@@ -10,6 +10,7 @@ if __name__ == "__main__":
     args = input_commands.get_input()
     processes.run_phanotate(args.infile)
     processes.translate_fastas()
+    processes.run_mmseqs()
     sys.exit("phrokka has finished")  # pragma: no cover
 
 
