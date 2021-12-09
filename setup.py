@@ -2,6 +2,7 @@
 
 """The setup script."""
 
+from sys import version_info
 from setuptools import setup, find_packages
 
 with open('README.rst') as readme_file:
@@ -13,6 +14,9 @@ with open('HISTORY.rst') as history_file:
 requirements = [ ]
 
 test_requirements = ['pytest>=3', ]
+
+version_file = open('VERSION', 'r')
+v = version_file.read().strip()
 
 setup(
     author="George Bouras",
@@ -44,6 +48,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/gbouras13/phrokka',
-    version='0.1.0',
+    version=v,
     zip_safe=False,
 )
