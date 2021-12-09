@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 import sys
 from modules import input_commands
-
+from modules import processes
 
 
 
 if __name__ == "__main__":
-    print("test")
+    input_commands.instantiate_outdir()
     args = input_commands.get_input()
-    tmp = args.infile
-    print(tmp)
+    processes.run_phanotate(args.infile)
+    processes.translate_fastas()
     sys.exit("phrokka has finished")  # pragma: no cover
 
 
