@@ -2,6 +2,7 @@ import argparse
 import os
 import sys
 from argparse import RawTextHelpFormatter
+from Bio import SeqIO
 
 
 ROOT_DIR = os.path.dirname(os.path.abspath("VERSION"))
@@ -17,3 +18,9 @@ def get_input():
 	args = parser.parse_args()
 
 	return args
+
+
+def read_fasta(filepath):
+
+	for record in SeqIO.parse(filepath, "fasta"):
+	print(record.id)
