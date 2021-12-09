@@ -21,7 +21,9 @@ phage annotation program
 
 * Free software: MIT license
 * Documentation: https://phrokka.readthedocs.io.
-
+* To install
+* conda env create -f environment.yml
+* conda activate phrokka_env
 
 Features
 --------
