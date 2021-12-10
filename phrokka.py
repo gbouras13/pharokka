@@ -6,10 +6,10 @@ from modules import processes
 
 
 if __name__ == "__main__":
-    input_commands.instantiate_outdir()
     args = input_commands.get_input()
-    processes.run_phanotate(args.infile)
-    processes.translate_fastas()
+    #processes.run_phanotate(args.infile)
+    #processes.translate_fastas()
+    #processes.run_trna_scan(args.infile)
     processes.run_mmseqs()
     sys.exit("phrokka has finished")  # pragma: no cover
 

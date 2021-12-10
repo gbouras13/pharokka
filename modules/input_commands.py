@@ -17,8 +17,7 @@ def get_input():
 
 	return args
 
-def instantiate_outdir():
-	out_dir = "output/"
-	if os.path.isdir(out_dir) == False:
-		os.mkdir(out_dir)
+
+
+
 
