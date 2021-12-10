@@ -22,8 +22,10 @@ def get_phrog_mmseqs():
     folder = "phrogs_mmseqs_db"
     
     # get tarball if not already present
-    if os.path.isfile(os.path.join(db_dir,tarball)) == False: 
+    if os.path.isfile(os.path.join(db_dir,tarball)) == True: 
+         print("PHROGs Database already downloaded")
         # download tarball and untar
+    else:
         try:
             sp.call(["wget", filepath, "-P", db_dir])
         except:
@@ -34,21 +36,22 @@ def get_phrog_mmseqs():
     if os.path.isfile(os.path.join(db_dir,folder)) == True:
         sp.call(["rm", os.path.join(db_dir,folder)])
     
-    # download untar
-    sp.call(["tar", "-xzf", os.path.join(db_dir, tarball)])
+    # download untar -C for specifying the directory
+    sp.call(["tar", "-xzf", os.path.join(db_dir, tarball), "-C", db_dir])
 
 
 def get_phrog_annot_table():
     print("Getting PHROGs Annotation Table")
     db_dir = "databases/"
     filepath = "https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v3.tsv"
-    # delete if the file already exists
-    if os.path.isfile(os.path.join(db_dir,filepath)) == True:
-        sp.call(["rm", os.path.join(db_dir,filepath)])
-
-    try:
-        sp.call(["wget", filepath, "-P", db_dir])
-    except:
-        sys.stderr.write("Error: PHROGs annotation file not found - link likely broken\n")  
-        return 0
+    file = "phrog_annot_v3.tsv"
+    #if the file already exists
+    if os.path.isfile(os.path.join(db_dir,file)) == True:
+        print("PHROGs annotation file already downloaded")
+    else:
+        try:
+            sp.call(["wget", filepath, "-P", db_dir])
+        except:
+            sys.stderr.write("Error: PHROGs annotation file not found - link likely broken\n")  
+            return 0
 
