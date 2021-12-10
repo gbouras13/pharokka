@@ -17,3 +17,4 @@ dependencies:
   - biopython==1.79
   - phanotate==1.5.0
   - mmseqs2==13.45111
+  - trnascan-se==2.0.9
