@@ -2,6 +2,7 @@
 import sys
 from modules import input_commands
 from modules import processes
+from modules import post_processing
 
 
 
@@ -11,6 +12,7 @@ if __name__ == "__main__":
     processes.translate_fastas()
     processes.run_trna_scan(args.infile)
     processes.run_mmseqs()
+    post_processing.process_mmseqs_results()
     sys.exit("phrokka has finished")  # pragma: no cover
 
 

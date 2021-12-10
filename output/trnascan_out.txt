@@ -1,6 +1,0 @@
-Sequence 		tRNA 	Bounds	tRNA	Anti	Intron Bounds	Inf	      
-Name     	tRNA #	Begin	End  	Type	Codon	Begin	End	Score	Note
--------- 	------	-----	------	----	-----	-----	----	------	------
-contig_2 	1	3864 	3793 	Ile2	CAT	0	0	63.1	
-contig_3 	1	14501	14428	Asp	GTC	0	0	62.8	
-contig_3 	2	14421	14349	Phe	GAA	0	0	64.0	
