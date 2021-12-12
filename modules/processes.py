@@ -25,6 +25,7 @@ def tidy_phanotate_output():
     # get rid of the headers and reset the index
     phan_df = phan_df[phan_df['start'] != '#id:']
     phan_df = phan_df[phan_df['start'] != '#START'].reset_index(drop=True)
+    phan_df["gene"] = phan_df['contig'] + " " + phan_df['start'] + "_" + phan_df['stop']
     phan_df.to_csv(out_dir + "cleaned_phanotate.tsv", sep="\t")
     return phan_df
 
