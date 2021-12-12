@@ -22,5 +22,17 @@ def process_mmseqs_results():
         print(tophits)
 
     tophits_df = pd.DataFrame(tophits, columns=['phrog', 'gene', 'alnScore', 'seqIdentity', 'eVal'])
-    print(tophits_df)
     tophits_df.to_csv(input_dir + "top_hits.tsv", sep="\t")
+    # left join 
+    input_dir = "output/"
+    phan_file = input_dir + "cleaned_phanotate.tsv"
+    col_list = ["ind" ,"start", "stop", "frame", "contig", "score", "gene"] 
+    phan_df = pd.read_csv(phan_file, sep="\t", index_col=False, names=col_list)
+    phan_df['gene']=phan_df['gene'].astype(str)
+    tophits_df['gene']=tophits_df['gene'].astype(str)
+    merged_df = phan_df.merge(tophits_df, on='gene', how='left')
+    print(merged_df)
+
+
+
+
