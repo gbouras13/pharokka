@@ -16,7 +16,6 @@ def run_phanotate(filepath):
         sys.stderr.write("Error: phanotate not found\n")  
         return 0
 
-
 def tidy_phanotate_output():
     out_dir = "output/"
     phan_file = out_dir + "/phanotate_out.txt"
@@ -48,10 +47,12 @@ def run_trna_scan(filepath):
     out_dir = "output/"
 
     try:
-        sp.call(["tRNAscan-SE", filepath, "-B", "-o", os.path.join(out_dir, "trnascan_out.txt")])
+        sp.call(["tRNAscan-SE", filepath, "-B", "-j",  os.path.join(out_dir, "trnascan_out.gff")])
     except:
         sys.stderr.write("Error: tRNAscan-SE not found\n")  
         return 0
+
+    
               
 def run_mmseqs():
     out_dir = "output/"
