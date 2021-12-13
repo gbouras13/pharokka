@@ -3,6 +3,6 @@
 
 from modules import databases
 
-databases.instantiate_dirs()
+databases.instantiate_dir()
 databases.get_phrog_mmseqs()
 databases.get_phrog_annot_table()

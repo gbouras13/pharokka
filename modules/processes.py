@@ -6,32 +6,29 @@ from Bio.SeqRecord import SeqRecord
 import pandas as pd
 
 
-def run_phanotate(filepath):
+def run_phanotate(filepath_in, out_dir):
     print("Beginning Phanotate")
-    out_dir = "output/"
     try:
-        sp.call([ "phanotate.py", filepath, "-o", os.path.join(out_dir, "phanotate_out.fasta"), "-f", "fasta"]) # , stderr=sp.DEVNULL, stdout=sp.DEVNULL silence the warnings (no trnaScan)
-        sp.call(["phanotate.py", filepath, "-o", os.path.join(out_dir, "phanotate_out.txt"), "-f", "tabular"])
+        sp.call([ "phanotate.py", filepath_in, "-o", os.path.join(out_dir, "phanotate_out.fasta"), "-f", "fasta"]) # , stderr=sp.DEVNULL, stdout=sp.DEVNULL silence the warnings (no trnaScan)
+        sp.call(["phanotate.py", filepath_in, "-o", os.path.join(out_dir, "phanotate_out.txt"), "-f", "tabular"])
     except:
         sys.stderr.write("Error: phanotate not found\n")  
         return 0
 
-def tidy_phanotate_output():
-    out_dir = "output/"
-    phan_file = out_dir + "/phanotate_out.txt"
+def tidy_phanotate_output(out_dir):
+    phan_file = os.path.join(out_dir, "phanotate_out.txt")
     col_list = ["start", "stop", "frame", "contig", "score"] 
     phan_df = pd.read_csv(phan_file, delimiter= '\t', index_col=False , names=col_list) 
     # get rid of the headers and reset the index
     phan_df = phan_df[phan_df['start'] != '#id:']
     phan_df = phan_df[phan_df['start'] != '#START'].reset_index(drop=True)
     phan_df["gene"] = phan_df['contig'] + " " + phan_df['start'] + "_" + phan_df['stop']
-    phan_df.to_csv(out_dir + "cleaned_phanotate.tsv", sep="\t", index=False)
+    phan_df.to_csv(os.path.join(out_dir,"cleaned_phanotate.tsv"), sep="\t", index=False)
     return phan_df
 
 
-def translate_fastas():
-    phan_df = tidy_phanotate_output()
-    out_dir = "output/"
+def translate_fastas(out_dir):
+    phan_df = tidy_phanotate_output(out_dir)
     with open(os.path.join(out_dir, "phanotate_aas.fasta"), 'w') as aa_fa:
         i = 0 
         for dna_record in SeqIO.parse(os.path.join(out_dir, "phanotate_out.fasta"), 'fasta'): 
@@ -41,23 +38,19 @@ def translate_fastas():
             SeqIO.write(aa_record, aa_fa, 'fasta')
             i += 1
 
-def run_trna_scan(filepath):
+def run_trna_scan(filepath_in, out_dir):
     print("Beginning tRNAscan-SE")
-    out_dir = "output/"
-
     try:
-        sp.call(["tRNAscan-SE", filepath, "-B", "-j",  os.path.join(out_dir, "trnascan_out.gff")])
+        sp.call(["tRNAscan-SE", filepath_in, "-B", "-j",  os.path.join(out_dir, "trnascan_out.gff")])
     except:
         sys.stderr.write("Error: tRNAscan-SE not found\n")  
         return 0
 
     
-              
-def run_mmseqs():
+def run_mmseqs(out_dir):
     print("Running mmseqs")
-    out_dir = "output/"
     phrog_db_dir = "databases/phrogs_mmseqs_db/"
-    mmseqs_dir = "output/mmseqs/"
+    mmseqs_dir = os.path.join(out_dir, "mmseqs/")
     amino_acid_fasta = "phanotate_aas.fasta"
     target_db_dir = "databases/target_dir"
 
