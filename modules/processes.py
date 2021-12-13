@@ -30,7 +30,6 @@ def tidy_phanotate_output():
 
 
 def translate_fastas():
-    print("Translating Nucleotide to Acids")
     phan_df = tidy_phanotate_output()
     out_dir = "output/"
     with open(os.path.join(out_dir, "phanotate_aas.fasta"), 'w') as aa_fa:
@@ -55,6 +54,7 @@ def run_trna_scan(filepath):
     
               
 def run_mmseqs():
+    print("Running mmseqs")
     out_dir = "output/"
     phrog_db_dir = "databases/phrogs_mmseqs_db/"
     mmseqs_dir = "output/mmseqs/"
