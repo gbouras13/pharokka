@@ -8,15 +8,15 @@ from modules import post_processing
 
 if __name__ == "__main__":
     args = input_commands.get_input()
-    #processes.run_phanotate(args.infile)
-    #processes.translate_fastas()
-    #processes.run_trna_scan(args.infile)
+    processes.run_phanotate(args.infile)
+    processes.translate_fastas()
+    processes.run_trna_scan(args.infile)
     processes.run_mmseqs()
     phan_mmseq_merge_df = post_processing.process_mmseqs_results()
     length_df = post_processing.get_contig_name_lengths(args.infile)
-    post_processing.create_gff(phan_mmseq_merge_df, length_df)
+    post_processing.create_gff(phan_mmseq_merge_df, length_df, args.infile)
     post_processing.create_tbl(phan_mmseq_merge_df, length_df)
-    sys.exit("phrokka has finished")  # pragma: no cover
+    sys.exit("phrokka has finished")  
 
 
 

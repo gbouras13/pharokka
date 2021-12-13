@@ -63,7 +63,7 @@ def get_contig_name_lengths(fasta_input):
     })
     return(length_df)
 
-def create_gff(phanotate_mmseqs_df, length_df):
+def create_gff(phanotate_mmseqs_df, length_df, fasta_input):
     # write the headers of the gff file
     with open('output/phannotate.gff', 'w') as f:
         f.write('##gff-version 3\n')
@@ -87,7 +87,7 @@ def create_gff(phanotate_mmseqs_df, length_df):
     with open('output/phannotate.gff', 'a') as f:
         gff_df.to_csv(f, sep="\t", index=False, header=False)
         print(f)
-    
+      
     ### trnas
 
     col_list = ["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]
@@ -98,6 +98,16 @@ def create_gff(phanotate_mmseqs_df, length_df):
     trna_df.stop = trna_df.stop.astype(int)
     with open('output/phannotate.gff', 'a') as f:
         trna_df.to_csv(f, sep="\t", index=False, header=False)
+        print(f)
+
+    # write fasta on the end 
+
+    ##FASTA
+
+    with open('output/phannotate.gff', 'a') as f:
+        f.write('##FASTA\n')
+        fasta_sequences = SeqIO.parse(open(fasta_input),'fasta')
+        SeqIO.write(fasta_sequences, f, "fasta")
         print(f)
 
 def create_tbl(phanotate_mmseqs_df, length_df):
@@ -123,12 +133,16 @@ def create_tbl(phanotate_mmseqs_df, length_df):
             subset_df = phanotate_mmseqs_df[phanotate_mmseqs_df['contig'] == contig]
             for index, row in subset_df.iterrows():
                 f.write(str(row['start']) + "\t" + str(row['stop']) + "\t" + row['Region'] + "\n")
+                f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "PHANOTATE")
                 f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "phrog=" + str(row['phrog']) + "\n")
                 f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ str(row['annot']) + "\n")
+                f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
             subset_trna_df = trna_df[trna_df['contig'] == contig]
             for index, row in subset_trna_df.iterrows():
                 f.write(str(row['start']) + "\t" + str(row['stop']) + "\t" + row['Region'] + "\n")
+                f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "tRNAscan-SE")
                 f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ str(row['trna_product']) + "\n")
+                f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
 
 
 
