@@ -6,8 +6,8 @@ from Bio.SeqRecord import SeqRecord
 import pandas as pd
 import numpy as np
 
-def process_mmseqs_results():
-    mmseqs_file =  "output/mmseqs_results.tsv"
+def process_mmseqs_results(out_dir):
+    mmseqs_file =  os.path.join(out_dir, "mmseqs_results.tsv")
     print("Processing mmseqs output")
     col_list = ["phrog", "gene", "alnScore", "seqIdentity", "eVal", "qStart", "qEnd", "qLen", "tStart", "tEnd", "tLen"] 
     mmseqs_df = pd.read_csv(mmseqs_file, delimiter= '\t', index_col=False , names=col_list) 
@@ -22,9 +22,9 @@ def process_mmseqs_results():
         print(tophits)
 
     tophits_df = pd.DataFrame(tophits, columns=['phrog', 'gene', 'alnScore', 'seqIdentity', 'eVal'])
-    tophits_df.to_csv("output/top_hits.tsv", sep="\t", index=False)
+    tophits_df.to_csv(os.path.join(out_dir, "top_hits.tsv"), sep="\t", index=False)
     # left join mmseqs top hits to phanotate
-    phan_file = "output/cleaned_phanotate.tsv"
+    phan_file = os.path.join(out_dir, "cleaned_phanotate.tsv") 
     # automatically picks up the names
     #col_list = ["start", "stop", "frame", "contig", "score", "gene"] 
     phan_df = pd.read_csv(phan_file, sep="\t", index_col=False )
@@ -47,7 +47,7 @@ def process_mmseqs_results():
     merged_df['Method'] = "PHANOTATE"
     merged_df['Region'] = "CDS"
   
-    merged_df.to_csv("output/final_merged_output.tsv", sep="\t", index=False)
+    merged_df.to_csv( os.path.join(out_dir, "final_merged_output.tsv"), sep="\t", index=False)
     return merged_df
 
 def get_contig_name_lengths(fasta_input):
@@ -63,9 +63,9 @@ def get_contig_name_lengths(fasta_input):
     })
     return(length_df)
 
-def create_gff(phanotate_mmseqs_df, length_df, fasta_input):
+def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir):
     # write the headers of the gff file
-    with open('output/phannotate.gff', 'w') as f:
+    with open(os.path.join(out_dir, "phannotate.gff"), 'w') as f:
         f.write('##gff-version 3\n')
         for index, row in length_df.iterrows():
             f.write('##sequence-region ' + row['contig'] + ' 1 ' + str(row['length']) +'\n')
@@ -84,7 +84,7 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input):
     # get gff dataframe in correct order 
     gff_df = phanotate_mmseqs_df[["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]]
 
-    with open('output/phannotate.gff', 'a') as f:
+    with open(os.path.join(out_dir, "phannotate.gff"), 'a') as f:
         gff_df.to_csv(f, sep="\t", index=False, header=False)
         print(f)
       
@@ -96,7 +96,7 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input):
     trna_df = trna_df[trna_df['Region'] == 'tRNA']
     trna_df.start = trna_df.start.astype(int)
     trna_df.stop = trna_df.stop.astype(int)
-    with open('output/phannotate.gff', 'a') as f:
+    with open(os.path.join(out_dir, "phannotate.gff"), 'a') as f:
         trna_df.to_csv(f, sep="\t", index=False, header=False)
         print(f)
 
@@ -104,18 +104,18 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input):
 
     ##FASTA
 
-    with open('output/phannotate.gff', 'a') as f:
+    with open(os.path.join(out_dir, "phannotate.gff"), 'a') as f:
         f.write('##FASTA\n')
         fasta_sequences = SeqIO.parse(open(fasta_input),'fasta')
         SeqIO.write(fasta_sequences, f, "fasta")
         print(f)
 
-def create_tbl(phanotate_mmseqs_df, length_df):
+def create_tbl(phanotate_mmseqs_df, length_df, out_dir):
 
     ### readtrnas
 
     col_list = ["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]
-    trna_df = pd.read_csv("output/trnascan_out.gff", delimiter= '\t', index_col=False, names=col_list ) 
+    trna_df = pd.read_csv(os.path.join(out_dir, "trnascan_out.gff"), delimiter= '\t', index_col=False, names=col_list ) 
     # keep only trnas
     trna_df = trna_df[trna_df['Region'] == 'tRNA']
     trna_df.start = trna_df.start.astype(int)
@@ -126,14 +126,14 @@ def create_tbl(phanotate_mmseqs_df, length_df):
     trna_df[['anticodon','rest']] = trna_df['anticodon'].str.split(';gene_biotype',expand=True)
     trna_df['trna_product']='tRNA-'+trna_df['isotypes']+"("+trna_df['anticodon']+")"
 
-    with open('output/phannotate.tbl', 'w') as f:
+    with open( os.path.join(out_dir, "phannotate.tbl"), 'w') as f:
         for index, row in length_df.iterrows():
             contig = row['contig']
             f.write('>' + contig + '\n')
             subset_df = phanotate_mmseqs_df[phanotate_mmseqs_df['contig'] == contig]
             for index, row in subset_df.iterrows():
                 f.write(str(row['start']) + "\t" + str(row['stop']) + "\t" + row['Region'] + "\n")
-                f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "PHANOTATE")
+                f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "PHANOTATE\n")
                 f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "phrog=" + str(row['phrog']) + "\n")
                 f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ str(row['annot']) + "\n")
                 f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")

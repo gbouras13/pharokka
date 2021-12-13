@@ -3,16 +3,10 @@ import os
 import sys
 import subprocess as sp
 
-def instantiate_dirs():
-	out_dir = "output/"
-	if os.path.isdir(out_dir) == False:
-		os.mkdir(out_dir)
+def instantiate_dir():
 	db_dir = "databases/"
 	if os.path.isdir(db_dir) == False:
 		os.mkdir(db_dir)
-	mmseqs_dir = "output/mmseqs/"
-	if os.path.isdir(mmseqs_dir) == False:
-		os.mkdir(mmseqs_dir)
 
 def get_phrog_mmseqs():
     print("Getting PHROGs MMSeqs DB")

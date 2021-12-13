@@ -1,0 +1,984 @@
+>APTC-SA-4
+2	427	CDS
+			inference	PHANOTATE			inference	phrog=2543
+			product	hypothetical protein
+			transl_table	11
+486	659	CDS
+			inference	PHANOTATE			inference	phrog=3789
+			product	hypothetical protein
+			transl_table	11
+659	928	CDS
+			inference	PHANOTATE			inference	phrog=7733
+			product	hypothetical protein
+			transl_table	11
+1007	1192	CDS
+			inference	PHANOTATE			inference	phrog=4863
+			product	hypothetical protein
+			transl_table	11
+1276	1377	CDS
+			inference	PHANOTATE			inference	phrog=22992
+			product	hypothetical protein
+			transl_table	11
+1447	1542	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+1526	1762	CDS
+			inference	PHANOTATE			inference	phrog=2884
+			product	hypothetical protein
+			transl_table	11
+1764	2249	CDS
+			inference	PHANOTATE			inference	phrog=7534
+			product	hypothetical protein
+			transl_table	11
+2262	2669	CDS
+			inference	PHANOTATE			inference	phrog=5770
+			product	hypothetical protein
+			transl_table	11
+2669	3100	CDS
+			inference	PHANOTATE			inference	phrog=16296
+			product	hypothetical protein
+			transl_table	11
+3103	3294	CDS
+			inference	PHANOTATE			inference	phrog=4249
+			product	hypothetical protein
+			transl_table	11
+3291	3776	CDS
+			inference	PHANOTATE			inference	phrog=3619
+			product	hypothetical protein
+			transl_table	11
+3769	4200	CDS
+			inference	PHANOTATE			inference	phrog=2349
+			product	hypothetical protein
+			transl_table	11
+>contig_2
+14	556	CDS
+			inference	PHANOTATE			inference	phrog=4045
+			product	hypothetical protein
+			transl_table	11
+568	1056	CDS
+			inference	PHANOTATE			inference	phrog=1017
+			product	hypothetical protein
+			transl_table	11
+1069	1467	CDS
+			inference	PHANOTATE			inference	phrog=3857
+			product	hypothetical protein
+			transl_table	11
+1464	2171	CDS
+			inference	PHANOTATE			inference	phrog=246
+			product	NinI-like serine-threonine phosphatase
+			transl_table	11
+2271	2825	CDS
+			inference	PHANOTATE			inference	phrog=2981
+			product	hypothetical protein
+			transl_table	11
+2841	3158	CDS
+			inference	PHANOTATE			inference	phrog=4178
+			product	major tail protein
+			transl_table	11
+3227	3340	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+3349	3525	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+3522	3650	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+3728	3928	CDS
+			inference	PHANOTATE			inference	phrog=27748
+			product	hypothetical protein
+			transl_table	11
+3928	4029	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+4144	4692	CDS
+			inference	PHANOTATE			inference	phrog=2948
+			product	hypothetical protein
+			transl_table	11
+4696	4914	CDS
+			inference	PHANOTATE			inference	phrog=3686
+			product	hypothetical protein
+			transl_table	11
+4915	5109	CDS
+			inference	PHANOTATE			inference	phrog=3950
+			product	hypothetical protein
+			transl_table	11
+5099	5836	CDS
+			inference	PHANOTATE			inference	phrog=3464
+			product	nucleotidyltransferase
+			transl_table	11
+5899	6003	CDS
+			inference	PHANOTATE			inference	phrog=5230
+			product	hypothetical protein
+			transl_table	11
+6015	6254	CDS
+			inference	PHANOTATE			inference	phrog=3697
+			product	hypothetical protein
+			transl_table	11
+6256	6645	CDS
+			inference	PHANOTATE			inference	phrog=2164
+			product	hypothetical protein
+			transl_table	11
+6744	6917	CDS
+			inference	PHANOTATE			inference	phrog=3504
+			product	hypothetical protein
+			transl_table	11
+6958	7440	CDS
+			inference	PHANOTATE			inference	phrog=3319
+			product	hypothetical protein
+			transl_table	11
+7490	8032	CDS
+			inference	PHANOTATE			inference	phrog=3635
+			product	hypothetical protein
+			transl_table	11
+8032	8565	CDS
+			inference	PHANOTATE			inference	phrog=3702
+			product	hypothetical protein
+			transl_table	11
+8568	8732	CDS
+			inference	PHANOTATE			inference	phrog=152
+			product	RinB-like transcriptional activator
+			transl_table	11
+8735	9010	CDS
+			inference	PHANOTATE			inference	phrog=3751
+			product	membrane protein
+			transl_table	11
+9010	9855	CDS
+			inference	PHANOTATE			inference	phrog=1909
+			product	hypothetical protein
+			transl_table	11
+9867	10985	CDS
+			inference	PHANOTATE			inference	phrog=20349
+			product	hypothetical protein
+			transl_table	11
+11001	11108	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+11139	11465	CDS
+			inference	PHANOTATE			inference	phrog=2861
+			product	hypothetical protein
+			transl_table	11
+11458	11874	CDS
+			inference	PHANOTATE			inference	phrog=2708
+			product	nucleotide kinase
+			transl_table	11
+12008	12310	CDS
+			inference	PHANOTATE			inference	phrog=1992
+			product	MazG-like pyrophosphatase
+			transl_table	11
+12310	12498	CDS
+			inference	PHANOTATE			inference	phrog=3048
+			product	hypothetical protein
+			transl_table	11
+12542	12703	CDS
+			inference	PHANOTATE			inference	phrog=2966
+			product	hypothetical protein
+			transl_table	11
+3793	3864	tRNA
+			inference	tRNAscan-SE			product	tRNA-Ile2(CAT)
+			transl_table	11
+>contig_3
+2	2011	CDS
+			inference	PHANOTATE			inference	phrog=3200
+			product	hypothetical protein
+			transl_table	11
+2089	2352	CDS
+			inference	PHANOTATE			inference	phrog=2811
+			product	virion structural protein
+			transl_table	11
+2369	2542	CDS
+			inference	PHANOTATE			inference	phrog=1274
+			product	lysM motif protein
+			transl_table	11
+2549	3127	CDS
+			inference	PHANOTATE			inference	phrog=2642
+			product	hypothetical protein
+			transl_table	11
+3120	3746	CDS
+			inference	PHANOTATE			inference	phrog=1817
+			product	nucleoside 2-deoxyribosyltransferase
+			transl_table	11
+3739	4635	CDS
+			inference	PHANOTATE			inference	phrog=548
+			product	RNA ligase
+			transl_table	11
+4635	4859	CDS
+			inference	PHANOTATE			inference	phrog=3093
+			product	hypothetical protein
+			transl_table	11
+4928	5668	CDS
+			inference	PHANOTATE			inference	phrog=170
+			product	PhoH-like phosphate starvation-inducible
+			transl_table	11
+5720	6334	CDS
+			inference	PHANOTATE			inference	phrog=2995
+			product	hypothetical protein
+			transl_table	11
+6350	6775	CDS
+			inference	PHANOTATE			inference	phrog=25616
+			product	Rnase H
+			transl_table	11
+6765	6956	CDS
+			inference	PHANOTATE			inference	phrog=2706
+			product	hypothetical protein
+			transl_table	11
+6979	7620	CDS
+			inference	PHANOTATE			inference	phrog=2896
+			product	hypothetical protein
+			transl_table	11
+7610	7840	CDS
+			inference	PHANOTATE			inference	phrog=8
+			product	transcriptional regulator
+			transl_table	11
+7843	8070	CDS
+			inference	PHANOTATE			inference	phrog=2770
+			product	hypothetical protein
+			transl_table	11
+8180	8872	CDS
+			inference	PHANOTATE			inference	phrog=3310
+			product	transglycosylase
+			transl_table	11
+9059	9694	CDS
+			inference	PHANOTATE			inference	phrog=3377
+			product	HNH endonuclease
+			transl_table	11
+9761	10552	CDS
+			inference	PHANOTATE			inference	phrog=200
+			product	lipoprotein
+			transl_table	11
+10552	10860	CDS
+			inference	PHANOTATE			inference	phrog=3667
+			product	hypothetical protein
+			transl_table	11
+10973	11602	CDS
+			inference	PHANOTATE			inference	phrog=635
+			product	endolysin
+			transl_table	11
+11838	11927	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+11873	12373	CDS
+			inference	PHANOTATE			inference	phrog=59
+			product	HNH endonuclease
+			transl_table	11
+12466	12567	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+12533	13336	CDS
+			inference	PHANOTATE			inference	phrog=635
+			product	endolysin
+			transl_table	11
+13336	13839	CDS
+			inference	PHANOTATE			inference	phrog=962
+			product	holin
+			transl_table	11
+13924	14109	CDS
+			inference	PHANOTATE			inference	phrog=987
+			product	hypothetical protein
+			transl_table	11
+14172	14300	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+14511	14615	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+14785	14907	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+15298	15405	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+15406	15576	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+15656	15874	CDS
+			inference	PHANOTATE			inference	phrog=1257
+			product	ribosome associated inhibitor A; zinc finger domain
+			transl_table	11
+15988	16128	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+16352	16561	CDS
+			inference	PHANOTATE			inference	phrog=1215
+			product	hypothetical protein
+			transl_table	11
+16574	16906	CDS
+			inference	PHANOTATE			inference	phrog=937
+			product	hemolysin
+			transl_table	11
+16919	17245	CDS
+			inference	PHANOTATE			inference	phrog=1481
+			product	hypothetical protein
+			transl_table	11
+17278	17544	CDS
+			inference	PHANOTATE			inference	phrog=4526
+			product	hypothetical protein
+			transl_table	11
+17639	17731	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+17805	18071	CDS
+			inference	PHANOTATE			inference	phrog=5547
+			product	membrane protein
+			transl_table	11
+18049	18327	CDS
+			inference	PHANOTATE			inference	phrog=1321
+			product	hypothetical protein
+			transl_table	11
+18408	18734	CDS
+			inference	PHANOTATE			inference	phrog=1063
+			product	terminase small subunit
+			transl_table	11
+18749	20566	CDS
+			inference	PHANOTATE			inference	phrog=675
+			product	terminase large subunit
+			transl_table	11
+20559	21380	CDS
+			inference	PHANOTATE			inference	phrog=1917
+			product	virion structural protein
+			transl_table	11
+21451	21540	CDS
+			inference	PHANOTATE			inference	phrog=3863
+			product	hypothetical protein
+			transl_table	11
+21537	22016	CDS
+			inference	PHANOTATE			inference	phrog=1116
+			product	hypothetical protein
+			transl_table	11
+22109	23227	CDS
+			inference	PHANOTATE			inference	phrog=3094
+			product	hypothetical protein
+			transl_table	11
+23369	23653	CDS
+			inference	PHANOTATE			inference	phrog=3937
+			product	hypothetical protein
+			transl_table	11
+23731	24042	CDS
+			inference	PHANOTATE			inference	phrog=1108
+			product	portal protein
+			transl_table	11
+24046	25737	CDS
+			inference	PHANOTATE			inference	phrog=15361
+			product	portal protein
+			transl_table	11
+25964	26704	CDS
+			inference	PHANOTATE			inference	phrog=1028
+			product	head maturation protease
+			transl_table	11
+26723	27679	CDS
+			inference	PHANOTATE			inference	phrog=1133
+			product	hypothetical protein
+			transl_table	11
+27795	29186	CDS
+			inference	PHANOTATE			inference	phrog=752
+			product	major head protein
+			transl_table	11
+29278	29574	CDS
+			inference	PHANOTATE			inference	phrog=1205
+			product	hypothetical protein
+			transl_table	11
+29587	30495	CDS
+			inference	PHANOTATE			inference	phrog=772
+			product	tail fiber protein
+			transl_table	11
+30509	31387	CDS
+			inference	PHANOTATE			inference	phrog=1004
+			product	virion structural protein
+			transl_table	11
+31387	32007	CDS
+			inference	PHANOTATE			inference	phrog=1127
+			product	hypothetical protein
+			transl_table	11
+32026	32862	CDS
+			inference	PHANOTATE			inference	phrog=1000
+			product	hypothetical protein
+			transl_table	11
+32864	33079	CDS
+			inference	PHANOTATE			inference	phrog=1151
+			product	hypothetical protein
+			transl_table	11
+33106	34869	CDS
+			inference	PHANOTATE			inference	phrog=279
+			product	tail sheath
+			transl_table	11
+34942	35370	CDS
+			inference	PHANOTATE			inference	phrog=985
+			product	virion structural protein
+			transl_table	11
+35467	35607	CDS
+			inference	PHANOTATE			inference	phrog=2701
+			product	hypothetical protein
+			transl_table	11
+35650	36108	CDS
+			inference	PHANOTATE			inference	phrog=1905
+			product	hypothetical protein
+			transl_table	11
+36121	36315	CDS
+			inference	PHANOTATE			inference	phrog=4320
+			product	hypothetical protein
+			transl_table	11
+36397	36708	CDS
+			inference	PHANOTATE			inference	phrog=2754
+			product	virion structural protein
+			transl_table	11
+36840	37298	CDS
+			inference	PHANOTATE			inference	phrog=1038
+			product	tail assembly chaperone
+			transl_table	11
+37342	37878	CDS
+			inference	PHANOTATE			inference	phrog=1316
+			product	RNA polymerase beta subunit
+			transl_table	11
+37934	41989	CDS
+			inference	PHANOTATE			inference	phrog=1047
+			product	tail associated lysin
+			transl_table	11
+42068	44494	CDS
+			inference	PHANOTATE			inference	phrog=1015
+			product	tail protein with lysin activity
+			transl_table	11
+44508	45395	CDS
+			inference	PHANOTATE			inference	phrog=2677
+			product	tail protein with lysin activity
+			transl_table	11
+45395	47941	CDS
+			inference	PHANOTATE			inference	phrog=2204
+			product	glycerophosphoryl diester phosphodiesterase
+			transl_table	11
+48048	48839	CDS
+			inference	PHANOTATE			inference	phrog=1011
+			product	virion structural protein
+			transl_table	11
+48839	49363	CDS
+			inference	PHANOTATE			inference	phrog=1073
+			product	hypothetical protein
+			transl_table	11
+49363	50067	CDS
+			inference	PHANOTATE			inference	phrog=975
+			product	baseplate protein
+			transl_table	11
+50082	51128	CDS
+			inference	PHANOTATE			inference	phrog=6
+			product	baseplate protein
+			transl_table	11
+51149	54208	CDS
+			inference	PHANOTATE			inference	phrog=2386
+			product	virion structural protein
+			transl_table	11
+54319	54840	CDS
+			inference	PHANOTATE			inference	phrog=1394
+			product	virion structural protein
+			transl_table	11
+54861	58319	CDS
+			inference	PHANOTATE			inference	phrog=877
+			product	hypothetical protein
+			transl_table	11
+58368	58526	CDS
+			inference	PHANOTATE			inference	phrog=1074
+			product	hypothetical protein
+			transl_table	11
+58527	60449	CDS
+			inference	PHANOTATE			inference	phrog=2665
+			product	virion structural protein
+			transl_table	11
+60472	60846	CDS
+			inference	PHANOTATE			inference	phrog=2671
+			product	tail fiber protein
+			transl_table	11
+60853	62229	CDS
+			inference	PHANOTATE			inference	phrog=2691
+			product	tail fiber protein
+			transl_table	11
+62321	64069	CDS
+			inference	PHANOTATE			inference	phrog=9690
+			product	DNA helicase
+			transl_table	11
+64081	65694	CDS
+			inference	PHANOTATE			inference	phrog=1098
+			product	HTH DNA binding protein
+			transl_table	11
+65687	67129	CDS
+			inference	PHANOTATE			inference	phrog=19
+			product	DnaB-like replicative helicase
+			transl_table	11
+67208	68245	CDS
+			inference	PHANOTATE			inference	phrog=100
+			product	SbcD-like subunit of palindrome specific endonuclease
+			transl_table	11
+68245	68622	CDS
+			inference	PHANOTATE			inference	phrog=2773
+			product	hypothetical protein
+			transl_table	11
+68622	70541	CDS
+			inference	PHANOTATE			inference	phrog=21388
+			product	exonuclease
+			transl_table	11
+70541	71137	CDS
+			inference	PHANOTATE			inference	phrog=1070
+			product	anti-sigma factor
+			transl_table	11
+71152	72219	CDS
+			inference	PHANOTATE			inference	phrog=32622
+			product	DNA primase/helicase
+			transl_table	11
+72286	72624	CDS
+			inference	PHANOTATE			inference	phrog=1291
+			product	hypothetical protein
+			transl_table	11
+72624	73076	CDS
+			inference	PHANOTATE			inference	phrog=1095
+			product	hypothetical protein
+			transl_table	11
+73063	73671	CDS
+			inference	PHANOTATE			inference	phrog=244
+			product	RusA-like Holliday junction resolvase
+			transl_table	11
+73688	74080	CDS
+			inference	PHANOTATE			inference	phrog=883
+			product	flavodoxin
+			transl_table	11
+74095	76209	CDS
+			inference	PHANOTATE			inference	phrog=3844
+			product	NrdA-like aerobic NDP reductase large subunit
+			transl_table	11
+76223	77272	CDS
+			inference	PHANOTATE			inference	phrog=86
+			product	ribonucleoside diphosphate reductase small subunit
+			transl_table	11
+77290	77619	CDS
+			inference	PHANOTATE			inference	phrog=2797
+			product	hypothetical protein
+			transl_table	11
+77603	77923	CDS
+			inference	PHANOTATE			inference	phrog=22
+			product	thioredoxin domain
+			transl_table	11
+77952	78059	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+78130	78726	CDS
+			inference	PHANOTATE			inference	phrog=1054
+			product	hypothetical protein
+			transl_table	11
+78736	79041	CDS
+			inference	PHANOTATE			inference	phrog=379
+			product	DNA binding protein
+			transl_table	11
+79117	79989	CDS
+			inference	PHANOTATE			inference	phrog=4008
+			product	DNA polymerase
+			transl_table	11
+80155	80667	CDS
+			inference	PHANOTATE			inference	phrog=2340
+			product	endonuclease
+			transl_table	11
+80803	82146	CDS
+			inference	PHANOTATE			inference	phrog=4008
+			product	DNA polymerase
+			transl_table	11
+82212	82307	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+82414	83121	CDS
+			inference	PHANOTATE			inference	phrog=59
+			product	HNH endonuclease
+			transl_table	11
+83182	83286	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+83355	84215	CDS
+			inference	PHANOTATE			inference	phrog=2573
+			product	DNA polymerase
+			transl_table	11
+84284	84526	CDS
+			inference	PHANOTATE			inference	phrog=3621
+			product	hypothetical protein
+			transl_table	11
+84543	85025	CDS
+			inference	PHANOTATE			inference	phrog=1069
+			product	hypothetical protein
+			transl_table	11
+85112	86383	CDS
+			inference	PHANOTATE			inference	phrog=2672
+			product	hypothetical protein
+			transl_table	11
+86443	87699	CDS
+			inference	PHANOTATE			inference	phrog=97
+			product	UvsX-like recombinase
+			transl_table	11
+87703	88056	CDS
+			inference	PHANOTATE			inference	phrog=1089
+			product	hypothetical protein
+			transl_table	11
+88043	88705	CDS
+			inference	PHANOTATE			inference	phrog=1025
+			product	RNA polymerase sigma factor
+			transl_table	11
+88711	88809	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+88833	89465	CDS
+			inference	PHANOTATE			inference	phrog=1240
+			product	Ig domain containing protein
+			transl_table	11
+89479	90000	CDS
+			inference	PHANOTATE			inference	phrog=341
+			product	major tail protein
+			transl_table	11
+90015	90242	CDS
+			inference	PHANOTATE			inference	phrog=1696
+			product	major tail protein
+			transl_table	11
+90338	90598	CDS
+			inference	PHANOTATE			inference	phrog=2673
+			product	hypothetical protein
+			transl_table	11
+90602	91357	CDS
+			inference	PHANOTATE			inference	phrog=2721
+			product	hypothetical protein
+			transl_table	11
+91350	92600	CDS
+			inference	PHANOTATE			inference	phrog=284
+			product	exonuclease
+			transl_table	11
+92614	92982	CDS
+			inference	PHANOTATE			inference	phrog=2892
+			product	hypothetical protein
+			transl_table	11
+92969	93280	CDS
+			inference	PHANOTATE			inference	phrog=3644
+			product	hypothetical protein
+			transl_table	11
+93344	93880	CDS
+			inference	PHANOTATE			inference	phrog=1080
+			product	hypothetical protein
+			transl_table	11
+93873	94640	CDS
+			inference	PHANOTATE			inference	phrog=984
+			product	hypothetical protein
+			transl_table	11
+94618	95064	CDS
+			inference	PHANOTATE			inference	phrog=21462
+			product	hypothetical protein
+			transl_table	11
+95064	95927	CDS
+			inference	PHANOTATE			inference	phrog=1113
+			product	hypothetical protein
+			transl_table	11
+96299	97030	CDS
+			inference	PHANOTATE			inference	phrog=1007
+			product	hypothetical protein
+			transl_table	11
+97048	97506	CDS
+			inference	PHANOTATE			inference	phrog=1104
+			product	virion structural protein
+			transl_table	11
+97571	98014	CDS
+			inference	PHANOTATE			inference	phrog=1303
+			product	DNA binding protein
+			transl_table	11
+98031	98735	CDS
+			inference	PHANOTATE			inference	phrog=2726
+			product	hypothetical protein
+			transl_table	11
+98797	99195	CDS
+			inference	PHANOTATE			inference	phrog=2863
+			product	hypothetical protein
+			transl_table	11
+99342	99584	CDS
+			inference	PHANOTATE			inference	phrog=3157
+			product	hypothetical protein
+			transl_table	11
+99589	99753	CDS
+			inference	PHANOTATE			inference	phrog=6754
+			product	hypothetical protein
+			transl_table	11
+99740	99919	CDS
+			inference	PHANOTATE			inference	phrog=7869
+			product	hypothetical protein
+			transl_table	11
+99955	100131	CDS
+			inference	PHANOTATE			inference	phrog=3664
+			product	DNA sliding clamp inhibitor; arrest of S.aureus DNA synthesis
+			transl_table	11
+100121	100654	CDS
+			inference	PHANOTATE			inference	phrog=3854
+			product	ribulose-1;5-bisphosphate carboxylase/oxygenase small subunit
+			transl_table	11
+100669	100917	CDS
+			inference	PHANOTATE			inference	phrog=4009
+			product	hypothetical protein
+			transl_table	11
+100929	101105	CDS
+			inference	PHANOTATE			inference	phrog=3524
+			product	hypothetical protein
+			transl_table	11
+101098	101394	CDS
+			inference	PHANOTATE			inference	phrog=3128
+			product	hypothetical protein
+			transl_table	11
+101433	101624	CDS
+			inference	PHANOTATE			inference	phrog=3640
+			product	membrane protein
+			transl_table	11
+101637	102005	CDS
+			inference	PHANOTATE			inference	phrog=3669
+			product	hypothetical protein
+			transl_table	11
+102018	102365	CDS
+			inference	PHANOTATE			inference	phrog=2988
+			product	hypothetical protein
+			transl_table	11
+102365	102643	CDS
+			inference	PHANOTATE			inference	phrog=3804
+			product	hypothetical protein
+			transl_table	11
+102713	103018	CDS
+			inference	PHANOTATE			inference	phrog=3143
+			product	hypothetical protein
+			transl_table	11
+103033	103383	CDS
+			inference	PHANOTATE			inference	phrog=3752
+			product	hypothetical protein
+			transl_table	11
+103383	103985	CDS
+			inference	PHANOTATE			inference	phrog=4208
+			product	HNH endonuclease
+			transl_table	11
+103999	104178	CDS
+			inference	PHANOTATE			inference	phrog=3701
+			product	hypothetical protein
+			transl_table	11
+104307	104405	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+104405	104806	CDS
+			inference	PHANOTATE			inference	phrog=1486
+			product	membrane protein
+			transl_table	11
+104808	105068	CDS
+			inference	PHANOTATE			inference	phrog=11913
+			product	hypothetical protein
+			transl_table	11
+105120	105407	CDS
+			inference	PHANOTATE			inference	phrog=1486
+			product	membrane protein
+			transl_table	11
+105418	105534	CDS
+			inference	PHANOTATE			inference	phrog=4580
+			product	transcription factor
+			transl_table	11
+105524	105787	CDS
+			inference	PHANOTATE			inference	phrog=32014
+			product	hypothetical protein
+			transl_table	11
+105864	106043	CDS
+			inference	PHANOTATE			inference	phrog=4743
+			product	hypothetical protein
+			transl_table	11
+106058	106321	CDS
+			inference	PHANOTATE			inference	phrog=4418
+			product	hypothetical protein
+			transl_table	11
+106324	106641	CDS
+			inference	PHANOTATE			inference	phrog=4081
+			product	hypothetical protein
+			transl_table	11
+106642	107322	CDS
+			inference	PHANOTATE			inference	phrog=4650
+			product	hypothetical protein
+			transl_table	11
+107411	107569	CDS
+			inference	PHANOTATE			inference	phrog=4430
+			product	hypothetical protein
+			transl_table	11
+107604	107804	CDS
+			inference	PHANOTATE			inference	phrog=3453
+			product	hypothetical protein
+			transl_table	11
+107805	108095	CDS
+			inference	PHANOTATE			inference	phrog=4096
+			product	hypothetical protein
+			transl_table	11
+108187	108495	CDS
+			inference	PHANOTATE			inference	phrog=1099
+			product	hypothetical protein
+			transl_table	11
+108492	109400	CDS
+			inference	PHANOTATE			inference	phrog=619
+			product	ribose-phosphate pyrophosphokinase
+			transl_table	11
+109418	110887	CDS
+			inference	PHANOTATE			inference	phrog=448
+			product	nicotinamide phosphoribosyl transferase
+			transl_table	11
+110966	111211	CDS
+			inference	PHANOTATE			inference	phrog=4028
+			product	hypothetical protein
+			transl_table	11
+111231	111623	CDS
+			inference	PHANOTATE			inference	phrog=3847
+			product	hypothetical protein
+			transl_table	11
+111625	111846	CDS
+			inference	PHANOTATE			inference	phrog=4340
+			product	hypothetical protein
+			transl_table	11
+111912	112223	CDS
+			inference	PHANOTATE			inference	phrog=3224
+			product	hypothetical protein
+			transl_table	11
+112226	112735	CDS
+			inference	PHANOTATE			inference	phrog=4855
+			product	endolysin
+			transl_table	11
+112737	113066	CDS
+			inference	PHANOTATE			inference	phrog=4637
+			product	hypothetical protein
+			transl_table	11
+113072	113266	CDS
+			inference	PHANOTATE			inference	phrog=4983
+			product	hypothetical protein
+			transl_table	11
+113290	113604	CDS
+			inference	PHANOTATE			inference	phrog=5741
+			product	hypothetical protein
+			transl_table	11
+113619	113786	CDS
+			inference	PHANOTATE			inference	phrog=5729
+			product	hypothetical protein
+			transl_table	11
+113823	113924	CDS
+			inference	PHANOTATE			inference	phrog=7862
+			product	hypothetical protein
+			transl_table	11
+114023	114217	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+114224	114346	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+114332	114427	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+114521	114628	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+114733	115032	CDS
+			inference	PHANOTATE			inference	phrog=654
+			product	hypothetical protein
+			transl_table	11
+115048	115233	CDS
+			inference	PHANOTATE			inference	phrog=3204
+			product	hypothetical protein
+			transl_table	11
+115340	115630	CDS
+			inference	PHANOTATE			inference	phrog=654
+			product	hypothetical protein
+			transl_table	11
+115630	115917	CDS
+			inference	PHANOTATE			inference	phrog=654
+			product	hypothetical protein
+			transl_table	11
+115917	116210	CDS
+			inference	PHANOTATE			inference	phrog=654
+			product	hypothetical protein
+			transl_table	11
+116214	116471	CDS
+			inference	PHANOTATE			inference	phrog=1099
+			product	hypothetical protein
+			transl_table	11
+116549	116788	CDS
+			inference	PHANOTATE			inference	phrog=1099
+			product	hypothetical protein
+			transl_table	11
+116799	117146	CDS
+			inference	PHANOTATE			inference	phrog=3522
+			product	hypothetical protein
+			transl_table	11
+117355	117693	CDS
+			inference	PHANOTATE			inference	phrog=3077
+			product	hypothetical protein
+			transl_table	11
+117672	117830	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+117844	117957	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+118004	118312	CDS
+			inference	PHANOTATE			inference	phrog=2601
+			product	hypothetical protein
+			transl_table	11
+118331	118465	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+118518	118802	CDS
+			inference	PHANOTATE			inference	phrog=3164
+			product	hypothetical protein
+			transl_table	11
+118877	119068	CDS
+			inference	PHANOTATE			inference	phrog=3388
+			product	hypothetical protein
+			transl_table	11
+119055	119150	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+119177	119317	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+119385	119873	CDS
+			inference	PHANOTATE			inference	phrog=59
+			product	HNH endonuclease
+			transl_table	11
+119995	120138	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+120211	120306	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+120269	120400	CDS
+			inference	PHANOTATE			inference	phrog=3837
+			product	hypothetical protein
+			transl_table	11
+120487	120585	CDS
+			inference	PHANOTATE			inference	phrog=No_PHROG
+			product	hypothetical protein
+			transl_table	11
+14349	14421	tRNA
+			inference	tRNAscan-SE			product	tRNA-Phe(GAA)
+			transl_table	11
+14428	14501	tRNA
+			inference	tRNAscan-SE			product	tRNA-Asp(GTC)
+			transl_table	11
