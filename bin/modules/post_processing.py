@@ -6,7 +6,7 @@ from Bio.SeqRecord import SeqRecord
 import pandas as pd
 import numpy as np
 
-def process_mmseqs_results(out_dir):
+def process_mmseqs_results(db_dir,out_dir):
     mmseqs_file =  os.path.join(out_dir, "mmseqs_results.tsv")
     print("Processing mmseqs output")
     col_list = ["phrog", "gene", "alnScore", "seqIdentity", "eVal", "qStart", "qEnd", "qLen", "tStart", "tEnd", "tLen"] 
@@ -35,7 +35,7 @@ def process_mmseqs_results(out_dir):
     merged_df[['phrog','top_hit']] = merged_df['phrog'].str.split(' ## ',expand=True)
     merged_df["phrog"] = merged_df["phrog"].str.replace("phrog_", "")
     # get phrog annotaion file
-    phrog_annot_df = pd.read_csv('databases/phrog_annot_v3.tsv', sep="\t", index_col=False )
+    phrog_annot_df = pd.read_csv( phrog_db_dir = os.path.join(db_dir, "phrog_annot_v3.tsv"), sep="\t", index_col=False )
     # merge phrog
     phrog_annot_df['phrog']=phrog_annot_df['phrog'].astype(str)
     merged_df = merged_df.merge(phrog_annot_df, on='phrog', how='left')
