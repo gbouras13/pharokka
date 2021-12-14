@@ -14,7 +14,7 @@ if __name__ == "__main__":
     processes.translate_fastas(args.outdir)
     processes.run_trna_scan(args.infile, args.outdir)
     processes.run_mmseqs(DBDIR, args.outdir)
-    phan_mmseq_merge_df = post_processing.process_mmseqs_results(args.outdir)
+    phan_mmseq_merge_df = post_processing.process_mmseqs_results(DBDIR, args.outdir)
     length_df = post_processing.get_contig_name_lengths(args.infile)
     post_processing.create_gff(phan_mmseq_merge_df, length_df, args.infile, args.outdir)
     post_processing.create_tbl(phan_mmseq_merge_df, length_df, args.outdir)
