@@ -35,7 +35,7 @@ def process_mmseqs_results(db_dir,out_dir):
     merged_df[['phrog','top_hit']] = merged_df['phrog'].str.split(' ## ',expand=True)
     merged_df["phrog"] = merged_df["phrog"].str.replace("phrog_", "")
     # get phrog annotaion file
-    phrog_annot_df = pd.read_csv( phrog_db_dir = os.path.join(db_dir, "phrog_annot_v3.tsv"), sep="\t", index_col=False )
+    phrog_annot_df = pd.read_csv( os.path.join(db_dir, "phrog_annot_v3.tsv"), sep="\t", index_col=False )
     # merge phrog
     phrog_annot_df['phrog']=phrog_annot_df['phrog'].astype(str)
     merged_df = merged_df.merge(phrog_annot_df, on='phrog', how='left')
