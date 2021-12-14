@@ -3,14 +3,17 @@ import os
 import sys
 import subprocess as sp
 
-def instantiate_dir():
-	db_dir = "databases/"
-	if os.path.isdir(db_dir) == False:
-		os.mkdir(db_dir)
+def instantiate_install(db_dir):
+    instantiate_dir(db_dir)
+    get_phrog_mmseqs(db_dir)
+    get_phrog_annot_table(db_dir)
 
-def get_phrog_mmseqs():
+def instantiate_dir(db_dir):
+    if os.path.isdir(db_dir) == False:
+        os.mkdir(db_dir)
+ 
+def get_phrog_mmseqs(db_dir):
     print("Getting PHROGs MMSeqs DB")
-    db_dir = "databases/"
     filepath = "https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_mmseqs_db.tar.gz"
     tarball = "phrogs_mmseqs_db.tar.gz"
     folder = "phrogs_mmseqs_db"
@@ -34,9 +37,8 @@ def get_phrog_mmseqs():
     sp.call(["tar", "-xzf", os.path.join(db_dir, tarball), "-C", db_dir])
 
 
-def get_phrog_annot_table():
+def get_phrog_annot_table(db_dir):
     print("Getting PHROGs Annotation Table")
-    db_dir = "databases/"
     filepath = "https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v3.tsv"
     file = "phrog_annot_v3.tsv"
     #if the file already exists

@@ -4,6 +4,8 @@
 
 from sys import version_info
 from setuptools import setup, find_packages
+import os
+
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
