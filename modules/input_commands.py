@@ -1,12 +1,10 @@
 import argparse
 import os
-import sys
+import VERSION
 from argparse import RawTextHelpFormatter
 import datetime
 
-ROOT_DIR = os.path.dirname(os.path.abspath("VERSION"))
-version_file = open(os.path.join(ROOT_DIR, 'VERSION'))
-v = version_file.read().strip()
+v = VERSION.get_version()
 
 
 def get_input():

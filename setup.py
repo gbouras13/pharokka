@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
+import VERSION
 """The setup script."""
 
-from sys import version_info
 from setuptools import setup, find_packages
-import os
 
 
 with open('README.rst') as readme_file:
@@ -13,12 +12,7 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = [ ]
-
 test_requirements = ['pytest>=3', ]
-
-version_file = open('VERSION', 'r')
-v = version_file.read().strip()
 
 setup(
     author="George Bouras",
@@ -29,18 +23,9 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
     ],
     description="phage annotation program",
-    entry_points={
-        'console_scripts': [
-            'phrokka=phrokka.cli:main',
-        ],
-    },
-    install_requires=requirements,
     license="MIT license",
     long_description=readme + '\n\n' + history,
     include_package_data=True,
@@ -50,6 +35,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/gbouras13/phrokka',
-    version=v,
+    version=VERSION.get_version(),
     zip_safe=False,
 )
