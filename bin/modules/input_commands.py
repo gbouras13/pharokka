@@ -1,10 +1,9 @@
 import argparse
 import os
-import VERSION
 from argparse import RawTextHelpFormatter
 import datetime
 
-v = VERSION.get_version()
+v = '1.0.1'
 
 
 ### GLOBAL VARIABLES
