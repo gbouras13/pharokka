@@ -2,7 +2,8 @@
 """The setup script."""
 
 from modules import databases
+import global_variables
 
-databases.instantiate_dir()
-databases.get_phrog_mmseqs()
-databases.get_phrog_annot_table()
+db_dir = global_variables.DATABASE_DIR
+
+databases.instantiate_install(db_dir)

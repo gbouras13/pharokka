@@ -1,8 +1,0 @@
-##gff-version 3
-contig_2	tRNAscan-SE	tRNA	3793	3864	63.1	-	.	ID=contig_2.trna1;Name=contig_2.tRNA1-Ile2CAT;isotype=Ile2;anticodon=CAT;gene_biotype=tRNA;
-contig_2	tRNAscan-SE	exon	3793	3864	.	-	.	ID=contig_2.trna1.exon1;Parent=contig_2.trna1;
-##gff-version 3
-contig_3	tRNAscan-SE	tRNA	14349	14421	64.0	-	.	ID=contig_3.trna2;Name=contig_3.tRNA2-PheGAA;isotype=Phe;anticodon=GAA;gene_biotype=tRNA;
-contig_3	tRNAscan-SE	exon	14349	14421	.	-	.	ID=contig_3.trna2.exon1;Parent=contig_3.trna2;
-contig_3	tRNAscan-SE	tRNA	14428	14501	62.8	-	.	ID=contig_3.trna1;Name=contig_3.tRNA1-AspGTC;isotype=Asp;anticodon=GTC;gene_biotype=tRNA;
-contig_3	tRNAscan-SE	exon	14428	14501	.	-	.	ID=contig_3.trna1.exon1;Parent=contig_3.trna1;

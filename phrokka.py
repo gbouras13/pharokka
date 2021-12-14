@@ -4,8 +4,6 @@ from modules import input_commands
 from modules import processes
 from modules import post_processing
 
-
-
 if __name__ == "__main__":
     args = input_commands.get_input()
     input_commands.instantiate_dirs(args.outdir)
