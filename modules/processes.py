@@ -47,12 +47,12 @@ def run_trna_scan(filepath_in, out_dir):
         return 0
 
     
-def run_mmseqs(out_dir):
+def run_mmseqs(db_dir, out_dir):
     print("Running mmseqs")
-    phrog_db_dir = "databases/phrogs_mmseqs_db/"
+    phrog_db_dir = os.path.join(db_dir, "phrogs_mmseqs_db/")
     mmseqs_dir = os.path.join(out_dir, "mmseqs/")
     amino_acid_fasta = "phanotate_aas.fasta"
-    target_db_dir = "databases/target_dir"
+    target_db_dir =  os.path.join(out_dir, "target_dir/") 
 
     # make dir for target db
     if os.path.isdir(target_db_dir) == False:

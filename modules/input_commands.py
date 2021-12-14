@@ -7,6 +7,9 @@ import datetime
 v = VERSION.get_version()
 
 
+### GLOBAL VARIABLES
+
+
 def get_input():
 	usage = 'phrokka ...'
 	parser = argparse.ArgumentParser(description='phrokka: phage genome annotation piepline', formatter_class=RawTextHelpFormatter)
