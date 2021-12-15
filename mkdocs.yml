@@ -13,3 +13,6 @@ nav:
       - Overview: index.md
     - RUNNING:
       - Install: install.md
+      - Usage: run.md
+    - OUTPUT:
+      - Output: output.md
