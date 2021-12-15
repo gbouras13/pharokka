@@ -11,3 +11,4 @@ theme:
 nav:
     - ABOUT:-
       - Everything: index.md
+      - Installation: install.md
