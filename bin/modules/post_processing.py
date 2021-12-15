@@ -104,7 +104,7 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir):
 
     ##FASTA
 
-    with open(os.path.join(out_dir, "phannotate.gff"), 'a') as f:
+    with open(os.path.join(out_dir, "phrokka.gff"), 'a') as f:
         f.write('##FASTA\n')
         fasta_sequences = SeqIO.parse(open(fasta_input),'fasta')
         SeqIO.write(fasta_sequences, f, "fasta")
@@ -126,7 +126,7 @@ def create_tbl(phanotate_mmseqs_df, length_df, out_dir):
     trna_df[['anticodon','rest']] = trna_df['anticodon'].str.split(';gene_biotype',expand=True)
     trna_df['trna_product']='tRNA-'+trna_df['isotypes']+"("+trna_df['anticodon']+")"
 
-    with open( os.path.join(out_dir, "phannotate.tbl"), 'w') as f:
+    with open( os.path.join(out_dir, "phrokka.tbl"), 'w') as f:
         for index, row in length_df.iterrows():
             contig = row['contig']
             f.write('>' + contig + '\n')

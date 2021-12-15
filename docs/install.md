@@ -13,7 +13,12 @@ The dependencies found in other_files/requirements.yaml will then need to be ins
 For example using conda:
 
 ```
-conda env create -f environment.yml
+conda env create -f environment.yml -n phrokka_env
 conda activate phrokka_env
 git clone https://github.com/gbouras13/phrokka.git
 ```
+
+Before running phrokka, the PHROGs database needs to be downloaded using
+
+`install_databases.py`
+
