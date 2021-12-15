@@ -24,12 +24,16 @@ def get_input():
 def instantiate_dirs(output_dir):
 	# if the output directory already exists add the date and time on the end to make unique dir
 	if os.path.isdir(output_dir) == True:
-		output_dir = output_dir + str(datetime.datetime.now().strftime('_%Y%m%d_%H%M_%S%f'))
+		output_dir = str(output_dir).rstrip('/') + str(datetime.datetime.now().strftime('_%Y%m%d_%H%M_%S%f'))
 	if os.path.isdir(output_dir) == False:
 		os.mkdir(output_dir)
 	mmseqs_dir = os.path.join(output_dir, "mmseqs/")
 	if os.path.isdir(mmseqs_dir) == False:
 		os.mkdir(mmseqs_dir)
+	hhsuite_dir = os.path.join(output_dir, "hhsuite/")
+	if os.path.isdir(hhsuite_dir) == False:
+		os.mkdir(hhsuite_dir)
+	return output_dir
 
 
 def validate_fasta(filename):
