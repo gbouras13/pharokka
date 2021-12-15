@@ -1,6 +1,6 @@
 The easiest way to install phrokka is via conda using
 
-`conda install phrokka -c gbouras13`
+`conda install phrokka -c gbouras13 -c bioconda -c conda-forge`
 
 This will install all the dependencies along with phrokka.
 
