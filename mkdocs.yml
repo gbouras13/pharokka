@@ -9,6 +9,7 @@ theme:
         - shell
         - python
 nav:
-    - ABOUT:-
-      - Everything: index.md
-      - Installation: install.md
+    - ABOUT:
+      - Overview: index.md
+    - RUNNING:
+      - Install: install.md
