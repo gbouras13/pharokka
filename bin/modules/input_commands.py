@@ -1,7 +1,9 @@
 import argparse
 import os
+import sys
 from argparse import RawTextHelpFormatter
 import datetime
+from Bio import SeqIO
 
 v = '1.0.1'
 
@@ -29,6 +31,14 @@ def instantiate_dirs(output_dir):
 	if os.path.isdir(mmseqs_dir) == False:
 		os.mkdir(mmseqs_dir)
 
+
+def validate_fasta(filename):
+	with open(filename, "r") as handle:
+		fasta = SeqIO.parse(handle, "fasta")
+		if any(fasta):
+			print("FASTA checked")
+		else:
+			sys.exit("Error: Input file is not in the FASTA format.\n")  
 
 
 

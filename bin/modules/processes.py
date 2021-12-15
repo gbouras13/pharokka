@@ -12,7 +12,7 @@ def run_phanotate(filepath_in, out_dir):
         sp.call([ "phanotate.py", filepath_in, "-o", os.path.join(out_dir, "phanotate_out.fasta"), "-f", "fasta"]) # , stderr=sp.DEVNULL, stdout=sp.DEVNULL silence the warnings (no trnaScan)
         sp.call(["phanotate.py", filepath_in, "-o", os.path.join(out_dir, "phanotate_out.txt"), "-f", "tabular"])
     except:
-        sys.stderr.write("Error: phanotate not found\n")  
+        sys.exit("Error: phanotate not found\n")  
         return 0
 
 def tidy_phanotate_output(out_dir):

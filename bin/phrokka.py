@@ -9,6 +9,7 @@ DBDIR = os.path.join(os.path.dirname(__file__),'../',"databases/")
 
 if __name__ == "__main__":
     args = input_commands.get_input()
+    input_commands.validate_fasta(args.infile)
     input_commands.instantiate_dirs(args.outdir)
     processes.run_phanotate(args.infile, args.outdir)
     processes.translate_fastas(args.outdir)
