@@ -1,0 +1,13 @@
+site_name: phrokka
+site_url: "https://github.com/gbouras13/phrokka"
+theme:
+    name: readthedocs
+    highlightjs: true
+    hljs_languages:
+        - yaml
+        - bash
+        - shell
+        - python
+nav:
+    - ABOUT:-
+      - Everything: index.md
