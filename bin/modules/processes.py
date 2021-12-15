@@ -13,7 +13,6 @@ def run_phanotate(filepath_in, out_dir):
         sp.call(["phanotate.py", filepath_in, "-o", os.path.join(out_dir, "phanotate_out.txt"), "-f", "tabular"])
     except:
         sys.exit("Error: phanotate not found\n")  
-        return 0
 
 def tidy_phanotate_output(out_dir):
     phan_file = os.path.join(out_dir, "phanotate_out.txt")
@@ -61,8 +60,52 @@ def run_mmseqs(db_dir, out_dir):
     # creates db for input
     sp.call(["mmseqs", "createdb", os.path.join(out_dir, amino_acid_fasta), os.path.join(target_db_dir, "target_seqs")])
     # runs the seacr
-    sp.call(["mmseqs", "search", os.path.join(phrog_db_dir, "phrogs_profile_db"), os.path.join(target_db_dir, "target_seqs"), os.path.join(mmseqs_dir, "results_mmseqs"), "./tmp", "-s", "7"])
+    sp.call(["mmseqs", "search", os.path.join(phrog_db_dir, "phrogs_profile_db"), os.path.join(target_db_dir, "target_seqs"), os.path.join(mmseqs_dir, "results_mmseqs"), "./tmp", "-s", "8.5"])
     sp.call(["mmseqs", "createtsv", os.path.join(phrog_db_dir, "phrogs_profile_db"), os.path.join(target_db_dir, "target_seqs"), os.path.join(mmseqs_dir, "results_mmseqs"), 
     os.path.join(out_dir,"mmseqs_results.tsv"), "--full-header"])
     # remove the target dir when finished 
     sp.call(["rm", "-r", target_db_dir])
+
+def run_hmmer(db_dir, out_dir):
+    print("Running mmseqs")
+    phrog_db_dir = os.path.join(db_dir, "phrogs_mmseqs_db/")
+    mmseqs_dir = os.path.join(out_dir, "mmseqs/")
+    amino_acid_fasta = "phanotate_aas.fasta"
+    target_db_dir =  os.path.join(out_dir, "target_dir/") 
+
+    # make dir for target db
+    if os.path.isdir(target_db_dir) == False:
+        os.mkdir(target_db_dir)
+
+    # creates db for input
+    sp.call(["mmseqs", "createdb", os.path.join(out_dir, amino_acid_fasta), os.path.join(target_db_dir, "target_seqs")])
+    # runs the seacr
+    sp.call(["mmseqs", "search", os.path.join(phrog_db_dir, "phrogs_profile_db"), os.path.join(target_db_dir, "target_seqs"), os.path.join(mmseqs_dir, "results_mmseqs"), "./tmp", "-s", "8.5"])
+    sp.call(["mmseqs", "createtsv", os.path.join(phrog_db_dir, "phrogs_profile_db"), os.path.join(target_db_dir, "target_seqs"), os.path.join(mmseqs_dir, "results_mmseqs"), 
+    os.path.join(out_dir,"mmseqs_results.tsv"), "--full-header"])
+    # remove the target dir when finished 
+    sp.call(["rm", "-r", target_db_dir])
+
+def run_hmmsuite(db_dir, out_dir):
+    print("Running hmmsuite")
+    hmmsuite_db_dir = os.path.join(db_dir, "phrogs_hhsuite_db/")
+    amino_acid_fasta = "phanotate_aas.fasta"
+    target_db_dir =  os.path.join(out_dir, "hmmsuite_target_dir/") 
+
+    # make dir for target db
+    if os.path.isdir(target_db_dir) == False:
+        os.mkdir(target_db_dir)
+
+    # custom index
+    print(os.path.join(target_db_dir, 'your_multifasta.ff{data,index}'))
+    print(os.path.join(out_dir, amino_acid_fasta))
+
+    # indexes the file 
+    #can't pass curly brackets to subprocess so need to run using os
+    cmd = 'ffindex_from_fasta -s ' + os.path.join(target_db_dir, 'your_multifasta.ff{data,index}') + " " + os.path.join(out_dir, amino_acid_fasta)
+
+    os.system(cmd)
+
+    # runs
+    sp.run(["hhblits_omp", '-i', os.path.join(target_db_dir, 'your_multifasta'), '-d', os.path.join(hmmsuite_db_dir, "phrogs"), '-M', 'first', '-n', '1', '-o',os.path.join(target_db_dir, "results_your_seq_VS_phrogs"), '-blasttab', 'tsv_file'])
+

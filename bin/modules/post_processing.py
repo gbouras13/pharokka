@@ -65,7 +65,7 @@ def get_contig_name_lengths(fasta_input):
 
 def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir):
     # write the headers of the gff file
-    with open(os.path.join(out_dir, "phannotate.gff"), 'w') as f:
+    with open(os.path.join(out_dir, "phrokka.gff"), 'w') as f:
         f.write('##gff-version 3\n')
         for index, row in length_df.iterrows():
             f.write('##sequence-region ' + row['contig'] + ' 1 ' + str(row['length']) +'\n')
@@ -84,7 +84,7 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir):
     # get gff dataframe in correct order 
     gff_df = phanotate_mmseqs_df[["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]]
 
-    with open(os.path.join(out_dir, "phannotate.gff"), 'a') as f:
+    with open(os.path.join(out_dir, "phrokka.gff"), 'a') as f:
         gff_df.to_csv(f, sep="\t", index=False, header=False)
         print(f)
       
@@ -103,12 +103,10 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir):
     # write fasta on the end 
 
     ##FASTA
-
     with open(os.path.join(out_dir, "phrokka.gff"), 'a') as f:
         f.write('##FASTA\n')
         fasta_sequences = SeqIO.parse(open(fasta_input),'fasta')
         SeqIO.write(fasta_sequences, f, "fasta")
-        print(f)
 
 def create_tbl(phanotate_mmseqs_df, length_df, out_dir):
 
