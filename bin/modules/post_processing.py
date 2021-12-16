@@ -6,27 +6,27 @@ from Bio.SeqRecord import SeqRecord
 import pandas as pd
 import numpy as np
 
-def process_mmseqs_results(db_dir,out_dir):
+def process_results(db_dir,out_dir):
+
+    ##mmseqs
+
     mmseqs_file =  os.path.join(out_dir, "mmseqs_results.tsv")
     print("Processing mmseqs output")
     col_list = ["phrog", "gene", "alnScore", "seqIdentity", "eVal", "qStart", "qEnd", "qLen", "tStart", "tEnd", "tLen"] 
     mmseqs_df = pd.read_csv(mmseqs_file, delimiter= '\t', index_col=False , names=col_list) 
     genes = mmseqs_df.gene.unique()
-    print(genes)
 
     tophits = []
 
     for gene in genes:
         tmp_df = mmseqs_df.loc[mmseqs_df['gene'] == gene].sort_values('eVal').reset_index(drop=True).loc[0]
         tophits.append([tmp_df.phrog, tmp_df.gene, tmp_df.alnScore, tmp_df.seqIdentity, tmp_df.eVal])
-        print(tophits)
 
     tophits_df = pd.DataFrame(tophits, columns=['phrog', 'gene', 'alnScore', 'seqIdentity', 'eVal'])
-    tophits_df.to_csv(os.path.join(out_dir, "top_hits.tsv"), sep="\t", index=False)
+    tophits_df.to_csv(os.path.join(out_dir, "top_hits_mmseqs.tsv"), sep="\t", index=False)
     # left join mmseqs top hits to phanotate
     phan_file = os.path.join(out_dir, "cleaned_phanotate.tsv") 
     # automatically picks up the names
-    #col_list = ["start", "stop", "frame", "contig", "score", "gene"] 
     phan_df = pd.read_csv(phan_file, sep="\t", index_col=False )
     phan_df['gene']=phan_df['gene'].astype(str)
     tophits_df['gene']=tophits_df['gene'].astype(str)
@@ -34,6 +34,7 @@ def process_mmseqs_results(db_dir,out_dir):
     merged_df = phan_df.merge(tophits_df, on='gene', how='left')
     merged_df[['phrog','top_hit']] = merged_df['phrog'].str.split(' ## ',expand=True)
     merged_df["phrog"] = merged_df["phrog"].str.replace("phrog_", "")
+    
     # get phrog annotaion file
     phrog_annot_df = pd.read_csv( os.path.join(db_dir, "phrog_annot_v3.tsv"), sep="\t", index_col=False )
     # merge phrog
@@ -46,9 +47,69 @@ def process_mmseqs_results(db_dir,out_dir):
     # add columns
     merged_df['Method'] = "PHANOTATE"
     merged_df['Region'] = "CDS"
-  
+
+    ############################
+    ########## hhsuite
+
+    hhsuite_file =  os.path.join(out_dir, "hhsuite_tsv_file.ffdata")
+    print("Processing hhsuite output")
+    col_list = ["gene_hmm", "phrog_hmm", "seqIdentity_hmm", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "eVal_hmm", "alnScore_hmm"] 
+    hhsuite_df = pd.read_csv(hhsuite_file, delimiter= '\t', index_col=False , names=col_list) 
+    genes = hhsuite_df.gene_hmm.unique()
+    # remove nan
+    genes = [x for x in genes if str(x) != 'nan']
+    tophits = []
+
+    for gene in genes:
+        tmp_df = hhsuite_df.loc[hhsuite_df['gene_hmm'] == gene].sort_values('eVal_hmm').reset_index(drop=True).iloc[0]
+        tophits.append([tmp_df.phrog_hmm, tmp_df.gene_hmm, tmp_df.alnScore_hmm, tmp_df.seqIdentity_hmm, tmp_df.eVal_hmm])
+
+    tophits_hmm__df = pd.DataFrame(tophits, columns=['phrog_hmm', 'gene_hmm', 'alnScore_hmm', 'seqIdentity_hmm', 'eVal_hmm'])
+
+    # filter from 0 to end for savings
+
+    tophits_hmm__df[['spl','ind']] = tophits_hmm__df['gene_hmm'].str.split('est',expand=True)
+    tophits_hmm__df[['ind']] = tophits_hmm__df[['ind']].astype(int)
+    tophits_hmm__df = tophits_hmm__df.sort_values(by=['ind']).drop(columns = ['spl', 'ind'])
+    tophits_hmm__df.to_csv(os.path.join(out_dir, "top_hits_hhsuite.tsv"), sep="\t", index=False)
+    
+    
+    ################
+    ### merge in hmm
+
+    # add match type
+    merged_df['match_type'] = np.where(merged_df['phrog'] == "No_PHROG", 'hmm', 'mmseqs')
+
+    merged_df[['gene_hmm','loca']] = merged_df['gene'].str.split(' ',expand=True)
+    merged_df = merged_df.merge(tophits_hmm__df, on='gene_hmm', how='left')
+
+    # replace 
+    merged_df.loc[merged_df['phrog'] == 'No_PHROG', 'phrog'] = merged_df['phrog_hmm']
+    merged_df.loc[merged_df['alnScore'] == 'No_PHROG', 'alnScore'] = merged_df['alnScore_hmm']
+    merged_df.loc[merged_df['seqIdentity'] == 'No_PHROG', 'seqIdentity'] = merged_df['seqIdentity_hmm']
+    merged_df.loc[merged_df['eVal'] == 'No_PHROG', 'eVal'] = merged_df['eVal_hmm']
+    merged_df.loc[merged_df['top_hit'] == 'No_PHROG', 'top_hit'] = 'NA'
+    merged_df.loc[merged_df['color'] == 'No_PHROG', 'color'] = 'NA'
+    
+    merged_df["phrog"] = merged_df["phrog"].str.replace("phrog_", "")
+    merged_df['phrog']=merged_df['phrog'].astype(str)
+    #merged_df = merged_df.merge(phrog_annot_df, on='phrog', how='left')
+    merged_df.drop(columns = ['color', 'annot', 'category'])
+    merged_df = merged_df.merge(phrog_annot_df, on='phrog', how='left')
+    merged_df = merged_df.replace(np.nan, 'No_PHROG', regex=True)
+    #merged_df['annot'] = merged_df["annot"].str.replace("No_PHROG", "hypothetical protein")
+    #merged_df['category'] = merged_df["category"].str.replace("No_PHROG", "unknown function")
+
     merged_df.to_csv( os.path.join(out_dir, "final_merged_output.tsv"), sep="\t", index=False)
     return merged_df
+
+
+
+
+
+
+
+
 
 def get_contig_name_lengths(fasta_input):
     fasta_sequences = SeqIO.parse(open(fasta_input),'fasta')
@@ -96,7 +157,7 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir):
     trna_df = trna_df[trna_df['Region'] == 'tRNA']
     trna_df.start = trna_df.start.astype(int)
     trna_df.stop = trna_df.stop.astype(int)
-    with open(os.path.join(out_dir, "phannotate.gff"), 'a') as f:
+    with open(os.path.join(out_dir, "phrokka.gff"), 'a') as f:
         trna_df.to_csv(f, sep="\t", index=False, header=False)
         print(f)
 
