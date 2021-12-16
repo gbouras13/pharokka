@@ -93,7 +93,7 @@ def run_hmmsuite(db_dir, out_dir):
     print("Running hmmsuite")
     hmmsuite_db_dir = os.path.join(db_dir, "phrogs_hhsuite_db/")
     amino_acid_fasta = "phanotate_aas.fasta"
-    target_db_dir =  os.path.join(out_dir, "hmmsuite_target_dir/") 
+    target_db_dir =  os.path.join(out_dir, "hhsuite_target_dir/") 
 
     # make dir for target db
     if os.path.isdir(target_db_dir) == False:
@@ -106,9 +106,8 @@ def run_hmmsuite(db_dir, out_dir):
     # indexes the file 
     #can't pass curly brackets to subprocess so need to run using os
     cmd = 'ffindex_from_fasta -s ' + os.path.join(target_db_dir, 'your_multifasta.ff{data,index}') + " " + os.path.join(out_dir, amino_acid_fasta)
-
     os.system(cmd)
 
     # runs
-    sp.run(["hhblits_omp", '-i', os.path.join(target_db_dir, 'your_multifasta'), '-d', os.path.join(hmmsuite_db_dir, "phrogs"), '-M', 'first', '-n', '1', '-o',os.path.join(target_db_dir, "results_your_seq_VS_phrogs"), '-blasttab', 'tsv_file'])
+    sp.run(["hhblits_omp", '-i', os.path.join(target_db_dir, 'your_multifasta'), '-d', os.path.join(hmmsuite_db_dir, "phrogs"), '-M', 'first', '-n', '1', '-o',os.path.join(target_db_dir, "results_your_seq_VS_phrogs"), '-blasttab', os.path.join(out_dir, "hhsuite_tsv_file")])
 
