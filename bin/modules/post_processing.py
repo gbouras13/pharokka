@@ -67,7 +67,6 @@ def process_results(db_dir,out_dir):
     tophits_hmm__df = pd.DataFrame(tophits, columns=['phrog_hmm', 'gene_hmm', 'alnScore_hmm', 'seqIdentity_hmm', 'eVal_hmm'])
 
     # filter from 0 to end for savings
-
     tophits_hmm__df[['spl','ind']] = tophits_hmm__df['gene_hmm'].str.split('est',expand=True)
     tophits_hmm__df[['ind']] = tophits_hmm__df[['ind']].astype(int)
     tophits_hmm__df = tophits_hmm__df.sort_values(by=['ind']).drop(columns = ['spl', 'ind'])
@@ -83,7 +82,7 @@ def process_results(db_dir,out_dir):
     merged_df[['gene_hmm','loca']] = merged_df['gene'].str.split(' ',expand=True)
     merged_df = merged_df.merge(tophits_hmm__df, on='gene_hmm', how='left')
 
-    # replace 
+    # replace with hmm if nothing found for mmseqs
     merged_df.loc[merged_df['phrog'] == 'No_PHROG', 'phrog'] = merged_df['phrog_hmm']
     merged_df.loc[merged_df['alnScore'] == 'No_PHROG', 'alnScore'] = merged_df['alnScore_hmm']
     merged_df.loc[merged_df['seqIdentity'] == 'No_PHROG', 'seqIdentity'] = merged_df['seqIdentity_hmm']
@@ -91,15 +90,13 @@ def process_results(db_dir,out_dir):
     merged_df.loc[merged_df['top_hit'] == 'No_PHROG', 'top_hit'] = 'NA'
     merged_df.loc[merged_df['color'] == 'No_PHROG', 'color'] = 'NA'
     
+    # get phrog
     merged_df["phrog"] = merged_df["phrog"].str.replace("phrog_", "")
     merged_df['phrog']=merged_df['phrog'].astype(str)
-    #merged_df = merged_df.merge(phrog_annot_df, on='phrog', how='left')
-    merged_df.drop(columns = ['color', 'annot', 'category'])
+    # drop existing color annot category cols
+    merged_df = merged_df.drop(columns = ['color', 'annot', 'category'])
     merged_df = merged_df.merge(phrog_annot_df, on='phrog', how='left')
-    merged_df = merged_df.replace(np.nan, 'No_PHROG', regex=True)
-    #merged_df['annot'] = merged_df["annot"].str.replace("No_PHROG", "hypothetical protein")
-    #merged_df['category'] = merged_df["category"].str.replace("No_PHROG", "unknown function")
-
+    merged_df["annot"] = merged_df["annot"].replace(np.nan, 'hypothetical protein', regex=True)
     merged_df.to_csv( os.path.join(out_dir, "final_merged_output.tsv"), sep="\t", index=False)
     return merged_df
 
