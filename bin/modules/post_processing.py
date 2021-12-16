@@ -12,21 +12,20 @@ def process_mmseqs_results(db_dir,out_dir):
     col_list = ["phrog", "gene", "alnScore", "seqIdentity", "eVal", "qStart", "qEnd", "qLen", "tStart", "tEnd", "tLen"] 
     mmseqs_df = pd.read_csv(mmseqs_file, delimiter= '\t', index_col=False , names=col_list) 
     genes = mmseqs_df.gene.unique()
-    print(genes)
+
 
     tophits = []
 
     for gene in genes:
         tmp_df = mmseqs_df.loc[mmseqs_df['gene'] == gene].sort_values('eVal').reset_index(drop=True).loc[0]
         tophits.append([tmp_df.phrog, tmp_df.gene, tmp_df.alnScore, tmp_df.seqIdentity, tmp_df.eVal])
-        print(tophits)
+
 
     tophits_df = pd.DataFrame(tophits, columns=['phrog', 'gene', 'alnScore', 'seqIdentity', 'eVal'])
     tophits_df.to_csv(os.path.join(out_dir, "top_hits.tsv"), sep="\t", index=False)
     # left join mmseqs top hits to phanotate
     phan_file = os.path.join(out_dir, "cleaned_phanotate.tsv") 
     # automatically picks up the names
-    #col_list = ["start", "stop", "frame", "contig", "score", "gene"] 
     phan_df = pd.read_csv(phan_file, sep="\t", index_col=False )
     phan_df['gene']=phan_df['gene'].astype(str)
     tophits_df['gene']=tophits_df['gene'].astype(str)
@@ -96,7 +95,7 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir):
     trna_df = trna_df[trna_df['Region'] == 'tRNA']
     trna_df.start = trna_df.start.astype(int)
     trna_df.stop = trna_df.stop.astype(int)
-    with open(os.path.join(out_dir, "phannotate.gff"), 'a') as f:
+    with open(os.path.join(out_dir, "phrokka.gff"), 'a') as f:
         trna_df.to_csv(f, sep="\t", index=False, header=False)
         print(f)
 
