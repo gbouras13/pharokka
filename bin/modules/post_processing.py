@@ -101,13 +101,6 @@ def process_results(db_dir,out_dir):
     return merged_df
 
 
-
-
-
-
-
-
-
 def get_contig_name_lengths(fasta_input):
     fasta_sequences = SeqIO.parse(open(fasta_input),'fasta')
     contig_names = []
@@ -120,6 +113,13 @@ def get_contig_name_lengths(fasta_input):
      'length': lengths,
     })
     return(length_df)
+
+
+def create_txt(phanotate_mmseqs_df, length_df, out_dir):
+    contig_count = len(length_df)
+    with open( os.path.join(out_dir, "phrokka.txt"), 'w') as f:
+        f.write('Contigs: ' + str(contig_count) + '\n')
+
 
 def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir):
     # write the headers of the gff file

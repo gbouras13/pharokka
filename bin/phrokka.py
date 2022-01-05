@@ -21,6 +21,7 @@ if __name__ == "__main__":
     length_df = post_processing.get_contig_name_lengths(args.infile)
     post_processing.create_gff(phan_mmseq_merge_df, length_df, args.infile, out_dir)
     post_processing.create_tbl(phan_mmseq_merge_df, length_df, out_dir)
+    post_processing.create_txt(phan_mmseq_merge_df, length_df, out_dir)
 
     # delete tmp
     sp.call(["rm", "-r", os.path.join(os.path.dirname(__file__), "../", "tmp/") ])
