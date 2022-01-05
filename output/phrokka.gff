@@ -1,94 +1,94 @@
 ##gff-version 3
 ##sequence-region test 1 136116
-test	PHANOTATE	CDS	3	182	-0.1496680588159223	-	0	phrog=24718;top_hit=NA;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	281	382	-37.314799602272885	-	0	phrog=7862;top_hit=JX080301_p192;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	419	586	-686.1029708992919	-	0	phrog=5729;top_hit=JX080302_p211;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	601	915	-28627.481019356183	-	0	phrog=5741;top_hit=AP018375_p194;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	939	1133	-137.86397555470796	-	0	phrog=4983;top_hit=JX080302_p209;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	1139	1468	-6350.924149481089	-	0	phrog=4637;top_hit=AP018375_p196;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	3	182	-0.1496680588159223	-	0	phrog=24718;top_hit=NA;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	281	382	-37.314799602272885	-	0	phrog=7862;top_hit=JX080301_p192;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	419	586	-686.1029708992919	-	0	phrog=5729;top_hit=JX080302_p211;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	601	915	-28627.481019356183	-	0	phrog=5741;top_hit=AP018375_p194;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	939	1133	-137.86397555470796	-	0	phrog=4983;top_hit=JX080302_p209;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	1139	1468	-6350.924149481089	-	0	phrog=4637;top_hit=AP018375_p196;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	1470	1979	-258089.73897728292	-	0	phrog=4855;top_hit=JX080302_p207;annotation=endolysin;function=lysis
-test	PHANOTATE	CDS	1982	2293	-4646.816929484896	-	0	phrog=3224;top_hit=NC_021328_p223;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	2359	2580	-63.8416654484652	-	0	phrog=4340;top_hit=AY954969_p124;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	2582	2974	-199858.21466460152	-	0	phrog=3847;top_hit=AY954969_p123;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	2994	3239	-280.9066389269003	-	0	phrog=4028;top_hit=AY954969_p122;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	1982	2293	-4646.816929484896	-	0	phrog=3224;top_hit=NC_021328_p223;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	2359	2580	-63.8416654484652	-	0	phrog=4340;top_hit=AY954969_p124;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	2582	2974	-199858.21466460152	-	0	phrog=3847;top_hit=AY954969_p123;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	2994	3239	-280.9066389269003	-	0	phrog=4028;top_hit=AY954969_p122;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	3318	4787	-6.5311785366307624e+16	-	0	phrog=448;top_hit=NC_031034_p67;annotation=nicotinamide phosphoribosyl transferase;function=other
 test	PHANOTATE	CDS	4805	5713	-121311380297.10805	-	0	phrog=619;top_hit=NC_024383_p145;annotation=ribose-phosphate pyrophosphokinase;function=other
-test	PHANOTATE	CDS	5710	6018	-3449.980082604233	-	0	phrog=1099;top_hit=MH078572_p111;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	6110	6400	-337.68140213838603	-	0	phrog=4096;top_hit=JX080304_p199;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	6401	6601	-186.2285460821238	-	0	phrog=3453;top_hit=KP881332_p117;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	6636	6794	-285.4312129399068	-	0	phrog=4430;top_hit=NC_025417_p202;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	6883	7563	-21638703.92193512	-	0	phrog=4650;top_hit=JX080304_p196;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	7564	7881	-273526.36163157766	-	0	phrog=4081;top_hit=NC_025417_p199;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	7884	8147	-1013.6479204450588	-	0	phrog=4418;top_hit=NC_025417_p198;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	8162	8341	-308.1220758574598	-	0	phrog=4743;top_hit=NC_024355_p101;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	8418	8681	-2397.1898880775807	-	0	phrog=32014;top_hit=KJ206562_p189;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	5710	6018	-3449.980082604233	-	0	phrog=1099;top_hit=MH078572_p111;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	6110	6400	-337.68140213838603	-	0	phrog=4096;top_hit=JX080304_p199;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	6401	6601	-186.2285460821238	-	0	phrog=3453;top_hit=KP881332_p117;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	6636	6794	-285.4312129399068	-	0	phrog=4430;top_hit=NC_025417_p202;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	6883	7563	-21638703.92193512	-	0	phrog=4650;top_hit=JX080304_p196;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	7564	7881	-273526.36163157766	-	0	phrog=4081;top_hit=NC_025417_p199;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	7884	8147	-1013.6479204450588	-	0	phrog=4418;top_hit=NC_025417_p198;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	8162	8341	-308.1220758574598	-	0	phrog=4743;top_hit=NC_024355_p101;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	8418	8681	-2397.1898880775807	-	0	phrog=32014;top_hit=KJ206562_p189;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	8671	8787	-66.84088085280378	-	0	phrog=4580;top_hit=MH028956_p143;annotation=transcription factor;function=transcription regulation
 test	PHANOTATE	CDS	8798	9085	-10652.5606623532	-	0	phrog=1486;top_hit=MF288921_p261;annotation=membrane protein;function=moron, auxiliary metabolic gene and host takeover
-test	PHANOTATE	CDS	9137	9397	-333.7150319857414	-	0	phrog=11913;top_hit=MF398190_p193;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	9137	9397	-333.7150319857414	-	0	phrog=11913;top_hit=MF398190_p193;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	9399	9800	-26787.957632772395	-	0	phrog=1486;top_hit=MF288921_p261;annotation=membrane protein;function=moron, auxiliary metabolic gene and host takeover
 test	PHANOTATE	CDS	9800	9898	-1.5122405432083517	-	0	phrog=25662;top_hit=NA;annotation=tail assembly protein;function=tail
-test	PHANOTATE	CDS	10027	10206	-219.55441912448512	-	0	phrog=3701;top_hit=NC_025426_p82;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	10027	10206	-219.55441912448512	-	0	phrog=3701;top_hit=NC_025426_p82;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	10220	10822	-3036162.529116701	-	0	phrog=4208;top_hit=NC_005880_p180;annotation=HNH endonuclease;function=DNA, RNA and nucleotide metabolism
-test	PHANOTATE	CDS	10822	11172	-73543.72402107346	-	0	phrog=3752;top_hit=NC_005880_p179;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	11187	11492	-1197.0993514068243	-	0	phrog=3143;top_hit=MH107769_p184;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	11562	11834	-574.2243448197033	-	0	phrog=3804;top_hit=MH107769_p183;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	11840	12187	-29590.239141370417	-	0	phrog=2988;top_hit=NC_020877_p89;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	12200	12568	-245276.41800156792	-	0	phrog=3669;top_hit=MH107769_p181;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	10822	11172	-73543.72402107346	-	0	phrog=3752;top_hit=NC_005880_p179;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	11187	11492	-1197.0993514068243	-	0	phrog=3143;top_hit=MH107769_p184;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	11562	11834	-574.2243448197033	-	0	phrog=3804;top_hit=MH107769_p183;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	11840	12187	-29590.239141370417	-	0	phrog=2988;top_hit=NC_020877_p89;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	12200	12568	-245276.41800156792	-	0	phrog=3669;top_hit=MH107769_p181;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	12581	12763	-9.78598089037145	-	0	phrog=3640;top_hit=MH107769_p180;annotation=membrane protein;function=moron, auxiliary metabolic gene and host takeover
-test	PHANOTATE	CDS	12811	13107	-37354.437552429714	-	0	phrog=3128;top_hit=NC_020877_p88;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	13100	13276	-15.522054807305704	-	0	phrog=3524;top_hit=MF398190_p180;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	13288	13536	-287.4840365598266	-	0	phrog=4009;top_hit=KY779849_p187;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	12811	13107	-37354.437552429714	-	0	phrog=3128;top_hit=NC_020877_p88;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	13100	13276	-15.522054807305704	-	0	phrog=3524;top_hit=MF398190_p180;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	13288	13536	-287.4840365598266	-	0	phrog=4009;top_hit=KY779849_p187;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	13551	14084	-7234.952680086147	-	0	phrog=3854;top_hit=MF398190_p179;annotation=ribulose-1;5-bisphosphate carboxylase/oxygenase small subunit;function=moron, auxiliary metabolic gene and host takeover
 test	PHANOTATE	CDS	14074	14250	-55.03902627316487	-	0	phrog=3664;top_hit=MF398190_p178;annotation=DNA sliding clamp inhibitor; arrest of S.aureus DNA synthesis;function=DNA, RNA and nucleotide metabolism
-test	PHANOTATE	CDS	14286	14465	-5.982308053720408	-	0	phrog=7869;top_hit=MF398190_p177;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	14452	14616	-88.53178540608498	-	0	phrog=6754;top_hit=MF398190_p176;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	14621	14863	-568.0791444037989	-	0	phrog=3157;top_hit=EU418428_p169;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	15010	15408	-125.9025506233642	-	0	phrog=2863;top_hit=EU418428_p167;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	15470	16174	-3130806.281158836	-	0	phrog=2726;top_hit=EU418428_p166;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	14286	14465	-5.982308053720408	-	0	phrog=7869;top_hit=MF398190_p177;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	14452	14616	-88.53178540608498	-	0	phrog=6754;top_hit=MF398190_p176;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	14621	14863	-568.0791444037989	-	0	phrog=3157;top_hit=EU418428_p169;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	15010	15408	-125.9025506233642	-	0	phrog=2863;top_hit=EU418428_p167;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	15470	16174	-3130806.281158836	-	0	phrog=2726;top_hit=EU418428_p166;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	16191	16634	-27148.217651513663	-	0	phrog=1303;top_hit=NC_020873_p120;annotation=DNA binding protein;function=DNA, RNA and nucleotide metabolism
 test	PHANOTATE	CDS	16699	17157	-43249.76171684758	-	0	phrog=1104;top_hit=NC_021781_p184;annotation=virion structural protein;function=head and packaging
-test	PHANOTATE	CDS	17175	17906	-7191085805.819665	-	0	phrog=1007;top_hit=NC_011421_p2;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	18278	19141	-529905426.7877644	-	0	phrog=1113;top_hit=KJ586795_p34;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	19141	19587	-7282.523112409037	-	0	phrog=21462;top_hit=JX875065_p154;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	19565	20332	-2601529.687117804	-	0	phrog=984;top_hit=p282458 VI_10890;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	20325	20861	-203560.90440218968	-	0	phrog=1080;top_hit=NC_024360_p172;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	20925	21236	-9934.836929647388	-	0	phrog=3644;top_hit=JX080301_p157;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	21223	21591	-4246.3510514967	-	0	phrog=2892;top_hit=KP881332_p99;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	17175	17906	-7191085805.819665	-	0	phrog=1007;top_hit=NC_011421_p2;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	18278	19141	-529905426.7877644	-	0	phrog=1113;top_hit=KJ586795_p34;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	19141	19587	-7282.523112409037	-	0	phrog=21462;top_hit=JX875065_p154;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	19565	20332	-2601529.687117804	-	0	phrog=984;top_hit=p282458 VI_10890;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	20325	20861	-203560.90440218968	-	0	phrog=1080;top_hit=NC_024360_p172;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	20925	21236	-9934.836929647388	-	0	phrog=3644;top_hit=JX080301_p157;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	21223	21591	-4246.3510514967	-	0	phrog=2892;top_hit=KP881332_p99;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	21605	22855	-4012570129080565.0	-	0	phrog=284;top_hit=NC_021330_p34;annotation=exonuclease;function=DNA, RNA and nucleotide metabolism
-test	PHANOTATE	CDS	22848	23603	-36162801.31215763	-	0	phrog=2721;top_hit=JX080303_p156;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	23607	23867	-218.70133469460177	-	0	phrog=2673;top_hit=JX080303_p155;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	22848	23603	-36162801.31215763	-	0	phrog=2721;top_hit=JX080303_p156;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	23607	23867	-218.70133469460177	-	0	phrog=2673;top_hit=JX080303_p155;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	23963	24190	-3907.9096609128496	-	0	phrog=1696;top_hit=MF678790_p61;annotation=major tail protein;function=tail
 test	PHANOTATE	CDS	24205	24726	-20430.333925639345	-	0	phrog=341;top_hit=p82046 VI_05313;annotation=major tail protein;function=tail
 test	PHANOTATE	CDS	24740	25372	-2583421.643493207	-	0	phrog=1240;top_hit=NC_027355_p165;annotation=Ig domain containing protein;function=other
-test	PHANOTATE	CDS	25396	25494	-0.1807053360677703	-	0	phrog=22105;top_hit=NA;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	25396	25494	-0.1807053360677703	-	0	phrog=22105;top_hit=NA;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	25500	26162	-32965582.50899987	-	0	phrog=1025;top_hit=NC_011421_p154;annotation=RNA polymerase sigma factor;function=transcription regulation
-test	PHANOTATE	CDS	26149	26502	-4991.089323585783	-	0	phrog=1089;top_hit=NC_024787_p156;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	26149	26502	-4991.089323585783	-	0	phrog=1089;top_hit=NC_024787_p156;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	26506	27762	-468417371509333.25	-	0	phrog=97;top_hit=NC_023573_p129;annotation=UvsX-like recombinase;function=other
-test	PHANOTATE	CDS	27822	29093	-711471141332.3022	-	0	phrog=2672;top_hit=KP687431_p94;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	29180	29662	-3708447.6531643206	-	0	phrog=1069;top_hit=MH107769_p149;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	29679	29921	-630.4996215584616	-	0	phrog=3621;top_hit=NC_019726_p198;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	27822	29093	-711471141332.3022	-	0	phrog=2672;top_hit=KP687431_p94;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	29180	29662	-3708447.6531643206	-	0	phrog=1069;top_hit=MH107769_p149;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	29679	29921	-630.4996215584616	-	0	phrog=3621;top_hit=NC_019726_p198;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	29990	30850	-131691656.96264768	-	0	phrog=2573;top_hit=NC_028962_p70;annotation=DNA polymerase;function=DNA, RNA and nucleotide metabolism
-test	PHANOTATE	CDS	30919	31023	-0.2618134238398226	+	0	phrog=738;top_hit=NA;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	30919	31023	-0.2618134238398226	+	0	phrog=738;top_hit=NA;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	31084	31791	-4501834.856915765	-	0	phrog=59;top_hit=MG812495_p46;annotation=HNH endonuclease;function=DNA, RNA and nucleotide metabolism
-test	PHANOTATE	CDS	31898	31993	-0.989739125501177	-	0	phrog=4520;top_hit=NA;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	31898	31993	-0.989739125501177	-	0	phrog=4520;top_hit=NA;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	32059	33402	-2335770983641.037	-	0	phrog=4008;top_hit=NC_025426_p41;annotation=DNA polymerase;function=DNA, RNA and nucleotide metabolism
 test	PHANOTATE	CDS	33538	34050	-22.711108335850852	-	0	phrog=2340;top_hit=MH107769_p146;annotation=endonuclease;function=DNA, RNA and nucleotide metabolism
 test	PHANOTATE	CDS	34216	35088	-1760856877.181723	-	0	phrog=4008;top_hit=NC_025426_p41;annotation=DNA polymerase;function=DNA, RNA and nucleotide metabolism
 test	PHANOTATE	CDS	35164	35469	-1605.300122677734	-	0	phrog=379;top_hit=KY554777_p175;annotation=DNA binding protein;function=DNA, RNA and nucleotide metabolism
-test	PHANOTATE	CDS	35479	36075	-6199567.635629212	-	0	phrog=1054;top_hit=NC_012530_p148;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	36146	36253	-0.233301514099177	+	0	phrog=25992;top_hit=NA;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	35479	36075	-6199567.635629212	-	0	phrog=1054;top_hit=NC_012530_p148;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	36146	36253	-0.233301514099177	+	0	phrog=25992;top_hit=NA;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	36282	36602	-1066.6985569690053	-	0	phrog=22;top_hit=KX925554_p168;annotation=thioredoxin domain;function=DNA, RNA and nucleotide metabolism
-test	PHANOTATE	CDS	36586	36915	-13644.226374654503	-	0	phrog=2797;top_hit=NC_020877_p61;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	36586	36915	-13644.226374654503	-	0	phrog=2797;top_hit=NC_020877_p61;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	36933	37982	-74018710822.32727	-	0	phrog=86;top_hit=KT995480_p118;annotation=ribonucleoside diphosphate reductase small subunit;function=DNA, RNA and nucleotide metabolism
 test	PHANOTATE	CDS	37996	40110	-1.6690325595975536e+20	-	0	phrog=3844;top_hit=KX507046_p55;annotation=NrdA-like aerobic NDP reductase large subunit;function=moron, auxiliary metabolic gene and host takeover
 test	PHANOTATE	CDS	40125	40517	-430.9106593711701	-	0	phrog=883;top_hit=KY554770_p110;annotation=flavodoxin;function=moron, auxiliary metabolic gene and host takeover
 test	PHANOTATE	CDS	40534	41142	-4676.623894418509	-	0	phrog=244;top_hit=KY926791_p64;annotation=RusA-like Holliday junction resolvase;function=DNA, RNA and nucleotide metabolism
-test	PHANOTATE	CDS	41129	41581	-96874.44043635568	-	0	phrog=1095;top_hit=NC_024137_p119;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	41581	41919	-19882.051973164	-	0	phrog=1291;top_hit=NC_027366_p132;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	41129	41581	-96874.44043635568	-	0	phrog=1095;top_hit=NC_024137_p119;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	41581	41919	-19882.051973164	-	0	phrog=1291;top_hit=NC_027366_p132;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	41986	43053	-1338064518995.2402	-	0	phrog=32622;top_hit=NC_025426_p30;annotation=DNA primase/helicase;function=DNA, RNA and nucleotide metabolism
 test	PHANOTATE	CDS	43068	43664	-7918989.165391251	-	0	phrog=1070;top_hit=DQ004855_p48;annotation=anti-sigma factor;function=moron, auxiliary metabolic gene and host takeover
 test	PHANOTATE	CDS	43664	45583	-2.75345000789345e+18	-	0	phrog=21388;top_hit=KX532239_p86;annotation=exonuclease;function=DNA, RNA and nucleotide metabolism
-test	PHANOTATE	CDS	45583	45960	-53932.60129065396	-	0	phrog=2773;top_hit=KP881332_p67;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	45583	45960	-53932.60129065396	-	0	phrog=2773;top_hit=KP881332_p67;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	45960	46997	-853744941284.1343	-	0	phrog=100;top_hit=NC_031107_p32;annotation=SbcD-like subunit of palindrome specific endonuclease;function=DNA, RNA and nucleotide metabolism
 test	PHANOTATE	CDS	47076	48518	-54071479640817.61	-	0	phrog=19;top_hit=p414569 VI_10123;annotation=DnaB-like replicative helicase;function=DNA, RNA and nucleotide metabolism
 test	PHANOTATE	CDS	48511	50124	-561544139635814.8	-	0	phrog=1098;top_hit=NC_009904_p44;annotation=HTH DNA binding protein;function=DNA, RNA and nucleotide metabolism
@@ -96,13 +96,13 @@ test	PHANOTATE	CDS	50136	51884	-2.932082031226249e+19	-	0	phrog=9690;top_hit=MF0
 test	PHANOTATE	CDS	51976	53352	-89264309.37241413	-	0	phrog=2691;top_hit=NC_025426_p19;annotation=tail fiber protein;function=tail
 test	PHANOTATE	CDS	53359	53733	-18140.244884600706	-	0	phrog=2671;top_hit=NC_025426_p18;annotation=tail fiber protein;function=tail
 test	PHANOTATE	CDS	53756	55678	-62703086900056.93	-	0	phrog=2665;top_hit=NC_025426_p17;annotation=virion structural protein;function=head and packaging
-test	PHANOTATE	CDS	55679	55837	-191.00431303348444	-	0	phrog=1074;top_hit=DQ004855_p38;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	55886	59344	-8.225949685317655e+30	-	0	phrog=877;top_hit=NC_020871_p97;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	55679	55837	-191.00431303348444	-	0	phrog=1074;top_hit=DQ004855_p38;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	55886	59344	-8.225949685317655e+30	-	0	phrog=877;top_hit=NC_020871_p97;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	59365	59886	-1197105.269003064	-	0	phrog=1394;top_hit=p52190 VI_08944;annotation=virion structural protein;function=head and packaging
 test	PHANOTATE	CDS	59997	62951	-1.3760467041590285e+28	-	0	phrog=2386;top_hit=NC_020871_p95;annotation=virion structural protein;function=head and packaging
 test	PHANOTATE	CDS	63077	64123	-8792390067.21425	-	0	phrog=6;top_hit=p248291 VI_09499;annotation=baseplate protein;function=tail
 test	PHANOTATE	CDS	64138	64842	-4710843454.12975	-	0	phrog=975;top_hit=NC_020871_p93;annotation=baseplate protein;function=tail
-test	PHANOTATE	CDS	64842	65366	-1967191.0060964653	-	0	phrog=1073;top_hit=FR852584_p32;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	64842	65366	-1967191.0060964653	-	0	phrog=1073;top_hit=FR852584_p32;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	65366	66157	-288812518.88289374	-	0	phrog=1011;top_hit=MF288921_p99;annotation=virion structural protein;function=head and packaging
 test	PHANOTATE	CDS	66264	68810	-1.5097397142583e+24	-	0	phrog=2204;top_hit=JX080300_p112;annotation=glycerophosphoryl diester phosphodiesterase;function=other
 test	PHANOTATE	CDS	68810	69697	-244231227828.1444	-	0	phrog=2677;top_hit=JX080300_p111;annotation=tail protein with lysin activity;function=tail
@@ -111,134 +111,134 @@ test	PHANOTATE	CDS	72216	76274	-8.631577150930595e+35	-	0	phrog=1047;top_hit=KP8
 test	PHANOTATE	CDS	76327	76863	-569136.5006390194	-	0	phrog=1316;top_hit=NC_022763_p89;annotation=RNA polymerase beta subunit;function=DNA, RNA and nucleotide metabolism
 test	PHANOTATE	CDS	76907	77365	-7122.475859909574	-	0	phrog=1038;top_hit=KY581279_p99;annotation=tail assembly chaperone;function=tail
 test	PHANOTATE	CDS	77497	77808	-39109.256383063905	-	0	phrog=2754;top_hit=KY581279_p98;annotation=virion structural protein;function=head and packaging
-test	PHANOTATE	CDS	77890	78084	-27.41231959260871	-	0	phrog=4320;top_hit=NC_022918_p107;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	78097	78555	-38623.83957934103	-	0	phrog=1905;top_hit=MG708276_p44;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	78598	78738	-12.172450188445017	-	0	phrog=2701;top_hit=NC_014661_p3;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	77890	78084	-27.41231959260871	-	0	phrog=4320;top_hit=NC_022918_p107;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	78097	78555	-38623.83957934103	-	0	phrog=1905;top_hit=MG708276_p44;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	78598	78738	-12.172450188445017	-	0	phrog=2701;top_hit=NC_014661_p3;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	78835	79263	-19287.37637628536	-	0	phrog=985;top_hit=NC_022918_p104;annotation=virion structural protein;function=head and packaging
 test	PHANOTATE	CDS	79336	81099	-6.147791806994468e+16	-	0	phrog=279;top_hit=p47709 VI_05997;annotation=tail sheath;function=tail
-test	PHANOTATE	CDS	81126	81341	-113.06165424020239	-	0	phrog=1151;top_hit=NC_031056_p197;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	81343	82179	-2594581689.472737	-	0	phrog=1000;top_hit=NC_028982_p94;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	82198	82818	-31920.42250775023	-	0	phrog=1127;top_hit=KU737346_p88;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	81126	81341	-113.06165424020239	-	0	phrog=1151;top_hit=NC_031056_p197;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	81343	82179	-2594581689.472737	-	0	phrog=1000;top_hit=NC_028982_p94;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	82198	82818	-31920.42250775023	-	0	phrog=1127;top_hit=KU737346_p88;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	82818	83696	-1051825281.6132516	-	0	phrog=1004;top_hit=NC_019487_p144;annotation=virion structural protein;function=head and packaging
 test	PHANOTATE	CDS	83710	84618	-3120848243.5527563	-	0	phrog=772;top_hit=NC_022090_p13;annotation=tail fiber protein;function=tail
-test	PHANOTATE	CDS	84631	84927	-125.58312599369631	-	0	phrog=1205;top_hit=NC_022090_p12;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	84631	84927	-125.58312599369631	-	0	phrog=1205;top_hit=NC_022090_p12;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	85019	86410	-553643962899.7311	-	0	phrog=752;top_hit=p62610 VI_12390;annotation=major head protein;function=head and packaging
-test	PHANOTATE	CDS	86526	87482	-30544511050.75646	-	0	phrog=1133;top_hit=KJ591605_p133;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	86526	87482	-30544511050.75646	-	0	phrog=1133;top_hit=KJ591605_p133;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	87501	88241	-28102309.52420601	-	0	phrog=1028;top_hit=MF001365_p35;annotation=head maturation protease;function=head and packaging
 test	PHANOTATE	CDS	88468	90159	-4.885302909968547e+16	-	0	phrog=15361;top_hit=NC_030933_p20;annotation=portal protein;function=head and packaging
 test	PHANOTATE	CDS	90163	90474	-785.4308584854067	-	0	phrog=1108;top_hit=NC_030925_p107;annotation=portal protein;function=head and packaging
-test	PHANOTATE	CDS	90552	90836	-729.4411030035334	-	0	phrog=3937;top_hit=KJ206562_p90;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	90978	92126	-172547256300.1404	-	0	phrog=3094;top_hit=NC_030933_p17;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	92219	92698	-4004939.8871008903	-	0	phrog=1116;top_hit=NC_024364_p99;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	92695	92784	-7.620689120820311	-	0	phrog=3863;top_hit=KJ206562_p87;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	90552	90836	-729.4411030035334	-	0	phrog=3937;top_hit=KJ206562_p90;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	90978	92126	-172547256300.1404	-	0	phrog=3094;top_hit=NC_030933_p17;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	92219	92698	-4004939.8871008903	-	0	phrog=1116;top_hit=NC_024364_p99;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	92695	92784	-7.620689120820311	-	0	phrog=3863;top_hit=KJ206562_p87;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	92855	93676	-103181882112.08813	-	0	phrog=1917;top_hit=KJ206562_p86;annotation=virion structural protein;function=head and packaging
 test	PHANOTATE	CDS	93669	95486	-3.9297532956545056e+17	-	0	phrog=675;top_hit=MF288921_p63;annotation=terminase large subunit;function=head and packaging
 test	PHANOTATE	CDS	95501	95827	-910.083206982661	-	0	phrog=1063;top_hit=KY549443_p103;annotation=terminase small subunit;function=head and packaging
-test	PHANOTATE	CDS	95908	96186	-93.83706495597956	-	0	phrog=1321;top_hit=NC_018860_p10;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	95908	96186	-93.83706495597956	-	0	phrog=1321;top_hit=NC_018860_p10;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	96164	96430	-297.75926160908847	-	0	phrog=5547;top_hit=MH078572_p191;annotation=membrane protein;function=moron, auxiliary metabolic gene and host takeover
-test	PHANOTATE	CDS	96504	96596	-1.4906812448067484	+	0	phrog=18069;top_hit=NA;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	96691	96957	-8.651005973256954	+	0	phrog=4526;top_hit=JX080303_p80;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	96990	97316	-8.422286936840761	+	0	phrog=1481;top_hit=NC_021856_p56;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	96504	96596	-1.4906812448067484	+	0	phrog=18069;top_hit=NA;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	96691	96957	-8.651005973256954	+	0	phrog=4526;top_hit=JX080303_p80;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	96990	97316	-8.422286936840761	+	0	phrog=1481;top_hit=NC_021856_p56;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	97329	97661	-330.9705259121996	+	0	phrog=937;top_hit=p288068 VI_01277;annotation=hemolysin;function=other
-test	PHANOTATE	CDS	97674	97883	-38.630182481246294	+	0	phrog=1215;top_hit=NC_024787_p72;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	98107	98247	-1.9885520502810692	+	0	phrog=16795;top_hit=NA;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	97674	97883	-38.630182481246294	+	0	phrog=1215;top_hit=NC_024787_p72;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	98107	98247	-1.9885520502810692	+	0	phrog=16795;top_hit=NA;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	98361	98579	-40.354416650713766	+	0	phrog=1257;top_hit=NC_024364_p114;annotation=ribosome associated inhibitor A; zinc finger domain;function=moron, auxiliary metabolic gene and host takeover
-test	PHANOTATE	CDS	98659	98829	-0.051952304707492	-	0	phrog=23978;top_hit=NA;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	98830	98937	-2.0788471170375584	-	0	phrog=23327;top_hit=NA;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	99328	99450	-0.5031256620280243	+	0	phrog=34038;top_hit=NA;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	99620	99724	-1.064156206917744	-	0	phrog=839;top_hit=NA;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	99935	100063	-0.0922905626440874	-	0	phrog=17435;top_hit=NA;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	100126	100311	-265.80155533618705	+	0	phrog=987;top_hit=p92466 VI_00133;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	98659	98829	-0.051952304707492	-	0	phrog=23978;top_hit=NA;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	98830	98937	-2.0788471170375584	-	0	phrog=23327;top_hit=NA;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	99328	99450	-0.5031256620280243	+	0	phrog=34038;top_hit=NA;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	99620	99724	-1.064156206917744	-	0	phrog=839;top_hit=NA;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	99935	100063	-0.0922905626440874	-	0	phrog=17435;top_hit=NA;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	100126	100311	-265.80155533618705	+	0	phrog=987;top_hit=p92466 VI_00133;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	100396	100899	-74196.23655561202	+	0	phrog=962;top_hit=p185654 VI_04542;annotation=holin;function=lysis
 test	PHANOTATE	CDS	100899	101756	-8050694.893901155	+	0	phrog=635;top_hit=p151018 VI_04917;annotation=endolysin;function=lysis
-test	PHANOTATE	CDS	101869	102177	-41815.0191682525	+	0	phrog=3667;top_hit=KR902361_p79;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	101869	102177	-41815.0191682525	+	0	phrog=3667;top_hit=KR902361_p79;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	102177	102968	-77981198063.24973	+	0	phrog=200;top_hit=p13345 VI_10141;annotation=lipoprotein;function=other
 test	PHANOTATE	CDS	103035	103670	-240356.7820098064	+	0	phrog=3377;top_hit=NC_027355_p168;annotation=HNH endonuclease;function=DNA, RNA and nucleotide metabolism
 test	PHANOTATE	CDS	103857	104549	-1721278.4106624508	+	0	phrog=3310;top_hit=NC_007021_p174;annotation=transglycosylase;function=other
-test	PHANOTATE	CDS	104659	104886	-6105.310508538895	+	0	phrog=2770;top_hit=NC_025426_p183;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	104659	104886	-6105.310508538895	+	0	phrog=2770;top_hit=NC_025426_p183;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	104889	105119	-1812.8591754348583	+	0	phrog=3;top_hit=p29899 VI_00998;annotation=transcriptional repressor;function=transcription regulation
-test	PHANOTATE	CDS	105109	105750	-55793955.54996467	+	0	phrog=2896;top_hit=NC_019511_p175;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	105773	105964	-444.86384831575384	+	0	phrog=2706;top_hit=JX080303_p65;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	105109	105750	-55793955.54996467	+	0	phrog=2896;top_hit=NC_019511_p175;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	105773	105964	-444.86384831575384	+	0	phrog=2706;top_hit=JX080303_p65;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	105954	106379	-54675.350366293314	+	0	phrog=25616;top_hit=NC_030933_p170;annotation=Rnase H;function=DNA, RNA and nucleotide metabolism
-test	PHANOTATE	CDS	106395	107009	-2771561218.865537	+	0	phrog=2995;top_hit=MG721208_p172;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	106395	107009	-2771561218.865537	+	0	phrog=2995;top_hit=MG721208_p172;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	107061	107801	-47314452.04083797	+	0	phrog=170;top_hit=KT995480_p45;annotation=PhoH-like phosphate starvation-inducible;function=other
-test	PHANOTATE	CDS	107870	108094	-1166.2702261305042	+	0	phrog=3093;top_hit=NC_023582_p63;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	107870	108094	-1166.2702261305042	+	0	phrog=3093;top_hit=NC_023582_p63;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	108094	108990	-521533592520.43335	+	0	phrog=548;top_hit=NC_028887_p254;annotation=RNA ligase;function=DNA, RNA and nucleotide metabolism
 test	PHANOTATE	CDS	108983	109609	-194083357.0261905	+	0	phrog=1817;top_hit=NC_029080_p59;annotation=nucleoside 2-deoxyribosyltransferase;function=DNA, RNA and nucleotide metabolism
-test	PHANOTATE	CDS	109602	110180	-58970.45285128581	+	0	phrog=2642;top_hit=KP687431_p208;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	109602	110180	-58970.45285128581	+	0	phrog=2642;top_hit=KP687431_p208;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	110187	110360	-1.307827921551396	+	0	phrog=1274;top_hit=p104578 VI_00510;annotation=lysM motif protein;function=lysis
 test	PHANOTATE	CDS	110377	110640	-51921.00369482049	+	0	phrog=2811;top_hit=KJ206562_p56;annotation=virion structural protein;function=head and packaging
-test	PHANOTATE	CDS	110718	112766	-6.628453737705695e+27	+	0	phrog=3200;top_hit=KJ206562_p55;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	112766	112927	-239.40366001404945	+	0	phrog=2966;top_hit=KJ206562_p54;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	112971	113159	-203.0629968925961	+	0	phrog=3048;top_hit=KJ206562_p53;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	110718	112766	-6.628453737705695e+27	+	0	phrog=3200;top_hit=KJ206562_p55;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	112766	112927	-239.40366001404945	+	0	phrog=2966;top_hit=KJ206562_p54;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	112971	113159	-203.0629968925961	+	0	phrog=3048;top_hit=KJ206562_p53;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	113159	113461	-13877.31756503078	+	0	phrog=1992;top_hit=p247154 VI_04561;annotation=MazG-like pyrophosphatase;function=other
 test	PHANOTATE	CDS	113595	114011	-16285168.210062549	+	0	phrog=2708;top_hit=KJ206562_p51;annotation=nucleotide kinase;function=other
-test	PHANOTATE	CDS	114004	114330	-282.7247401887595	+	0	phrog=2861;top_hit=NC_025426_p166;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	114361	114468	-0.1719347141647605	-	0	phrog=16811;top_hit=NA;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	114484	115602	-37438427841620.01	+	0	phrog=20349;top_hit=KJ206562_p49;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	115614	116459	-6035253335.254223	+	0	phrog=1909;top_hit=NC_028778_p121;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	114004	114330	-282.7247401887595	+	0	phrog=2861;top_hit=NC_025426_p166;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	114361	114468	-0.1719347141647605	-	0	phrog=16811;top_hit=NA;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	114484	115602	-37438427841620.01	+	0	phrog=20349;top_hit=KJ206562_p49;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	115614	116459	-6035253335.254223	+	0	phrog=1909;top_hit=NC_028778_p121;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	116459	116734	-154.82239849176165	+	0	phrog=3751;top_hit=AP018375_p26;annotation=membrane protein;function=moron, auxiliary metabolic gene and host takeover
 test	PHANOTATE	CDS	116737	116901	-202.56927644056768	+	0	phrog=152;top_hit=p296456 VI_05035;annotation=RinB-like transcriptional activator;function=transcription regulation
-test	PHANOTATE	CDS	116904	117437	-863162.1902258749	+	0	phrog=3702;top_hit=AP018375_p24;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	117437	117979	-703551130.9288517	+	0	phrog=3635;top_hit=KY581279_p34;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	118029	118511	-61741.38078236846	+	0	phrog=3319;top_hit=KY581279_p33;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	118552	118725	-475.3575900366288	+	0	phrog=3504;top_hit=MG721208_p193;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	118824	119213	-407908.7303613936	+	0	phrog=2164;top_hit=KJ829260_p111;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	119215	119454	-729.9125568979039	+	0	phrog=3697;top_hit=MG721208_p195;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	119466	119570	-52.10564868809157	+	0	phrog=5230;top_hit=MG721208_p196;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	116904	117437	-863162.1902258749	+	0	phrog=3702;top_hit=AP018375_p24;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	117437	117979	-703551130.9288517	+	0	phrog=3635;top_hit=KY581279_p34;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	118029	118511	-61741.38078236846	+	0	phrog=3319;top_hit=KY581279_p33;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	118552	118725	-475.3575900366288	+	0	phrog=3504;top_hit=MG721208_p193;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	118824	119213	-407908.7303613936	+	0	phrog=2164;top_hit=KJ829260_p111;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	119215	119454	-729.9125568979039	+	0	phrog=3697;top_hit=MG721208_p195;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	119466	119570	-52.10564868809157	+	0	phrog=5230;top_hit=MG721208_p196;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	119633	120370	-196651288.060665	+	0	phrog=3464;top_hit=MG721208_p197;annotation=nucleotidyltransferase;function=DNA, RNA and nucleotide metabolism
-test	PHANOTATE	CDS	120360	120554	-164.77284551808864	+	0	phrog=3950;top_hit=KJ206562_p36;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	120555	120773	-326.32999840581493	+	0	phrog=3686;top_hit=KJ206562_p35;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	120777	121325	-47251374.72079742	+	0	phrog=2948;top_hit=KJ206562_p34;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	121440	121541	-1.764015250828744	+	0	phrog=18101;top_hit=NA;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	121541	121741	-7.53218012206407	+	0	phrog=27748;top_hit=KY779849_p45;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	121819	121947	-0.1872241174146763	+	0	phrog=38175;top_hit=NA;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	120360	120554	-164.77284551808864	+	0	phrog=3950;top_hit=KJ206562_p36;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	120555	120773	-326.32999840581493	+	0	phrog=3686;top_hit=KJ206562_p35;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	120777	121325	-47251374.72079742	+	0	phrog=2948;top_hit=KJ206562_p34;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	121440	121541	-1.764015250828744	+	0	phrog=18101;top_hit=NA;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	121541	121741	-7.53218012206407	+	0	phrog=27748;top_hit=KY779849_p45;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	121819	121947	-0.1872241174146763	+	0	phrog=38175;top_hit=NA;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	121944	122120	-0.0872563463977289	-	0	phrog=27954;top_hit=NA;annotation=exonuclease;function=DNA, RNA and nucleotide metabolism
-test	PHANOTATE	CDS	122129	122242	-0.118215881763202	-	0	phrog=23421;top_hit=NA;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	122129	122242	-0.118215881763202	-	0	phrog=23421;top_hit=NA;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	122311	122628	-121.09222558897804	+	0	phrog=4178;top_hit=KJ206562_p33;annotation=major tail protein;function=tail
-test	PHANOTATE	CDS	122644	123198	-29185995.05323406	+	0	phrog=2981;top_hit=KJ206562_p32;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	122644	123198	-29185995.05323406	+	0	phrog=2981;top_hit=KJ206562_p32;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	123298	124005	-310702339.2624702	+	0	phrog=246;top_hit=p216000 VI_03943;annotation=NinI-like serine-threonine phosphatase;function=other
-test	PHANOTATE	CDS	124002	124400	-324.6806074071941	+	0	phrog=3857;top_hit=KJ206562_p30;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	124413	124901	-121790.45255285398	+	0	phrog=1017;top_hit=p137170 VI_02792;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	124913	125455	-64316.268839709504	+	0	phrog=4045;top_hit=KJ206562_p28;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	125469	125900	-5606.062940107292	+	0	phrog=2349;top_hit=p37356 VI_05911;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	125893	126378	-610407.6371176873	+	0	phrog=3619;top_hit=KP687431_p178;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	126375	126566	-16.04906875334834	+	0	phrog=4249;top_hit=NC_025417_p25;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	126569	127000	-22096.04467954599	+	0	phrog=16296;top_hit=EU418428_p24;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	127000	127407	-19064.435371971216	+	0	phrog=5770;top_hit=KY779849_p31;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	127420	127905	-3133023.0134727783	+	0	phrog=7534;top_hit=KR908644_p62;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	127907	128143	-50.57670920734583	+	0	phrog=2884;top_hit=KY779849_p29;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	124002	124400	-324.6806074071941	+	0	phrog=3857;top_hit=KJ206562_p30;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	124413	124901	-121790.45255285398	+	0	phrog=1017;top_hit=p137170 VI_02792;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	124913	125455	-64316.268839709504	+	0	phrog=4045;top_hit=KJ206562_p28;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	125469	125900	-5606.062940107292	+	0	phrog=2349;top_hit=p37356 VI_05911;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	125893	126378	-610407.6371176873	+	0	phrog=3619;top_hit=KP687431_p178;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	126375	126566	-16.04906875334834	+	0	phrog=4249;top_hit=NC_025417_p25;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	126569	127000	-22096.04467954599	+	0	phrog=16296;top_hit=EU418428_p24;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	127000	127407	-19064.435371971216	+	0	phrog=5770;top_hit=KY779849_p31;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	127420	127905	-3133023.0134727783	+	0	phrog=7534;top_hit=KR908644_p62;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	127907	128143	-50.57670920734583	+	0	phrog=2884;top_hit=KY779849_p29;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	128127	128222	-0.0671428493818519	+	0	phrog=7943;top_hit=NA;annotation=membrane protein;function=moron, auxiliary metabolic gene and host takeover
-test	PHANOTATE	CDS	128292	128393	-1.6689082636860302	-	0	phrog=22992;top_hit=AY954969_p152;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	128477	128656	-131.02573304274085	-	0	phrog=4863;top_hit=KY581279_p11;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	128741	129010	-6.475398696266184	-	0	phrog=7733;top_hit=KY581279_p10;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	129010	129183	-17.1759211366418	-	0	phrog=3789;top_hit=NC_005880_p19;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	129242	129712	-340.69529956773175	-	0	phrog=2543;top_hit=NC_020838_p42;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	128292	128393	-1.6689082636860302	-	0	phrog=22992;top_hit=AY954969_p152;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	128477	128656	-131.02573304274085	-	0	phrog=4863;top_hit=KY581279_p11;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	128741	129010	-6.475398696266184	-	0	phrog=7733;top_hit=KY581279_p10;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	129010	129183	-17.1759211366418	-	0	phrog=3789;top_hit=NC_005880_p19;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	129242	129712	-340.69529956773175	-	0	phrog=2543;top_hit=NC_020838_p42;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	129695	129793	-0.0547394633342042	+	0	phrog=1625;top_hit=NA;annotation=involved in bacteriocin production or immunity;function=moron, auxiliary metabolic gene and host takeover
-test	PHANOTATE	CDS	129880	130011	-5.220874873096887	-	0	phrog=3837;top_hit=MH107769_p238;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	129880	130011	-5.220874873096887	-	0	phrog=3837;top_hit=MH107769_p238;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	129974	130069	-0.9163125614060822	+	0	phrog=21287;top_hit=NA;annotation=membrane associated protein;function=moron, auxiliary metabolic gene and host takeover
-test	PHANOTATE	CDS	130142	130285	-0.1676192321322626	+	0	phrog=4839;top_hit=NA;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	130142	130285	-0.1676192321322626	+	0	phrog=4839;top_hit=NA;annotation=hypothetical protein;function=unknown function
 test	PHANOTATE	CDS	130407	130895	-4138.746448943948	+	0	phrog=59;top_hit=MG812495_p46;annotation=HNH endonuclease;function=DNA, RNA and nucleotide metabolism
-test	PHANOTATE	CDS	130963	131103	-0.0452511722259153	-	0	phrog=32828;top_hit=NA;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	131130	131225	-0.2510286079409943	-	0	phrog=34074;top_hit=NA;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	131212	131403	-135.51269948068537	-	0	phrog=3388;top_hit=NC_022918_p13;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	131478	131762	-46.26311242893933	-	0	phrog=3164;top_hit=MH107769_p11;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	131815	131949	-0.1272214631300111	+	0	phrog=35776;top_hit=NA;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	131968	132276	-8.234218455064845	-	0	phrog=2601;top_hit=NC_020877_p110;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	132323	132436	-0.0691493131859424	+	0	phrog=27706;top_hit=NA;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	132450	132608	-0.1061449681612924	-	0	phrog=24011;top_hit=NA;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	132587	132925	-11987.461521624944	+	0	phrog=3077;top_hit=NC_005880_p9;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	133132	133479	-19972.637078846637	-	0	phrog=3522;top_hit=NC_005880_p8;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	133490	133729	-175.18927400584403	-	0	phrog=1099;top_hit=MH078572_p111;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	133807	134064	-79.89140636257108	-	0	phrog=1099;top_hit=MH078572_p111;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	134068	134361	-5251.530241038049	-	0	phrog=654;top_hit=MH107769_p227;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	134361	134648	-5715.5579934751995	-	0	phrog=654;top_hit=MH107769_p227;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	134648	134938	-844.8299004354573	-	0	phrog=654;top_hit=MH107769_p227;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	135045	135230	-45.73709938721548	-	0	phrog=3204;top_hit=KY779849_p3;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	135246	135545	-1040.223548440218	-	0	phrog=654;top_hit=MH107769_p227;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	135650	135757	-2.697491805087496	-	0	phrog=15570;top_hit=NA;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	135851	135946	-3.9611414005884633	+	0	phrog=18819;top_hit=NA;annotation=No_PHROG;function=unknown function
-test	PHANOTATE	CDS	135925	136116	-1.1375054486251213	-	0	phrog=24718;top_hit=KR908644_p85;annotation=No_PHROG;function=unknown function
+test	PHANOTATE	CDS	130963	131103	-0.0452511722259153	-	0	phrog=32828;top_hit=NA;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	131130	131225	-0.2510286079409943	-	0	phrog=34074;top_hit=NA;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	131212	131403	-135.51269948068537	-	0	phrog=3388;top_hit=NC_022918_p13;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	131478	131762	-46.26311242893933	-	0	phrog=3164;top_hit=MH107769_p11;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	131815	131949	-0.1272214631300111	+	0	phrog=35776;top_hit=NA;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	131968	132276	-8.234218455064845	-	0	phrog=2601;top_hit=NC_020877_p110;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	132323	132436	-0.0691493131859424	+	0	phrog=27706;top_hit=NA;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	132450	132608	-0.1061449681612924	-	0	phrog=24011;top_hit=NA;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	132587	132925	-11987.461521624944	+	0	phrog=3077;top_hit=NC_005880_p9;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	133132	133479	-19972.637078846637	-	0	phrog=3522;top_hit=NC_005880_p8;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	133490	133729	-175.18927400584403	-	0	phrog=1099;top_hit=MH078572_p111;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	133807	134064	-79.89140636257108	-	0	phrog=1099;top_hit=MH078572_p111;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	134068	134361	-5251.530241038049	-	0	phrog=654;top_hit=MH107769_p227;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	134361	134648	-5715.5579934751995	-	0	phrog=654;top_hit=MH107769_p227;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	134648	134938	-844.8299004354573	-	0	phrog=654;top_hit=MH107769_p227;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	135045	135230	-45.73709938721548	-	0	phrog=3204;top_hit=KY779849_p3;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	135246	135545	-1040.223548440218	-	0	phrog=654;top_hit=MH107769_p227;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	135650	135757	-2.697491805087496	-	0	phrog=15570;top_hit=NA;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	135851	135946	-3.9611414005884633	+	0	phrog=18819;top_hit=NA;annotation=hypothetical protein;function=unknown function
+test	PHANOTATE	CDS	135925	136116	-1.1375054486251213	-	0	phrog=24718;top_hit=KR908644_p85;annotation=hypothetical protein;function=unknown function
 test	tRNAscan-SE	tRNA	99734	99807	62.8	+	.	ID=test.trna1;Name=test.tRNA1-AspGTC;isotype=Asp;anticodon=GTC;gene_biotype=tRNA;
 test	tRNAscan-SE	tRNA	99814	99886	64.0	+	.	ID=test.trna2;Name=test.tRNA2-PheGAA;isotype=Phe;anticodon=GAA;gene_biotype=tRNA;
 test	tRNAscan-SE	tRNA	121605	121676	63.1	+	.	ID=test.trna3;Name=test.tRNA3-Ile2CAT;isotype=Ile2;anticodon=CAT;gene_biotype=tRNA;
