@@ -1,0 +1,15 @@
+Contigs: 1
+CDS: 64
+tRNA: 0
+
+CDS Function Summary
+head and packaging: 6
+connector: 1
+tail: 6
+DNA, RNA and nucleotide metabolism: 6
+integration and excision: 0
+lysis: 5
+transcription regulation: 0
+moron, auxiliary metabolic gene and host takeover: 2
+other: 5
+unknown function: 34
