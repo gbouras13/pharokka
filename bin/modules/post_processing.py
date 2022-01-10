@@ -51,12 +51,13 @@ def process_results(db_dir,out_dir):
     ############################
     ########## hhsuite
 
-    hhs_dir = out_dir + "hhsuite_target_dir/"
+    hhs_dir = out_dir + "/hhsuite_target_dir/"
 
-    hhsuite_file =  os.path.join(hhs_dir, "hhsuite_tsv_file.ffdata")
+    hhsuite_file =  os.path.join(hhs_dir, "results_tsv_file.ffdata")
     print("Processing hhsuite output")
     col_list = ["gene_hmm", "phrog_hmm", "seqIdentity_hmm", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "eVal_hmm", "alnScore_hmm"] 
     hhsuite_df = pd.read_csv(hhsuite_file, delimiter= '\t', index_col=False , names=col_list) 
+    print(hhsuite_df)
     genes = hhsuite_df.gene_hmm.unique()
     # remove nan
     genes = [x for x in genes if str(x) != 'nan']
@@ -69,6 +70,7 @@ def process_results(db_dir,out_dir):
     tophits_hmm__df = pd.DataFrame(tophits, columns=['phrog_hmm', 'gene_hmm', 'alnScore_hmm', 'seqIdentity_hmm', 'eVal_hmm'])
 
     # filter from 0 to end for savings
+    print(tophits_hmm__df['gene_hmm'])
     tophits_hmm__df[['spl','ind']] = tophits_hmm__df['gene_hmm'].str.split('est',expand=True)
     tophits_hmm__df[['ind']] = tophits_hmm__df[['ind']].astype(int)
     tophits_hmm__df = tophits_hmm__df.sort_values(by=['ind']).drop(columns = ['spl', 'ind'])
