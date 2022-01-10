@@ -8,7 +8,7 @@ build:
 
 source:
   git_url: https://github.com/gbouras13/phrokka
- 
+
 requirements:
  run:
     - python==3.9.7
@@ -25,6 +25,7 @@ requirements:
     - phanotate==1.5.0
     - mmseqs2==13.45111
     - trnascan-se==2.0.9
+    - hhsuite==3.3.0
 
 about:
   home: https://github.com/gbouras13/phrokka

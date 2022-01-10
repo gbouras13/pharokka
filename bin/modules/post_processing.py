@@ -51,7 +51,9 @@ def process_results(db_dir,out_dir):
     ############################
     ########## hhsuite
 
-    hhsuite_file =  os.path.join(out_dir, "hhsuite_tsv_file.ffdata")
+    hh_dir = out_dir + "hhsuite_target_dir/"
+
+    hhsuite_file =  os.path.join(hh_dir, "hhsuite_tsv_file.ffdata")
     print("Processing hhsuite output")
     col_list = ["gene_hmm", "phrog_hmm", "seqIdentity_hmm", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "eVal_hmm", "alnScore_hmm"] 
     hhsuite_df = pd.read_csv(hhsuite_file, delimiter= '\t', index_col=False , names=col_list) 
