@@ -1,4 +1,5 @@
 import os
+from re import T
 import sys
 import subprocess as sp
 from Bio import SeqIO
@@ -57,7 +58,6 @@ def process_results(db_dir,out_dir):
     print("Processing hhsuite output")
     col_list = ["gene_hmm", "phrog_hmm", "seqIdentity_hmm", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "eVal_hmm", "alnScore_hmm"] 
     hhsuite_df = pd.read_csv(hhsuite_file, delimiter= '\t', index_col=False , names=col_list) 
-    print(hhsuite_df)
     genes = hhsuite_df.gene_hmm.unique()
     # remove nan
     genes = [x for x in genes if str(x) != 'nan']
@@ -70,8 +70,7 @@ def process_results(db_dir,out_dir):
     tophits_hmm__df = pd.DataFrame(tophits, columns=['phrog_hmm', 'gene_hmm', 'alnScore_hmm', 'seqIdentity_hmm', 'eVal_hmm'])
 
     # filter from 0 to end for savings
-    print(tophits_hmm__df['gene_hmm'])
-    tophits_hmm__df[['spl','ind']] = tophits_hmm__df['gene_hmm'].str.split('est',expand=True)
+    tophits_hmm__df[['spl','ind']] = tophits_hmm__df['gene_hmm'].str.split('delimiter',expand=True)
     tophits_hmm__df[['ind']] = tophits_hmm__df[['ind']].astype(int)
     tophits_hmm__df = tophits_hmm__df.sort_values(by=['ind']).drop(columns = ['spl', 'ind'])
     tophits_hmm__df.to_csv(os.path.join(out_dir, "top_hits_hhsuite.tsv"), sep="\t", index=False)
@@ -136,7 +135,6 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir):
     cols = ["start","stop"]
     #indices where start is greater than stop
     ixs = phanotate_mmseqs_df['frame'] == '-'
-    print(ixs)
     # Where ixs is True, values are swapped
     phanotate_mmseqs_df.loc[ixs,cols] = phanotate_mmseqs_df.loc[ixs, cols].reindex(columns=cols[::-1]).values
     
@@ -148,7 +146,7 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir):
 
     with open(os.path.join(out_dir, "phrokka.gff"), 'a') as f:
         gff_df.to_csv(f, sep="\t", index=False, header=False)
-        print(f)
+
       
     ### trnas
 
@@ -160,7 +158,7 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir):
     trna_df.stop = trna_df.stop.astype(int)
     with open(os.path.join(out_dir, "phrokka.gff"), 'a') as f:
         trna_df.to_csv(f, sep="\t", index=False, header=False)
-        print(f)
+
 
     # write fasta on the end 
 
@@ -175,16 +173,21 @@ def create_tbl(phanotate_mmseqs_df, length_df, out_dir):
     ### readtrnas
 
     col_list = ["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]
-    trna_df = pd.read_csv(os.path.join(out_dir, "trnascan_out.gff"), delimiter= '\t', index_col=False, names=col_list ) 
-    # keep only trnas
-    trna_df = trna_df[trna_df['Region'] == 'tRNA']
-    trna_df.start = trna_df.start.astype(int)
-    trna_df.stop = trna_df.stop.astype(int)
+     # check if no trnas
+    empty = False
+    if os.stat(os.path.join(out_dir, "trnascan_out.gff")).st_size == 0:
+        empty = True
+    if empty == False:    
+        trna_df = pd.read_csv(os.path.join(out_dir, "trnascan_out.gff"), delimiter= '\t', index_col=False, names=col_list ) 
+        # keep only trnas
+        trna_df = trna_df[trna_df['Region'] == 'tRNA']
+        trna_df.start = trna_df.start.astype(int)
+        trna_df.stop = trna_df.stop.astype(int)
 
-    trna_df[['attributes','isotypes']] = trna_df['attributes'].str.split(';isotype=',expand=True)
-    trna_df[['isotypes','anticodon']] = trna_df['isotypes'].str.split(';anticodon=',expand=True)
-    trna_df[['anticodon','rest']] = trna_df['anticodon'].str.split(';gene_biotype',expand=True)
-    trna_df['trna_product']='tRNA-'+trna_df['isotypes']+"("+trna_df['anticodon']+")"
+        trna_df[['attributes','isotypes']] = trna_df['attributes'].str.split(';isotype=',expand=True)
+        trna_df[['isotypes','anticodon']] = trna_df['isotypes'].str.split(';anticodon=',expand=True)
+        trna_df[['anticodon','rest']] = trna_df['anticodon'].str.split(';gene_biotype',expand=True)
+        trna_df['trna_product']='tRNA-'+trna_df['isotypes']+"("+trna_df['anticodon']+")"
 
     with open( os.path.join(out_dir, "phrokka.tbl"), 'w') as f:
         for index, row in length_df.iterrows():
@@ -197,12 +200,13 @@ def create_tbl(phanotate_mmseqs_df, length_df, out_dir):
                 f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "phrog=" + str(row['phrog']) + "\n")
                 f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ str(row['annot']) + "\n")
                 f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
-            subset_trna_df = trna_df[trna_df['contig'] == contig]
-            for index, row in subset_trna_df.iterrows():
-                f.write(str(row['start']) + "\t" + str(row['stop']) + "\t" + row['Region'] + "\n")
-                f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "tRNAscan-SE")
-                f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ str(row['trna_product']) + "\n")
-                f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
+            if empty == False:
+                subset_trna_df = trna_df[trna_df['contig'] == contig]
+                for index, row in subset_trna_df.iterrows():
+                    f.write(str(row['start']) + "\t" + str(row['stop']) + "\t" + row['Region'] + "\n")
+                    f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "tRNAscan-SE")
+                    f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ str(row['trna_product']) + "\n")
+                    f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
 
 
 

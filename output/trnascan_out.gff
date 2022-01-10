@@ -1,7 +1,0 @@
-##gff-version 3
-test	tRNAscan-SE	tRNA	99734	99807	62.8	+	.	ID=test.trna1;Name=test.tRNA1-AspGTC;isotype=Asp;anticodon=GTC;gene_biotype=tRNA;
-test	tRNAscan-SE	exon	99734	99807	.	+	.	ID=test.trna1.exon1;Parent=test.trna1;
-test	tRNAscan-SE	tRNA	99814	99886	64.0	+	.	ID=test.trna2;Name=test.tRNA2-PheGAA;isotype=Phe;anticodon=GAA;gene_biotype=tRNA;
-test	tRNAscan-SE	exon	99814	99886	.	+	.	ID=test.trna2.exon1;Parent=test.trna2;
-test	tRNAscan-SE	tRNA	121605	121676	63.1	+	.	ID=test.trna3;Name=test.tRNA3-Ile2CAT;isotype=Ile2;anticodon=CAT;gene_biotype=tRNA;
-test	tRNAscan-SE	exon	121605	121676	.	+	.	ID=test.trna3.exon1;Parent=test.trna3;

@@ -8,11 +8,23 @@ import pandas as pd
 
 def run_phanotate(filepath_in, out_dir):
     print("Beginning Phanotate")
+    
+    add_delim_to_fasta(filepath_in, out_dir)
+
     try:
-        sp.call([ "phanotate.py", filepath_in, "-o", os.path.join(out_dir, "phanotate_out.fasta"), "-f", "fasta"]) # , stderr=sp.DEVNULL, stdout=sp.DEVNULL silence the warnings (no trnaScan)
-        sp.call(["phanotate.py", filepath_in, "-o", os.path.join(out_dir, "phanotate_out.txt"), "-f", "tabular"])
+        sp.call([ "phanotate.py", os.path.join(out_dir, "input_fasta_delim.fasta"), "-o", os.path.join(out_dir, "phanotate_out.fasta"), "-f", "fasta"]) # , stderr=sp.DEVNULL, stdout=sp.DEVNULL silence the warnings (no trnaScan)
+        sp.call(["phanotate.py", os.path.join(out_dir, "input_fasta_delim.fasta"), "-o", os.path.join(out_dir, "phanotate_out.txt"), "-f", "tabular"])
     except:
         sys.exit("Error: phanotate not found\n")  
+
+def add_delim_to_fasta(filepath_in, out_dir):
+    with open(os.path.join(out_dir, "input_fasta_delim.fasta"), 'w') as na_fa:
+        for dna_record in SeqIO.parse(filepath_in, 'fasta'): 
+            dna_header = dna_record.id + str("delimiter") 
+            dna_description = ""
+            dna_record = SeqRecord(dna_record.seq, id=dna_header, description = dna_description)
+            SeqIO.write(dna_record, na_fa, 'fasta')
+
 
 def tidy_phanotate_output(out_dir):
     phan_file = os.path.join(out_dir, "phanotate_out.txt")
@@ -99,9 +111,6 @@ def run_hmmsuite(db_dir, out_dir):
     if os.path.isdir(target_db_dir) == False:
         os.mkdir(target_db_dir)
 
-    # custom index
-    print(os.path.join(target_db_dir, 'hhsuite_tsv_file.ff{data,index}'))
-    print(os.path.join(out_dir, amino_acid_fasta))
 
     # indexes the file 
     #can't pass curly brackets to subprocess so need to run using os
