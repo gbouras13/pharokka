@@ -118,11 +118,24 @@ def get_contig_name_lengths(fasta_input):
     return(length_df)
 
 
-def create_txt(phanotate_mmseqs_df, length_df, out_dir):
-    contig_count = len(length_df)
-    with open( os.path.join(out_dir, "phrokka.txt"), 'w') as f:
-        f.write('Contigs: ' + str(contig_count) + '\n')
+def create_txt(phanotate_mmseqs_df, out_dir):
+    cds_count = len(phanotate_mmseqs_df[phanotate_mmseqs_df['Region'] == 'CDS'])
+    trna_count = len(phanotate_mmseqs_df[phanotate_mmseqs_df['Region'] == 'tRNA'])
 
+    with open( os.path.join(out_dir, "phrokka_summary.txt"), 'w') as f:
+        f.write('CDS: ' + str(cds_count) + '\n')
+        f.write('tRNA: ' + str(trna_count) + '\n\n')
+        f.write('CDS Function Summary\n')
+        f.write('head and packaging: ' + str(len(phanotate_mmseqs_df[phanotate_mmseqs_df['attributes'].str.contains("head and packaging")])) + '\n')
+        f.write('connector: ' + str(len(phanotate_mmseqs_df[phanotate_mmseqs_df['attributes'].str.contains("connector")])) + '\n')
+        f.write('tail: ' + str(len(phanotate_mmseqs_df[phanotate_mmseqs_df['attributes'].str.contains("tail")])) + '\n')
+        f.write('DNA, RNA and nucleotide metabolism: ' + str(len(phanotate_mmseqs_df[phanotate_mmseqs_df['attributes'].str.contains("DNA, RNA and nucleotide metabolism")])) + '\n')
+        f.write('integration and excision: ' + str(len(phanotate_mmseqs_df[phanotate_mmseqs_df['attributes'].str.contains("integration and excision")])) + '\n')
+        f.write('lysis: ' + str(len(phanotate_mmseqs_df[phanotate_mmseqs_df['attributes'].str.contains("lysis")])) + '\n')
+        f.write('transcription regulation: ' + str(len(phanotate_mmseqs_df[phanotate_mmseqs_df['attributes'].str.contains("transcription regulation")])) + '\n')
+        f.write('moron, auxiliary metabolic gene and host takeover: ' + str(len(phanotate_mmseqs_df[phanotate_mmseqs_df['attributes'].str.contains("moron, auxiliary metabolic gene and host takeover")])) + '\n')
+        f.write('other: ' + str(len(phanotate_mmseqs_df[phanotate_mmseqs_df['attributes'].str.contains("other")])) + '\n')
+        f.write('unknown function: ' + str(len(phanotate_mmseqs_df[phanotate_mmseqs_df['attributes'].str.contains("unknown function")])) + '\n')
 
 def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir):
     # write the headers of the gff file
