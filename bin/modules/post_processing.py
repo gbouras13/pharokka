@@ -4,6 +4,7 @@ import sys
 import subprocess as sp
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
+from Bio.SeqUtils import GC
 import pandas as pd
 import numpy as np
 
@@ -100,29 +101,40 @@ def process_results(db_dir,out_dir):
     merged_df = merged_df.drop(columns = ['color', 'annot', 'category'])
     merged_df = merged_df.merge(phrog_annot_df, on='phrog', how='left')
     merged_df["annot"] = merged_df["annot"].replace(np.nan, 'hypothetical protein', regex=True)
+
+    # get rid of "delimiter"
+    merged_df["contig"] = merged_df["contig"].str.replace("delimiter", "")
+    merged_df["gene"] = merged_df["gene"].str.replace("delimiter", "_")
+    merged_df["gene_hmm"] = merged_df["gene_hmm"].str.replace("delimiter", "_")
+
     merged_df.to_csv( os.path.join(out_dir, "final_merged_output.tsv"), sep="\t", index=False)
+    
     return merged_df
 
-
-def get_contig_name_lengths(fasta_input):
+def get_contig_name_lengths(fasta_input, out_dir):
     fasta_sequences = SeqIO.parse(open(fasta_input),'fasta')
     contig_names = []
     lengths = []
+    gc = []
     for fasta in fasta_sequences:
         contig_names.append(fasta.id)
         lengths.append(len(fasta.seq))
+        gc.append(GC(fasta.seq))
     length_df = pd.DataFrame(
     {'contig': contig_names,
      'length': lengths,
+     'gc_perc': gc,
     })
+    length_df.to_csv(os.path.join(out_dir, "length_gc.tsv"), sep="\t", index=False)
     return(length_df)
 
-
-def create_txt(phanotate_mmseqs_df, out_dir):
+def create_txt(phanotate_mmseqs_df, length_df, out_dir):
+    contig_count = len(length_df)
     cds_count = len(phanotate_mmseqs_df[phanotate_mmseqs_df['Region'] == 'CDS'])
     trna_count = len(phanotate_mmseqs_df[phanotate_mmseqs_df['Region'] == 'tRNA'])
 
     with open( os.path.join(out_dir, "phrokka_summary.txt"), 'w') as f:
+        f.write('Contigs: ' + str(contig_count) + '\n')
         f.write('CDS: ' + str(cds_count) + '\n')
         f.write('tRNA: ' + str(trna_count) + '\n\n')
         f.write('CDS Function Summary\n')

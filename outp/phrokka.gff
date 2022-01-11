@@ -1,69 +1,69 @@
 ##gff-version 3
 ##sequence-region EC23 1 44682
-EC23delimiter	PHANOTATE	CDS	2	490	-19840.771783483026	-	0	phrog=2166;top_hit=NA;annotation=N4-like RNA polymerase;function=DNA, RNA and nucleotide metabolism
-EC23delimiter	PHANOTATE	CDS	554	1477	-1220050.1895570362	-	0	phrog=4571;top_hit=KY250034_p9;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	1539	1664	-10.229666487711395	-	0	phrog=32237;top_hit=NA;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	1741	1854	-7.380488557321602	-	0	phrog=11746;top_hit=KX279892_p4;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	1857	2210	-659.3100166583376	-	0	phrog=2568;top_hit=NC_023007_p18;annotation=ocr-like anti-restriction;function=moron, auxiliary metabolic gene and host takeover
-EC23delimiter	PHANOTATE	CDS	2361	2471	-19.24074207554459	-	0	phrog=23798;top_hit=NA;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	2494	2592	-0.0638179185537425	-	0	phrog=22753;top_hit=NA;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	2601	2825	-206.267082438556	-	0	phrog=6403;top_hit=KX279892_p2;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	2825	3004	-14.254422507426774	-	0	phrog=9275;top_hit=MG251390_p2;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	3001	3138	-7.244687726817759	-	0	phrog=2061;top_hit=p246816 VI_06898;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	3122	3241	-4.603897605141664	-	0	phrog=24157;top_hit=NA;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	3557	3664	-0.128312015881925	-	0	phrog=23151;top_hit=NA;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	3710	3892	-0.0954277788599445	-	0	phrog=5849;top_hit=NA;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	3952	4101	-0.1066637124276346	-	0	phrog=22926;top_hit=NA;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	4185	4334	-55.92512728579981	-	0	phrog=2423;top_hit=KY435490_p57;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	4346	6058	-26954933781.438908	-	0	phrog=2234;top_hit=NC_020081_p203;annotation=tail spike protein;function=tail
-EC23delimiter	PHANOTATE	CDS	6144	8042	-851694163.8247328	-	0	phrog=14895;top_hit=MG251390_p54;annotation=tail spike protein;function=tail
-EC23delimiter	PHANOTATE	CDS	8174	8371	-9.68223774850569	-	0	phrog=8971;top_hit=NC_007637_p59;annotation=Rz-like spanin;function=lysis
-EC23delimiter	PHANOTATE	CDS	8461	8610	-8.026318355426001	-	0	phrog=4712;top_hit=NC_013651_p44;annotation=holin;function=lysis
-EC23delimiter	PHANOTATE	CDS	8594	8725	-5.6812317454818	-	0	phrog=1312;top_hit=NC_028795_p19;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	8719	9063	-128.71755887598255	-	0	phrog=894;top_hit=KR093626_p4;annotation=endolysin;function=lysis
-EC23delimiter	PHANOTATE	CDS	9063	9752	-13006.285248839484	-	0	phrog=32357;top_hit=MG775042_p16;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	9754	10038	-94.28005165459065	-	0	phrog=2725;top_hit=NC_025822_p40;annotation=acetyl-CoA acetyltransferase;function=other
-EC23delimiter	PHANOTATE	CDS	10056	10337	-109.63452042541132	-	0	phrog=2725;top_hit=NC_025822_p40;annotation=acetyl-CoA acetyltransferase;function=other
-EC23delimiter	PHANOTATE	CDS	10495	12390	-3246956585146.932	-	0	phrog=17672;top_hit=NC_007637_p52;annotation=terminase large subunit;function=head and packaging
-EC23delimiter	PHANOTATE	CDS	12390	12689	-20.87554107720459	-	0	phrog=891;top_hit=KY065149_p24;annotation=terminase small subunit;function=head and packaging
-EC23delimiter	PHANOTATE	CDS	12673	12867	-91.67389073930835	-	0	phrog=920;top_hit=NC_028880_p40;annotation=holin;function=lysis
-EC23delimiter	PHANOTATE	CDS	12877	13839	-68605449.17237452	-	0	phrog=2710;top_hit=MF612071_p45;annotation=tail fiber protein;function=tail
-EC23delimiter	PHANOTATE	CDS	13839	17147	-5.835751379496538e+22	-	0	phrog=342;top_hit=NC_028880_p38;annotation=internal virion protein with endolysin domain;function=head and packaging
-EC23delimiter	PHANOTATE	CDS	17212	20160	-3.189503344746536e+19	-	0	phrog=4290;top_hit=MG545917_p39;annotation=lysozyme domain-containing protein;function=lysis
-EC23delimiter	PHANOTATE	CDS	20160	20882	-1630.2995441171106	-	0	phrog=805;top_hit=MG957431_p3;annotation=internal virion protein;function=head and packaging
-EC23delimiter	PHANOTATE	CDS	20882	23284	-2.2412387877168384e+16	-	0	phrog=457;top_hit=NC_020874_p22;annotation=tail protein;function=tail
-EC23delimiter	PHANOTATE	CDS	23284	24021	-706616.332008314	-	0	phrog=446;top_hit=NC_004777_p36;annotation=tail protein;function=tail
-EC23delimiter	PHANOTATE	CDS	24076	25290	-13389958.857832067	-	0	phrog=267;top_hit=NC_031123_p36;annotation=major head protein;function=head and packaging
-EC23delimiter	PHANOTATE	CDS	25370	26290	-5469712.043034428	-	0	phrog=1018;top_hit=HG796221_p32;annotation=head scaffolding protein;function=head and packaging
-EC23delimiter	PHANOTATE	CDS	26290	27840	-134963318082.16689	-	0	phrog=449;top_hit=KM576124_p42;annotation=head-tail adaptor;function=connector
-EC23delimiter	PHANOTATE	CDS	27842	28051	-36.82409351063501	-	0	phrog=9033;top_hit=KY626176_p31;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	28061	28522	-4323.435656039771	-	0	phrog=1249;top_hit=NC_028770_p48;annotation=acetyltransferase;function=other
-EC23delimiter	PHANOTATE	CDS	28519	28632	-10.632560444042117	-	0	phrog=6507;top_hit=NC_031271_p26;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	28652	28867	-60.15278168186163	-	0	phrog=5860;top_hit=MG736918_p27;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	28839	29786	-17242556.682347033	-	0	phrog=114;top_hit=NC_019913_p32;annotation=ATP-dependent DNA ligase;function=DNA, RNA and nucleotide metabolism
-EC23delimiter	PHANOTATE	CDS	29788	30291	-5428.552606172793	-	0	phrog=2585;top_hit=NC_031115_p18;annotation=nucleotide kinase;function=other
-EC23delimiter	PHANOTATE	CDS	30393	31532	-676598.784601309	-	0	phrog=221;top_hit=MH020239_p48;annotation=metallo-phosphoesterase;function=other
-EC23delimiter	PHANOTATE	CDS	31542	31673	-2.741912388045716	-	0	phrog=16030;top_hit=NA;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	31788	32816	-45980872.53917246	-	0	phrog=107;top_hit=NC_019402_p42;annotation=RNaseH;function=DNA, RNA and nucleotide metabolism
-EC23delimiter	PHANOTATE	CDS	32830	32919	-1.3238238718280275	-	0	phrog=38380;top_hit=NA;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	33078	33452	-849.942805419802	-	0	phrog=4429;top_hit=MG545917_p23;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	33558	33776	-18.706316531750833	-	0	phrog=5791;top_hit=KY295891_p13;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	33786	34592	-3917765.6265473654	-	0	phrog=862;top_hit=MG676466_p38;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	34670	35047	-1924.003840189556	-	0	phrog=7450;top_hit=NC_031271_p14;annotation=polysaccharide chain length determinant protein;function=moron, auxiliary metabolic gene and host takeover
-EC23delimiter	PHANOTATE	CDS	35134	35394	-82.15796855233249	-	0	phrog=35123;top_hit=NC_028916_p18;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	35452	35550	-4.264995757018456	-	0	phrog=4539;top_hit=KY295897_p27;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	35550	35666	-10.44028493077624	-	0	phrog=15860;top_hit=NC_007637_p23;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	35666	38212	-9831156975927048.0	-	0	phrog=17;top_hit=NC_019926_p15;annotation=DNA polymerase;function=DNA, RNA and nucleotide metabolism
-EC23delimiter	PHANOTATE	CDS	38267	38356	-3.077749580881332	-	0	phrog=10572;top_hit=NA;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	38405	38512	-17.798437401000733	-	0	phrog=15473;top_hit=KY295897_p24;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	38570	38746	-22.15187194045816	-	0	phrog=5754;top_hit=KY295897_p23;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	38736	38954	-22.559331517151424	-	0	phrog=9214;top_hit=NC_019403_p16;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	38965	39648	-268435.01998601	-	0	phrog=6703;top_hit=KX279892_p10;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	39721	39882	-28.091538018456312	-	0	phrog=15806;top_hit=NC_019403_p14;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	39882	41870	-379120989681427.2	-	0	phrog=239;top_hit=NC_031029_p115;annotation=DNA primase/helicase;function=DNA, RNA and nucleotide metabolism
-EC23delimiter	PHANOTATE	CDS	41870	42088	-7.023118092328032	-	0	phrog=24605;top_hit=NC_029067_p7;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	42092	42220	-6.414749685462111	-	0	phrog=2490;top_hit=NC_011045_p6;annotation=hypothetical protein;function=unknown function
-EC23delimiter	PHANOTATE	CDS	42545	44680	-691500801930.0591	-	0	phrog=414;top_hit=NC_010106_p1;annotation=RNA polymerase;function=DNA, RNA and nucleotide metabolism
+EC23	PHANOTATE	CDS	2	490	-19840.771783483026	-	0	phrog=2166;top_hit=NA;annotation=N4-like RNA polymerase;function=DNA, RNA and nucleotide metabolism
+EC23	PHANOTATE	CDS	554	1477	-1220050.1895570362	-	0	phrog=4571;top_hit=KY250034_p9;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	1539	1664	-10.229666487711395	-	0	phrog=32237;top_hit=NA;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	1741	1854	-7.380488557321602	-	0	phrog=11746;top_hit=KX279892_p4;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	1857	2210	-659.3100166583376	-	0	phrog=2568;top_hit=NC_023007_p18;annotation=ocr-like anti-restriction;function=moron, auxiliary metabolic gene and host takeover
+EC23	PHANOTATE	CDS	2361	2471	-19.24074207554459	-	0	phrog=23798;top_hit=NA;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	2494	2592	-0.0638179185537425	-	0	phrog=22753;top_hit=NA;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	2601	2825	-206.267082438556	-	0	phrog=6403;top_hit=KX279892_p2;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	2825	3004	-14.254422507426774	-	0	phrog=9275;top_hit=MG251390_p2;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	3001	3138	-7.244687726817759	-	0	phrog=2061;top_hit=p246816 VI_06898;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	3122	3241	-4.603897605141664	-	0	phrog=24157;top_hit=NA;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	3557	3664	-0.128312015881925	-	0	phrog=23151;top_hit=NA;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	3710	3892	-0.0954277788599445	-	0	phrog=5849;top_hit=NA;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	3952	4101	-0.1066637124276346	-	0	phrog=22926;top_hit=NA;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	4185	4334	-55.92512728579981	-	0	phrog=2423;top_hit=KY435490_p57;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	4346	6058	-26954933781.438908	-	0	phrog=2234;top_hit=NC_020081_p203;annotation=tail spike protein;function=tail
+EC23	PHANOTATE	CDS	6144	8042	-851694163.8247328	-	0	phrog=14895;top_hit=MG251390_p54;annotation=tail spike protein;function=tail
+EC23	PHANOTATE	CDS	8174	8371	-9.68223774850569	-	0	phrog=8971;top_hit=NC_007637_p59;annotation=Rz-like spanin;function=lysis
+EC23	PHANOTATE	CDS	8461	8610	-8.026318355426001	-	0	phrog=4712;top_hit=NC_013651_p44;annotation=holin;function=lysis
+EC23	PHANOTATE	CDS	8594	8725	-5.6812317454818	-	0	phrog=1312;top_hit=NC_028795_p19;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	8719	9063	-128.71755887598255	-	0	phrog=894;top_hit=KR093626_p4;annotation=endolysin;function=lysis
+EC23	PHANOTATE	CDS	9063	9752	-13006.285248839484	-	0	phrog=32357;top_hit=MG775042_p16;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	9754	10038	-94.28005165459065	-	0	phrog=2725;top_hit=NC_025822_p40;annotation=acetyl-CoA acetyltransferase;function=other
+EC23	PHANOTATE	CDS	10056	10337	-109.63452042541132	-	0	phrog=2725;top_hit=NC_025822_p40;annotation=acetyl-CoA acetyltransferase;function=other
+EC23	PHANOTATE	CDS	10495	12390	-3246956585146.932	-	0	phrog=17672;top_hit=NC_007637_p52;annotation=terminase large subunit;function=head and packaging
+EC23	PHANOTATE	CDS	12390	12689	-20.87554107720459	-	0	phrog=891;top_hit=KY065149_p24;annotation=terminase small subunit;function=head and packaging
+EC23	PHANOTATE	CDS	12673	12867	-91.67389073930835	-	0	phrog=920;top_hit=NC_028880_p40;annotation=holin;function=lysis
+EC23	PHANOTATE	CDS	12877	13839	-68605449.17237452	-	0	phrog=2710;top_hit=MF612071_p45;annotation=tail fiber protein;function=tail
+EC23	PHANOTATE	CDS	13839	17147	-5.835751379496538e+22	-	0	phrog=342;top_hit=NC_028880_p38;annotation=internal virion protein with endolysin domain;function=head and packaging
+EC23	PHANOTATE	CDS	17212	20160	-3.189503344746536e+19	-	0	phrog=4290;top_hit=MG545917_p39;annotation=lysozyme domain-containing protein;function=lysis
+EC23	PHANOTATE	CDS	20160	20882	-1630.2995441171106	-	0	phrog=805;top_hit=MG957431_p3;annotation=internal virion protein;function=head and packaging
+EC23	PHANOTATE	CDS	20882	23284	-2.2412387877168384e+16	-	0	phrog=457;top_hit=NC_020874_p22;annotation=tail protein;function=tail
+EC23	PHANOTATE	CDS	23284	24021	-706616.332008314	-	0	phrog=446;top_hit=NC_004777_p36;annotation=tail protein;function=tail
+EC23	PHANOTATE	CDS	24076	25290	-13389958.857832067	-	0	phrog=267;top_hit=NC_031123_p36;annotation=major head protein;function=head and packaging
+EC23	PHANOTATE	CDS	25370	26290	-5469712.043034428	-	0	phrog=1018;top_hit=HG796221_p32;annotation=head scaffolding protein;function=head and packaging
+EC23	PHANOTATE	CDS	26290	27840	-134963318082.16689	-	0	phrog=449;top_hit=KM576124_p42;annotation=head-tail adaptor;function=connector
+EC23	PHANOTATE	CDS	27842	28051	-36.82409351063501	-	0	phrog=9033;top_hit=KY626176_p31;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	28061	28522	-4323.435656039771	-	0	phrog=1249;top_hit=NC_028770_p48;annotation=acetyltransferase;function=other
+EC23	PHANOTATE	CDS	28519	28632	-10.632560444042117	-	0	phrog=6507;top_hit=NC_031271_p26;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	28652	28867	-60.15278168186163	-	0	phrog=5860;top_hit=MG736918_p27;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	28839	29786	-17242556.682347033	-	0	phrog=114;top_hit=NC_019913_p32;annotation=ATP-dependent DNA ligase;function=DNA, RNA and nucleotide metabolism
+EC23	PHANOTATE	CDS	29788	30291	-5428.552606172793	-	0	phrog=2585;top_hit=NC_031115_p18;annotation=nucleotide kinase;function=other
+EC23	PHANOTATE	CDS	30393	31532	-676598.784601309	-	0	phrog=221;top_hit=MH020239_p48;annotation=metallo-phosphoesterase;function=other
+EC23	PHANOTATE	CDS	31542	31673	-2.741912388045716	-	0	phrog=16030;top_hit=NA;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	31788	32816	-45980872.53917246	-	0	phrog=107;top_hit=NC_019402_p42;annotation=RNaseH;function=DNA, RNA and nucleotide metabolism
+EC23	PHANOTATE	CDS	32830	32919	-1.3238238718280275	-	0	phrog=38380;top_hit=NA;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	33078	33452	-849.942805419802	-	0	phrog=4429;top_hit=MG545917_p23;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	33558	33776	-18.706316531750833	-	0	phrog=5791;top_hit=KY295891_p13;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	33786	34592	-3917765.6265473654	-	0	phrog=862;top_hit=MG676466_p38;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	34670	35047	-1924.003840189556	-	0	phrog=7450;top_hit=NC_031271_p14;annotation=polysaccharide chain length determinant protein;function=moron, auxiliary metabolic gene and host takeover
+EC23	PHANOTATE	CDS	35134	35394	-82.15796855233249	-	0	phrog=35123;top_hit=NC_028916_p18;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	35452	35550	-4.264995757018456	-	0	phrog=4539;top_hit=KY295897_p27;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	35550	35666	-10.44028493077624	-	0	phrog=15860;top_hit=NC_007637_p23;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	35666	38212	-9831156975927048.0	-	0	phrog=17;top_hit=NC_019926_p15;annotation=DNA polymerase;function=DNA, RNA and nucleotide metabolism
+EC23	PHANOTATE	CDS	38267	38356	-3.077749580881332	-	0	phrog=10572;top_hit=NA;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	38405	38512	-17.798437401000733	-	0	phrog=15473;top_hit=KY295897_p24;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	38570	38746	-22.15187194045816	-	0	phrog=5754;top_hit=KY295897_p23;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	38736	38954	-22.559331517151424	-	0	phrog=9214;top_hit=NC_019403_p16;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	38965	39648	-268435.01998601	-	0	phrog=6703;top_hit=KX279892_p10;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	39721	39882	-28.091538018456312	-	0	phrog=15806;top_hit=NC_019403_p14;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	39882	41870	-379120989681427.2	-	0	phrog=239;top_hit=NC_031029_p115;annotation=DNA primase/helicase;function=DNA, RNA and nucleotide metabolism
+EC23	PHANOTATE	CDS	41870	42088	-7.023118092328032	-	0	phrog=24605;top_hit=NC_029067_p7;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	42092	42220	-6.414749685462111	-	0	phrog=2490;top_hit=NC_011045_p6;annotation=hypothetical protein;function=unknown function
+EC23	PHANOTATE	CDS	42545	44680	-691500801930.0591	-	0	phrog=414;top_hit=NC_010106_p1;annotation=RNA polymerase;function=DNA, RNA and nucleotide metabolism
 ##FASTA
 >EC23
 GGTCAGCTACTGACTTCTCAGCCACGACCGCTACGTTGTGCGCATGGCGATATGATTTAG
