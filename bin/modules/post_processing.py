@@ -133,6 +133,19 @@ def create_txt(phanotate_mmseqs_df, length_df, out_dir):
     cds_count = len(phanotate_mmseqs_df[phanotate_mmseqs_df['Region'] == 'CDS'])
     trna_count = len(phanotate_mmseqs_df[phanotate_mmseqs_df['Region'] == 'tRNA'])
 
+    # get function
+    phanotate_mmseqs_df[['attributes2']] = phanotate_mmseqs_df[['attributes']]
+    phanotate_mmseqs_df[['attributes2','function']] = phanotate_mmseqs_df['attributes2'].str.split(';function=',expand=True)
+    phanotate_mmseqs_df = phanotate_mmseqs_df.drop(columns=['attributes2'])
+
+    # get counts of functions and cds 
+    regions = phanotate_mmseqs_df['Region'].value_counts()
+    functions = phanotate_mmseqs_df['function'].value_counts()
+
+    description_df = pd.concat([regions, functions])
+    description_df.to_csv(os.path.join(out_dir, "cds_functions.tsv"), sep="\t", index=False)
+    # save as tsv
+
     with open( os.path.join(out_dir, "phrokka_summary.txt"), 'w') as f:
         f.write('Contigs: ' + str(contig_count) + '\n')
         f.write('CDS: ' + str(cds_count) + '\n')
