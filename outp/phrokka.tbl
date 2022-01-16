@@ -1,8 +1,8 @@
 >EC23
 2	490	CDS
 			inference	PHANOTATE
-			inference	phrog=2166
-			product	N4-like RNA polymerase
+			inference	phrog=35936
+			product	hypothetical protein
 			transl_table	11
 554	1477	CDS
 			inference	PHANOTATE
@@ -226,7 +226,7 @@
 			transl_table	11
 32830	32919	CDS
 			inference	PHANOTATE
-			inference	phrog=38380
+			inference	phrog=36368
 			product	hypothetical protein
 			transl_table	11
 33078	33452	CDS
@@ -318,4 +318,130 @@
 			inference	PHANOTATE
 			inference	phrog=414
 			product	RNA polymerase
+			transl_table	11
+>Test_Contig
+2	490	CDS
+			inference	PHANOTATE
+			inference	phrog=35936
+			product	hypothetical protein
+			transl_table	11
+554	1477	CDS
+			inference	PHANOTATE
+			inference	phrog=4571
+			product	hypothetical protein
+			transl_table	11
+1539	1664	CDS
+			inference	PHANOTATE
+			inference	phrog=32237
+			product	hypothetical protein
+			transl_table	11
+1741	1854	CDS
+			inference	PHANOTATE
+			inference	phrog=11746
+			product	hypothetical protein
+			transl_table	11
+1857	2210	CDS
+			inference	PHANOTATE
+			inference	phrog=2568
+			product	ocr-like anti-restriction
+			transl_table	11
+2361	2471	CDS
+			inference	PHANOTATE
+			inference	phrog=23798
+			product	hypothetical protein
+			transl_table	11
+2494	2592	CDS
+			inference	PHANOTATE
+			inference	phrog=22753
+			product	hypothetical protein
+			transl_table	11
+2601	2825	CDS
+			inference	PHANOTATE
+			inference	phrog=6403
+			product	hypothetical protein
+			transl_table	11
+2825	3004	CDS
+			inference	PHANOTATE
+			inference	phrog=9275
+			product	hypothetical protein
+			transl_table	11
+3001	3096	CDS
+			inference	PHANOTATE
+			inference	phrog=2061
+			product	hypothetical protein
+			transl_table	11
+3122	3241	CDS
+			inference	PHANOTATE
+			inference	phrog=24157
+			product	hypothetical protein
+			transl_table	11
+3557	3664	CDS
+			inference	PHANOTATE
+			inference	phrog=23151
+			product	hypothetical protein
+			transl_table	11
+3710	3892	CDS
+			inference	PHANOTATE
+			inference	phrog=5849
+			product	hypothetical protein
+			transl_table	11
+3952	4101	CDS
+			inference	PHANOTATE
+			inference	phrog=22926
+			product	hypothetical protein
+			transl_table	11
+4185	4334	CDS
+			inference	PHANOTATE
+			inference	phrog=2423
+			product	hypothetical protein
+			transl_table	11
+4346	6058	CDS
+			inference	PHANOTATE
+			inference	phrog=2234
+			product	tail spike protein
+			transl_table	11
+6144	8042	CDS
+			inference	PHANOTATE
+			inference	phrog=14895
+			product	tail spike protein
+			transl_table	11
+8174	8371	CDS
+			inference	PHANOTATE
+			inference	phrog=8971
+			product	Rz-like spanin
+			transl_table	11
+8461	8610	CDS
+			inference	PHANOTATE
+			inference	phrog=4712
+			product	holin
+			transl_table	11
+8594	8725	CDS
+			inference	PHANOTATE
+			inference	phrog=1312
+			product	hypothetical protein
+			transl_table	11
+8719	9063	CDS
+			inference	PHANOTATE
+			inference	phrog=894
+			product	endolysin
+			transl_table	11
+9063	9752	CDS
+			inference	PHANOTATE
+			inference	phrog=32357
+			product	hypothetical protein
+			transl_table	11
+9754	10038	CDS
+			inference	PHANOTATE
+			inference	phrog=2725
+			product	acetyl-CoA acetyltransferase
+			transl_table	11
+10056	10337	CDS
+			inference	PHANOTATE
+			inference	phrog=2725
+			product	acetyl-CoA acetyltransferase
+			transl_table	11
+10495	11058	CDS
+			inference	PHANOTATE
+			inference	phrog=15524
+			product	terminase large subunit
 			transl_table	11
