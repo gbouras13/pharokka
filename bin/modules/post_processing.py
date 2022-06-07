@@ -32,9 +32,11 @@ def process_results(db_dir,out_dir):
     # automatically picks up the names
     phan_df = pd.read_csv(phan_file, sep="\t", index_col=False )
     phan_df['gene']=phan_df['gene'].astype(str)
+    print(tophits_df)
     tophits_df['gene']=tophits_df['gene'].astype(str)
     # merge top hit
     merged_df = phan_df.merge(tophits_df, on='gene', how='left')
+    print(merged_df)
     merged_df[['phrog','top_hit']] = merged_df['phrog'].str.split(' ## ',expand=True)
     merged_df["phrog"] = merged_df["phrog"].str.replace("phrog_", "")
     

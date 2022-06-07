@@ -8,7 +8,6 @@ import pandas as pd
 
 def run_phanotate(filepath_in, out_dir):
     print("Beginning Phanotate")
-    
     add_delim_to_fasta(filepath_in, out_dir)
 
     try:
@@ -29,14 +28,19 @@ def add_delim_to_fasta(filepath_in, out_dir):
 def tidy_phanotate_output(out_dir):
     phan_file = os.path.join(out_dir, "phanotate_out.txt")
     col_list = ["start", "stop", "frame", "contig", "score"] 
-    phan_df = pd.read_csv(phan_file, delimiter= '\t', index_col=False , names=col_list) 
+    phan_df = pd.read_csv(phan_file, delimiter= '\t', index_col=False , names=col_list, skiprows=2 ) 
     # get rid of the headers and reset the index
-    phan_df = phan_df[phan_df['start'] != '#id:']
-    phan_df = phan_df[phan_df['start'] != '#START'].reset_index(drop=True)
-    phan_df["gene"] = ""
+    #phan_df = phan_df[phan_df['start'] != '#id:']
+    # phan_df = phan_df[phan_df['start'] != '#START'].reset_index(drop=True)
+
     # to match with hmms
-    for index, row in phan_df.iterrows():
-        row["gene"] = row['contig'] + str(index) + " " + row['start'] + "_" + row['stop']
+    #phan_df["gene"] = ""
+    phan_df['gene'] = phan_df['contig'] + phan_df.index.astype(str) + " " + phan_df['start'].astype(str) + "_" + phan_df['stop'].astype(str)
+    print(phan_df)
+    # old code
+    # for index, row in phan_df.iterrows():
+    #    # print(row['contig'] + str(index) + " " + str(row['start']) + "_" + str(row['stop']))
+    #     row["gene"] = row['contig'] + str(index) + " " + str(row['start']) + "_" + str(row['stop'])
     phan_df.to_csv(os.path.join(out_dir,"cleaned_phanotate.tsv"), sep="\t", index=False)
     return phan_df
 
@@ -47,7 +51,7 @@ def translate_fastas(out_dir):
         i = 0 
         for dna_record in SeqIO.parse(os.path.join(out_dir, "phanotate_out.fasta"), 'fasta'): 
             dna_header = phan_df['contig'].iloc[i] + str(i) 
-            dna_description =   phan_df['start'].iloc[i] + "_" + phan_df['stop'].iloc[i]
+            dna_description =   phan_df['start'].iloc[i].astype(str) + "_" + phan_df['stop'].iloc[i].astype(str)
             aa_record = SeqRecord(dna_record.seq.translate(to_stop=True), id=dna_header, description = dna_description )
             SeqIO.write(aa_record, aa_fa, 'fasta')
             i += 1
@@ -103,7 +107,7 @@ def run_hmmer(db_dir, out_dir):
 
 def run_hmmsuite(db_dir, out_dir):
     print("Running hmmsuite")
-    hmmsuite_db_dir = os.path.join(db_dir, "phrogs_hhsuite_db/") 
+    hmmsuite_db_dir = os.path.join(db_dir, "phrogs_hhsuite_db/")
     amino_acid_fasta = "phanotate_aas.fasta"
     target_db_dir =  os.path.join(out_dir, "hhsuite_target_dir/") 
 

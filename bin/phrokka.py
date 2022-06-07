@@ -1,26 +1,35 @@
-#!/usr/bin/env python3
 import sys
 from modules import input_commands
 from modules import processes
 from modules import post_processing
 import os
 import subprocess as sp
+import logging
+
 
 
 if __name__ == "__main__":
     args = input_commands.get_input()
+    out_dir = input_commands.instantiate_dirs(args.outdir) # incase there is already an outdir
 
-    # the db dir
+    # start the log
+    logging.basicConfig(filename=out_dir+'/phrokka.log')
+    stderrLogger=logging.StreamHandler()
+    stderrLogger.setFormatter(logging.Formatter(logging.BASIC_FORMAT))
+    logging.getLogger().addHandler(stderrLogger)
+
+
+    input_commands.validate_fasta(args.infile)
+    processes.run_phanotate(args.infile, out_dir)
+    processes.translate_fastas(out_dir)
+    processes.run_trna_scan(args.infile, out_dir)
+
+    # set the db dir
     if args.database == "Default":
         DBDIR = os.path.join(os.path.dirname(__file__),'../',"databases/")  
     else:
         DBDIR = args.database
 
-    input_commands.validate_fasta(args.infile)
-    out_dir = input_commands.instantiate_dirs(args.outdir) # incase there is already an outdir
-    processes.run_phanotate(args.infile, out_dir)
-    processes.translate_fastas(out_dir)
-    processes.run_trna_scan(args.infile, out_dir)
     processes.run_mmseqs(DBDIR, out_dir)
     processes.run_hmmsuite(DBDIR, out_dir)
     phan_mmseq_merge_df = post_processing.process_results(DBDIR, out_dir)
@@ -28,11 +37,11 @@ if __name__ == "__main__":
     post_processing.create_gff(phan_mmseq_merge_df, length_df, args.infile, out_dir)
     post_processing.create_tbl(phan_mmseq_merge_df, length_df, out_dir)
     post_processing.create_txt(phan_mmseq_merge_df, length_df,out_dir)
-
     # delete tmp
     sp.call(["rm", "-rf", os.path.join(os.getcwd(), "tmp/") ])
-     
+    logging.info('phrokka has finished"')
     sys.exit("phrokka has finished")  
+    
 
 
 
