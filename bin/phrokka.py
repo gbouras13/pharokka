@@ -6,10 +6,16 @@ from modules import post_processing
 import os
 import subprocess as sp
 
-DBDIR = os.path.join(os.path.dirname(__file__),'../',"databases/")  
 
 if __name__ == "__main__":
     args = input_commands.get_input()
+
+    # the db dir
+    if args.database == "Default":
+        DBDIR = os.path.join(os.path.dirname(__file__),'../',"databases/")  
+    else:
+        DBDIR = args.database
+
     input_commands.validate_fasta(args.infile)
     out_dir = input_commands.instantiate_dirs(args.outdir) # incase there is already an outdir
     processes.run_phanotate(args.infile, out_dir)
