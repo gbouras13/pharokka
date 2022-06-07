@@ -11,9 +11,7 @@ source:
 
 requirements:
  run:
-  - python==3.9.7
-  - coverage==6.2
-  - biopython==1.79
+  - biopython==1.78
   - phanotate==1.5.0
   - mmseqs2==13.45111
   - trnascan-se==2.0.9
