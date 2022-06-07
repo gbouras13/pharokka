@@ -3,6 +3,8 @@
 
 from modules import databases
 import os
+import argparse
+from argparse import RawTextHelpFormatter
 
 def get_db_input():
 	usage = 'install_databases.py -d N -o "path/to/dir'
