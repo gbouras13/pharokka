@@ -39,8 +39,9 @@ if __name__ == "__main__":
     post_processing.create_txt(phan_mmseq_merge_df, length_df,out_dir)
     # delete tmp
     sp.call(["rm", "-rf", os.path.join(os.getcwd(), "tmp/") ])
-    logging.info('phrokka has finished"')
-    sys.exit("phrokka has finished")  
+    logging.info('phrokka has finished')
+    print("phrokka has finished")
+    #sys.exit("phrokka has finished")  
     
 
 
