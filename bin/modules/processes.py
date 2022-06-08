@@ -59,7 +59,7 @@ def translate_fastas(out_dir):
 def run_trna_scan(filepath_in, out_dir):
     print("Beginning tRNAscan-SE")
     try:
-        sp.call(["tRNAscan-SE", filepath_in, "-B", "-j",  os.path.join(out_dir, "trnascan_out.gff")])
+        sp.call(["tRNAscan-SE", filepath_in, "-B", "-Q", "-j",  os.path.join(out_dir, "trnascan_out.gff")])
     except:
         sys.stderr.write("Error: tRNAscan-SE not found\n")  
         return 0
