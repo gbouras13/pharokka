@@ -1,9 +1,9 @@
 import os
 from re import T
-import sys
 import subprocess as sp
 from Bio import SeqIO
-from Bio.SeqRecord import SeqRecord
+import random
+import string
 from Bio.SeqUtils import GC
 import pandas as pd
 import numpy as np
@@ -197,9 +197,12 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir):
     ixs = phanotate_mmseqs_df['frame'] == '-'
     # Where ixs is True, values are swapped
     phanotate_mmseqs_df.loc[ixs,cols] = phanotate_mmseqs_df.loc[ixs, cols].reindex(columns=cols[::-1]).values
+
+    # locus tag header 8 random letters
+    locus_t = ''.join(random.choice(string.ascii_uppercase) for _ in range(8))
     
     phanotate_mmseqs_df['phase'] = 0
-    phanotate_mmseqs_df['attributes'] = "phrog=" + phanotate_mmseqs_df["phrog"] + ";" + "top_hit=" + phanotate_mmseqs_df["top_hit"] + ";" + "annotation=" + phanotate_mmseqs_df["annot"] + ";" + "function=" + phanotate_mmseqs_df["category"]
+    phanotate_mmseqs_df['attributes'] = "ID=" + locus_t + "_" + phanotate_mmseqs_df.index.astype(str)  + ";" + "phrog=" + phanotate_mmseqs_df["phrog"] + ";" + "top_hit=" + phanotate_mmseqs_df["top_hit"] + ";" + "locus_tag=" + locus_t + "_" + phanotate_mmseqs_df.index.astype(str) + ";" + "function=" + phanotate_mmseqs_df["category"] + ";"  + "product=" + phanotate_mmseqs_df["annot"]
 
     # get gff dataframe in correct order 
     gff_df = phanotate_mmseqs_df[["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]]
@@ -249,24 +252,24 @@ def create_tbl(phanotate_mmseqs_df, length_df, out_dir):
         trna_df[['anticodon','rest']] = trna_df['anticodon'].str.split(';gene_biotype',expand=True)
         trna_df['trna_product']='tRNA-'+trna_df['isotypes']+"("+trna_df['anticodon']+")"
 
-    with open( os.path.join(out_dir, "phrokka.tbl"), 'w') as f:
-        for index, row in length_df.iterrows():
-            contig = row['contig']
-            f.write('>' + contig + '\n')
-            subset_df = phanotate_mmseqs_df[phanotate_mmseqs_df['contig'] == contig]
-            for index, row in subset_df.iterrows():
-                f.write(str(row['start']) + "\t" + str(row['stop']) + "\t" + row['Region'] + "\n")
-                f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "PHANOTATE\n")
-                f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "phrog=" + str(row['phrog']) + "\n")
-                f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ str(row['annot']) + "\n")
-                f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
-            if empty == False:
-                subset_trna_df = trna_df[trna_df['contig'] == contig]
-                for index, row in subset_trna_df.iterrows():
-                    f.write(str(row['start']) + "\t" + str(row['stop']) + "\t" + row['Region'] + "\n")
-                    f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "tRNAscan-SE")
-                    f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ str(row['trna_product']) + "\n")
-                    f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
+    # with open( os.path.join(out_dir, "phrokka.tbl"), 'w') as f:
+    #     for index, row in length_df.iterrows():
+    #         contig = row['contig']
+    #         f.write('>' + contig + '\n')
+    #         subset_df = phanotate_mmseqs_df[phanotate_mmseqs_df['contig'] == contig]
+    #         for index, row in subset_df.iterrows():
+    #             f.write(str(row['start']) + "\t" + str(row['stop']) + "\t" + row['Region'] + "\n")
+    #             f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "PHANOTATE\n")
+    #             f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "phrog=" + str(row['phrog']) + "\n")
+    #             f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ str(row['annot']) + "\n")
+    #             f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
+    #         if empty == False:
+    #             subset_trna_df = trna_df[trna_df['contig'] == contig]
+    #             for index, row in subset_trna_df.iterrows():
+    #                 f.write(str(row['start']) + "\t" + str(row['stop']) + "\t" + row['Region'] + "\n")
+    #                 f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "tRNAscan-SE")
+    #                 f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ str(row['trna_product']) + "\n")
+    #                 f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
 
 
 
