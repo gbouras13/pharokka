@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import sys
 from modules import input_commands
 from modules import processes
