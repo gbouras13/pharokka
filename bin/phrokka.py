@@ -11,7 +11,7 @@ import logging
 
 if __name__ == "__main__":
     args = input_commands.get_input()
-    out_dir = input_commands.instantiate_dirs(args.outdir) # incase there is already an outdir
+    out_dir = input_commands.instantiate_dirs(args.outdir, args.force) # incase there is already an outdir
 
     # start the log
     logging.basicConfig(filename=out_dir+'/phrokka.log')
