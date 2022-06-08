@@ -71,6 +71,7 @@ def run_mmseqs(db_dir, out_dir):
     mmseqs_dir = os.path.join(out_dir, "mmseqs/")
     amino_acid_fasta = "phanotate_aas.fasta"
     target_db_dir =  os.path.join(out_dir, "target_dir/") 
+    tmp_dir = os.path.join(out_dir, "tmp_dir/") 
 
     # make dir for target db
     if os.path.isdir(target_db_dir) == False:
@@ -79,7 +80,7 @@ def run_mmseqs(db_dir, out_dir):
     # creates db for input
     sp.call(["mmseqs", "createdb", os.path.join(out_dir, amino_acid_fasta), os.path.join(target_db_dir, "target_seqs")])
     # runs the seacr
-    sp.call(["mmseqs", "search", os.path.join(phrog_db_dir, "phrogs_profile_db"), os.path.join(target_db_dir, "target_seqs"), os.path.join(mmseqs_dir, "results_mmseqs"), "./tmp", "-s", "8.5"])
+    sp.call(["mmseqs", "search", os.path.join(phrog_db_dir, "phrogs_profile_db"), os.path.join(target_db_dir, "target_seqs"), os.path.join(mmseqs_dir, "results_mmseqs"), tmp_dir, "-s", "8.5"])
     sp.call(["mmseqs", "createtsv", os.path.join(phrog_db_dir, "phrogs_profile_db"), os.path.join(target_db_dir, "target_seqs"), os.path.join(mmseqs_dir, "results_mmseqs"), 
     os.path.join(out_dir,"mmseqs_results.tsv"), "--full-header"])
     # remove the target dir when finished 
