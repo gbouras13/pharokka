@@ -1,6 +1,6 @@
 The easiest way to install phrokka is via conda using
 
-`conda install phrokka -c gbouras13 -c bioconda -c conda-forge`
+`conda install phrokka -c gbouras13`
 
 This will install all the dependencies along with phrokka.
 
@@ -20,5 +20,9 @@ git clone https://github.com/gbouras13/phrokka.git
 
 Before running phrokka, the PHROGs database needs to be downloaded using
 
-`install_databases.py`
+`install_databases.py -d Y`
 
+
+If you would like to specify a different database directory, that can be achieved as follows:
+
+`install_databases.py -d N -o "<path/to/databse_dir>`

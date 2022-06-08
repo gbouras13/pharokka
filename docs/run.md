@@ -2,4 +2,12 @@ Once `install_databases.py` has been run, phrokka requires an input fasta file. 
 
 You can run phrokka using the following command:
 
-`python phrokka.py -i <fast filea> -o <output folder>`
+`phrokka.py -i <fasta file> -o <output folder>`
+
+To specify a different database directory:
+
+`phrokka.py -i <fasta file> -o <output folder> -d <path/to/databse_dir>`
+
+To overwrite an existing output directory, use -f
+
+`phrokka.py -i <fasta file> -o <output folder> -f`
