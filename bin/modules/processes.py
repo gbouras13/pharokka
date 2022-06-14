@@ -41,7 +41,6 @@ def tidy_phanotate_output(out_dir):
     # to match with hmms
     #phan_df["gene"] = ""
     phan_df['gene'] = phan_df['contig'] + phan_df.index.astype(str) + " " + phan_df['start'].astype(str) + "_" + phan_df['stop'].astype(str)
-    print(phan_df)
     # old code
     # for index, row in phan_df.iterrows():
     #    # print(row['contig'] + str(index) + " " + str(row['start']) + "_" + str(row['stop']))

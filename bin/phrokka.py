@@ -29,8 +29,15 @@ if __name__ == "__main__":
     post_processing.create_gff(phan_mmseq_merge_df, length_df, args.infile, out_dir)
     post_processing.create_tbl(phan_mmseq_merge_df, length_df, out_dir)
     post_processing.create_txt(phan_mmseq_merge_df, length_df,out_dir)
-    # delete tmp
-    sp.call(["rm", "-rf", os.path.join(os.getcwd(), "tmp/") ])
+    # delete tmp files
+    sp.run(["rm", "-rf", os.path.join(os.getcwd(), "target_dir") ])
+    sp.run(["rm", "-rf", os.path.join(os.getcwd(), "tmp_dir/") ])
+    sp.run(["rm", "-rf", os.path.join(os.getcwd(), "mmseqs/") ])
+    sp.run(["rm", "-rf", os.path.join(os.getcwd(), "cleaned_phanotate.tsv") ])
+    sp.run(["rm", "-rf", os.path.join(os.getcwd(), "input_fasta_delim.fasta") ])
+    sp.run(["rm", "-rf", os.path.join(os.getcwd(), "mmseqs_results.tsv") ])
+    sp.run(["rm", "-rf", os.path.join(os.getcwd(), "top_hits_hhsuite.tsv") ])
+    sp.run(["rm", "-rf", os.path.join(os.getcwd(), "top_hits_mmseqs.tsv") ])
     print("phrokka has finished")
     #sys.exit("phrokka has finished")  
     
