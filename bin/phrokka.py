@@ -38,9 +38,11 @@ if __name__ == "__main__":
     sp.run(["rm", "-rf", os.path.join(out_dir, "mmseqs_results.tsv") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "top_hits_hhsuite.tsv") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "top_hits_mmseqs.tsv") ])
+    sp.run(["rm", "-rf", os.path.join(out_dir, "hhsuite_target_dir") ])
     print("phrokka has finished")
-    #sys.exit("phrokka has finished")  
+
     
+
 
 
 
