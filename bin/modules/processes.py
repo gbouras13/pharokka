@@ -8,7 +8,7 @@ import pandas as pd
 
 def run_phanotate(filepath_in, out_dir):
     print("Beginning Phanotate")
-    add_delim_to_fasta(filepath_in, out_dir)
+    add_delim_trim_fasta(filepath_in, out_dir)
 
     try:
         sp.run([ "phanotate.py", os.path.join(out_dir, "input_fasta_delim.fasta"), "-o", os.path.join(out_dir, "phanotate_out.fasta"), "-f", "fasta"], check=True) # , stderr=sp.DEVNULL, stdout=sp.DEVNULL silence the warnings (no trnaScan)
@@ -16,10 +16,15 @@ def run_phanotate(filepath_in, out_dir):
     except:
         sys.exit("Error: phanotate not found\n")  
 
-def add_delim_to_fasta(filepath_in, out_dir):
+def add_delim_trim_fasta(filepath_in, out_dir):
     with open(os.path.join(out_dir, "input_fasta_delim.fasta"), 'w') as na_fa:
         for dna_record in SeqIO.parse(filepath_in, 'fasta'): 
-            dna_header = dna_record.id + str("delimiter") 
+            # trim to first 26 chars of fasta header if too long
+            if len(dna_record.id) > 26:
+                print("Trimming fasta headers to the first 26 characters.")
+                dna_record.id = dna_record.id[0:25]
+            # add delim
+            dna_header = dna_record.id + str("delim") 
             dna_description = ""
             dna_record = SeqRecord(dna_record.seq, id=dna_header, description = dna_description)
             SeqIO.write(dna_record, na_fa, 'fasta')

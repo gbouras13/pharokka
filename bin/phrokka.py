@@ -5,8 +5,6 @@ from modules import processes
 from modules import post_processing
 import os
 import subprocess as sp
-import logging
-
 
 
 if __name__ == "__main__":
