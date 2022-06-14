@@ -6,10 +6,10 @@ You can run phrokka using the following command:
 
 To specify a different database directory from the default:
 
-`phrokka.py -i <fasta file> -o <output folder> -d <path/to/databse_dir> -t <threads>`
+`phrokka.py -i <fasta file> -o <output folder> -d <path/to/databse_dir> -t <threads> `
 
 To overwrite an existing output directory, use -f
 
-`phrokka.py -i <fasta file> -o <output folder> -t <threads>  -f`
+`phrokka.py -i <fasta file> -o <output folder> -d <path/to/databse_dir> -t <threads>  -f`
 
-phrokka defaults to 1 thread.
+Phrokka defaults to 1 thread.
