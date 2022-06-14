@@ -16,6 +16,7 @@ def get_input():
 	parser.add_argument('-i', '--infile', action="store", help='input file in fasta format',  required=True)
 	parser.add_argument('-o', '--outdir', action="store", help='where to write the output', default=os.path.join(os.getcwd(), "output/") )
 	parser.add_argument('-d', '--database', action="store", help='database directory. If the databases have been install in the default directory, this is not required. Otherwise specify the path',  default='Default')
+	parser.add_argument('-t', '--threads', help="Number of threads for mmseqs and hhsuite. Defaults to 1.", action="store", default = 1)
 	parser.add_argument('-f', '--force', help="Overwrites the output directory", action="store_true" )
 	parser.add_argument('-V', '--version', action='version', version=v)
 	args = parser.parse_args()

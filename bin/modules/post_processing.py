@@ -252,24 +252,24 @@ def create_tbl(phanotate_mmseqs_df, length_df, out_dir):
         trna_df[['anticodon','rest']] = trna_df['anticodon'].str.split(';gene_biotype',expand=True)
         trna_df['trna_product']='tRNA-'+trna_df['isotypes']+"("+trna_df['anticodon']+")"
 
-    # with open( os.path.join(out_dir, "phrokka.tbl"), 'w') as f:
-    #     for index, row in length_df.iterrows():
-    #         contig = row['contig']
-    #         f.write('>' + contig + '\n')
-    #         subset_df = phanotate_mmseqs_df[phanotate_mmseqs_df['contig'] == contig]
-    #         for index, row in subset_df.iterrows():
-    #             f.write(str(row['start']) + "\t" + str(row['stop']) + "\t" + row['Region'] + "\n")
-    #             f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "PHANOTATE\n")
-    #             f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "phrog=" + str(row['phrog']) + "\n")
-    #             f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ str(row['annot']) + "\n")
-    #             f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
-    #         if empty == False:
-    #             subset_trna_df = trna_df[trna_df['contig'] == contig]
-    #             for index, row in subset_trna_df.iterrows():
-    #                 f.write(str(row['start']) + "\t" + str(row['stop']) + "\t" + row['Region'] + "\n")
-    #                 f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "tRNAscan-SE")
-    #                 f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ str(row['trna_product']) + "\n")
-    #                 f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
+    with open( os.path.join(out_dir, "phrokka.tbl"), 'w') as f:
+        for index, row in length_df.iterrows():
+            contig = row['contig']
+            f.write('>' + contig + '\n')
+            subset_df = phanotate_mmseqs_df[phanotate_mmseqs_df['contig'] == contig]
+            for index, row in subset_df.iterrows():
+                f.write(str(row['start']) + "\t" + str(row['stop']) + "\t" + row['Region'] + "\n")
+                f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "PHANOTATE\n")
+                f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "phrog=" + str(row['phrog']) + "\n")
+                f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ str(row['annot']) + "\n")
+                f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
+            if empty == False:
+                subset_trna_df = trna_df[trna_df['contig'] == contig]
+                for index, row in subset_trna_df.iterrows():
+                    f.write(str(row['start']) + "\t" + str(row['stop']) + "\t" + row['Region'] + "\n")
+                    f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "tRNAscan-SE")
+                    f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ str(row['trna_product']) + "\n")
+                    f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
 
 
 

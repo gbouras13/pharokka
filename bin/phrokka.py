@@ -13,13 +13,6 @@ if __name__ == "__main__":
     args = input_commands.get_input()
     out_dir = input_commands.instantiate_dirs(args.outdir, args.force) # incase there is already an outdir
 
-    # start the log
-    logging.basicConfig(filename=out_dir+'/phrokka.log')
-    stderrLogger=logging.StreamHandler()
-    stderrLogger.setFormatter(logging.Formatter(logging.BASIC_FORMAT))
-    logging.getLogger().addHandler(stderrLogger)
-
-
     input_commands.validate_fasta(args.infile)
     processes.run_phanotate(args.infile, out_dir)
     processes.translate_fastas(out_dir)
@@ -31,8 +24,8 @@ if __name__ == "__main__":
     else:
         DBDIR = args.database
 
-    processes.run_mmseqs(DBDIR, out_dir)
-    processes.run_hmmsuite(DBDIR, out_dir)
+    processes.run_mmseqs(DBDIR, out_dir, args.threads)
+    processes.run_hmmsuite(DBDIR, out_dir, args.threads)
     phan_mmseq_merge_df = post_processing.process_results(DBDIR, out_dir)
     length_df = post_processing.get_contig_name_lengths(args.infile, out_dir)
     post_processing.create_gff(phan_mmseq_merge_df, length_df, args.infile, out_dir)
@@ -40,7 +33,6 @@ if __name__ == "__main__":
     post_processing.create_txt(phan_mmseq_merge_df, length_df,out_dir)
     # delete tmp
     sp.call(["rm", "-rf", os.path.join(os.getcwd(), "tmp/") ])
-    logging.info('phrokka has finished')
     print("phrokka has finished")
     #sys.exit("phrokka has finished")  
     
