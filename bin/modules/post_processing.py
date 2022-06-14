@@ -72,7 +72,7 @@ def process_results(db_dir,out_dir):
     tophits_hmm__df = pd.DataFrame(tophits, columns=['phrog_hmm', 'gene_hmm', 'alnScore_hmm', 'seqIdentity_hmm', 'eVal_hmm'])
 
     # filter from 0 to end for savings
-    tophits_hmm__df[['spl','ind']] = tophits_hmm__df['gene_hmm'].str.split('delimiter',expand=True)
+    tophits_hmm__df[['spl','ind']] = tophits_hmm__df['gene_hmm'].str.split('delim',expand=True)
     tophits_hmm__df[['ind']] = tophits_hmm__df[['ind']].astype(int)
     tophits_hmm__df = tophits_hmm__df.sort_values(by=['ind']).drop(columns = ['spl', 'ind'])
     tophits_hmm__df.to_csv(os.path.join(out_dir, "top_hits_hhsuite.tsv"), sep="\t", index=False)
@@ -104,9 +104,9 @@ def process_results(db_dir,out_dir):
     merged_df["annot"] = merged_df["annot"].replace(np.nan, 'hypothetical protein', regex=True)
 
     # get rid of "delimiter"
-    merged_df["contig"] = merged_df["contig"].str.replace("delimiter", "")
-    merged_df["gene"] = merged_df["gene"].str.replace("delimiter", "_")
-    merged_df["gene_hmm"] = merged_df["gene_hmm"].str.replace("delimiter", "_")
+    merged_df["contig"] = merged_df["contig"].str.replace("delim", "")
+    merged_df["gene"] = merged_df["gene"].str.replace("delim", "_")
+    merged_df["gene_hmm"] = merged_df["gene_hmm"].str.replace("delim", "_")
 
     merged_df.to_csv( os.path.join(out_dir, "final_merged_output.tsv"), sep="\t", index=False)
     
