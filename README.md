@@ -40,7 +40,7 @@ If you would like to specify a different database directory, that can be achieve
 
 Once the databases have finished downloading, run phrokka
 
-`phrokka.py -i <fasta file> -o <output folder> -t <threads> `
+`phrokka.py -i <fasta file> -o <output folder> -t <threads>`
 
 To specify a different database directory:
 
