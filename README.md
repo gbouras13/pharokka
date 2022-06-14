@@ -40,12 +40,14 @@ If you would like to specify a different database directory, that can be achieve
 
 Once the databases have finished downloading, run phrokka
 
-`phrokka.py -i <fasta file> -o <output folder>`
+`phrokka.py -i <fasta file> -o <output folder> -t <threads> `
 
 To specify a different database directory:
 
-`phrokka.py -i <fasta file> -o <output folder> -d <path/to/databse_dir>`
+`phrokka.py -i <fasta file> -o <output folder> -d <path/to/databse_dir> -t <threads> `
 
 To overwrite an existing output directory, use -f
 
-`phrokka.py -i <fasta file> -o <output folder> -f`
+`phrokka.py -i <fasta file> -o <output folder> -t <threads>  -f`
+
+Phrokka defaults to 1 thread.
