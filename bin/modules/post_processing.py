@@ -242,8 +242,8 @@ def create_tbl(phanotate_mmseqs_df, length_df, out_dir):
         empty = True
     if empty == False:    
         trna_df = pd.read_csv(os.path.join(out_dir, "trnascan_out.gff"), delimiter= '\t', index_col=False, names=col_list ) 
-        # keep only trnas
-        trna_df = trna_df[trna_df['Region'] == 'tRNA']
+        # keep only trnas and pseudogenes 
+        trna_df = trna_df[(trna_df['Region'] == 'tRNA') | (trna_df['Region'] == 'pseudogene')]
         trna_df.start = trna_df.start.astype(int)
         trna_df.stop = trna_df.stop.astype(int)
 
