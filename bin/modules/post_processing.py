@@ -131,10 +131,10 @@ def get_contig_name_lengths(fasta_input, out_dir):
 
 def create_txt(phanotate_mmseqs_df, length_df, out_dir):
     contig_count = len(length_df)
-    with open( os.path.join(out_dir, "phrokka_summary.txt"), 'w') as f:
-            f.write('Total Number of Contigs: ' + str(contig_count) + '\n')
-            f.write('------------------------------------\n\n')
-            f.close()   
+    # with open( os.path.join(out_dir, "phrokka_summary.txt"), 'w') as f:
+    #         f.write('Total Number of Contigs: ' + str(contig_count) + '\n')
+    #         f.write('------------------------------------\n\n')
+    #         f.close()   
 
     contigs = length_df["contig"]
     description_list = []
@@ -147,6 +147,8 @@ def create_txt(phanotate_mmseqs_df, length_df, out_dir):
         phanotate_mmseqs_df_cont[['attributes2']] = phanotate_mmseqs_df_cont[['attributes']]
         phanotate_mmseqs_df_cont[['attributes2','function']] = phanotate_mmseqs_df_cont['attributes2'].str.split(';function=',expand=True)
         phanotate_mmseqs_df_cont = phanotate_mmseqs_df_cont.drop(columns=['attributes2'])
+        phanotate_mmseqs_df_cont[['function','product']] = phanotate_mmseqs_df_cont['function'].str.split(';product=',expand=True)
+        phanotate_mmseqs_df_cont = phanotate_mmseqs_df_cont.drop(columns=['product'])
         # get counts of functions and cds 
         regions = phanotate_mmseqs_df_cont['Region'].value_counts()
         functions = phanotate_mmseqs_df_cont['function'].value_counts()
