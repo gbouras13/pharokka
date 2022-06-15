@@ -22,13 +22,19 @@ if __name__ == "__main__":
     else:
         DBDIR = args.database
 
+    # set the prefix
+    if args.prefix == "Default":
+        prefix = "phrokka"
+    else:
+        prefix = args.prefix
+
     processes.run_mmseqs(DBDIR, out_dir, args.threads)
     processes.run_hmmsuite(DBDIR, out_dir, args.threads)
-    phan_mmseq_merge_df = post_processing.process_results(DBDIR, out_dir)
-    length_df = post_processing.get_contig_name_lengths(args.infile, out_dir)
-    post_processing.create_gff(phan_mmseq_merge_df, length_df, args.infile, out_dir)
-    post_processing.create_tbl(phan_mmseq_merge_df, length_df, out_dir)
-    post_processing.create_txt(phan_mmseq_merge_df, length_df,out_dir)
+    phan_mmseq_merge_df = post_processing.process_results(DBDIR, out_dir, prefix)
+    length_df = post_processing.get_contig_name_lengths(args.infile, out_dir, prefix)
+    post_processing.create_gff(phan_mmseq_merge_df, length_df, args.infile, out_dir, prefix)
+    post_processing.create_tbl(phan_mmseq_merge_df, length_df, out_dir, prefix)
+    post_processing.create_txt(phan_mmseq_merge_df, length_df,out_dir, prefix)
     # delete tmp files
     sp.run(["rm", "-rf", os.path.join(out_dir, "target_dir") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "tmp_dir/") ])
@@ -39,6 +45,8 @@ if __name__ == "__main__":
     sp.run(["rm", "-rf", os.path.join(out_dir, "top_hits_hhsuite.tsv") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "top_hits_mmseqs.tsv") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "hhsuite_target_dir") ])
+    sp.run(["rm", "-rf", os.path.join(out_dir, "phanotate_out.txt") ])
+    sp.run(["rm", "-rf", os.path.join(out_dir, "trnascan_out.gff") ])
     print("phrokka has finished")
 
     
