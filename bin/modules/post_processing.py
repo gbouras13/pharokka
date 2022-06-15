@@ -9,7 +9,7 @@ import pandas as pd
 import numpy as np
 pd.options.mode.chained_assignment = None
 
-def process_results(db_dir,out_dir):
+def process_results(db_dir,out_dir, prefix):
 
     ##mmseqs
 
@@ -108,11 +108,11 @@ def process_results(db_dir,out_dir):
     merged_df["gene"] = merged_df["gene"].str.replace("delim", "_")
     merged_df["gene_hmm"] = merged_df["gene_hmm"].str.replace("delim", "_")
 
-    merged_df.to_csv( os.path.join(out_dir, "final_merged_output.tsv"), sep="\t", index=False)
+    merged_df.to_csv( os.path.join(out_dir, prefix + "_final_merged_output.tsv"), sep="\t", index=False)
     
     return merged_df
 
-def get_contig_name_lengths(fasta_input, out_dir):
+def get_contig_name_lengths(fasta_input, out_dir, prefix):
     fasta_sequences = SeqIO.parse(open(fasta_input),'fasta')
     contig_names = []
     lengths = []
@@ -126,10 +126,10 @@ def get_contig_name_lengths(fasta_input, out_dir):
      'length': lengths,
      'gc_perc': gc,
     })
-    length_df.to_csv(os.path.join(out_dir, "length_gc.tsv"), sep="\t", index=False)
+    length_df.to_csv(os.path.join(out_dir, prefix + "_length_gc.tsv"), sep="\t", index=False)
     return(length_df)
 
-def create_txt(phanotate_mmseqs_df, length_df, out_dir):
+def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix):
     contig_count = len(length_df)
     # with open( os.path.join(out_dir, "phrokka_summary.txt"), 'w') as f:
     #         f.write('Total Number of Contigs: ' + str(contig_count) + '\n')
@@ -180,14 +180,14 @@ def create_txt(phanotate_mmseqs_df, length_df, out_dir):
 
     #description_df = description_df.drop(index=description_df.index[0], axis=0, inplace=True)
     description_total_df = pd.concat(description_list)
-    description_total_df.to_csv(os.path.join(out_dir, "cds_functions.tsv"), sep="\t", index=False)
+    description_total_df.to_csv(os.path.join(out_dir, prefix + "_cds_functions.tsv"), sep="\t", index=False)
 
     # save as tsv
 
   
-def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir):
+def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix):
     # write the headers of the gff file
-    with open(os.path.join(out_dir, "phrokka.gff"), 'w') as f:
+    with open(os.path.join(out_dir, prefix + ".gff"), 'w') as f:
         f.write('##gff-version 3\n')
         for index, row in length_df.iterrows():
             f.write('##sequence-region ' + row['contig'] + ' 1 ' + str(row['length']) +'\n')
@@ -208,7 +208,7 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir):
     # get gff dataframe in correct order 
     gff_df = phanotate_mmseqs_df[["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]]
 
-    with open(os.path.join(out_dir, "phrokka.gff"), 'a') as f:
+    with open(os.path.join(out_dir, prefix + ".gff"), 'a') as f:
         gff_df.to_csv(f, sep="\t", index=False, header=False)
 
       
@@ -220,19 +220,19 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir):
     trna_df = trna_df[(trna_df['Region'] == 'tRNA') | (trna_df['Region'] == 'pseudogene')]
     trna_df.start = trna_df.start.astype(int)
     trna_df.stop = trna_df.stop.astype(int)
-    with open(os.path.join(out_dir, "phrokka.gff"), 'a') as f:
+    with open(os.path.join(out_dir, prefix + ".gff"), 'a') as f:
         trna_df.to_csv(f, sep="\t", index=False, header=False)
 
 
     # write fasta on the end 
 
     ##FASTA
-    with open(os.path.join(out_dir, "phrokka.gff"), 'a') as f:
+    with open(os.path.join(out_dir, prefix + ".gff"), 'a') as f:
         f.write('##FASTA\n')
         fasta_sequences = SeqIO.parse(open(fasta_input),'fasta')
         SeqIO.write(fasta_sequences, f, "fasta")
 
-def create_tbl(phanotate_mmseqs_df, length_df, out_dir):
+def create_tbl(phanotate_mmseqs_df, length_df, out_dir, prefix):
 
     ### readtrnas
 
@@ -253,7 +253,7 @@ def create_tbl(phanotate_mmseqs_df, length_df, out_dir):
         trna_df[['anticodon','rest']] = trna_df['anticodon'].str.split(';gene_biotype',expand=True)
         trna_df['trna_product']='tRNA-'+trna_df['isotypes']+"("+trna_df['anticodon']+")"
 
-    with open( os.path.join(out_dir, "phrokka.tbl"), 'w') as f:
+    with open( os.path.join(out_dir, prefix + ".tbl"), 'w') as f:
         for index, row in length_df.iterrows():
             contig = row['contig']
             f.write('>' + contig + '\n')
