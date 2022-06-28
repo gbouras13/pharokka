@@ -6,7 +6,7 @@ This will install all the dependencies along with pharokka.
 
 Alternatively, pharokka can be installed manually via github
 
-`git clone https://github.com/gbouras13/pharokka.git`
+`git clone [https://github.com/gbouras13/pharokka.git](https://github.com/gbouras13/pharokka.git)`
 
 The dependencies found in other_files/requirements.yaml will then need to be installed manually.
 
@@ -15,7 +15,7 @@ For example using conda:
 ```
 conda env create -f environment.yml
 conda activate pharokka_env
-git clone https://github.com/gbouras13/pharokka.git
+git clone [https://github.com/gbouras13/pharokka.git](https://github.com/gbouras13/pharokka.git)
 cd pharokka
 ```
 
@@ -30,6 +30,6 @@ If you would like to specify a different database directory, that can be achieve
 
 If you have trouble downloading the databases using install_databases.py, they can be manually downloaded from the PHROGs website and placed in a directory of your choice:
 
-* https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_mmseqs_db.tar.gz
-* https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_hhsuite_db.tar.gz
-* https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v3.tsv.
+* [https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_mmseqs_db.tar.gz](https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_mmseqs_db.tar.gz)
+* [https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_hhsuite_db.tar.gz](https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_hhsuite_db.tar.gz)
+* [https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v3.tsv](https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v3.tsv).
