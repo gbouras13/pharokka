@@ -1,25 +1,25 @@
-The easiest way to install phrokka is via conda using
+The easiest way to install pharokka is via conda using
 
-`conda install phrokka -c gbouras13`
+`conda install pharokka -c gbouras13`
 
-This will install all the dependencies along with phrokka.
+This will install all the dependencies along with pharokka.
 
-Alternatively, phrokka can be installed manually via github
+Alternatively, pharokka can be installed manually via github
 
-`git clone https://github.com/gbouras13/phrokka.git`
+`git clone https://github.com/gbouras13/pharokka.git`
 
 The dependencies found in other_files/requirements.yaml will then need to be installed manually.
 
 For example using conda:
 
 ```
-cd phrokka
+cd pharokka
 conda env create -f environment.yml
-conda activate phrokka_env
-git clone https://github.com/gbouras13/phrokka.git
+conda activate pharokka_env
+git clone https://github.com/gbouras13/pharokka.git
 ```
 
-Before running phrokka, the PHROGs database needs to be downloaded using
+Before running pharokka, the PHROGs database needs to be downloaded using
 
 `install_databases.py -d Y`
 
