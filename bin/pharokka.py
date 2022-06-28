@@ -24,7 +24,7 @@ if __name__ == "__main__":
 
     # set the prefix
     if args.prefix == "Default":
-        prefix = "phrokka"
+        prefix = "pharokka"
     else:
         prefix = args.prefix
 
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     sp.run(["rm", "-rf", os.path.join(out_dir, "hhsuite_target_dir") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "phanotate_out.txt") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "trnascan_out.gff") ])
-    print("phrokka has finished")
+    print("pharokka has finished")
 
     
 

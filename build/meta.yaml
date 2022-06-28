@@ -1,5 +1,5 @@
 package:
-  name: "phrokka"
+  name: "pharokka"
   version: "0.1.1"
 
 build:
@@ -7,7 +7,7 @@ build:
   noarch: generic
 
 source:
-  git_url: https://github.com/gbouras13/phrokka
+  git_url: https://github.com/gbouras13/pharokka
 
 requirements:
  run:
@@ -18,10 +18,10 @@ requirements:
   - hhsuite==3.3.0
 
 about:
-  home: https://github.com/gbouras13/phrokka
+  home: https://github.com/gbouras13/pharokka
   license: MIT
   license_familY: MIT
-  summary: "Quick Phage annotations"
+  summary: "Fast Phage annotations"
 
 extra:
   recipe-maintainers:

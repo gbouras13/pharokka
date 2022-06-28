@@ -1,5 +1,5 @@
-site_name: phrokka
-site_url: "https://github.com/gbouras13/phrokka"
+site_name: pharokka
+site_url: "https://github.com/gbouras13/pharokka"
 theme:
     name: readthedocs
     highlightjs: true
