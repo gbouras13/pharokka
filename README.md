@@ -84,4 +84,4 @@ pharokka has been tested on Linux and MacOS (M1 and Intel).
 
 Time
 --------
-On a standard 16GB laptop specifying 8 threads, pharokka should take between 5-20 minutes, depending on the size.
+On a standard 16GB laptop specifying 8 threads, pharokka should take between 5-20 minutes, depending on the genome size.
