@@ -85,3 +85,12 @@ pharokka has been tested on Linux and MacOS (M1 and Intel).
 Time
 --------
 On a standard 16GB laptop specifying 8 threads, pharokka should take between 5-20 minutes, depending on the genome size.
+
+Citation
+--------
+If you use pharokka, please also cite:
+
+* PHANOTATE (McNair K., Zhou C., Dinsdale E.A., Souza B., Edwards R.A. (2019) "PHANOTATE: a novel approach to gene identification in phage genomes", Bioinformatics, https://doi.org/10.1093/bioinformatics/btz26).
+* tRNAscan-SE: Chan, P.P., Lin, B.Y., Mak, A.J. and Lowe, T.M. (2021) "tRNAscan-SE 2.0: improved detection and functional classification of transfer RNA genes", Nucleic Acids Res., https://doi.org/10.1093/nar/gkab688.
+* Steinegger M. and Soeding J. (2017), "MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets", Nature Biotechnology (https://doi.org/10.1038/nbt.3988).
+* Steinegger M, Meier M, Mirdita M, Vöhringer H, Haunsberger S J, and Söding J (2019), "HH-suite3 for fast remote homology detection and deep protein annotation", BMC Bioinformatics, (https://doi.org/10.1186/s12859-019-3019-7).

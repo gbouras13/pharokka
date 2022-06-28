@@ -14,8 +14,8 @@ Other Files
 
 * A `_length_gc.tsv` file, which outputs the phage's length and GC percentage.
 
-* A `_final_merged_output.tsv`, which gives the full output from mmseqs2 and hhmsuite. In particular, the 'match_type' column shows whether mmseqs2 or hmmsuite was used to conduct the match. In general, mmseqs2 identifies most CDSs, while small (80-200bp) hypothetical proteins are identified using hhmsuite matching the closest PHROG. pharokka should be used as a rough guide only in these cases.
+* A `_final_merged_output.tsv`, which gives the full output from mmseqs2 and hh-suite. In particular, the 'match_type' column shows whether mmseqs2 or hh-suite was used to conduct the match. In general, mmseqs2 identifies most CDSs, while small (80-200bp) hypothetical proteins are identified using hh-suite matching the closest PHROG. pharokka should be used as a rough guide only in these cases.
 
-* Further, the 'score' column contains the PHANOTATE score for each CDS. In general, the closer the score to 0, the smaller the CDS and the more likely that a PHRO will not be identified by mmseqs2.
+* Further, the 'score' column contains the PHANOTATE score for each CDS. In general, the closer the score to 0, the smaller the CDS and the more likely that a PHROG will not be identified by mmseqs2.
 
 * For more information about PHROGs please consult the website https://phrogs.lmge.uca.fr and paper https://doi.org/10.1093/nargab/lqab067.
