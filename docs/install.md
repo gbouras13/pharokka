@@ -13,10 +13,10 @@ The dependencies found in other_files/requirements.yaml will then need to be ins
 For example using conda:
 
 ```
-cd pharokka
 conda env create -f environment.yml
 conda activate pharokka_env
 git clone https://github.com/gbouras13/pharokka.git
+cd pharokka
 ```
 
 Before running pharokka, the PHROGs database needs to be downloaded using
@@ -28,4 +28,8 @@ If you would like to specify a different database directory, that can be achieve
 
 `install_databases.py -d N -o "<path/to/databse_dir>`
 
-If you have trouble downloading the databases using install_databases.py, they can be manually downloaded from the PHROGs website and placed in a directory of your choice https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_mmseqs_db.tar.gz https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_hhsuite_db.tar.gz https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v3.tsv.
+If you have trouble downloading the databases using install_databases.py, they can be manually downloaded from the PHROGs website and placed in a directory of your choice:
+
+* https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_mmseqs_db.tar.gz
+* https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_hhsuite_db.tar.gz
+* https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v3.tsv.

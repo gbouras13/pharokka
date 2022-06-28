@@ -1,7 +1,7 @@
 pharokka is a fast phage annotation pipeline.
 
-pharokka uses Phanotate (McNair et al (2019)) to conduct gene calling and tRNAscan-SE 2 (Chan et al (2021)) to call tRNAs.
+pharokka uses PHANOTATE (McNair et al 2019 https://github.com/deprekate/PHANOTATE) to conduct gene prediction and tRNAscan-SE 2 (Chan et al 2021 https://github.com/UCSC-LoweLab/tRNAscan-SE) to call tRNAs.
 
-pharokka then uses the lightweight PHROGS database (https://phrogs.lmge.uca.fr Terzian et al (2021)) for annotation of all predicted ORFs.
+pharokka then uses the lightweight PHROGS database (Terzian et al 2021 https://phrogs.lmge.uca.fr) for functional annotation of all predicted CDSs.
 
-Specifically, each predicted ORF is compared against the PHROGS database first using mmseqs2 and secondly using hhsuite.
+Each predicted CDS is compared against the PHROGS database twice first using mmseqs2 and secondly using hhsuite (which usually assigns PHROGs to short, hypothetical genes that are predicted by PHANOTATE).
