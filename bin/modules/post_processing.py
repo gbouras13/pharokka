@@ -180,7 +180,15 @@ def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix):
 
     #description_df = description_df.drop(index=description_df.index[0], axis=0, inplace=True)
     description_total_df = pd.concat(description_list)
+    # add tRNA count
+    trna_row = pd.DataFrame({ 'Description':['tRNAs'], 'Count':[trna_count], 'contig':[contig] })
+    description_total_df = pd.concat([description_total_df, trna_row])
+    #description_total_df = description_total_df.append({'Description':'tRNAs', 'Count':trna_count, 'contig':contig}, ignore_index=True)
     description_total_df.to_csv(os.path.join(out_dir, prefix + "_cds_functions.tsv"), sep="\t", index=False)
+
+
+
+
 
     # save as tsv
 

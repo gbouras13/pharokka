@@ -2,7 +2,7 @@
 pharokka
 ===============
 
-Fast Phage Annotation Pipeline
+Fast Phage Annotation Program
 ------------
 
 pharokka is designed for rapid, standard annotation of bacteriophages based on the PHROGs database (https://phrogs.lmge.uca.fr).
