@@ -2,14 +2,14 @@ Once `install_databases.py` has been run, pharokka requires an input fasta file.
 
 You can run pharokka using the following command:
 
-`pharokka.py -i <fasta file> -o <output folder> -t <threads>`
+`pharokka.py -i <fasta file> -o <output folder> -t <threads> -p <prefix>`
 
 To specify a different database directory from the default:
 
-`pharokka.py -i <fasta file> -o <output folder> -d <path/to/databse_dir> -t <threads> `
+`pharokka.py -i <fasta file> -o <output folder> -d <path/to/databse_dir> -t <threads> -p <prefix>`
 
 To overwrite an existing output directory, use -f
 
-`pharokka.py -i <fasta file> -o <output folder> -d <path/to/databse_dir> -t <threads>  -f`
+`pharokka.py -i <fasta file> -o <output folder> -d <path/to/databse_dir> -t <threads> -p <prefix>  -f `
 
 pharokka defaults to 1 thread.

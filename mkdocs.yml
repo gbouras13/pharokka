@@ -11,6 +11,7 @@ theme:
 nav:
     - ABOUT:
       - Overview: index.md
+      - Why Use pharokka?: reasons.md
     - RUNNING:
       - Install: install.md
       - Usage: run.md

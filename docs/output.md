@@ -1,7 +1,21 @@
 pharokka creates a number of output files in different formats.
 
-The main file pharokka generates is pharokka.gff, which is a gff3 format file including the fasta following the gff table annotations.
+Main Output
+----------
+The main output is a gff3 file that is suitable for use downstream pangenomic pipelines such as Roary (https://sanger-pathogens.github.io/Roary/) to generate pangenomes.
 
-This file can be used by programs such as Roary to generate pangenomes.
+* The 'phrog=' section shows the closest matching PHROG. The 'top_hit=' section shows the closest matching protein in the PHROGs database.
 
-pharokka also creates pharokka.tbl, which is a flat-file table suitable to be unploaded to the NCBI's Bankit.
+Other Files
+------
+* A .tbl file, which is a flat-file table suitable to be uploaded to the NCBI's Bankit.
+
+* A `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, and functions assigned to CDSs according to the PHROGs database.
+
+* A `_length_gc.tsv` file, which outputs the phage's length and GC percentage.
+
+* A `_final_merged_output.tsv`, which gives the full output from mmseqs2 and hhmsuite. In particular, the 'match_type' column shows whether mmseqs2 or hmmsuite was used to conduct the match. In general, mmseqs2 identifies most CDSs, while small (80-200bp) hypothetical proteins are identified using hhmsuite matching the closest PHROG. pharokka should be used as a rough guide only in these cases.
+
+* Further, the 'score' column contains the PHANOTATE score for each CDS. In general, the closer the score to 0, the smaller the CDS and the more likely that a PHRO will not be identified by mmseqs2.
+
+* For more information about PHROGs please consult the website https://phrogs.lmge.uca.fr and paper https://doi.org/10.1093/nargab/lqab067.
