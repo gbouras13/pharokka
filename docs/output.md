@@ -2,7 +2,7 @@ pharokka creates a number of output files in different formats.
 
 Main Output
 ----------
-The main output is a gff3 file that is suitable for use downstream pangenomic pipelines such as Roary (https://sanger-pathogens.github.io/Roary/) to generate pangenomes.
+The main output is a gff3 file that is suitable for use downstream pangenomic pipelines such as Roary ([https://sanger-pathogens.github.io/Roary/](https://sanger-pathogens.github.io/Roary/)) to generate pangenomes.
 
 * The 'phrog=' section shows the closest matching PHROG. The 'top_hit=' section shows the closest matching protein in the PHROGs database.
 
@@ -18,4 +18,4 @@ Other Files
 
 * Further, the 'score' column contains the PHANOTATE score for each CDS. In general, the closer the score to 0, the smaller the CDS and the more likely that a PHROG will not be identified by mmseqs2.
 
-* For more information about PHROGs please consult the website https://phrogs.lmge.uca.fr and paper https://doi.org/10.1093/nargab/lqab067.
+* For more information about PHROGs please consult the website [https://phrogs.lmge.uca.fr](https://phrogs.lmge.uca.fr) and paper [https://doi.org/10.1093/nargab/lqab067](https://doi.org/10.1093/nargab/lqab067).
