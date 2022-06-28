@@ -1,36 +1,36 @@
 
-phrokka
+pharokka
 ===============
 
 Fast Phage Annotation Pipeline
 ------------
 
-phrokka is designed for rapid, standard annotation of bacteriophages based on the PHROGs database (https://phrogs.lmge.uca.fr).
+pharokka is designed for rapid, standard annotation of bacteriophages based on the PHROGs database (https://phrogs.lmge.uca.fr).
 
-For full documentation, please visit https://phrokka.readthedocs.io.
+For full documentation, please visit https://pharokka.readthedocs.io.
 
-The easiest way to install phrokka is via conda using
+The easiest way to install pharokka is via conda using
 
-`conda install phrokka -c gbouras13`
+`conda install pharokka -c gbouras13`
 
-This will install all the dependencies along with phrokka.
+This will install all the dependencies along with pharokka.
 
-Alternatively, phrokka can be installed manually via github.
+Alternatively, pharokka can be installed manually via github.
 
-`git clone https://github.com/gbouras13/phrokka.git`
+`git clone https://github.com/gbouras13/pharokka.git`
 
 The dependencies found in environment.yml will then need to be installed manually.
 
 For example using conda:
 
 ```
-cd phrokka
+cd pharokka
 conda env create -f environment.yml
-conda activate phrokka_env
-git clone https://github.com/gbouras13/phrokka.git
+conda activate pharokka_env
+git clone https://github.com/gbouras13/pharokka.git
 ```
 
-Running phrokka
+Running pharokka
 --------
 
 First the PHROGs databases need to be installed
@@ -43,16 +43,16 @@ If you would like to specify a different database directory, that can be achieve
 
 If you have trouble downloading the databases using install_databases.py, they can be manually downloaded from the PHROGs website and placed in a directory of your choice https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_mmseqs_db.tar.gz https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_hhsuite_db.tar.gz https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v3.tsv.
 
-Once the databases have finished downloading, run phrokka
+Once the databases have finished downloading, run pharokka
 
-`phrokka.py -i <fasta file> -o <output folder> -t <threads>`
+`pharokka.py -i <fasta file> -o <output folder> -t <threads>`
 
 To specify a different database directory:
 
-`phrokka.py -i <fasta file> -o <output folder> -d <path/to/databse_dir> -t <threads> `
+`pharokka.py -i <fasta file> -o <output folder> -d <path/to/databse_dir> -t <threads> `
 
 To overwrite an existing output directory, use -f
 
-`phrokka.py -i <fasta file> -o <output folder> -d <path/to/databse_dir> -t <threads>  -f`
+`pharokka.py -i <fasta file> -o <output folder> -d <path/to/databse_dir> -t <threads>  -f`
 
-Phrokka defaults to 1 thread.
+pharokka defaults to 1 thread.
