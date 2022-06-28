@@ -131,7 +131,7 @@ def get_contig_name_lengths(fasta_input, out_dir, prefix):
 
 def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix):
     contig_count = len(length_df)
-    # with open( os.path.join(out_dir, "phrokka_summary.txt"), 'w') as f:
+    # with open( os.path.join(out_dir, "pharokka_summary.txt"), 'w') as f:
     #         f.write('Total Number of Contigs: ' + str(contig_count) + '\n')
     #         f.write('------------------------------------\n\n')
     #         f.close()   
@@ -157,8 +157,8 @@ def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix):
         description_df.columns = ['Description', 'Count']
         description_df['contig'] = contig
         description_list.append(description_df)
-        # remove phrokka summary for now until debug
-        # with open( os.path.join(out_dir, "phrokka_summary.txt"), 'a') as f:
+        # remove pharokka summary for now until debug
+        # with open( os.path.join(out_dir, "pharokka_summary.txt"), 'a') as f:
         #     f.write('Contig: ' + str(contig) + '\n')
         #     f.write('------------------------------------\n')
         #     f.write('CDS: ' + str(cds_count) + '\n')
