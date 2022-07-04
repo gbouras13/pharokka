@@ -216,14 +216,20 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix):
     # get gff dataframe in correct order 
     gff_df = phanotate_mmseqs_df[["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]]
 
+    # change start and stop to int 
+    gff_df["start"] = gff_df["start"].astype('int')
+    gff_df["stop"] = gff_df["stop"].astype('int')
+
     with open(os.path.join(out_dir, prefix + ".gff"), 'a') as f:
         gff_df.to_csv(f, sep="\t", index=False, header=False)
-
       
     ### trnas
 
     col_list = ["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]
     trna_df = pd.read_csv(os.path.join(out_dir,"trnascan_out.gff"), delimiter= '\t', index_col=False, names=col_list ) 
+    trna_df["start"] = trna_df["start"].astype('int')
+    trna_df["stop"] = trna_df["stop"].astype('int')
+    trna_df['stop'] = trna_df['stop']
     # keep only trnas
     trna_df = trna_df[(trna_df['Region'] == 'tRNA') | (trna_df['Region'] == 'pseudogene')]
     trna_df.start = trna_df.start.astype(int)
@@ -239,6 +245,11 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix):
         f.write('##FASTA\n')
         fasta_sequences = SeqIO.parse(open(fasta_input),'fasta')
         SeqIO.write(fasta_sequences, f, "fasta")
+
+def convert_gff_to_gbk(fasta_input, out_dir, prefix):
+    gff_file = os.path.join(out_dir, prefix + ".gff")
+    out_pref = os.path.join(out_dir, prefix)
+    sp.run(["seqret", "-sequence", fasta_input, "-feature", "-fformat", "gff", "-fopenfile", gff_file, "-osformat", "genbank", "-osname_outseq", out_pref, "-auto"], check=True)
 
 def create_tbl(phanotate_mmseqs_df, length_df, out_dir, prefix):
 

@@ -14,7 +14,7 @@ def run_phanotate(filepath_in, out_dir):
         sp.run([ "phanotate.py", os.path.join(out_dir, "input_fasta_delim.fasta"), "-o", os.path.join(out_dir, "phanotate_out.fasta"), "-f", "fasta"], check=True) # , stderr=sp.DEVNULL, stdout=sp.DEVNULL silence the warnings (no trnaScan)
         sp.run(["phanotate.py", os.path.join(out_dir, "input_fasta_delim.fasta"), "-o", os.path.join(out_dir, "phanotate_out.txt"), "-f", "tabular"], check=True)
     except:
-        sys.exit("Error: phanotate not found\n")  
+        sys.exit("Error with Phanotate\n")  
 
 def add_delim_trim_fasta(filepath_in, out_dir):
     with open(os.path.join(out_dir, "input_fasta_delim.fasta"), 'w') as na_fa:
@@ -35,8 +35,8 @@ def tidy_phanotate_output(out_dir):
     col_list = ["start", "stop", "frame", "contig", "score"] 
     phan_df = pd.read_csv(phan_file, delimiter= '\t', index_col=False , names=col_list, skiprows=2 ) 
     # get rid of the headers and reset the index
-    #phan_df = phan_df[phan_df['start'] != '#id:']
-    # phan_df = phan_df[phan_df['start'] != '#START'].reset_index(drop=True)
+    phan_df = phan_df[phan_df['start'] != '#id:']
+    phan_df = phan_df[phan_df['start'] != '#START'].reset_index(drop=True)
 
     # to match with hmms
     #phan_df["gene"] = ""
@@ -45,6 +45,7 @@ def tidy_phanotate_output(out_dir):
     # for index, row in phan_df.iterrows():
     #    # print(row['contig'] + str(index) + " " + str(row['start']) + "_" + str(row['stop']))
     #     row["gene"] = row['contig'] + str(index) + " " + str(row['start']) + "_" + str(row['stop'])
+    #print(phan_df)
     phan_df.to_csv(os.path.join(out_dir,"cleaned_phanotate.tsv"), sep="\t", index=False)
     return phan_df
 
@@ -54,8 +55,8 @@ def translate_fastas(out_dir):
     with open(os.path.join(out_dir, "phanotate_aas.fasta"), 'w') as aa_fa:
         i = 0 
         for dna_record in SeqIO.parse(os.path.join(out_dir, "phanotate_out.fasta"), 'fasta'): 
-            dna_header = phan_df['contig'].iloc[i] + str(i) 
-            dna_description =   phan_df['start'].iloc[i].astype(str) + "_" + phan_df['stop'].iloc[i].astype(str)
+            dna_header = str(phan_df['contig'].iloc[i]) + str(i) 
+            dna_description = str(phan_df['start'].iloc[i]) + "_" + str(phan_df['stop'].iloc[i])
             aa_record = SeqRecord(dna_record.seq.translate(to_stop=True), id=dna_header, description = dna_description )
             SeqIO.write(aa_record, aa_fa, 'fasta')
             i += 1

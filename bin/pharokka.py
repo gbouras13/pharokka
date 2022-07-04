@@ -35,6 +35,7 @@ if __name__ == "__main__":
     post_processing.create_gff(phan_mmseq_merge_df, length_df, args.infile, out_dir, prefix)
     post_processing.create_tbl(phan_mmseq_merge_df, length_df, out_dir, prefix)
     post_processing.create_txt(phan_mmseq_merge_df, length_df,out_dir, prefix)
+    post_processing.convert_gff_to_gbk(args.infile, out_dir, prefix)
     # delete tmp files
     sp.run(["rm", "-rf", os.path.join(out_dir, "target_dir") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "tmp_dir/") ])
