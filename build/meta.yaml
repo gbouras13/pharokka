@@ -1,6 +1,6 @@
 package:
   name: "pharokka"
-  version: "0.1.1"
+  version: "0.1.2"
 
 build:
   number: 0
@@ -16,6 +16,7 @@ requirements:
   - mmseqs2==13.45111
   - trnascan-se==2.0.9
   - hhsuite==3.3.0
+  - emboss==6.6.0
 
 about:
   home: https://github.com/gbouras13/pharokka

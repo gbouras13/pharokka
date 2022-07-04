@@ -9,3 +9,4 @@ dependencies:
   - mmseqs2==13.45111
   - trnascan-se==2.0.9
   - hhsuite==3.3.0
+  - emboss==6.6.0
