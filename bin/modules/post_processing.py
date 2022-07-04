@@ -227,9 +227,6 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix):
 
     col_list = ["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]
     trna_df = pd.read_csv(os.path.join(out_dir,"trnascan_out.gff"), delimiter= '\t', index_col=False, names=col_list ) 
-    trna_df["start"] = trna_df["start"].astype('int')
-    trna_df["stop"] = trna_df["stop"].astype('int')
-    trna_df['stop'] = trna_df['stop']
     # keep only trnas
     trna_df = trna_df[(trna_df['Region'] == 'tRNA') | (trna_df['Region'] == 'pseudogene')]
     trna_df.start = trna_df.start.astype(int)
