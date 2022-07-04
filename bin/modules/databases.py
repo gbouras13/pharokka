@@ -25,7 +25,7 @@ def get_phrog_mmseqs(db_dir):
         # download tarball and untar
     else:
         try:
-            sp.call(["wget", filepath, "-P", db_dir])
+            sp.call(["curl", filepath, "-o", os.path.join(db_dir,tarball)])
         except:
             sys.stderr.write("Error: PHROGs MMSeqs Database not found - link likely broken\n")  
             return 0
@@ -47,7 +47,7 @@ def get_phrog_annot_table(db_dir):
         print("PHROGs annotation file already downloaded")
     else:
         try:
-            sp.call(["wget", filepath, "-P", db_dir])
+            sp.call(["curl", filepath, "-o", os.path.join(db_dir,file)])
         except:
             sys.stderr.write("Error: PHROGs annotation file not found - link likely broken\n")  
             return 0
@@ -64,7 +64,7 @@ def get_phrog_hhmer(db_dir):
         # download tarball and untar
     else:
         try:
-            sp.call(["wget", filepath, "-P", db_dir])
+            sp.call(["curl", filepath, "-o", os.path.join(db_dir,tarball)])
         except:
             sys.stderr.write("Error: PHROGs HMMer Database not found - link likely broken\n")  
             return 0
