@@ -8,6 +8,8 @@ The main output is a gff3 file that is suitable for use downstream pangenomic pi
 
 Other Files
 ------
+* A .genbank file, which is converted from the gff using seqret [http://emboss.open-bio.org](http://emboss.open-bio.org).
+
 * A .tbl file, which is a flat-file table suitable to be uploaded to the NCBI's Bankit.
 
 * A `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, and functions assigned to CDSs according to the PHROGs database.
