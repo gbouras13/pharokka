@@ -4,17 +4,29 @@ import subprocess as sp
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 import pandas as pd
+import logging
+
+def write_to_log(s, logger):
+           while True:
+                output = s.readline().decode()
+                if output:
+                    logger.log(logging.INFO, output)
+                else:
+                    break
 
 
-def run_phanotate(filepath_in, out_dir):
-    print("Beginning Phanotate")
+def run_phanotate(filepath_in, out_dir,logger):
+    print("Running Phanotate.")
     add_delim_trim_fasta(filepath_in, out_dir)
-
     try:
-        sp.run([ "phanotate.py", os.path.join(out_dir, "input_fasta_delim.fasta"), "-o", os.path.join(out_dir, "phanotate_out.fasta"), "-f", "fasta"], check=True) # , stderr=sp.DEVNULL, stdout=sp.DEVNULL silence the warnings (no trnaScan)
-        sp.run(["phanotate.py", os.path.join(out_dir, "input_fasta_delim.fasta"), "-o", os.path.join(out_dir, "phanotate_out.txt"), "-f", "tabular"], check=True)
+        # no phanotate stderr
+        sp.run([ "phanotate.py", os.path.join(out_dir, "input_fasta_delim.fasta"), "-o", os.path.join(out_dir, "phanotate_out.fasta"), "-f", "fasta"], stdout=sp.PIPE) # , stderr=sp.DEVNULL, stdout=sp.DEVNULL silence the warnings (no trnaScan)
+        sp.run(["phanotate.py", os.path.join(out_dir, "input_fasta_delim.fasta"), "-o", os.path.join(out_dir, "phanotate_out.txt"), "-f", "tabular"], stdout=sp.PIPE)
     except:
         sys.exit("Error with Phanotate\n")  
+
+    
+    
 
 def add_delim_trim_fasta(filepath_in, out_dir):
     with open(os.path.join(out_dir, "input_fasta_delim.fasta"), 'w') as na_fa:
@@ -61,17 +73,19 @@ def translate_fastas(out_dir):
             SeqIO.write(aa_record, aa_fa, 'fasta')
             i += 1
 
-def run_trna_scan(filepath_in, out_dir):
-    print("Beginning tRNAscan-SE")
+def run_trna_scan(filepath_in, out_dir, logger):
+    print("Running tRNAscan-SE.")
     try:
-        sp.run(["tRNAscan-SE", filepath_in, "-B", "-Q", "-j",  os.path.join(out_dir, "trnascan_out.gff")], check=True)
+        # needs stderr for trna scan
+        trna = sp.Popen(["tRNAscan-SE", filepath_in, "-B", "-Q", "-j",  os.path.join(out_dir, "trnascan_out.gff")], stderr=sp.PIPE, stdout=sp.DEVNULL)
+        write_to_log(trna.stderr, logger)
     except:
         sys.stderr.write("Error: tRNAscan-SE not found\n")  
         return 0
 
     
-def run_mmseqs(db_dir, out_dir, threads):
-    print("Running mmseqs")
+def run_mmseqs(db_dir, out_dir, threads, logger):
+    print("Running mmseqs2.")
     phrog_db_dir = os.path.join(db_dir, "phrogs_mmseqs_db/")
     mmseqs_dir = os.path.join(out_dir, "mmseqs/")
     amino_acid_fasta = "phanotate_aas.fasta"
@@ -83,19 +97,22 @@ def run_mmseqs(db_dir, out_dir, threads):
         os.mkdir(target_db_dir)
 
     # creates db for input
-    sp.run(["mmseqs", "createdb", os.path.join(out_dir, amino_acid_fasta), os.path.join(target_db_dir, "target_seqs")], check=True)
+    mmseqs_createdb = sp.Popen(["mmseqs", "createdb", os.path.join(out_dir, amino_acid_fasta), os.path.join(target_db_dir, "target_seqs")], stdout=sp.PIPE)
+    write_to_log(mmseqs_createdb.stdout, logger)
     # runs the seacrh
-    sp.run(["mmseqs", "search", os.path.join(phrog_db_dir, "phrogs_profile_db"), os.path.join(target_db_dir, "target_seqs"), os.path.join(mmseqs_dir, "results_mmseqs"), tmp_dir, "-s", "8.5",
-    "--threads", threads], check=True)
+    mmseqs_searc = sp.Popen(["mmseqs", "search", os.path.join(phrog_db_dir, "phrogs_profile_db"), os.path.join(target_db_dir, "target_seqs"), os.path.join(mmseqs_dir, "results_mmseqs"), tmp_dir, "-s", "8.5",
+    "--threads", threads], stdout=sp.PIPE)
+    write_to_log(mmseqs_searc.stdout, logger)
     # creates the tsv
-    sp.run(["mmseqs", "createtsv", os.path.join(phrog_db_dir, "phrogs_profile_db"), os.path.join(target_db_dir, "target_seqs"), os.path.join(mmseqs_dir, "results_mmseqs"), 
-    os.path.join(out_dir,"mmseqs_results.tsv"), "--full-header", "--threads", threads], check=True)
+    mmseqs_createtsv = sp.Popen(["mmseqs", "createtsv", os.path.join(phrog_db_dir, "phrogs_profile_db"), os.path.join(target_db_dir, "target_seqs"), os.path.join(mmseqs_dir, "results_mmseqs"), 
+    os.path.join(out_dir,"mmseqs_results.tsv"), "--full-header", "--threads", threads], stdout=sp.PIPE)
+    write_to_log(mmseqs_createtsv.stdout, logger)
     # remove the target dir when finished 
     sp.run(["rm", "-r", target_db_dir], check=True)
 
 
-def run_hmmsuite(db_dir, out_dir, threads):
-    print("Running hmmsuite")
+def run_hmmsuite(db_dir, out_dir, threads, logger):
+    print("Running hmmsuite.")
     hmmsuite_db_dir = os.path.join(db_dir, "phrogs_hhsuite_db/")
     amino_acid_fasta = "phanotate_aas.fasta"
     target_db_dir =  os.path.join(out_dir, "hhsuite_target_dir/")
@@ -107,20 +124,20 @@ def run_hmmsuite(db_dir, out_dir, threads):
 
 
     # indexes the file 
-    sp.run(
+    hh_ffindex = sp.Popen(
         [
             'ffindex_from_fasta',
             '-s',
             ''.join((tsv_prefix, 'data')),
             ''.join((tsv_prefix, 'index')),
             os.path.join(out_dir, amino_acid_fasta),
-        ],
-        check=True
+        ], stdout=sp.PIPE
     )
+    write_to_log(hh_ffindex.stdout, logger)
 
 
     # runs
-    sp.run(["hhblits_omp", '-i', os.path.join(target_db_dir, 'hhsuite_tsv_file'), '-d', os.path.join(hmmsuite_db_dir, "phrogs"), 
+    hh_omp = sp.Popen(["hhblits_omp", '-i', os.path.join(target_db_dir, 'hhsuite_tsv_file'), '-d', os.path.join(hmmsuite_db_dir, "phrogs"), 
     '-M', 'first', '-n', '1', '-o',os.path.join(target_db_dir, "results_your_seq_VS_phrogs"), 
-    '-blasttab', os.path.join(target_db_dir, "results_tsv_file"), "-cpu", threads], 
-    check=True)
+    '-blasttab', os.path.join(target_db_dir, "results_tsv_file"), "-cpu", threads], stderr=sp.PIPE)
+    write_to_log(hh_omp.stderr, logger)

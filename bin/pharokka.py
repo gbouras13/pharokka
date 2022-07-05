@@ -5,16 +5,28 @@ from modules import processes
 from modules import post_processing
 import os
 import subprocess as sp
-
+import logging
 
 if __name__ == "__main__":
+
+
     args = input_commands.get_input()
+        # set the prefix
+    if args.prefix == "Default":
+        prefix = "pharokka"
+    else:
+        prefix = args.prefix
+
     out_dir = input_commands.instantiate_dirs(args.outdir, args.force) # incase there is already an outdir
 
+    LOG_FILE = os.path.join(args.outdir, prefix + ".log")
+    logger = logging.getLogger()
+    logging.basicConfig(level=logging.INFO,filename=LOG_FILE,format='%(asctime)s - %(levelname)s - %(message)s')
+    
     input_commands.validate_fasta(args.infile)
-    processes.run_phanotate(args.infile, out_dir)
+    processes.run_phanotate(args.infile, out_dir, logger)
     processes.translate_fastas(out_dir)
-    processes.run_trna_scan(args.infile, out_dir)
+    processes.run_trna_scan(args.infile, out_dir, logger)
 
     # set the db dir
     if args.database == "Default":
@@ -22,14 +34,9 @@ if __name__ == "__main__":
     else:
         DBDIR = args.database
 
-    # set the prefix
-    if args.prefix == "Default":
-        prefix = "pharokka"
-    else:
-        prefix = args.prefix
 
-    processes.run_mmseqs(DBDIR, out_dir, args.threads)
-    processes.run_hmmsuite(DBDIR, out_dir, args.threads)
+    processes.run_mmseqs(DBDIR, out_dir, args.threads, logger)
+    processes.run_hmmsuite(DBDIR, out_dir, args.threads, logger)
     phan_mmseq_merge_df = post_processing.process_results(DBDIR, out_dir, prefix)
     length_df = post_processing.get_contig_name_lengths(args.infile, out_dir, prefix)
     post_processing.create_gff(phan_mmseq_merge_df, length_df, args.infile, out_dir, prefix)
