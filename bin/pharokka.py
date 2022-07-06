@@ -16,6 +16,11 @@ if __name__ == "__main__":
         prefix = "pharokka"
     else:
         prefix = args.prefix
+    
+    if args.locustag == "Default":
+        locustag = "Random"
+    else:
+        locustag = args.locustag
 
     out_dir = input_commands.instantiate_dirs(args.outdir, args.force) # incase there is already an outdir
 
@@ -39,7 +44,7 @@ if __name__ == "__main__":
     processes.run_hmmsuite(DBDIR, out_dir, args.threads, logger)
     phan_mmseq_merge_df = post_processing.process_results(DBDIR, out_dir, prefix)
     length_df = post_processing.get_contig_name_lengths(args.infile, out_dir, prefix)
-    post_processing.create_gff(phan_mmseq_merge_df, length_df, args.infile, out_dir, prefix)
+    post_processing.create_gff(phan_mmseq_merge_df, length_df, args.infile, out_dir, prefix, locustag)
     post_processing.create_tbl(phan_mmseq_merge_df, length_df, out_dir, prefix)
     post_processing.create_txt(phan_mmseq_merge_df, length_df,out_dir, prefix)
     post_processing.convert_gff_to_gbk(args.infile, out_dir, prefix)
