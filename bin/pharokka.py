@@ -92,6 +92,7 @@ if __name__ == "__main__":
     logger.info("Elapsed time: "+str(elapsed_time)+" seconds")
 
     print("pharokka has finished")
+    print("Elapsed time: "+str(elapsed_time)+" seconds")
 
     
 
