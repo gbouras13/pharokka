@@ -245,11 +245,6 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix, loc
         fasta_sequences = SeqIO.parse(open(fasta_input),'fasta')
         SeqIO.write(fasta_sequences, f, "fasta")
 
-def convert_gff_to_gbk(fasta_input, out_dir, prefix):
-    gff_file = os.path.join(out_dir, prefix + ".gff")
-    out_pref = os.path.join(out_dir, prefix)
-    sp.run(["seqret", "-sequence", fasta_input, "-feature", "-fformat", "gff", "-fopenfile", gff_file, "-osformat", "genbank", "-osname_outseq", out_pref, "-auto"], check=True)
-
 def create_tbl(phanotate_mmseqs_df, length_df, out_dir, prefix):
 
     ### readtrnas

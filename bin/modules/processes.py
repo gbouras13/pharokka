@@ -159,3 +159,9 @@ def remove_delim_fastas(out_dir):
             dna_description = dna_record.description.replace("delim", "")
             dna_record = SeqRecord(dna_record.seq, id=dna_header, description = dna_description)
             SeqIO.write(dna_record, na_fa, 'fasta')
+
+def convert_gff_to_gbk(fasta_input, out_dir, prefix, logger):
+    gff_file = os.path.join(out_dir, prefix + ".gff")
+    out_pref = os.path.join(out_dir, prefix)
+    seqret = sp.Popen(["seqret", "-sequence", fasta_input, "-feature", "-fformat", "gff", "-fopenfile", gff_file, "-osformat", "genbank", "-osname_outseq", out_pref, "-auto"], stderr=sp.PIPE)
+    write_to_log(seqret.stderr, logger)

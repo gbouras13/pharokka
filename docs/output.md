@@ -10,7 +10,7 @@ Other Files
 ------
 * A .genbank file, which is converted from the gff using seqret [http://emboss.open-bio.org](http://emboss.open-bio.org).
 
-* A .log file, which holds the output from tRNA-scanSE, mmseqs2 and hh-suite.
+* A .log file, which holds the output from tRNA-scanSE, mmseqs2 and hh-suite. It is time-stamped in the "%m%d%Y_%H%M%S" format.
 
 * A .tbl file, which is a flat-file table suitable to be uploaded to the NCBI's Bankit.
 
