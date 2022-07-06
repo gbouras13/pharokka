@@ -20,7 +20,7 @@ def run_phanotate(filepath_in, out_dir,logger):
     add_delim_trim_fasta(filepath_in, out_dir)
     try:
         # no phanotate stderr
-        sp.run([ "phanotate.py", os.path.join(out_dir, "input_fasta_delim.fasta"), "-o", os.path.join(out_dir, "phanotate_out.fasta"), "-f", "fasta"], stdout=sp.PIPE) # , stderr=sp.DEVNULL, stdout=sp.DEVNULL silence the warnings (no trnaScan)
+        sp.run([ "phanotate.py", os.path.join(out_dir, "input_fasta_delim.fasta"), "-o", os.path.join(out_dir, "phanotate_out_tmp.fasta"), "-f", "fasta"], stdout=sp.PIPE) # , stderr=sp.DEVNULL, stdout=sp.DEVNULL silence the warnings (no trnaScan)
         sp.run(["phanotate.py", os.path.join(out_dir, "input_fasta_delim.fasta"), "-o", os.path.join(out_dir, "phanotate_out.txt"), "-f", "tabular"], stdout=sp.PIPE)
     except:
         sys.exit("Error with Phanotate\n")  
@@ -64,14 +64,23 @@ def tidy_phanotate_output(out_dir):
 
 def translate_fastas(out_dir):
     phan_df = tidy_phanotate_output(out_dir)
-    with open(os.path.join(out_dir, "phanotate_aas.fasta"), 'w') as aa_fa:
+    with open(os.path.join(out_dir, "phanotate_aas_tmp.fasta"), 'w') as aa_fa:
         i = 0 
-        for dna_record in SeqIO.parse(os.path.join(out_dir, "phanotate_out.fasta"), 'fasta'): 
+        for dna_record in SeqIO.parse(os.path.join(out_dir, "phanotate_out_tmp.fasta"), 'fasta'): 
             dna_header = str(phan_df['contig'].iloc[i]) + str(i) 
             dna_description = str(phan_df['start'].iloc[i]) + "_" + str(phan_df['stop'].iloc[i])
             aa_record = SeqRecord(dna_record.seq.translate(to_stop=True), id=dna_header, description = dna_description )
             SeqIO.write(aa_record, aa_fa, 'fasta')
             i += 1
+    with open(os.path.join(out_dir, "phanotate_aas.fasta"), 'w') as aa_fa:
+        i = 0 
+        for dna_record in SeqIO.parse(os.path.join(out_dir, "phanotate_out_tmp.fasta"), 'fasta'): 
+            dna_header = str(phan_df['contig'].iloc[i]).replace("delim", "") + "_" + str(i) 
+            dna_description = str(phan_df['start'].iloc[i]) + "_" + str(phan_df['stop'].iloc[i])
+            aa_record = SeqRecord(dna_record.seq.translate(to_stop=True), id=dna_header, description = dna_description )
+            SeqIO.write(aa_record, aa_fa, 'fasta')
+            i += 1
+    
 
 def run_trna_scan(filepath_in, out_dir, logger):
     print("Running tRNAscan-SE.")
@@ -88,7 +97,7 @@ def run_mmseqs(db_dir, out_dir, threads, logger):
     print("Running mmseqs2.")
     phrog_db_dir = os.path.join(db_dir, "phrogs_mmseqs_db/")
     mmseqs_dir = os.path.join(out_dir, "mmseqs/")
-    amino_acid_fasta = "phanotate_aas.fasta"
+    amino_acid_fasta = "phanotate_aas_tmp.fasta"
     target_db_dir =  os.path.join(out_dir, "target_dir/") 
     tmp_dir = os.path.join(out_dir, "tmp_dir/") 
 
@@ -114,7 +123,7 @@ def run_mmseqs(db_dir, out_dir, threads, logger):
 def run_hmmsuite(db_dir, out_dir, threads, logger):
     print("Running hmmsuite.")
     hmmsuite_db_dir = os.path.join(db_dir, "phrogs_hhsuite_db/")
-    amino_acid_fasta = "phanotate_aas.fasta"
+    amino_acid_fasta = "phanotate_aas_tmp.fasta"
     target_db_dir =  os.path.join(out_dir, "hhsuite_target_dir/")
     tsv_prefix = os.path.join(target_db_dir, 'hhsuite_tsv_file.ff') 
 
@@ -141,3 +150,12 @@ def run_hmmsuite(db_dir, out_dir, threads, logger):
     '-M', 'first', '-n', '1', '-o',os.path.join(target_db_dir, "results_your_seq_VS_phrogs"), 
     '-blasttab', os.path.join(target_db_dir, "results_tsv_file"), "-cpu", threads], stderr=sp.PIPE)
     write_to_log(hh_omp.stderr, logger)
+
+def remove_delim_fastas(out_dir):
+    with open(os.path.join(out_dir, "phanotate_out.fasta"), 'w') as na_fa:
+        for dna_record in SeqIO.parse(os.path.join(out_dir,"phanotate_out_tmp.fasta"), 'fasta'): 
+            # remove delim no underscore, same output as phanotate
+            dna_header = ""
+            dna_description = dna_record.description.replace("delim", "")
+            dna_record = SeqRecord(dna_record.seq, id=dna_header, description = dna_description)
+            SeqIO.write(dna_record, na_fa, 'fasta')

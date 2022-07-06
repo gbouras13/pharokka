@@ -34,7 +34,7 @@ if __name__ == "__main__":
     else:
         DBDIR = args.database
 
-
+    processes.remove_delim_fastas(out_dir)
     processes.run_mmseqs(DBDIR, out_dir, args.threads, logger)
     processes.run_hmmsuite(DBDIR, out_dir, args.threads, logger)
     phan_mmseq_merge_df = post_processing.process_results(DBDIR, out_dir, prefix)
@@ -43,6 +43,7 @@ if __name__ == "__main__":
     post_processing.create_tbl(phan_mmseq_merge_df, length_df, out_dir, prefix)
     post_processing.create_txt(phan_mmseq_merge_df, length_df,out_dir, prefix)
     post_processing.convert_gff_to_gbk(args.infile, out_dir, prefix)
+    
     # delete tmp files
     sp.run(["rm", "-rf", os.path.join(out_dir, "target_dir") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "tmp_dir/") ])
@@ -55,6 +56,8 @@ if __name__ == "__main__":
     sp.run(["rm", "-rf", os.path.join(out_dir, "hhsuite_target_dir") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "phanotate_out.txt") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "trnascan_out.gff") ])
+    sp.run(["rm", "-rf", os.path.join(out_dir, "phanotate_aas_tmp.fasta") ])
+    sp.run(["rm", "-rf", os.path.join(out_dir, "phanotate_out_tmp.fasta") ])
     print("pharokka has finished")
 
     
