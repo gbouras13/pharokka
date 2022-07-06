@@ -193,7 +193,7 @@ def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix):
     # save as tsv
 
   
-def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix):
+def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag):
     # write the headers of the gff file
     with open(os.path.join(out_dir, prefix + ".gff"), 'w') as f:
         f.write('##gff-version 3\n')
@@ -207,11 +207,13 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix):
     # Where ixs is True, values are swapped
     phanotate_mmseqs_df.loc[ixs,cols] = phanotate_mmseqs_df.loc[ixs, cols].reindex(columns=cols[::-1]).values
 
-    # locus tag header 8 random letters
-    locus_t = ''.join(random.choice(string.ascii_uppercase) for _ in range(8))
+    if locustag == "Random":
+        # locus tag header 8 random letters
+        locustag = ''.join(random.choice(string.ascii_uppercase) for _ in range(8))
+        
     
     phanotate_mmseqs_df['phase'] = 0
-    phanotate_mmseqs_df['attributes'] = "ID=" + locus_t + "_" + phanotate_mmseqs_df.index.astype(str)  + ";" + "phrog=" + phanotate_mmseqs_df["phrog"] + ";" + "top_hit=" + phanotate_mmseqs_df["top_hit"] + ";" + "locus_tag=" + locus_t + "_" + phanotate_mmseqs_df.index.astype(str) + ";" + "function=" + phanotate_mmseqs_df["category"] + ";"  + "product=" + phanotate_mmseqs_df["annot"]
+    phanotate_mmseqs_df['attributes'] = "ID=" + locustag + "_" + phanotate_mmseqs_df.index.astype(str)  + ";" + "phrog=" + phanotate_mmseqs_df["phrog"] + ";" + "top_hit=" + phanotate_mmseqs_df["top_hit"] + ";" + "locus_tag=" + locustag + "_" + phanotate_mmseqs_df.index.astype(str) + ";" + "function=" + phanotate_mmseqs_df["category"] + ";"  + "product=" + phanotate_mmseqs_df["annot"]
 
     # get gff dataframe in correct order 
     gff_df = phanotate_mmseqs_df[["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]]

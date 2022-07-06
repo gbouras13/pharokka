@@ -19,6 +19,7 @@ def get_input():
 	parser.add_argument('-t', '--threads', help="Number of threads for mmseqs and hhsuite. Defaults to 1.", action="store", default = str(1))
 	parser.add_argument('-f', '--force', help="Overwrites the output directory", action="store_true" )
 	parser.add_argument('-p', '--prefix', action="store", help='Prefix for output files. This is not required',  default='Default')
+	parser.add_argument('-l', '--locustag', action="store", help='User specified locus tag for the gff/gbk files. This is not required. A random locus tag will be generated instead',  default='Default')
 	parser.add_argument('-V', '--version', action='version', version=v)
 	args = parser.parse_args()
 
