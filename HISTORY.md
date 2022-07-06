@@ -2,7 +2,14 @@
 History
 =======
 
-0.1.2 (2022-06-28)
+0.1.3 (2022-07-06)
+------------------
+
+* Fourth release
+* Adds .log file
+* Adds -l option
+
+0.1.2 (2022-07-04)
 ------------------
 
 * Third release
