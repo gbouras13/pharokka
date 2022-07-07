@@ -32,4 +32,4 @@ If you have trouble downloading the databases using install_databases.py, they c
 
 * [https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_mmseqs_db.tar.gz](https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_mmseqs_db.tar.gz)
 * [https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_hhsuite_db.tar.gz](https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_hhsuite_db.tar.gz)
-* [https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v3.tsv](https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v3.tsv).
+* [https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v4.tsv](https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v4.tsv).

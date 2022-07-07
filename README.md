@@ -58,7 +58,7 @@ If you would like to specify a different database directory (recommended), that 
 If you have trouble downloading the databases using `install_databases.py`, they can be manually downloaded from the PHROGs website links, untared and placed in a directory of your choice:
 * https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_mmseqs_db.tar.gz
 * https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_hhsuite_db.tar.gz
-* https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v3.tsv.
+* https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v4.tsv.
 
 Once the databases have finished downloading, run pharokka
 
@@ -93,6 +93,4 @@ If you use pharokka, please also cite:
 * PHANOTATE (McNair K., Zhou C., Dinsdale E.A., Souza B., Edwards R.A. (2019) "PHANOTATE: a novel approach to gene identification in phage genomes", Bioinformatics, https://doi.org/10.1093/bioinformatics/btz26).
 * tRNAscan-SE: Chan, P.P., Lin, B.Y., Mak, A.J. and Lowe, T.M. (2021) "tRNAscan-SE 2.0: improved detection and functional classification of transfer RNA genes", Nucleic Acids Res., https://doi.org/10.1093/nar/gkab688.
 * Steinegger M. and Soeding J. (2017), "MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets", Nature Biotechnology (https://doi.org/10.1038/nbt.3988).
-* Steinegger M, Meier M, Mirdita M, Vöhringer H, Haunsberger S J, and Söding J (2019), "HH-suite3 for fast remote homology detection and deep protein annotation", BMC Bioinformatics, (https://doi.org/10.1186/s12859-019-3019-7).
-* Steinegger M, Meier M, Mirdita M, Vöhringer H, Haunsberger S J, and Söding J (2019), "HH-suite3 for fast remote homology detection and deep protein annotation", BMC Bioinformatics, (https://doi.org/10.1186/s12859-019-3019-7).
 * Terzian P., Olo Ndela E., Galiez C., Lossouarn J., Pérez Bucio R.E., Mom R., Toussaint A., Petit M.A., Enault F., "PHROG : families of prokaryotic virus proteins clustered using remote homology", NAR Genomics and Bioinformatics, (2021), (https://doi.org/10.1093/nargab/lqab067).

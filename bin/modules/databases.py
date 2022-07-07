@@ -40,7 +40,7 @@ def get_phrog_mmseqs(db_dir):
 
 def get_phrog_annot_table(db_dir):
     print("Getting PHROGs Annotation Table")
-    filepath = "https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v3.tsv"
+    filepath = "https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v4.tsv"
     file = "phrog_annot_v3.tsv"
     #if the file already exists
     if os.path.isfile(os.path.join(db_dir,file)) == True:
