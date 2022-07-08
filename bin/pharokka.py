@@ -35,17 +35,27 @@ if __name__ == "__main__":
         locustag = args.locustag
 
     out_dir = input_commands.instantiate_dirs(args.outdir, args.force) # incase there is already an outdir
+    gene_predictor = args.gene_predictor
 
     LOG_FILE = os.path.join(args.outdir, prefix + "_" + str(time_for_log) + ".log")
     logger = logging.getLogger()
     logging.basicConfig(level=logging.INFO,filename=LOG_FILE,format='%(asctime)s - %(levelname)s - %(message)s')
     logger.info("Starting pharokka")
-    
+
+    # instantiation/checking fasta and gene_predictor
     input_commands.validate_fasta(args.infile)
-    logger.info("Starting Phanotate")
-    processes.run_phanotate(args.infile, out_dir, logger)
-    logger.info("Translating Phanotate fastas")
-    processes.translate_fastas(out_dir)
+    input_commands.validate_gene_predictor(gene_predictor)
+
+    # gene predictor
+    if args.gene_predictor == "phanotate":
+        logger.info("Starting Phanotate")
+        processes.run_phanotate(args.infile, out_dir, logger)
+    if gene_predictor == "prodigal":
+        logger.info("Starting Prodigal")
+        processes.run_prodigal(args.infile, out_dir, logger)
+
+    logger.info("Translating gene predicted fastas.")
+    processes.translate_fastas(out_dir,gene_predictor)
     logger.info("Starting tRNA-scanSE")
     processes.run_trna_scan(args.infile, out_dir, logger)
 
@@ -55,12 +65,16 @@ if __name__ == "__main__":
     else:
         DBDIR = args.database
 
-    processes.remove_delim_fastas(out_dir)
+    processes.remove_delim_fastas(out_dir,gene_predictor)
+
+    # runnin mmseqs2
     logger.info("Starting mmseqs2")
-    processes.run_mmseqs(DBDIR, out_dir, args.threads, logger)
+    processes.run_mmseqs(DBDIR, out_dir, args.threads, logger, gene_predictor)
     logger.info("Starting hhsuite")
-    processes.run_hmmsuite(DBDIR, out_dir, args.threads, logger)
-    phan_mmseq_merge_df = post_processing.process_results(DBDIR, out_dir, prefix)
+    processes.run_hmmsuite(DBDIR, out_dir, args.threads, logger, args.gene_predictor)
+
+    # post processing
+    phan_mmseq_merge_df = post_processing.process_results(DBDIR, out_dir, prefix, gene_predictor)
     logger.info("Post Processing Data")
     length_df = post_processing.get_contig_name_lengths(args.infile, out_dir, prefix)
     post_processing.create_gff(phan_mmseq_merge_df, length_df, args.infile, out_dir, prefix, locustag)
@@ -73,7 +87,7 @@ if __name__ == "__main__":
     sp.run(["rm", "-rf", os.path.join(out_dir, "target_dir") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "tmp_dir/") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "mmseqs/") ])
-    sp.run(["rm", "-rf", os.path.join(out_dir, "cleaned_phanotate.tsv") ])
+    sp.run(["rm", "-rf", os.path.join(out_dir, "cleaned_" + gene_predictor + ".tsv") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "input_fasta_delim.fasta") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "mmseqs_results.tsv") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "top_hits_hhsuite.tsv") ])
@@ -81,8 +95,8 @@ if __name__ == "__main__":
     sp.run(["rm", "-rf", os.path.join(out_dir, "hhsuite_target_dir") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "phanotate_out.txt") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "trnascan_out.gff") ])
-    sp.run(["rm", "-rf", os.path.join(out_dir, "phanotate_aas_tmp.fasta") ])
-    sp.run(["rm", "-rf", os.path.join(out_dir, "phanotate_out_tmp.fasta") ])
+    sp.run(["rm", "-rf", os.path.join(out_dir, gene_predictor + "_aas_tmp.fasta") ])
+    sp.run(["rm", "-rf", os.path.join(out_dir, gene_predictor + "_out_tmp.fasta") ])
 
     # Determine elapsed time
     elapsed_time = time.time() - start_time

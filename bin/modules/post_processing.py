@@ -9,7 +9,7 @@ import pandas as pd
 import numpy as np
 pd.options.mode.chained_assignment = None
 
-def process_results(db_dir,out_dir, prefix):
+def process_results(db_dir,out_dir, prefix, gene_predictor):
 
     ##mmseqs
 
@@ -28,7 +28,7 @@ def process_results(db_dir,out_dir, prefix):
     tophits_df = pd.DataFrame(tophits, columns=['phrog', 'gene', 'alnScore', 'seqIdentity', 'eVal'])
     tophits_df.to_csv(os.path.join(out_dir, "top_hits_mmseqs.tsv"), sep="\t", index=False)
     # left join mmseqs top hits to phanotate
-    phan_file = os.path.join(out_dir, "cleaned_phanotate.tsv") 
+    phan_file = os.path.join(out_dir, "cleaned_" +  gene_predictor +  ".tsv") 
     # automatically picks up the names
     phan_df = pd.read_csv(phan_file, sep="\t", index_col=False )
     phan_df['gene']=phan_df['gene'].astype(str)
@@ -48,7 +48,10 @@ def process_results(db_dir,out_dir, prefix):
     merged_df['category'] = merged_df["category"].str.replace("No_PHROG", "unknown function")
 
     # add columns
-    merged_df['Method'] = "PHANOTATE"
+    if gene_predictor == "phanotate":
+        merged_df['Method'] = "PHANOTATE"
+    if gene_predictor == "prodigal":
+        merged_df['Method'] = "PRODIGAL"
     merged_df['Region'] = "CDS"
 
     ############################
