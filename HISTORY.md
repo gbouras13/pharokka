@@ -2,6 +2,12 @@
 History
 =======
 
+0.1.4 (2022-07-08)
+------------------
+
+* Fifth release
+* Updates PHROGs annotation to version 4.
+
 0.1.3 (2022-07-06)
 ------------------
 
