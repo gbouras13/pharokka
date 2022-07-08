@@ -14,7 +14,7 @@ def process_results(db_dir,out_dir, prefix):
     ##mmseqs
 
     mmseqs_file =  os.path.join(out_dir, "mmseqs_results.tsv")
-    print("Processing mmseqs output")
+    print("Processing mmseqs2 output.")
     col_list = ["phrog", "gene", "alnScore", "seqIdentity", "eVal", "qStart", "qEnd", "qLen", "tStart", "tEnd", "tLen"] 
     mmseqs_df = pd.read_csv(mmseqs_file, delimiter= '\t', index_col=False , names=col_list) 
     genes = mmseqs_df.gene.unique()
@@ -57,7 +57,7 @@ def process_results(db_dir,out_dir, prefix):
     hhs_dir = out_dir + "/hhsuite_target_dir/"
 
     hhsuite_file =  os.path.join(hhs_dir, "results_tsv_file.ffdata")
-    print("Processing hhsuite output")
+    print("Processing hhsuite output.")
     col_list = ["gene_hmm", "phrog_hmm", "seqIdentity_hmm", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "eVal_hmm", "alnScore_hmm"] 
     hhsuite_df = pd.read_csv(hhsuite_file, delimiter= '\t', index_col=False , names=col_list) 
     genes = hhsuite_df.gene_hmm.unique()

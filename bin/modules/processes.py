@@ -121,7 +121,7 @@ def run_mmseqs(db_dir, out_dir, threads, logger):
 
 
 def run_hmmsuite(db_dir, out_dir, threads, logger):
-    print("Running hmmsuite.")
+    print("Running hhsuite.")
     hmmsuite_db_dir = os.path.join(db_dir, "phrogs_hhsuite_db/")
     amino_acid_fasta = "phanotate_aas_tmp.fasta"
     target_db_dir =  os.path.join(out_dir, "hhsuite_target_dir/")
