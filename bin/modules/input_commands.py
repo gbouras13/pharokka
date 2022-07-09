@@ -5,7 +5,7 @@ from argparse import RawTextHelpFormatter
 from Bio import SeqIO
 import shutil
 
-v = '0.1.4'
+v = '0.1.5'
 
 
 ### GLOBAL VARIABLES
@@ -21,6 +21,7 @@ def get_input():
 	parser.add_argument('-p', '--prefix', action="store", help='Prefix for output files. This is not required',  default='Default')
 	parser.add_argument('-l', '--locustag', action="store", help='User specified locus tag for the gff/gbk files. This is not required. A random locus tag will be generated instead.',  default='Default')
 	parser.add_argument('-g', '--gene_predictor', action="store", help='User specified gene predictor. Use " -g phanotate" or "-g prodigal". Defaults to phanotate.',  default='phanotate' )
+	parser.add_argument('-m', '--meta', help='Metagenomic option for Prodigal', action="store_true")
 	parser.add_argument('-V', '--version', action='version', version=v)
 	args = parser.parse_args()
 
@@ -59,10 +60,10 @@ def validate_fasta(filename):
 def validate_gene_predictor(gene_predictor):
 	if gene_predictor == "phanotate":
 		print("Phanotate will be used for gene prediction")
-	if gene_predictor == "prodigal":
+	elif gene_predictor == "prodigal":
 		print("Prodigal will be used for gene prediction")
 	else:
-		sys.exit("Error: gene predictor was incorrectly specified. Please use 'phanotate or 'prodigal' .\n")  
+		sys.exit("Error: gene predictor was incorrectly specified. Please use 'phanotate' or 'prodigal' .\n")  
 
 
 
