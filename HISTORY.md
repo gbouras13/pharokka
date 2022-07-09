@@ -2,6 +2,14 @@
 History
 =======
 
+0.1.5 (2022-07-09)
+------------------
+
+* Sixth release
+* Adds Prodigal option for gene prediction -g prodigal
+* Handles metagenome assembled virus contigs (that may have no genes) with -m flag
+* Fixes tRNA count bug in cds_functions.tsv
+
 0.1.4 (2022-07-08)
 ------------------
 

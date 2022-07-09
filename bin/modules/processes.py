@@ -15,22 +15,30 @@ def write_to_log(s, logger):
                     break
 
 
-def run_phanotate(filepath_in, out_dir):
+def run_phanotate(filepath_in, out_dir,logger):
     print("Running Phanotate.")
+    logger.info("Running Phanotate.")
     add_delim_trim_fasta(filepath_in, out_dir)
     try:
         # no phanotate stderr
-        sp.run([ "phanotate.py", os.path.join(out_dir, "input_fasta_delim.fasta"), "-o", os.path.join(out_dir, "phanotate_out_tmp.fasta"), "-f", "fasta"], stdout=sp.PIPE) # , stderr=sp.DEVNULL, stdout=sp.DEVNULL silence the warnings (no trnaScan)
-        sp.run(["phanotate.py", os.path.join(out_dir, "input_fasta_delim.fasta"), "-o", os.path.join(out_dir, "phanotate_out.txt"), "-f", "tabular"], stdout=sp.PIPE)
+        phan_fast = sp.Popen(["phanotate.py", os.path.join(out_dir, "input_fasta_delim.fasta"), "-o", os.path.join(out_dir, "phanotate_out_tmp.fasta"), "-f", "fasta"], stderr=sp.PIPE, stdout=sp.DEVNULL) # , stderr=sp.DEVNULL, stdout=sp.DEVNULL silence the warnings (no trnaScan)
+        phan_txt = sp.Popen(["phanotate.py", os.path.join(out_dir, "input_fasta_delim.fasta"), "-o", os.path.join(out_dir, "phanotate_out.txt"), "-f", "tabular"], stderr=sp.PIPE, stdout=sp.DEVNULL)
+        write_to_log(phan_fast.stderr, logger)
+        write_to_log(phan_txt.stderr, logger)
     except:
         sys.exit("Error with Phanotate\n")  
 
-def run_prodigal(filepath_in, out_dir,logger):
+def run_prodigal(filepath_in, out_dir,logger, meta):
     print("Running Prodigal.")
     add_delim_trim_fasta(filepath_in, out_dir)
     try:
         # no phanotate stderr
-        prodigal = sp.Popen(["prodigal", "-i", os.path.join(out_dir, "input_fasta_delim.fasta"), "-d", os.path.join(out_dir, "prodigal_out_tmp.fasta"), "-f", "gff", "-o", os.path.join(out_dir, "prodigal_out.gff") ], stdout=sp.PIPE, stderr=sp.DEVNULL) 
+        if meta == True:
+            print("Prodigal Meta Mode Enabled.")
+            logger.info("Prodigal Meta Mode Enabled.")
+            prodigal = sp.Popen(["prodigal", "-i", os.path.join(out_dir, "input_fasta_delim.fasta"), "-d", os.path.join(out_dir, "prodigal_out_tmp.fasta"), "-f", "gff", "-o", os.path.join(out_dir, "prodigal_out.gff"), "-p", "meta" ], stdout=sp.PIPE, stderr=sp.DEVNULL) 
+        else:
+            prodigal = sp.Popen(["prodigal", "-i", os.path.join(out_dir, "input_fasta_delim.fasta"), "-d", os.path.join(out_dir, "prodigal_out_tmp.fasta"), "-f", "gff", "-o", os.path.join(out_dir, "prodigal_out.gff") ], stdout=sp.PIPE, stderr=sp.DEVNULL) 
         write_to_log(prodigal.stdout, logger)
     except:
         sys.exit("Error with Prodigal\n")  
@@ -71,19 +79,22 @@ def tidy_prodigal_output(out_dir):
     prod_file = os.path.join(out_dir, "prodigal_out.gff")
     col_list = ["contig", "prod", "orf", "start", "stop","score", "frame", "phase", "description" ] 
     prod_df = pd.read_csv(prod_file, delimiter= '\t', index_col=False , names=col_list, skiprows=3 ) 
-
+    
+    # meta mode brings in some Nas so remove them
+    prod_df = prod_df.dropna()
     prod_filt_df = prod_df[["start", "stop", "frame", "contig", "score"]]
-
+    #convert staet stop to int
+    prod_filt_df["start"] = prod_filt_df["start"].astype('int')
+    prod_filt_df["stop"] = prod_filt_df["stop"].astype('int')
     # rearrange start and stop so that for negative strand, the stop is before start (like phanotate_out)
     cols = ["start","stop"]
     #indices where start is greater than stop
     ixs = prod_filt_df['frame'] == '-'
     # Where ixs is True, values are swapped
     prod_filt_df.loc[ixs,cols] = prod_filt_df.loc[ixs, cols].reindex(columns=cols[::-1]).values
-
     prod_filt_df['gene'] = prod_filt_df['contig'] + prod_filt_df.index.astype(str) + " " + prod_filt_df['start'].astype(str) + "_" + prod_filt_df['stop'].astype(str)
     prod_filt_df.to_csv(os.path.join(out_dir,"cleaned_prodigal.tsv"), sep="\t", index=False)
-    return prod_df
+    return prod_filt_df
 
 
 def translate_fastas(out_dir, gene_predictor):
@@ -109,7 +120,6 @@ def translate_fastas(out_dir, gene_predictor):
         i = 0 
         for dna_record in SeqIO.parse(os.path.join(out_dir, fasta_input_tmp), 'fasta'): 
             dna_header = str(clean_df['contig'].iloc[i]).replace("delim", "") + "_" + str(i) 
-            dna_description = str(clean_df['start'].iloc[i]) + "_" + str(clean_df['stop'].iloc[i])
             aa_record = SeqRecord(dna_record.seq.translate(to_stop=True), id=dna_header, description = dna_description )
             SeqIO.write(aa_record, aa_fa, 'fasta')
             i += 1

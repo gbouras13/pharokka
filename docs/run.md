@@ -16,6 +16,15 @@ To overwrite an existing output directory, use -f
 
 To specify a custom locus tag in the gff/genbank file, use -l
 
-`pharokka.py -i <fasta file> -o <output folder> -d <path/to/databse_dir> -t <threads> -p <prefix>  -f -l <locus_tag> `
+`pharokka.py -i <fasta file> -o <output folder> -d <path/to/databse_dir> -t <threads> -p <prefix>  -f -l <locus_tag>`
+
+To use Prodigal gene predictions instead of PHANOTATE use `-g prodigal`
+
+`pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -g prodigal`
+
+pharokka should work with metagenome assembled viral contigs with PHANOTATE automatically. With prodigal, please add the -m flag
+
+`pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -g prodigal -m`
+
 
 pharokka defaults to 1 thread.
