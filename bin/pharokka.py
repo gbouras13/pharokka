@@ -95,7 +95,7 @@ if __name__ == "__main__":
     sp.run(["rm", "-rf", os.path.join(out_dir, "top_hits_hhsuite.tsv") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "top_hits_mmseqs.tsv") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "hhsuite_target_dir") ])
-    sp.run(["rm", "-rf", os.path.join(out_dir, "trnascan_out.gff") ])
+    #sp.run(["rm", "-rf", os.path.join(out_dir, "trnascan_out.gff") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, gene_predictor + "_aas_tmp.fasta") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, gene_predictor + "_out_tmp.fasta") ])
     if gene_predictor == "phanotate":
