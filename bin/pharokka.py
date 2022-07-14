@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import sys
-from modules import input_commands
-from modules import processes
-from modules import post_processing
+import input_commands
+import processes
+import post_processing
 import os
 import subprocess as sp
 import logging
