@@ -5,7 +5,7 @@ from argparse import RawTextHelpFormatter
 from Bio import SeqIO
 import shutil
 
-v = '0.1.5'
+v = '0.1.6'
 
 
 ### GLOBAL VARIABLES

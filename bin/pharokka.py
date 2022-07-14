@@ -11,7 +11,7 @@ import datetime
 
 if __name__ == "__main__":
 
-    v = '0.1.5'
+    v = '0.1.6'
 
     print("Starting pharokka.")
 
