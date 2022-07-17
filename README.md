@@ -9,17 +9,15 @@ pharokka is designed for rapid standardised annotation of bacteriophages.
 
 If you are looking for rapid standardised annotation of prokaryotes, please use prokka (https://github.com/tseemann/prokka), which inspired the creation of pharokka.
 
-
 Method
 ----
-Briefly, gene prediction is done using PHANOTATE (https://github.com/deprekate/PHANOTATE) and function annotation is based on the PHROGs database (https://phrogs.lmge.uca.fr).
+Briefly, default gene prediction is done using PHANOTATE (https://github.com/deprekate/PHANOTATE) and function annotation is based on the PHROGs database (https://phrogs.lmge.uca.fr).
 
 The main output is a gff file that is suitable for use downstream pangenomic pipelines such as Roary (https://sanger-pathogens.github.io/Roary/).
 
 The other important output is `cds_functions.tsv`, which includes counts of CDSs, tRNAs, and functions assigned to CDSs according to the PHROGs database.
 
 For full documentation, please visit https://pharokka.readthedocs.io.
-
 
 Usage
 ------
@@ -29,7 +27,7 @@ The easiest way to install pharokka is via conda using
 
 This will install all the dependencies along with pharokka.
 
-Alternatively, pharokka can be installed manually via github.
+Alternatively, the development version of pharokka can be installed manually via github.
 
 `git clone https://github.com/gbouras13/pharokka.git`
 
@@ -93,6 +91,10 @@ pharokka has been tested on Linux and MacOS (M1 and Intel).
 Time
 --------
 On a standard 16GB laptop specifying 8 threads, pharokka should take between 5-20 minutes, depending on the genome size.
+
+Bugs and Suggestions
+--------
+If you come across bugs with pharokka, or would like to make any suggestions to improve the program, please open an issue or email george.bouras@adelaide.edu.au
 
 Citation
 --------
