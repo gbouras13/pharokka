@@ -1,0 +1,406 @@
+>EC2
+63	791	CDS
+			inference	PHANOTATE
+			inference	phrog=17079
+			product	hypothetical protein
+			transl_table	11
+953	1183	CDS
+			inference	PHANOTATE
+			inference	phrog=20632
+			product	hypothetical protein
+			transl_table	11
+1164	1778	CDS
+			inference	PHANOTATE
+			inference	phrog=5483
+			product	hypothetical protein
+			transl_table	11
+1850	2368	CDS
+			inference	PHANOTATE
+			inference	phrog=518
+			product	Rha-like transcriptional regulator
+			transl_table	11
+2567	3025	CDS
+			inference	PHANOTATE
+			inference	phrog=13
+			product	Rz-like spanin
+			transl_table	11
+3022	3516	CDS
+			inference	PHANOTATE
+			inference	phrog=7
+			product	endolysin
+			transl_table	11
+3494	3718	CDS
+			inference	PHANOTATE
+			inference	phrog=20
+			product	holin
+			transl_table	11
+3697	3867	CDS
+			inference	PHANOTATE
+			inference	phrog=7258
+			product	hypothetical protein
+			transl_table	11
+3913	4038	CDS
+			inference	PHANOTATE
+			inference	phrog=14630
+			product	hypothetical protein
+			transl_table	11
+4062	4154	CDS
+			inference	PHANOTATE
+			inference	phrog=8722
+			product	hypothetical protein
+			transl_table	11
+4197	5006	CDS
+			inference	PHANOTATE
+			inference	phrog=25523
+			product	anti-termination protein Q-like
+			transl_table	11
+5006	5122	CDS
+			inference	PHANOTATE
+			inference	phrog=35228
+			product	hypothetical protein
+			transl_table	11
+5119	5325	CDS
+			inference	PHANOTATE
+			inference	phrog=599
+			product	Lar-like restriction alleviation protein
+			transl_table	11
+5322	6041	CDS
+			inference	PHANOTATE
+			inference	phrog=171
+			product	NinG/ Rap DNA junction specific endonuclease
+			transl_table	11
+5956	6624	CDS
+			inference	PHANOTATE
+			inference	phrog=9096
+			product	hypothetical protein
+			transl_table	11
+6621	6791	CDS
+			inference	PHANOTATE
+			inference	phrog=288
+			product	hypothetical protein
+			transl_table	11
+6791	7246	CDS
+			inference	PHANOTATE
+			inference	phrog=25166
+			product	hypothetical protein
+			transl_table	11
+7243	7338	CDS
+			inference	PHANOTATE
+			inference	phrog=12399
+			product	hypothetical protein
+			transl_table	11
+7467	8186	CDS
+			inference	PHANOTATE
+			inference	phrog=5117
+			product	hypothetical protein
+			transl_table	11
+8250	8939	CDS
+			inference	PHANOTATE
+			inference	phrog=29721
+			product	hypothetical protein
+			transl_table	11
+8936	9844	CDS
+			inference	PHANOTATE
+			inference	phrog=277
+			product	replication initiation O-like
+			transl_table	11
+9930	10472	CDS
+			inference	PHANOTATE
+			inference	phrog=163
+			product	CII-like transcriptional activator
+			transl_table	11
+10503	10724	CDS
+			inference	PHANOTATE
+			inference	phrog=35
+			product	transcriptional repressor
+			transl_table	11
+10788	11552	CDS
+			inference	PHANOTATE
+			inference	phrog=4
+			product	transcriptional repressor
+			transl_table	11
+11575	11679	CDS
+			inference	PHANOTATE
+			inference	phrog=36743
+			product	hypothetical protein
+			transl_table	11
+11689	12555	CDS
+			inference	PHANOTATE
+			inference	phrog=5147
+			product	hypothetical protein
+			transl_table	11
+12586	12795	CDS
+			inference	PHANOTATE
+			inference	phrog=3975
+			product	hypothetical protein
+			transl_table	11
+12767	12874	CDS
+			inference	PHANOTATE
+			inference	phrog=29271
+			product	zinc-finger domain protein
+			transl_table	11
+12925	13095	CDS
+			inference	PHANOTATE
+			inference	phrog=31619
+			product	hypothetical protein
+			transl_table	11
+13127	13261	CDS
+			inference	PHANOTATE
+			inference	phrog=34658
+			product	hypothetical protein
+			transl_table	11
+13353	13649	CDS
+			inference	PHANOTATE
+			inference	phrog=25091
+			product	hypothetical protein
+			transl_table	11
+13805	14014	CDS
+			inference	PHANOTATE
+			inference	phrog=25975
+			product	hypothetical protein
+			transl_table	11
+14016	14174	CDS
+			inference	PHANOTATE
+			inference	phrog=6396
+			product	hypothetical protein
+			transl_table	11
+14171	14380	CDS
+			inference	PHANOTATE
+			inference	phrog=294
+			product	Kil protein for bacterial septation inhibition
+			transl_table	11
+14391	15227	CDS
+			inference	PHANOTATE
+			inference	phrog=16901
+			product	hypothetical protein
+			transl_table	11
+15332	16300	CDS
+			inference	PHANOTATE
+			inference	phrog=1376
+			product	hypothetical protein
+			transl_table	11
+16308	16589	CDS
+			inference	PHANOTATE
+			inference	phrog=1050
+			product	gam-like host nuclease inhibitor
+			transl_table	11
+16599	17516	CDS
+			inference	PHANOTATE
+			inference	phrog=148
+			product	RecT-like ssDNA annealing protein
+			transl_table	11
+17513	18193	CDS
+			inference	PHANOTATE
+			inference	phrog=149
+			product	exonuclease
+			transl_table	11
+18190	18618	CDS
+			inference	PHANOTATE
+			inference	phrog=1680
+			product	hypothetical protein
+			transl_table	11
+18615	18767	CDS
+			inference	PHANOTATE
+			inference	phrog=1998
+			product	hypothetical protein
+			transl_table	11
+18764	19222	CDS
+			inference	PHANOTATE
+			inference	phrog=56
+			product	DNA methyltransferase
+			transl_table	11
+19308	19649	CDS
+			inference	PHANOTATE
+			inference	phrog=1996
+			product	DNA methyltransferase
+			transl_table	11
+19649	19891	CDS
+			inference	PHANOTATE
+			inference	phrog=1852
+			product	hypothetical protein
+			transl_table	11
+19933	20130	CDS
+			inference	PHANOTATE
+			inference	phrog=1553
+			product	excisionase
+			transl_table	11
+20127	21335	CDS
+			inference	PHANOTATE
+			inference	phrog=1
+			product	integrase
+			transl_table	11
+21454	21543	CDS
+			inference	PHANOTATE
+			inference	phrog=31288
+			product	hypothetical protein
+			transl_table	11
+21674	22192	CDS
+			inference	PHANOTATE
+			inference	phrog=125
+			product	DNA invertase
+			transl_table	11
+22264	22356	CDS
+			inference	PHANOTATE
+			inference	phrog=18996
+			product	hypothetical protein
+			transl_table	11
+22384	22620	CDS
+			inference	PHANOTATE
+			inference	phrog=19499
+			product	hypothetical protein
+			transl_table	11
+22617	22727	CDS
+			inference	PHANOTATE
+			inference	phrog=14037
+			product	hypothetical protein
+			transl_table	11
+22840	22929	CDS
+			inference	PHANOTATE
+			inference	phrog=29531
+			product	hypothetical protein
+			transl_table	11
+22974	23213	CDS
+			inference	PHANOTATE
+			inference	phrog=189
+			product	RecA filament binding protein DinI
+			transl_table	11
+23219	23350	CDS
+			inference	PHANOTATE
+			inference	phrog=3017
+			product	head maturation protease
+			transl_table	11
+23340	24551	CDS
+			inference	PHANOTATE
+			inference	phrog=1591
+			product	tail fiber protein
+			transl_table	11
+24612	24845	CDS
+			inference	PHANOTATE
+			inference	phrog=1119
+			product	Cor superinfection exclusion protein
+			transl_table	11
+24957	25631	CDS
+			inference	PHANOTATE
+			inference	phrog=425
+			product	membrane associated protein
+			transl_table	11
+25631	25933	CDS
+			inference	PHANOTATE
+			inference	phrog=557
+			product	outer membrane protein
+			transl_table	11
+25935	29414	CDS
+			inference	PHANOTATE
+			inference	phrog=2589
+			product	tail protein
+			transl_table	11
+29506	30039	CDS
+			inference	PHANOTATE
+			inference	phrog=8179
+			product	hypothetical protein
+			transl_table	11
+30044	30718	CDS
+			inference	PHANOTATE
+			inference	phrog=32
+			product	tail assembly protein
+			transl_table	11
+30654	32009	CDS
+			inference	PHANOTATE
+			inference	phrog=30
+			product	minor tail protein
+			transl_table	11
+31918	32313	CDS
+			inference	PHANOTATE
+			inference	phrog=37691
+			product	hypothetical protein
+			transl_table	11
+32310	32525	CDS
+			inference	PHANOTATE
+			inference	phrog=3616
+			product	hypothetical protein
+			transl_table	11
+32504	35641	CDS
+			inference	PHANOTATE
+			inference	phrog=5918
+			product	hypothetical protein
+			transl_table	11
+35625	35897	CDS
+			inference	PHANOTATE
+			inference	phrog=32165
+			product	minor tail protein
+			transl_table	11
+35948	36379	CDS
+			inference	PHANOTATE
+			inference	phrog=42
+			product	minor tail protein
+			transl_table	11
+36390	37133	CDS
+			inference	PHANOTATE
+			inference	phrog=158
+			product	major tail protein
+			transl_table	11
+37141	37539	CDS
+			inference	PHANOTATE
+			inference	phrog=37
+			product	tail terminator
+			transl_table	11
+37536	38120	CDS
+			inference	PHANOTATE
+			inference	phrog=8274
+			product	hypothetical protein
+			transl_table	11
+38130	38450	CDS
+			inference	PHANOTATE
+			inference	phrog=82
+			product	head closure Hc1
+			transl_table	11
+38495	38911	CDS
+			inference	PHANOTATE
+			inference	phrog=92
+			product	DNA packaging chaperone FI
+			transl_table	11
+38957	39982	CDS
+			inference	PHANOTATE
+			inference	phrog=6281
+			product	hypothetical protein
+			transl_table	11
+40050	40382	CDS
+			inference	PHANOTATE
+			inference	phrog=49
+			product	head decoration
+			transl_table	11
+40392	41735	CDS
+			inference	PHANOTATE
+			inference	phrog=4759
+			product	hypothetical protein
+			transl_table	11
+41716	43308	CDS
+			inference	PHANOTATE
+			inference	phrog=21
+			product	portal protein
+			transl_table	11
+43305	43511	CDS
+			inference	PHANOTATE
+			inference	phrog=75
+			product	head-tail adaptor Ad1
+			transl_table	11
+43511	45253	CDS
+			inference	PHANOTATE
+			inference	phrog=15
+			product	terminase large subunit
+			transl_table	11
+45250	45342	CDS
+			inference	PHANOTATE
+			inference	phrog=37413
+			product	hypothetical protein
+			transl_table	11
+45408	45953	CDS
+			inference	PHANOTATE
+			inference	phrog=1790
+			product	terminase small subunit
+			transl_table	11
+46002	46124	CDS
+			inference	PHANOTATE
+			inference	phrog=26465
+			product	hypothetical protein
+			transl_table	11
