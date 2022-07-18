@@ -8,10 +8,11 @@ import subprocess as sp
 import logging
 import time
 import datetime
+from version import __version__
 
 if __name__ == "__main__":
 
-    v = '0.1.6'
+    v = __version__
 
     print("Starting pharokka.")
 
