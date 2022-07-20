@@ -22,7 +22,7 @@ For full documentation, please visit https://pharokka.readthedocs.io.
 Usage
 ------
 
-**pharokka v1.0.6 is now available on bioconda**
+**pharokka v0.1.6 is now available on bioconda**
 
 The easiest way to install pharokka is via conda.
 
