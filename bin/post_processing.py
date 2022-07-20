@@ -131,17 +131,15 @@ def get_contig_name_lengths(fasta_input, out_dir, prefix):
      'length': lengths,
      'gc_perc': gc,
     })
-    length_df.to_csv(os.path.join(out_dir, prefix + "_length_gc.tsv"), sep="\t", index=False)
+    #length_df.to_csv(os.path.join(out_dir, prefix + "_length_gc.tsv"), sep="\t", index=False)
     return(length_df)
 
 def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix):
     contig_count = len(length_df)
-    # with open( os.path.join(out_dir, "pharokka_summary.txt"), 'w') as f:
-    #         f.write('Total Number of Contigs: ' + str(contig_count) + '\n')
-    #         f.write('------------------------------------\n\n')
-    #         f.close()   
 
     contigs = length_df["contig"]
+    # instantiate the length_df['cds_coding_density']
+    length_df['cds_coding_density'] = 0.0
     description_list = []
 
     # read in trnascan
@@ -155,8 +153,11 @@ def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix):
         phanotate_mmseqs_df_cont = phanotate_mmseqs_df[phanotate_mmseqs_df['contig'] == contig]
         cds_count = len(phanotate_mmseqs_df_cont[phanotate_mmseqs_df_cont['Region'] == 'CDS'])
         trna_count = len(trna_df['Region'])
-        
+        # get the total length of the contig
+        contig_length = length_df[length_df["contig"] == contig]['length']
         if cds_count > 0:
+            # gets the total cds coding length
+            cds_lengths = abs(phanotate_mmseqs_df_cont['start'] - phanotate_mmseqs_df_cont['stop']).sum()
             # get function
             phanotate_mmseqs_df_cont[['attributes2']] = phanotate_mmseqs_df_cont[['attributes']]
             phanotate_mmseqs_df_cont[['attributes2','function']] = phanotate_mmseqs_df_cont['attributes2'].str.split(';function=',expand=True)
@@ -170,39 +171,25 @@ def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix):
             description_df = pd.concat([regions, functions]).to_frame(name = "Test").reset_index()
             description_df.columns = ['Description', 'Count']
             description_df['contig'] = contig
-            # remove pharokka summary for now until debug
-            # with open( os.path.join(out_dir, "pharokka_summary.txt"), 'a') as f:
-            #     f.write('Contig: ' + str(contig) + '\n')
-            #     f.write('------------------------------------\n')
-            #     f.write('CDS: ' + str(cds_count) + '\n')
-            #     f.write('tRNA: ' + str(trna_count) + '\n\n')
-            #     f.write('CDS Function Summary\n')
-            #     f.write('------------------------------------\n')
-            #     f.write('head and packaging: ' + str(len(phanotate_mmseqs_df_cont[phanotate_mmseqs_df_cont['attributes'].str.contains("head and packaging")])) + '\n')
-            #     f.write('connector: ' + str(len(phanotate_mmseqs_df_cont[phanotate_mmseqs_df_cont['attributes'].str.contains("connector")])) + '\n')
-            #     f.write('tail: ' + str(len(phanotate_mmseqs_df_cont[phanotate_mmseqs_df_cont['attributes'].str.contains("tail")])) + '\n')
-            #     f.write('DNA, RNA and nucleotide metabolism: ' + str(len(phanotate_mmseqs_df_cont[phanotate_mmseqs_df_cont['attributes'].str.contains("DNA, RNA and nucleotide metabolism")])) + '\n')
-            #     f.write('integration and excision: ' + str(len(phanotate_mmseqs_df_cont[phanotate_mmseqs_df_cont['attributes'].str.contains("integration and excision")])) + '\n')
-            #     f.write('lysis: ' + str(len(phanotate_mmseqs_df_cont[phanotate_mmseqs_df_cont['attributes'].str.contains("lysis")])) + '\n')
-            #     f.write('transcription regulation: ' + str(len(phanotate_mmseqs_df_cont[phanotate_mmseqs_df_cont['attributes'].str.contains("transcription regulation")])) + '\n')
-            #     f.write('moron, auxiliary metabolic gene and host takeover: ' + str(len(phanotate_mmseqs_df_cont[phanotate_mmseqs_df_cont['attributes'].str.contains("moron, auxiliary metabolic gene and host takeover")])) + '\n')
-            #     f.write('other: ' + str(len(phanotate_mmseqs_df_cont[phanotate_mmseqs_df_cont['attributes'].str.contains("other")])) + '\n')
-            #     f.write('unknown function: ' + str(len(phanotate_mmseqs_df_cont[phanotate_mmseqs_df_cont['attributes'].str.contains("unknown function")])) + '\n')
-            #     f.write('=====================================\n\n')
-            #     f.close()
         else:
             description_df = pd.DataFrame({'Description': ["CDS"], 'Count': [0], 'contig': contig})
+            cds_lengths = 0
         # add trna count
         trna_row = pd.DataFrame({ 'Description':['tRNAs'], 'Count':[trna_count], 'contig':[contig] })
+        # calculate the cds coding density and add to length_df
+        cds_coding_density = cds_lengths * 100 / contig_length
+        cds_coding_density = round(cds_coding_density, 2)
+        length_df.loc[length_df['contig'] == contig, 'cds_coding_density'] = cds_coding_density
         # append it all
         description_list.append(description_df)
         description_list.append(trna_row)
 
-
-    #description_df = description_df.drop(index=description_df.index[0], axis=0, inplace=True)
+    # save the output
     description_total_df = pd.concat(description_list)
     #description_total_df = description_total_df.append({'Description':'tRNAs', 'Count':trna_count, 'contig':contig}, ignore_index=True)
     description_total_df.to_csv(os.path.join(out_dir, prefix + "_cds_functions.tsv"), sep="\t", index=False)
+    # save the length_gc.tsv also
+    length_df.to_csv(os.path.join(out_dir, prefix + "_length_gc.tsv"), sep="\t", index=False)
 
 
 

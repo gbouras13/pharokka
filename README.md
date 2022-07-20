@@ -21,9 +21,12 @@ For full documentation, please visit https://pharokka.readthedocs.io.
 
 Usage
 ------
-The easiest way to install pharokka is via conda using
 
-`conda install pharokka -c gbouras13`
+** pharokka v1.0.6 is now available on bioconda **
+
+The easiest way to install pharokka is via conda.
+
+`conda install pharokka -c bioconda`
 
 This will install all the dependencies along with pharokka.
 
@@ -91,6 +94,10 @@ pharokka has been tested on Linux and MacOS (M1 and Intel).
 Time
 --------
 On a standard 16GB laptop specifying 8 threads, pharokka should take between 5-20 minutes, depending on the genome size.
+
+Version Log
+--------
+A brief description of what is new in easy update of pharokka can be found in the HISTORY.md file.
 
 Bugs and Suggestions
 --------
