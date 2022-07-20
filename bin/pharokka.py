@@ -72,7 +72,7 @@ if __name__ == "__main__":
     # runnin mmseqs2
     logger.info("Starting mmseqs2")
     processes.run_mmseqs(DBDIR, out_dir, args.threads, logger, gene_predictor, args.evalue)
-    logger.info("Starting hhsuite")
+    #logger.info("Starting hhsuite")
     #processes.run_hmmsuite(DBDIR, out_dir, args.threads, logger, args.gene_predictor)
 
     # post processing

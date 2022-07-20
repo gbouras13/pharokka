@@ -1,3 +1,4 @@
+from cmath import nan
 import os
 from re import T
 import subprocess as sp
@@ -92,13 +93,18 @@ def process_results(db_dir,out_dir, prefix, gene_predictor):
     # merged_df[['gene_hmm','loca']] = merged_df['gene'].str.split(' ',expand=True)
     # merged_df = merged_df.merge(tophits_hmm__df, on='gene_hmm', how='left')
 
-    # # replace with hmm if nothing found for mmseqs
-    # merged_df.loc[merged_df['phrog'] == 'No_PHROG', 'phrog'] = merged_df['phrog_hmm']
-    # merged_df.loc[merged_df['alnScore'] == 'No_PHROG', 'alnScore'] = merged_df['alnScore_hmm']
-    # merged_df.loc[merged_df['seqIdentity'] == 'No_PHROG', 'seqIdentity'] = merged_df['seqIdentity_hmm']
-    # merged_df.loc[merged_df['eVal'] == 'No_PHROG', 'eVal'] = merged_df['eVal_hmm']
-    # merged_df.loc[merged_df['top_hit'] == 'No_PHROG', 'top_hit'] = 'NA'
-    # merged_df.loc[merged_df['color'] == 'No_PHROG', 'color'] = 'NA'
+
+
+    # # replace with NA if nothing found for mmseqs
+    merged_df.loc[merged_df['phrog'] == 'No_PHROG', 'phrog'] = 'No_PHROG'
+    merged_df.loc[merged_df['alnScore'] == 'No_PHROG', 'alnScore'] = 'No_PHROG'
+    merged_df.loc[merged_df['seqIdentity'] == 'No_PHROG', 'seqIdentity'] = 'No_PHROG'
+    merged_df.loc[merged_df['eVal'] == 'No_PHROG', 'eVal'] = 'No_PHROG'
+    merged_df.loc[merged_df['top_hit'] == 'No_PHROG', 'top_hit'] = 'No_PHROG'
+    merged_df.loc[merged_df['color'] == 'No_PHROG', 'color'] = 'No_PHROG'
+    
+
+    print(merged_df)
     
     # get phrog
     merged_df["phrog"] = merged_df["phrog"].str.replace("phrog_", "")
@@ -106,12 +112,12 @@ def process_results(db_dir,out_dir, prefix, gene_predictor):
     # drop existing color annot category cols
     merged_df = merged_df.drop(columns = ['color', 'annot', 'category'])
     merged_df = merged_df.merge(phrog_annot_df, on='phrog', how='left')
-    merged_df["annot"] = merged_df["annot"].replace(np.nan, 'hypothetical protein', regex=True)
+    merged_df["annot"] = merged_df["annot"].replace(nan, 'hypothetical protein', regex=True)
+    merged_df["category"] = merged_df["category"].replace(nan, 'unknown function', regex=True)
 
     # get rid of "delimiter"
     merged_df["contig"] = merged_df["contig"].str.replace("delim", "")
     merged_df["gene"] = merged_df["gene"].str.replace("delim", "_")
-    # merged_df["gene_hmm"] = merged_df["gene_hmm"].str.replace("delim", "_")
 
     merged_df.to_csv( os.path.join(out_dir, prefix + "_final_merged_output.tsv"), sep="\t", index=False)
     
@@ -135,7 +141,7 @@ def get_contig_name_lengths(fasta_input, out_dir, prefix):
     return(length_df)
 
 def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix):
-    contig_count = len(length_df)
+    #contig_count = len(length_df)
 
     contigs = length_df["contig"]
     # instantiate the length_df['cds_coding_density']
