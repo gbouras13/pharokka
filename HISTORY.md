@@ -1,6 +1,11 @@
-=======
 History
 =======
+
+0.1.6 (2022-07-20)
+------------------
+
+* Removes hh-suite dependency
+* Adds e-value option for passing into mmseqs2.
 
 0.1.6 (2022-07-16)
 ------------------
