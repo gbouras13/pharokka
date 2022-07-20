@@ -88,22 +88,7 @@ if __name__ == "__main__":
     processes.convert_gff_to_gbk(args.infile, out_dir, prefix, logger)
     
     # delete tmp files
-    sp.run(["rm", "-rf", os.path.join(out_dir, "target_dir") ])
-    sp.run(["rm", "-rf", os.path.join(out_dir, "tmp_dir/") ])
-    sp.run(["rm", "-rf", os.path.join(out_dir, "mmseqs/") ])
-    sp.run(["rm", "-rf", os.path.join(out_dir, "cleaned_" + gene_predictor + ".tsv") ])
-    sp.run(["rm", "-rf", os.path.join(out_dir, "input_fasta_delim.fasta") ])
-    sp.run(["rm", "-rf", os.path.join(out_dir, "mmseqs_results.tsv") ])
-    sp.run(["rm", "-rf", os.path.join(out_dir, "top_hits_hhsuite.tsv") ])
-    sp.run(["rm", "-rf", os.path.join(out_dir, "top_hits_mmseqs.tsv") ])
-    sp.run(["rm", "-rf", os.path.join(out_dir, "hhsuite_target_dir") ])
-    #sp.run(["rm", "-rf", os.path.join(out_dir, "trnascan_out.gff") ])
-    sp.run(["rm", "-rf", os.path.join(out_dir, gene_predictor + "_aas_tmp.fasta") ])
-    sp.run(["rm", "-rf", os.path.join(out_dir, gene_predictor + "_out_tmp.fasta") ])
-    if gene_predictor == "phanotate":
-        sp.run(["rm", "-rf", os.path.join(out_dir, "phanotate_out.txt") ])
-    if gene_predictor == "prodigal":
-        sp.run(["rm", "-rf", os.path.join(out_dir, "prodigal_out.gff") ])
+    post_processing.remove_post_processing_files(out_dir, gene_predictor)
 
     # Determine elapsed time
     elapsed_time = time.time() - start_time

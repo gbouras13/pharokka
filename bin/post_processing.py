@@ -57,44 +57,6 @@ def process_results(db_dir,out_dir, prefix, gene_predictor):
         merged_df['Method'] = "PRODIGAL"
     merged_df['Region'] = "CDS"
 
-    ############################
-    ########## hhsuite
-
-    # hhs_dir = out_dir + "/hhsuite_target_dir/"
-
-    # hhsuite_file =  os.path.join(hhs_dir, "results_tsv_file.ffdata")
-    # print("Processing hhsuite output.")
-    # col_list = ["gene_hmm", "phrog_hmm", "seqIdentity_hmm", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "eVal_hmm", "alnScore_hmm"] 
-    # hhsuite_df = pd.read_csv(hhsuite_file, delimiter= '\t', index_col=False , names=col_list) 
-    # genes = hhsuite_df.gene_hmm.unique()
-    # # remove nan
-    # genes = [x for x in genes if str(x) != 'nan']
-    # tophits = []
-
-    # for gene in genes:
-    #     tmp_df = hhsuite_df.loc[hhsuite_df['gene_hmm'] == gene].sort_values('eVal_hmm').reset_index(drop=True).iloc[0]
-    #     tophits.append([tmp_df.phrog_hmm, tmp_df.gene_hmm, tmp_df.alnScore_hmm, tmp_df.seqIdentity_hmm, tmp_df.eVal_hmm])
-
-    # tophits_hmm__df = pd.DataFrame(tophits, columns=['phrog_hmm', 'gene_hmm', 'alnScore_hmm', 'seqIdentity_hmm', 'eVal_hmm'])
-
-    # # filter from 0 to end for savings
-    # tophits_hmm__df[['spl','ind']] = tophits_hmm__df['gene_hmm'].str.split('delim',expand=True)
-    # tophits_hmm__df[['ind']] = tophits_hmm__df[['ind']].astype(int)
-    # tophits_hmm__df = tophits_hmm__df.sort_values(by=['ind']).drop(columns = ['spl', 'ind'])
-    # tophits_hmm__df.to_csv(os.path.join(out_dir, "top_hits_hhsuite.tsv"), sep="\t", index=False)
-    
-    
-    ################
-    ### merge in hmm
-
-    # add match type
-    # merged_df['match_type'] = np.where(merged_df['phrog'] == "No_PHROG", 'hmm', 'mmseqs')
-
-    # merged_df[['gene_hmm','loca']] = merged_df['gene'].str.split(' ',expand=True)
-    # merged_df = merged_df.merge(tophits_hmm__df, on='gene_hmm', how='left')
-
-
-
     # # replace with NA if nothing found for mmseqs
     merged_df.loc[merged_df['phrog'] == 'No_PHROG', 'phrog'] = 'No_PHROG'
     merged_df.loc[merged_df['alnScore'] == 'No_PHROG', 'alnScore'] = 'No_PHROG'
@@ -111,11 +73,7 @@ def process_results(db_dir,out_dir, prefix, gene_predictor):
     merged_df = merged_df.merge(phrog_annot_df, on='phrog', how='left')
     merged_df["annot"] = merged_df["annot"].replace(nan, 'hypothetical protein', regex=True)
     merged_df["category"] = merged_df["category"].replace(nan, 'unknown function', regex=True)
-    merged_df["category"] = merged_df["color"].replace(nan, 'none', regex=True)
-
-    # get rid of "delimiter"
-    merged_df["contig"] = merged_df["contig"].str.replace("delim", "")
-    merged_df["gene"] = merged_df["gene"].str.replace("delim", "_")
+    merged_df["color"] = merged_df["color"].replace(nan, 'none', regex=True)
 
     merged_df.to_csv( os.path.join(out_dir, prefix + "_final_merged_output.tsv"), sep="\t", index=False)
     
@@ -194,11 +152,6 @@ def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix):
     length_df.to_csv(os.path.join(out_dir, prefix + "_length_gc.tsv"), sep="\t", index=False)
 
 
-
-
-
-    # save as tsv
-
   
 def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag):
     # write the headers of the gff file
@@ -233,7 +186,6 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix, loc
         gff_df.to_csv(f, sep="\t", index=False, header=False)
       
     ### trnas
-
     col_list = ["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]
     trna_df = pd.read_csv(os.path.join(out_dir,"trnascan_out.gff"), delimiter= '\t', index_col=False, names=col_list ) 
     # keep only trnas
@@ -242,7 +194,6 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix, loc
     trna_df.stop = trna_df.stop.astype(int)
     with open(os.path.join(out_dir, prefix + ".gff"), 'a') as f:
         trna_df.to_csv(f, sep="\t", index=False, header=False)
-
 
     # write fasta on the end 
 
@@ -291,6 +242,24 @@ def create_tbl(phanotate_mmseqs_df, length_df, out_dir, prefix):
                     f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "tRNAscan-SE")
                     f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ str(row['trna_product']) + "\n")
                     f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
+
+
+def remove_post_processing_files(out_dir, gene_predictor):
+    sp.run(["rm", "-rf", os.path.join(out_dir, "target_dir") ])
+    sp.run(["rm", "-rf", os.path.join(out_dir, "tmp_dir/") ])
+    sp.run(["rm", "-rf", os.path.join(out_dir, "mmseqs/") ])
+    sp.run(["rm", "-rf", os.path.join(out_dir, "cleaned_" + gene_predictor + ".tsv") ])
+    sp.run(["rm", "-rf", os.path.join(out_dir, "input_fasta_delim.fasta") ])
+    sp.run(["rm", "-rf", os.path.join(out_dir, "mmseqs_results.tsv") ])
+    # leave in tophits
+    #sp.run(["rm", "-rf", os.path.join(out_dir, "top_hits_mmseqs.tsv") ])
+    #sp.run(["rm", "-rf", os.path.join(out_dir, "trnascan_out.gff") ])
+    sp.run(["rm", "-rf", os.path.join(out_dir, gene_predictor + "_aas_tmp.fasta") ])
+    sp.run(["rm", "-rf", os.path.join(out_dir, gene_predictor + "_out_tmp.fasta") ])
+    if gene_predictor == "phanotate":
+        sp.run(["rm", "-rf", os.path.join(out_dir, "phanotate_out.txt") ])
+    if gene_predictor == "prodigal":
+        sp.run(["rm", "-rf", os.path.join(out_dir, "prodigal_out.gff") ])
 
 
 

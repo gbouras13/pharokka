@@ -18,11 +18,10 @@ def write_to_log(s, logger):
 def run_phanotate(filepath_in, out_dir,logger):
     print("Running Phanotate.")
     logger.info("Running Phanotate.")
-    add_delim_trim_fasta(filepath_in, out_dir)
     try:
         # no phanotate stderr
-        phan_fast = sp.Popen(["phanotate.py", os.path.join(out_dir, "input_fasta_delim.fasta"), "-o", os.path.join(out_dir, "phanotate_out_tmp.fasta"), "-f", "fasta"], stderr=sp.PIPE, stdout=sp.DEVNULL) # , stderr=sp.DEVNULL, stdout=sp.DEVNULL silence the warnings (no trnaScan)
-        phan_txt = sp.Popen(["phanotate.py", os.path.join(out_dir, "input_fasta_delim.fasta"), "-o", os.path.join(out_dir, "phanotate_out.txt"), "-f", "tabular"], stderr=sp.PIPE, stdout=sp.DEVNULL)
+        phan_fast = sp.Popen(["phanotate.py", filepath_in, "-o", os.path.join(out_dir, "phanotate_out_tmp.fasta"), "-f", "fasta"], stderr=sp.PIPE, stdout=sp.DEVNULL) # , stderr=sp.DEVNULL, stdout=sp.DEVNULL silence the warnings (no trnaScan)
+        phan_txt = sp.Popen(["phanotate.py", filepath_in, "-o", os.path.join(out_dir, "phanotate_out.txt"), "-f", "tabular"], stderr=sp.PIPE, stdout=sp.DEVNULL)
         write_to_log(phan_fast.stderr, logger)
         write_to_log(phan_txt.stderr, logger)
     except:
@@ -30,32 +29,17 @@ def run_phanotate(filepath_in, out_dir,logger):
 
 def run_prodigal(filepath_in, out_dir,logger, meta):
     print("Running Prodigal.")
-    add_delim_trim_fasta(filepath_in, out_dir)
     try:
         # no phanotate stderr
         if meta == True:
             print("Prodigal Meta Mode Enabled.")
             logger.info("Prodigal Meta Mode Enabled.")
-            prodigal = sp.Popen(["prodigal", "-i", os.path.join(out_dir, "input_fasta_delim.fasta"), "-d", os.path.join(out_dir, "prodigal_out_tmp.fasta"), "-f", "gff", "-o", os.path.join(out_dir, "prodigal_out.gff"), "-p", "meta" ], stdout=sp.PIPE, stderr=sp.DEVNULL) 
+            prodigal = sp.Popen(["prodigal", "-i", filepath_in, "-d", os.path.join(out_dir, "prodigal_out_tmp.fasta"), "-f", "gff", "-o", os.path.join(out_dir, "prodigal_out.gff"), "-p", "meta" ], stdout=sp.PIPE, stderr=sp.DEVNULL) 
         else:
-            prodigal = sp.Popen(["prodigal", "-i", os.path.join(out_dir, "input_fasta_delim.fasta"), "-d", os.path.join(out_dir, "prodigal_out_tmp.fasta"), "-f", "gff", "-o", os.path.join(out_dir, "prodigal_out.gff") ], stdout=sp.PIPE, stderr=sp.DEVNULL) 
+            prodigal = sp.Popen(["prodigal", "-i", filepath_in, "-d", os.path.join(out_dir, "prodigal_out_tmp.fasta"), "-f", "gff", "-o", os.path.join(out_dir, "prodigal_out.gff") ], stdout=sp.PIPE, stderr=sp.DEVNULL) 
         write_to_log(prodigal.stdout, logger)
     except:
         sys.exit("Error with Prodigal\n")  
-
-def add_delim_trim_fasta(filepath_in, out_dir):
-    with open(os.path.join(out_dir, "input_fasta_delim.fasta"), 'w') as na_fa:
-        for dna_record in SeqIO.parse(filepath_in, 'fasta'): 
-            # trim to first 20 chars of fasta header if too long
-            # if len(dna_record.id) > 20:
-            #     print("Trimming fasta headers to the first 20 characters.")
-            #     # in response to #149 change all to 20
-            #     dna_record.id = dna_record.id[0:19]
-            # add delim
-            dna_header = dna_record.id + str("delim") 
-            dna_description = ""
-            dna_record = SeqRecord(dna_record.seq, id=dna_header, description = dna_description)
-            SeqIO.write(dna_record, na_fa, 'fasta')
 
 
 def tidy_phanotate_output(out_dir):
