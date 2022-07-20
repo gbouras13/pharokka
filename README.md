@@ -26,7 +26,7 @@ Usage
 
 The easiest way to install pharokka is via conda.
 
-`conda install pharokka -c bioconda`
+`conda install -c bioconda pharokka`
 
 This will install all the dependencies along with pharokka.
 
