@@ -87,7 +87,7 @@ def get_contig_name_lengths(fasta_input, out_dir, prefix):
     for fasta in fasta_sequences:
         contig_names.append(fasta.id)
         lengths.append(len(fasta.seq))
-        gc.append(GC(fasta.seq))
+        gc.append(round(GC(fasta.seq),2))
     length_df = pd.DataFrame(
     {'contig': contig_names,
      'length': lengths,
