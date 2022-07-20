@@ -14,8 +14,6 @@ if __name__ == "__main__":
 
     v = __version__
 
-    print("Starting pharokka.")
-
     # get start time
     start_time = time.time()
 
@@ -24,6 +22,9 @@ if __name__ == "__main__":
     time_for_log = datetime.datetime.now().strftime("%m%d%Y_%H%M%S")
 
     args = input_commands.get_input()
+    # after input so that version is printed only
+    print("Starting pharokka.")
+
         # set the prefix
     if args.prefix == "Default":
         prefix = "pharokka"
