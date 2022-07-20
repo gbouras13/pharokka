@@ -103,9 +103,6 @@ def process_results(db_dir,out_dir, prefix, gene_predictor):
     merged_df.loc[merged_df['top_hit'] == 'No_PHROG', 'top_hit'] = 'No_PHROG'
     merged_df.loc[merged_df['color'] == 'No_PHROG', 'color'] = 'No_PHROG'
     
-
-    print(merged_df)
-    
     # get phrog
     merged_df["phrog"] = merged_df["phrog"].str.replace("phrog_", "")
     merged_df['phrog']=merged_df['phrog'].astype(str)
@@ -114,6 +111,7 @@ def process_results(db_dir,out_dir, prefix, gene_predictor):
     merged_df = merged_df.merge(phrog_annot_df, on='phrog', how='left')
     merged_df["annot"] = merged_df["annot"].replace(nan, 'hypothetical protein', regex=True)
     merged_df["category"] = merged_df["category"].replace(nan, 'unknown function', regex=True)
+    merged_df["category"] = merged_df["color"].replace(nan, 'none', regex=True)
 
     # get rid of "delimiter"
     merged_df["contig"] = merged_df["contig"].str.replace("delim", "")
@@ -137,11 +135,9 @@ def get_contig_name_lengths(fasta_input, out_dir, prefix):
      'length': lengths,
      'gc_perc': gc,
     })
-    #length_df.to_csv(os.path.join(out_dir, prefix + "_length_gc.tsv"), sep="\t", index=False)
     return(length_df)
 
 def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix):
-    #contig_count = len(length_df)
 
     contigs = length_df["contig"]
     # instantiate the length_df['cds_coding_density']
