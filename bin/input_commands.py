@@ -23,7 +23,7 @@ def get_input():
 	parser.add_argument('-l', '--locustag', action="store", help='User specified locus tag for the gff/gbk files. This is not required. A random locus tag will be generated instead.',  default='Default')
 	parser.add_argument('-g', '--gene_predictor', action="store", help='User specified gene predictor. Use " -g phanotate" or "-g prodigal". Defaults to phanotate.',  default='phanotate' )
 	parser.add_argument('-m', '--meta', help='Metagenomic option for Prodigal', action="store_true")
-	parser.add_argument('-e', '--evalue', help='evalue threshold for mmseqs', action="store", default = "1E-05")
+	parser.add_argument('-e', '--evalue', help='evalue threshold for mmseqs2', action="store", default = "1E-05")
 	parser.add_argument('-V', '--version', action='version', version=v)
 	args = parser.parse_args()
 
