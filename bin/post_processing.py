@@ -59,46 +59,46 @@ def process_results(db_dir,out_dir, prefix, gene_predictor):
     ############################
     ########## hhsuite
 
-    hhs_dir = out_dir + "/hhsuite_target_dir/"
+    # hhs_dir = out_dir + "/hhsuite_target_dir/"
 
-    hhsuite_file =  os.path.join(hhs_dir, "results_tsv_file.ffdata")
-    print("Processing hhsuite output.")
-    col_list = ["gene_hmm", "phrog_hmm", "seqIdentity_hmm", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "eVal_hmm", "alnScore_hmm"] 
-    hhsuite_df = pd.read_csv(hhsuite_file, delimiter= '\t', index_col=False , names=col_list) 
-    genes = hhsuite_df.gene_hmm.unique()
-    # remove nan
-    genes = [x for x in genes if str(x) != 'nan']
-    tophits = []
+    # hhsuite_file =  os.path.join(hhs_dir, "results_tsv_file.ffdata")
+    # print("Processing hhsuite output.")
+    # col_list = ["gene_hmm", "phrog_hmm", "seqIdentity_hmm", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "eVal_hmm", "alnScore_hmm"] 
+    # hhsuite_df = pd.read_csv(hhsuite_file, delimiter= '\t', index_col=False , names=col_list) 
+    # genes = hhsuite_df.gene_hmm.unique()
+    # # remove nan
+    # genes = [x for x in genes if str(x) != 'nan']
+    # tophits = []
 
-    for gene in genes:
-        tmp_df = hhsuite_df.loc[hhsuite_df['gene_hmm'] == gene].sort_values('eVal_hmm').reset_index(drop=True).iloc[0]
-        tophits.append([tmp_df.phrog_hmm, tmp_df.gene_hmm, tmp_df.alnScore_hmm, tmp_df.seqIdentity_hmm, tmp_df.eVal_hmm])
+    # for gene in genes:
+    #     tmp_df = hhsuite_df.loc[hhsuite_df['gene_hmm'] == gene].sort_values('eVal_hmm').reset_index(drop=True).iloc[0]
+    #     tophits.append([tmp_df.phrog_hmm, tmp_df.gene_hmm, tmp_df.alnScore_hmm, tmp_df.seqIdentity_hmm, tmp_df.eVal_hmm])
 
-    tophits_hmm__df = pd.DataFrame(tophits, columns=['phrog_hmm', 'gene_hmm', 'alnScore_hmm', 'seqIdentity_hmm', 'eVal_hmm'])
+    # tophits_hmm__df = pd.DataFrame(tophits, columns=['phrog_hmm', 'gene_hmm', 'alnScore_hmm', 'seqIdentity_hmm', 'eVal_hmm'])
 
-    # filter from 0 to end for savings
-    tophits_hmm__df[['spl','ind']] = tophits_hmm__df['gene_hmm'].str.split('delim',expand=True)
-    tophits_hmm__df[['ind']] = tophits_hmm__df[['ind']].astype(int)
-    tophits_hmm__df = tophits_hmm__df.sort_values(by=['ind']).drop(columns = ['spl', 'ind'])
-    tophits_hmm__df.to_csv(os.path.join(out_dir, "top_hits_hhsuite.tsv"), sep="\t", index=False)
+    # # filter from 0 to end for savings
+    # tophits_hmm__df[['spl','ind']] = tophits_hmm__df['gene_hmm'].str.split('delim',expand=True)
+    # tophits_hmm__df[['ind']] = tophits_hmm__df[['ind']].astype(int)
+    # tophits_hmm__df = tophits_hmm__df.sort_values(by=['ind']).drop(columns = ['spl', 'ind'])
+    # tophits_hmm__df.to_csv(os.path.join(out_dir, "top_hits_hhsuite.tsv"), sep="\t", index=False)
     
     
     ################
     ### merge in hmm
 
     # add match type
-    merged_df['match_type'] = np.where(merged_df['phrog'] == "No_PHROG", 'hmm', 'mmseqs')
+    # merged_df['match_type'] = np.where(merged_df['phrog'] == "No_PHROG", 'hmm', 'mmseqs')
 
-    merged_df[['gene_hmm','loca']] = merged_df['gene'].str.split(' ',expand=True)
-    merged_df = merged_df.merge(tophits_hmm__df, on='gene_hmm', how='left')
+    # merged_df[['gene_hmm','loca']] = merged_df['gene'].str.split(' ',expand=True)
+    # merged_df = merged_df.merge(tophits_hmm__df, on='gene_hmm', how='left')
 
-    # replace with hmm if nothing found for mmseqs
-    merged_df.loc[merged_df['phrog'] == 'No_PHROG', 'phrog'] = merged_df['phrog_hmm']
-    merged_df.loc[merged_df['alnScore'] == 'No_PHROG', 'alnScore'] = merged_df['alnScore_hmm']
-    merged_df.loc[merged_df['seqIdentity'] == 'No_PHROG', 'seqIdentity'] = merged_df['seqIdentity_hmm']
-    merged_df.loc[merged_df['eVal'] == 'No_PHROG', 'eVal'] = merged_df['eVal_hmm']
-    merged_df.loc[merged_df['top_hit'] == 'No_PHROG', 'top_hit'] = 'NA'
-    merged_df.loc[merged_df['color'] == 'No_PHROG', 'color'] = 'NA'
+    # # replace with hmm if nothing found for mmseqs
+    # merged_df.loc[merged_df['phrog'] == 'No_PHROG', 'phrog'] = merged_df['phrog_hmm']
+    # merged_df.loc[merged_df['alnScore'] == 'No_PHROG', 'alnScore'] = merged_df['alnScore_hmm']
+    # merged_df.loc[merged_df['seqIdentity'] == 'No_PHROG', 'seqIdentity'] = merged_df['seqIdentity_hmm']
+    # merged_df.loc[merged_df['eVal'] == 'No_PHROG', 'eVal'] = merged_df['eVal_hmm']
+    # merged_df.loc[merged_df['top_hit'] == 'No_PHROG', 'top_hit'] = 'NA'
+    # merged_df.loc[merged_df['color'] == 'No_PHROG', 'color'] = 'NA'
     
     # get phrog
     merged_df["phrog"] = merged_df["phrog"].str.replace("phrog_", "")
@@ -111,7 +111,7 @@ def process_results(db_dir,out_dir, prefix, gene_predictor):
     # get rid of "delimiter"
     merged_df["contig"] = merged_df["contig"].str.replace("delim", "")
     merged_df["gene"] = merged_df["gene"].str.replace("delim", "_")
-    merged_df["gene_hmm"] = merged_df["gene_hmm"].str.replace("delim", "_")
+    # merged_df["gene_hmm"] = merged_df["gene_hmm"].str.replace("delim", "_")
 
     merged_df.to_csv( os.path.join(out_dir, prefix + "_final_merged_output.tsv"), sep="\t", index=False)
     

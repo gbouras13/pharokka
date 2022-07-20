@@ -137,7 +137,7 @@ def run_trna_scan(filepath_in, out_dir, logger):
         return 0
 
     
-def run_mmseqs(db_dir, out_dir, threads, logger, gene_predictor):
+def run_mmseqs(db_dir, out_dir, threads, logger, gene_predictor, evalue):
     print("Running mmseqs2.")
     phrog_db_dir = os.path.join(db_dir, "phrogs_mmseqs_db/")
     mmseqs_dir = os.path.join(out_dir, "mmseqs/")
@@ -153,7 +153,7 @@ def run_mmseqs(db_dir, out_dir, threads, logger, gene_predictor):
     mmseqs_createdb = sp.Popen(["mmseqs", "createdb", os.path.join(out_dir, amino_acid_fasta), os.path.join(target_db_dir, "target_seqs")], stdout=sp.PIPE)
     write_to_log(mmseqs_createdb.stdout, logger)
     # runs the seacrh
-    mmseqs_searc = sp.Popen(["mmseqs", "search", os.path.join(phrog_db_dir, "phrogs_profile_db"), os.path.join(target_db_dir, "target_seqs"), os.path.join(mmseqs_dir, "results_mmseqs"), tmp_dir, "-s", "8.5",
+    mmseqs_searc = sp.Popen(["mmseqs", "search", "-e", evalue ,os.path.join(phrog_db_dir, "phrogs_profile_db"), os.path.join(target_db_dir, "target_seqs"), os.path.join(mmseqs_dir, "results_mmseqs"), tmp_dir, "-s", "8.5",
     "--threads", threads], stdout=sp.PIPE)
     write_to_log(mmseqs_searc.stdout, logger)
     # creates the tsv
