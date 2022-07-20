@@ -4,8 +4,9 @@ import sys
 from argparse import RawTextHelpFormatter
 from Bio import SeqIO
 import shutil
+from version import __version__
 
-v = '0.1.6'
+v = __version__
 
 
 ### GLOBAL VARIABLES

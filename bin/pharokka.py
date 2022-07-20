@@ -8,10 +8,11 @@ import subprocess as sp
 import logging
 import time
 import datetime
+from version import __version__
 
 if __name__ == "__main__":
 
-    v = '0.1.6'
+    v = __version__
 
     print("Starting pharokka.")
 
@@ -105,6 +106,7 @@ if __name__ == "__main__":
 
     # Determine elapsed time
     elapsed_time = time.time() - start_time
+    elapsed_time = round(elapsed_time, 2)
 
     # Show elapsed time for the process
     logger.info("pharokka has finished")
