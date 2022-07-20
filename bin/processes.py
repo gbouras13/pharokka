@@ -46,10 +46,11 @@ def run_prodigal(filepath_in, out_dir,logger, meta):
 def add_delim_trim_fasta(filepath_in, out_dir):
     with open(os.path.join(out_dir, "input_fasta_delim.fasta"), 'w') as na_fa:
         for dna_record in SeqIO.parse(filepath_in, 'fasta'): 
-            # trim to first 26 chars of fasta header if too long
-            if len(dna_record.id) > 26:
-                print("Trimming fasta headers to the first 26 characters.")
-                dna_record.id = dna_record.id[0:25]
+            # trim to first 20 chars of fasta header if too long
+            if len(dna_record.id) > 20:
+                print("Trimming fasta headers to the first 20 characters.")
+                # in response to #149 change all to 20
+                dna_record.id = dna_record.id[0:19]
             # add delim
             dna_header = dna_record.id + str("delim") 
             dna_description = ""
