@@ -13,7 +13,7 @@ v = __version__
 
 
 def get_input():
-	parser = argparse.ArgumentParser(description='pharokka: phage genome annotation piepline', formatter_class=RawTextHelpFormatter)
+	parser = argparse.ArgumentParser(description='pharokka: phage genome annotation pipeline', formatter_class=RawTextHelpFormatter)
 	parser.add_argument('-i', '--infile', action="store", help='Input file in fasta format.',  required=True)
 	parser.add_argument('-o', '--outdir', action="store", help='Directory to write the output to.', default=os.path.join(os.getcwd(), "output/") )
 	parser.add_argument('-d', '--database', action="store", help='Database directory. If the databases have been install in the default directory, this is not required. Otherwise specify the path.',  default='Default')
@@ -23,6 +23,7 @@ def get_input():
 	parser.add_argument('-l', '--locustag', action="store", help='User specified locus tag for the gff/gbk files. This is not required. A random locus tag will be generated instead.',  default='Default')
 	parser.add_argument('-g', '--gene_predictor', action="store", help='User specified gene predictor. Use " -g phanotate" or "-g prodigal". Defaults to phanotate.',  default='phanotate' )
 	parser.add_argument('-m', '--meta', help='Metagenomic option for Prodigal', action="store_true")
+	parser.add_argument('-e', '--evalue', help='evalue threshold for mmseqs2', action="store", default = "1E-05")
 	parser.add_argument('-V', '--version', action='version', version=v)
 	args = parser.parse_args()
 
@@ -48,6 +49,7 @@ def instantiate_dirs(output_dir, force):
 	if os.path.isdir(mmseqs_dir) == False:
 		os.mkdir(mmseqs_dir)
 	return output_dir
+
 
 
 def validate_fasta(filename):
