@@ -30,6 +30,10 @@ The easiest way to install pharokka is via conda.
 
 This will install all the dependencies along with pharokka.
 
+If this fails, please try downloading from my channel:
+
+`conda install -c gbouras13 pharokka`
+
 Alternatively, the development version of pharokka can be installed manually via github.
 
 `git clone https://github.com/gbouras13/pharokka.git`
