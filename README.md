@@ -39,10 +39,12 @@ The dependencies found in environment.yml will then need to be installed manuall
 For example using conda:
 
 ```
-conda env create -f environment.yml
-conda activate pharokka_env
 git clone https://github.com/gbouras13/pharokka.git
 cd pharokka
+conda env create -f environment.yml
+conda activate pharokka_env
+install_databses.py -h
+pharokka.py -h
 ```
 
 Running pharokka

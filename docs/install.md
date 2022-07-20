@@ -1,6 +1,8 @@
-The easiest way to install pharokka is via conda using
+**pharokka v0.1.6 is now available on bioconda**
 
-`conda install pharokka -c gbouras13`
+The easiest way to install pharokka is via conda.
+
+`conda install -c bioconda pharokka`
 
 This will install all the dependencies along with pharokka.
 
@@ -12,11 +14,14 @@ The dependencies found in other_files/requirements.yaml will then need to be ins
 
 For example using conda:
 
+
 ```
-conda env create -f environment.yml
-conda activate pharokka_env
 git clone [https://github.com/gbouras13/pharokka.git](https://github.com/gbouras13/pharokka.git)
 cd pharokka
+conda env create -f environment.yml
+conda activate pharokka_env
+install_databses.py -h
+pharokka.py -h
 ```
 
 Before running pharokka, the PHROGs database needs to be downloaded using
