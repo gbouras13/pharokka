@@ -108,7 +108,6 @@ def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix):
     trna_df = pd.read_csv(os.path.join(out_dir,"trnascan_out.gff"), delimiter= '\t', index_col=False, names=col_list ) 
     # keep only trnas
     trna_df = trna_df[(trna_df['Region'] == 'tRNA') | (trna_df['Region'] == 'pseudogene')]
-
     # read in minced
     minced_df = pd.read_csv(os.path.join(out_dir, prefix + "_minced.gff"), delimiter= '\t', index_col=False, names=col_list, skiprows = 1  ) 
 
@@ -155,7 +154,7 @@ def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix):
     #description_total_df = description_total_df.append({'Description':'tRNAs', 'Count':trna_count, 'contig':contig}, ignore_index=True)
     description_total_df.to_csv(os.path.join(out_dir, prefix + "_cds_functions.tsv"), sep="\t", index=False)
     # save the length_gc.tsv also
-    length_df.to_csv(os.path.join(out_dir, prefix + "_length_gc.tsv"), sep="\t", index=False)
+    length_df.to_csv(os.path.join(out_dir, prefix + "_length_gc_cds_density.tsv"), sep="\t", index=False)
 
 
   
@@ -244,7 +243,6 @@ def create_tbl(phanotate_mmseqs_df, length_df, out_dir, prefix, gene_predictor):
         crispr_empty = True
     if crispr_empty == False:    
         crispr_df = pd.read_csv(os.path.join(out_dir, prefix + "_minced.gff"), delimiter= '\t', index_col=False, names=col_list, skiprows = 1  ) 
-        # keep only trnas and pseudogenes 
         crispr_df.start = crispr_df.start.astype(int)
         crispr_df.stop = crispr_df.stop.astype(int)
         crispr_df[['attributes','rpt_unit_seq']] = crispr_df['attributes'].str.split(';rpt_unit_seq=',expand=True)

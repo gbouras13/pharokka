@@ -81,7 +81,7 @@ if __name__ == "__main__":
     print("Post Processing Output.")
     length_df = post_processing.get_contig_name_lengths(args.infile, out_dir, prefix)
     post_processing.create_gff(phan_mmseq_merge_df, length_df, args.infile, out_dir, prefix, locustag)
-    post_processing.create_tbl(phan_mmseq_merge_df, length_df, out_dir, prefix)
+    post_processing.create_tbl(phan_mmseq_merge_df, length_df, out_dir, prefix, gene_predictor)
     post_processing.create_txt(phan_mmseq_merge_df, length_df,out_dir, prefix)
     logger.info("Converting gff to genbank using seqret")
     print("Converting gff to genbank using seqret")
