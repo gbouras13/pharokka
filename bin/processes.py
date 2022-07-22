@@ -112,6 +112,7 @@ def translate_fastas(out_dir, gene_predictor):
 
 def run_trna_scan(filepath_in, out_dir, logger):
     print("Running tRNAscan-SE.")
+    logger.info("Starting tRNA-scanSE")
     try:
         # needs stderr for trna scan
         trna = sp.Popen(["tRNAscan-SE", filepath_in, "-G", "-Q", "-j",  os.path.join(out_dir, "trnascan_out.gff")], stderr=sp.PIPE, stdout=sp.DEVNULL)
@@ -199,3 +200,15 @@ def convert_gff_to_gbk(fasta_input, out_dir, prefix, logger):
     out_pref = os.path.join(out_dir, prefix)
     seqret = sp.Popen(["seqret", "-sequence", fasta_input, "-feature", "-fformat", "gff", "-fopenfile", gff_file, "-osformat", "genbank", "-osname_outseq", out_pref, "-auto"], stderr=sp.PIPE)
     write_to_log(seqret.stderr, logger)
+
+
+def run_minced(filepath_in, out_dir, prefix, logger):
+    print("Running MinCED.")
+    logger.info("Running MinCED.")
+    try:
+        # no phanotate stderr
+        #  minced CACUWS01.fasta CACUWS01.crisprs CACUWS01.gff
+        minced_fast = sp.Popen(["minced", filepath_in, os.path.join(out_dir, prefix + "_minced_spacers.txt") , os.path.join(out_dir, prefix + "_minced.gff")], stderr=sp.PIPE, stdout=sp.PIPE) 
+        write_to_log(minced_fast.stderr, logger)
+    except:
+        sys.exit("Error with MinCED\n")  

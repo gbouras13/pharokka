@@ -58,8 +58,8 @@ if __name__ == "__main__":
 
     logger.info("Translating gene predicted fastas.")
     processes.translate_fastas(out_dir,gene_predictor)
-    logger.info("Starting tRNA-scanSE")
     processes.run_trna_scan(args.infile, out_dir, logger)
+    processes.run_minced(args.infile, out_dir, prefix, logger)
 
     # set the db dir
     if args.database == "Default":
@@ -67,7 +67,7 @@ if __name__ == "__main__":
     else:
         DBDIR = args.database
 
-    processes.remove_delim_fastas(out_dir,gene_predictor)
+    #processes.remove_delim_fastas(out_dir,gene_predictor)
 
     # runnin mmseqs2
     logger.info("Starting mmseqs2")

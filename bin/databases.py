@@ -7,7 +7,7 @@ def instantiate_install(db_dir):
     instantiate_dir(db_dir)
     get_phrog_mmseqs(db_dir)
     get_phrog_annot_table(db_dir)
-    get_phrog_hhmer(db_dir)
+    #get_phrog_hhmer(db_dir)
 
 def instantiate_dir(db_dir):
     if os.path.isdir(db_dir) == False:
