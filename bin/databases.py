@@ -7,7 +7,7 @@ def instantiate_install(db_dir):
     instantiate_dir(db_dir)
     get_phrog_mmseqs(db_dir)
     get_phrog_annot_table(db_dir)
-    #get_phrog_hhmer(db_dir)
+
 
 def instantiate_dir(db_dir):
     if os.path.isdir(db_dir) == False:
@@ -52,26 +52,3 @@ def get_phrog_annot_table(db_dir):
             sys.stderr.write("Error: PHROGs annotation file not found - link likely broken\n")  
             return 0
 
-def get_phrog_hhmer(db_dir):
-    print("Getting PHROGs HHmer DB")
-    filepath = "https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_hhsuite_db.tar.gz"
-    tarball = "phrogs_hhsuite_db.tar.gz"
-    folder = "phrogs_hhsuite_db"
-    
-    # get tarball if not already present
-    if os.path.isfile(os.path.join(db_dir,tarball)) == True: 
-         print("PHROGs Database already downloaded")
-        # download tarball and untar
-    else:
-        try:
-            sp.call(["curl", filepath, "-o", os.path.join(db_dir,tarball)])
-        except:
-            sys.stderr.write("Error: PHROGs HMMer Database not found - link likely broken\n")  
-            return 0
-
-    # delete folder if it exists already
-    if os.path.isfile(os.path.join(db_dir,folder)) == True:
-        sp.call(["rm", os.path.join(db_dir,folder)])
-    
-    # download untar -C for specifying the directory
-    sp.call(["tar", "-xzf", os.path.join(db_dir, tarball), "-C", db_dir])
