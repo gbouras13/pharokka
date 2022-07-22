@@ -201,7 +201,7 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix, loc
         trna_df.to_csv(f, sep="\t", index=False, header=False)
 
     ### crisprs
-    minced_df = pd.read_csv(os.path.join(out_dir, prefix + "_minced.gff"), delimiter= '\t', index_col=False, names=col_list, skiprows = 1  ) 
+    minced_df = pd.read_csv(os.path.join(out_dir, prefix + "_minced.gff"), delimiter= '\t', index_col=False, names=col_list, skiprows = 1 ) 
     minced_df.start = minced_df.start.astype(int)
     minced_df.stop = minced_df.stop.astype(int)
     with open(os.path.join(out_dir, prefix + ".gff"), 'a') as f:
@@ -237,16 +237,13 @@ def create_tbl(phanotate_mmseqs_df, length_df, out_dir, prefix, gene_predictor):
         trna_df[['anticodon','rest']] = trna_df['anticodon'].str.split(';gene_biotype',expand=True)
         trna_df['trna_product']='tRNA-'+trna_df['isotypes']+"("+trna_df['anticodon']+")"
 
-    # check if no crisprs
-    crispr_empty = False
-    if os.stat(os.path.join(out_dir, prefix + "_minced.gff")).st_size == 0:
-        crispr_empty = True
-    if crispr_empty == False:    
+    # check if no crisprs 
         crispr_df = pd.read_csv(os.path.join(out_dir, prefix + "_minced.gff"), delimiter= '\t', index_col=False, names=col_list, skiprows = 1  ) 
-        crispr_df.start = crispr_df.start.astype(int)
-        crispr_df.stop = crispr_df.stop.astype(int)
-        crispr_df[['attributes','rpt_unit_seq']] = crispr_df['attributes'].str.split(';rpt_unit_seq=',expand=True)
-
+        crispr_count = len(crispr_df['Region'])
+        if crispr_count > 0:
+            crispr_df.start = crispr_df.start.astype(int)
+            crispr_df.stop = crispr_df.stop.astype(int)
+            crispr_df[['attributes','rpt_unit_seq']] = crispr_df['attributes'].str.split(';rpt_unit_seq=',expand=True)
 
     if gene_predictor == "phanotate":
         inf = "PHANOTATE"
@@ -270,7 +267,7 @@ def create_tbl(phanotate_mmseqs_df, length_df, out_dir, prefix, gene_predictor):
                     f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "tRNAscan-SE")
                     f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ str(row['trna_product']) + "\n")
                     f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
-            if crispr_empty == False:
+            if crispr_count > 0:
                 subset_crispr_df = crispr_df[crispr_df['contig'] == contig]
                 for index, row in subset_crispr_df.iterrows():
                     f.write(str(row['start']) + "\t" + str(row['stop']) + "\t" + row['Region'] + "\n")
