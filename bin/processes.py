@@ -88,11 +88,13 @@ def translate_fastas(out_dir, gene_predictor):
         fasta_input_tmp = "phanotate_out_tmp.fasta"
         fasta_output_aas_tmp = "phanotate_aas_tmp.fasta"
         fasta_output_aas_gd = "phanotate_aas.fasta"
+        fasta_output_nts_gd = "phanotate_nts.fasta"
     if gene_predictor == "prodigal":
         clean_df = tidy_prodigal_output(out_dir)
         fasta_input_tmp = "prodigal_out_tmp.fasta"
         fasta_output_aas_tmp = "prodigal_aas_tmp.fasta"
         fasta_output_aas_gd = "prodigal_aas.fasta"
+        fasta_output_nts_gd = "prodigal_nts.fasta"
     with open(os.path.join(out_dir, fasta_output_aas_tmp), 'w') as aa_fa:
         i = 0 
         for dna_record in SeqIO.parse(os.path.join(out_dir, fasta_input_tmp), 'fasta'): 
@@ -104,8 +106,17 @@ def translate_fastas(out_dir, gene_predictor):
     with open(os.path.join(out_dir, fasta_output_aas_gd), 'w') as aa_fa:
         i = 0 
         for dna_record in SeqIO.parse(os.path.join(out_dir, fasta_input_tmp), 'fasta'): 
-            dna_header = str(clean_df['contig'].iloc[i]).replace("delim", "") + "_" + str(i) 
+            dna_header = str(clean_df['contig'].iloc[i]) + "_" + str(i) 
+            dna_description = str(clean_df['start'].iloc[i]) + "_" + str(clean_df['stop'].iloc[i])
             aa_record = SeqRecord(dna_record.seq.translate(to_stop=True), id=dna_header, description = dna_description )
+            SeqIO.write(aa_record, aa_fa, 'fasta')
+            i += 1
+    with open(os.path.join(out_dir, fasta_output_nts_gd), 'w') as aa_fa:
+        i = 0 
+        for dna_record in SeqIO.parse(os.path.join(out_dir, fasta_input_tmp), 'fasta'): 
+            dna_header = str(clean_df['contig'].iloc[i]) + "_" + str(i) 
+            dna_description = str(clean_df['start'].iloc[i]) + "_" + str(clean_df['stop'].iloc[i])
+            aa_record = SeqRecord(dna_record.seq, id=dna_header, description = dna_description )
             SeqIO.write(aa_record, aa_fa, 'fasta')
             i += 1
     
@@ -148,52 +159,6 @@ def run_mmseqs(db_dir, out_dir, threads, logger, gene_predictor, evalue):
     # remove the target dir when finished 
     sp.run(["rm", "-r", target_db_dir], check=True)
 
-
-def run_hmmsuite(db_dir, out_dir, threads, logger, gene_predictor):
-    print("Running hhsuite.")
-    hmmsuite_db_dir = os.path.join(db_dir, "phrogs_hhsuite_db/")
-    amino_acid_fasta = gene_predictor + "_aas_tmp.fasta"
-    target_db_dir =  os.path.join(out_dir, "hhsuite_target_dir/")
-    tsv_prefix = os.path.join(target_db_dir, 'hhsuite_tsv_file.ff') 
-
-    # make dir for target db
-    if os.path.isdir(target_db_dir) == False:
-        os.mkdir(target_db_dir)
-
-
-    # indexes the file 
-    hh_ffindex = sp.Popen(
-        [
-            'ffindex_from_fasta',
-            '-s',
-            ''.join((tsv_prefix, 'data')),
-            ''.join((tsv_prefix, 'index')),
-            os.path.join(out_dir, amino_acid_fasta),
-        ], stdout=sp.PIPE
-    )
-    write_to_log(hh_ffindex.stdout, logger)
-
-
-    # runs
-    hh_omp = sp.Popen(["hhblits_omp", '-i', os.path.join(target_db_dir, 'hhsuite_tsv_file'), '-d', os.path.join(hmmsuite_db_dir, "phrogs"), 
-    '-M', 'first', '-n', '1', '-o',os.path.join(target_db_dir, "results_your_seq_VS_phrogs"), 
-    '-blasttab', os.path.join(target_db_dir, "results_tsv_file"), "-cpu", threads], stderr=sp.PIPE)
-    write_to_log(hh_omp.stderr, logger)
-
-def remove_delim_fastas(out_dir, gene_predictor):
-    if gene_predictor == "phanotate":
-        fasta_input_tmp = "phanotate_out_tmp.fasta"
-        fasta_output_gd = "phanotate_out.fasta"
-    if gene_predictor == "prodigal":
-        fasta_input_tmp = "prodigal_out_tmp.fasta"
-        fasta_output_gd = "prodigal_out.fasta"
-    with open(os.path.join(out_dir, fasta_output_gd), 'w') as na_fa:
-        for dna_record in SeqIO.parse(os.path.join(out_dir,fasta_input_tmp), 'fasta'): 
-            # remove delim no underscore, same output as phanotate
-            dna_header = ""
-            dna_description = dna_record.description.replace("delim", "")
-            dna_record = SeqRecord(dna_record.seq, id=dna_header, description = dna_description)
-            SeqIO.write(dna_record, na_fa, 'fasta')
 
 def convert_gff_to_gbk(fasta_input, out_dir, prefix, logger):
     gff_file = os.path.join(out_dir, prefix + ".gff")

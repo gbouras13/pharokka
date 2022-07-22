@@ -108,14 +108,13 @@ def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix):
     trna_df = pd.read_csv(os.path.join(out_dir,"trnascan_out.gff"), delimiter= '\t', index_col=False, names=col_list ) 
     # keep only trnas
     trna_df = trna_df[(trna_df['Region'] == 'tRNA') | (trna_df['Region'] == 'pseudogene')]
-    # read in minced
-    minced_df = pd.read_csv(os.path.join(out_dir, prefix + "_minced.gff"), delimiter= '\t', index_col=False, names=col_list, skiprows = 1  ) 
+    # get crispr count
+    crispr_count = get_crispr_count(out_dir, prefix)
 
     for contig in contigs:
         phanotate_mmseqs_df_cont = phanotate_mmseqs_df[phanotate_mmseqs_df['contig'] == contig]
         cds_count = len(phanotate_mmseqs_df_cont[phanotate_mmseqs_df_cont['Region'] == 'CDS'])
         trna_count = len(trna_df['Region'])
-        crispr_count = len(minced_df['Region'])
         # get the total length of the contig
         contig_length = length_df[length_df["contig"] == contig]['length']
         if cds_count > 0:
@@ -201,11 +200,14 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix, loc
         trna_df.to_csv(f, sep="\t", index=False, header=False)
 
     ### crisprs
-    minced_df = pd.read_csv(os.path.join(out_dir, prefix + "_minced.gff"), delimiter= '\t', index_col=False, names=col_list, skiprows = 1 ) 
-    minced_df.start = minced_df.start.astype(int)
-    minced_df.stop = minced_df.stop.astype(int)
-    with open(os.path.join(out_dir, prefix + ".gff"), 'a') as f:
-        minced_df.to_csv(f, sep="\t", index=False, header=False)
+    crispr_count = get_crispr_count(out_dir, prefix)
+    # add to gff if yes
+    if crispr_count > 0:
+        minced_df = pd.read_csv(os.path.join(out_dir, prefix + "_minced.gff"), delimiter= '\t', index_col=False, names=col_list, skiprows = 1 ) 
+        minced_df.start = minced_df.start.astype(int)
+        minced_df.stop = minced_df.stop.astype(int)
+        with open(os.path.join(out_dir, prefix + ".gff"), 'a') as f:
+            minced_df.to_csv(f, sep="\t", index=False, header=False)
 
     # write fasta on the end 
 
@@ -238,13 +240,13 @@ def create_tbl(phanotate_mmseqs_df, length_df, out_dir, prefix, gene_predictor):
         trna_df['trna_product']='tRNA-'+trna_df['isotypes']+"("+trna_df['anticodon']+")"
 
     # check if no crisprs 
+    # check if the file has more than 1 line (not empty)
+    crispr_count = get_crispr_count(out_dir, prefix)
+    if crispr_count > 0:
         crispr_df = pd.read_csv(os.path.join(out_dir, prefix + "_minced.gff"), delimiter= '\t', index_col=False, names=col_list, skiprows = 1  ) 
-        crispr_count = len(crispr_df['Region'])
-        if crispr_count > 0:
-            crispr_df.start = crispr_df.start.astype(int)
-            crispr_df.stop = crispr_df.stop.astype(int)
-            crispr_df[['attributes','rpt_unit_seq']] = crispr_df['attributes'].str.split(';rpt_unit_seq=',expand=True)
-
+        crispr_df.start = crispr_df.start.astype(int)
+        crispr_df.stop = crispr_df.stop.astype(int)
+        crispr_df[['attributes','rpt_unit_seq']] = crispr_df['attributes'].str.split(';rpt_unit_seq=',expand=True)
     if gene_predictor == "phanotate":
         inf = "PHANOTATE"
     else:
@@ -290,8 +292,14 @@ def remove_post_processing_files(out_dir, gene_predictor):
     if gene_predictor == "prodigal":
         sp.run(["rm", "-rf", os.path.join(out_dir, "prodigal_out.gff") ])
 
-
-
+# check if the crispr file has more than 1 line (not empty)
+def get_crispr_count(out_dir, prefix):
+    crispr_file = os.path.join(out_dir, prefix + "_minced.gff")
+    crispr_count = -1
+    with open(crispr_file, 'r') as f:
+        for line in f:
+            crispr_count += 0
+    return crispr_count
 
 
 

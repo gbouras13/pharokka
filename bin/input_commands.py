@@ -13,17 +13,17 @@ v = __version__
 
 
 def get_input():
-	parser = argparse.ArgumentParser(description='pharokka: phage genome annotation pipeline', formatter_class=RawTextHelpFormatter)
+	parser = argparse.ArgumentParser(description='pharokka: fast phage annotation program', formatter_class=RawTextHelpFormatter)
 	parser.add_argument('-i', '--infile', action="store", help='Input file in fasta format.',  required=True)
 	parser.add_argument('-o', '--outdir', action="store", help='Directory to write the output to.', default=os.path.join(os.getcwd(), "output/") )
 	parser.add_argument('-d', '--database', action="store", help='Database directory. If the databases have been install in the default directory, this is not required. Otherwise specify the path.',  default='Default')
 	parser.add_argument('-t', '--threads', help="Number of threads for mmseqs and hhsuite. Defaults to 1.", action="store", default = str(1))
 	parser.add_argument('-f', '--force', help="Overwrites the output directory.", action="store_true" )
-	parser.add_argument('-p', '--prefix', action="store", help='Prefix for output files. This is not required',  default='Default')
+	parser.add_argument('-p', '--prefix', action="store", help='Prefix for output files. This is not required.',  default='Default')
 	parser.add_argument('-l', '--locustag', action="store", help='User specified locus tag for the gff/gbk files. This is not required. A random locus tag will be generated instead.',  default='Default')
-	parser.add_argument('-g', '--gene_predictor', action="store", help='User specified gene predictor. Use "-g phanotate" or "-g prodigal". Defaults to phanotate.',  default='phanotate' )
+	parser.add_argument('-g', '--gene_predictor', action="store", help='User specified gene predictor. Use "-g phanotate" or "-g prodigal". Defaults to phanotate (not required unless prodigal is desired).',  default='phanotate' )
 	parser.add_argument('-m', '--meta', help='Metagenomic option for Prodigal', action="store_true")
-	parser.add_argument('-e', '--evalue', help='evalue threshold for mmseqs2', action="store", default = "1E-05")
+	parser.add_argument('-e', '--evalue', help='E-value threshold for mmseqs2. Defaults to 1E-05', action="store", default = "1E-05")
 	parser.add_argument('-V', '--version', action='version', version=v)
 	args = parser.parse_args()
 
