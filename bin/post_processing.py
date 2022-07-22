@@ -177,7 +177,7 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix, loc
         
     
     phanotate_mmseqs_df['phase'] = 0
-    phanotate_mmseqs_df['attributes'] = "ID=" + locustag + "_" + phanotate_mmseqs_df.index.astype(str)  + ";" + "phrog=" + phanotate_mmseqs_df["phrog"] + ";" + "top_hit=" + phanotate_mmseqs_df["top_hit"] + ";" + "locus_tag=" + locustag + "_" + phanotate_mmseqs_df.index.astype(str) + ";" + "function=" + phanotate_mmseqs_df["category"] + ";"  + "product=" + phanotate_mmseqs_df["annot"]
+    phanotate_mmseqs_df['attributes'] = "ID=" + locustag + "_CDS_" + phanotate_mmseqs_df.index.astype(str)  + ";" + "phrog=" + phanotate_mmseqs_df["phrog"] + ";" + "top_hit=" + phanotate_mmseqs_df["top_hit"] + ";" + "locus_tag=" + locustag + "_" + phanotate_mmseqs_df.index.astype(str) + ";" + "function=" + phanotate_mmseqs_df["category"] + ";"  + "product=" + phanotate_mmseqs_df["annot"]
 
     # get gff dataframe in correct order 
     gff_df = phanotate_mmseqs_df[["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]]
@@ -190,22 +190,39 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix, loc
         gff_df.to_csv(f, sep="\t", index=False, header=False)
       
     ### trnas
-    col_list = ["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]
-    trna_df = pd.read_csv(os.path.join(out_dir,"trnascan_out.gff"), delimiter= '\t', index_col=False, names=col_list ) 
-    # keep only trnas
-    trna_df = trna_df[(trna_df['Region'] == 'tRNA') | (trna_df['Region'] == 'pseudogene')]
-    trna_df.start = trna_df.start.astype(int)
-    trna_df.stop = trna_df.stop.astype(int)
-    with open(os.path.join(out_dir, prefix + ".gff"), 'a') as f:
-        trna_df.to_csv(f, sep="\t", index=False, header=False)
+    # check if no trnas
+    trna_empty = is_trna_empty(out_dir)
+    if trna_empty == False:   
+        col_list = ["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]
+        trna_df = pd.read_csv(os.path.join(out_dir,"trnascan_out.gff"), delimiter= '\t', index_col=False, names=col_list ) 
+        # keep only trnas
+        trna_df = trna_df[(trna_df['Region'] == 'tRNA') | (trna_df['Region'] == 'pseudogene')]
+        trna_df.start = trna_df.start.astype(int)
+        trna_df.stop = trna_df.stop.astype(int)
+        trna_df[['attributes','isotypes']] = trna_df['attributes'].str.split(';isotype=',expand=True)
+        trna_df[['isotypes','anticodon']] = trna_df['isotypes'].str.split(';anticodon=',expand=True)
+        trna_df[['anticodon','rest']] = trna_df['anticodon'].str.split(';gene_biotype',expand=True)
+        trna_df['trna_product']='tRNA-'+trna_df['isotypes']+"("+trna_df['anticodon']+")"
+        trna_df = trna_df.drop(columns=['attributes'])
+        trna_df['attributes'] = "ID=" + locustag + "_tRNA_" + trna_df.index.astype(str)  + ";" + "trna=" + trna_df["trna_product"] + ";" + "isotype=" + trna_df["isotypes"] + ";" + "anticodon=" + trna_df["anticodon"] + ";" + "locus_tag=" + locustag + "_tRNA_" + trna_df.index.astype(str)
+        trna_df = trna_df.drop(columns=['isotypes', 'anticodon', 'rest', 'trna_product'])
+        with open(os.path.join(out_dir, prefix + ".gff"), 'a') as f:
+            trna_df.to_csv(f, sep="\t", index=False, header=False)
 
     ### crisprs
     crispr_count = get_crispr_count(out_dir, prefix)
     # add to gff if yes
     if crispr_count > 0:
+        col_list = ["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]
         minced_df = pd.read_csv(os.path.join(out_dir, prefix + "_minced.gff"), delimiter= '\t', index_col=False, names=col_list, skiprows = 1 ) 
         minced_df.start = minced_df.start.astype(int)
         minced_df.stop = minced_df.stop.astype(int)
+        minced_df[['attributes','rpt_unit_seq']] = minced_df['attributes'].str.split(';rpt_unit_seq=',expand=True)
+        minced_df[['attributes','rpt_family']] = minced_df['attributes'].str.split(';rpt_family=',expand=True)
+        minced_df[['attributes','rpt_type']] = minced_df['attributes'].str.split(';rpt_type=',expand=True)
+        minced_df = minced_df.drop(columns=['attributes'])
+        minced_df['attributes'] = "ID=" + locustag + "_CRISPR_" + minced_df.index.astype(str)  + ";" + "rpt_type=" + minced_df["rpt_type"] + ";" + "rpt_family=" + minced_df["rpt_family"] + ";" + "rpt_unit_seq=" + minced_df["rpt_unit_seq"] + ";" + "locus_tag=" + locustag + "_CRISPR_" + minced_df.index.astype(str)
+        minced_df = minced_df.drop(columns=['rpt_unit_seq', 'rpt_family', 'rpt_type'])
         with open(os.path.join(out_dir, prefix + ".gff"), 'a') as f:
             minced_df.to_csv(f, sep="\t", index=False, header=False)
 
@@ -224,9 +241,7 @@ def create_tbl(phanotate_mmseqs_df, length_df, out_dir, prefix, gene_predictor):
     col_list = ["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]
 
      # check if no trnas
-    trna_empty = False
-    if os.stat(os.path.join(out_dir, "trnascan_out.gff")).st_size == 0:
-        trna_empty = True
+    trna_empty = is_trna_empty(out_dir)
     if trna_empty == False:    
         trna_df = pd.read_csv(os.path.join(out_dir, "trnascan_out.gff"), delimiter= '\t', index_col=False, names=col_list ) 
         # keep only trnas and pseudogenes 
@@ -295,11 +310,17 @@ def remove_post_processing_files(out_dir, gene_predictor):
 # check if the crispr file has more than 1 line (not empty)
 def get_crispr_count(out_dir, prefix):
     crispr_file = os.path.join(out_dir, prefix + "_minced.gff")
-    crispr_count = -1
-    with open(crispr_file, 'r') as f:
-        for line in f:
-            crispr_count += 0
+    num_lines = sum(1 for line in open(crispr_file))
+    crispr_count = num_lines - 1
     return crispr_count
+
+# check if the crispr file has more than 1 line (not empty)
+def is_trna_empty(out_dir):
+    trna_empty = False
+    if os.stat(os.path.join(out_dir, "trnascan_out.gff")).st_size == 0:
+        trna_empty = True
+    return trna_empty
+
 
 
 
