@@ -56,10 +56,13 @@ if __name__ == "__main__":
         logger.info("Starting Prodigal")
         processes.run_prodigal(args.infile, out_dir, logger, args.meta)
 
+    # translate fastas
     logger.info("Translating gene predicted fastas.")
     processes.translate_fastas(out_dir,gene_predictor)
-    logger.info("Starting tRNA-scanSE")
+
+    # trna and minced
     processes.run_trna_scan(args.infile, out_dir, logger)
+    processes.run_minced(args.infile, out_dir, prefix, logger)
 
     # set the db dir
     if args.database == "Default":
@@ -67,13 +70,10 @@ if __name__ == "__main__":
     else:
         DBDIR = args.database
 
-    processes.remove_delim_fastas(out_dir,gene_predictor)
 
-    # runnin mmseqs2
+    # running mmseqs2
     logger.info("Starting mmseqs2")
     processes.run_mmseqs(DBDIR, out_dir, args.threads, logger, gene_predictor, args.evalue)
-    #logger.info("Starting hhsuite")
-    #processes.run_hmmsuite(DBDIR, out_dir, args.threads, logger, args.gene_predictor)
 
     # post processing
     phan_mmseq_merge_df = post_processing.process_results(DBDIR, out_dir, prefix, gene_predictor)
@@ -81,8 +81,10 @@ if __name__ == "__main__":
     print("Post Processing Output.")
     length_df = post_processing.get_contig_name_lengths(args.infile, out_dir, prefix)
     post_processing.create_gff(phan_mmseq_merge_df, length_df, args.infile, out_dir, prefix, locustag)
-    post_processing.create_tbl(phan_mmseq_merge_df, length_df, out_dir, prefix)
+    post_processing.create_tbl(phan_mmseq_merge_df, length_df, out_dir, prefix, gene_predictor)
     post_processing.create_txt(phan_mmseq_merge_df, length_df,out_dir, prefix)
+    
+    # convert to genbank
     logger.info("Converting gff to genbank using seqret")
     print("Converting gff to genbank using seqret")
     processes.convert_gff_to_gbk(args.infile, out_dir, prefix, logger)

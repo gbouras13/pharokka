@@ -108,6 +108,8 @@ def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix):
     trna_df = pd.read_csv(os.path.join(out_dir,"trnascan_out.gff"), delimiter= '\t', index_col=False, names=col_list ) 
     # keep only trnas
     trna_df = trna_df[(trna_df['Region'] == 'tRNA') | (trna_df['Region'] == 'pseudogene')]
+    # get crispr count
+    crispr_count = get_crispr_count(out_dir, prefix)
 
     for contig in contigs:
         phanotate_mmseqs_df_cont = phanotate_mmseqs_df[phanotate_mmseqs_df['contig'] == contig]
@@ -136,6 +138,7 @@ def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix):
             cds_lengths = 0
         # add trna count
         trna_row = pd.DataFrame({ 'Description':['tRNAs'], 'Count':[trna_count], 'contig':[contig] })
+        crispr_row = pd.DataFrame({ 'Description':['CRISPRs'], 'Count':[crispr_count], 'contig':[contig] })
         # calculate the cds coding density and add to length_df
         cds_coding_density = cds_lengths * 100 / contig_length
         cds_coding_density = round(cds_coding_density, 2)
@@ -143,13 +146,14 @@ def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix):
         # append it all
         description_list.append(description_df)
         description_list.append(trna_row)
+        description_list.append(crispr_row)
 
     # save the output
     description_total_df = pd.concat(description_list)
     #description_total_df = description_total_df.append({'Description':'tRNAs', 'Count':trna_count, 'contig':contig}, ignore_index=True)
     description_total_df.to_csv(os.path.join(out_dir, prefix + "_cds_functions.tsv"), sep="\t", index=False)
     # save the length_gc.tsv also
-    length_df.to_csv(os.path.join(out_dir, prefix + "_length_gc.tsv"), sep="\t", index=False)
+    length_df.to_csv(os.path.join(out_dir, prefix + "_length_gc_cds_density.tsv"), sep="\t", index=False)
 
 
   
@@ -195,6 +199,16 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix, loc
     with open(os.path.join(out_dir, prefix + ".gff"), 'a') as f:
         trna_df.to_csv(f, sep="\t", index=False, header=False)
 
+    ### crisprs
+    crispr_count = get_crispr_count(out_dir, prefix)
+    # add to gff if yes
+    if crispr_count > 0:
+        minced_df = pd.read_csv(os.path.join(out_dir, prefix + "_minced.gff"), delimiter= '\t', index_col=False, names=col_list, skiprows = 1 ) 
+        minced_df.start = minced_df.start.astype(int)
+        minced_df.stop = minced_df.stop.astype(int)
+        with open(os.path.join(out_dir, prefix + ".gff"), 'a') as f:
+            minced_df.to_csv(f, sep="\t", index=False, header=False)
+
     # write fasta on the end 
 
     ##FASTA
@@ -203,16 +217,17 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix, loc
         fasta_sequences = SeqIO.parse(open(fasta_input),'fasta')
         SeqIO.write(fasta_sequences, f, "fasta")
 
-def create_tbl(phanotate_mmseqs_df, length_df, out_dir, prefix):
+def create_tbl(phanotate_mmseqs_df, length_df, out_dir, prefix, gene_predictor):
 
     ### readtrnas
 
     col_list = ["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]
+
      # check if no trnas
-    empty = False
+    trna_empty = False
     if os.stat(os.path.join(out_dir, "trnascan_out.gff")).st_size == 0:
-        empty = True
-    if empty == False:    
+        trna_empty = True
+    if trna_empty == False:    
         trna_df = pd.read_csv(os.path.join(out_dir, "trnascan_out.gff"), delimiter= '\t', index_col=False, names=col_list ) 
         # keep only trnas and pseudogenes 
         trna_df = trna_df[(trna_df['Region'] == 'tRNA') | (trna_df['Region'] == 'pseudogene')]
@@ -224,6 +239,18 @@ def create_tbl(phanotate_mmseqs_df, length_df, out_dir, prefix):
         trna_df[['anticodon','rest']] = trna_df['anticodon'].str.split(';gene_biotype',expand=True)
         trna_df['trna_product']='tRNA-'+trna_df['isotypes']+"("+trna_df['anticodon']+")"
 
+    # check if no crisprs 
+    # check if the file has more than 1 line (not empty)
+    crispr_count = get_crispr_count(out_dir, prefix)
+    if crispr_count > 0:
+        crispr_df = pd.read_csv(os.path.join(out_dir, prefix + "_minced.gff"), delimiter= '\t', index_col=False, names=col_list, skiprows = 1  ) 
+        crispr_df.start = crispr_df.start.astype(int)
+        crispr_df.stop = crispr_df.stop.astype(int)
+        crispr_df[['attributes','rpt_unit_seq']] = crispr_df['attributes'].str.split(';rpt_unit_seq=',expand=True)
+    if gene_predictor == "phanotate":
+        inf = "PHANOTATE"
+    else:
+        inf = "PRODIGAL"
     with open( os.path.join(out_dir, prefix + ".tbl"), 'w') as f:
         for index, row in length_df.iterrows():
             contig = row['contig']
@@ -231,18 +258,24 @@ def create_tbl(phanotate_mmseqs_df, length_df, out_dir, prefix):
             subset_df = phanotate_mmseqs_df[phanotate_mmseqs_df['contig'] == contig]
             for index, row in subset_df.iterrows():
                 f.write(str(row['start']) + "\t" + str(row['stop']) + "\t" + row['Region'] + "\n")
-                f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "PHANOTATE\n")
+                f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ inf + "\n")
                 f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "phrog=" + str(row['phrog']) + "\n")
                 f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ str(row['annot']) + "\n")
                 f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
-            if empty == False:
+            if trna_empty == False:
                 subset_trna_df = trna_df[trna_df['contig'] == contig]
                 for index, row in subset_trna_df.iterrows():
                     f.write(str(row['start']) + "\t" + str(row['stop']) + "\t" + row['Region'] + "\n")
                     f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "tRNAscan-SE")
                     f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ str(row['trna_product']) + "\n")
                     f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
-
+            if crispr_count > 0:
+                subset_crispr_df = crispr_df[crispr_df['contig'] == contig]
+                for index, row in subset_crispr_df.iterrows():
+                    f.write(str(row['start']) + "\t" + str(row['stop']) + "\t" + row['Region'] + "\n")
+                    f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "MinCED")
+                    f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ str(row['rpt_unit_seq']) + "\n")
+                    f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
 
 def remove_post_processing_files(out_dir, gene_predictor):
     sp.run(["rm", "-rf", os.path.join(out_dir, "target_dir") ])
@@ -252,8 +285,6 @@ def remove_post_processing_files(out_dir, gene_predictor):
     sp.run(["rm", "-rf", os.path.join(out_dir, "input_fasta_delim.fasta") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "mmseqs_results.tsv") ])
     # leave in tophits
-    #sp.run(["rm", "-rf", os.path.join(out_dir, "top_hits_mmseqs.tsv") ])
-    #sp.run(["rm", "-rf", os.path.join(out_dir, "trnascan_out.gff") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, gene_predictor + "_aas_tmp.fasta") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, gene_predictor + "_out_tmp.fasta") ])
     if gene_predictor == "phanotate":
@@ -261,8 +292,14 @@ def remove_post_processing_files(out_dir, gene_predictor):
     if gene_predictor == "prodigal":
         sp.run(["rm", "-rf", os.path.join(out_dir, "prodigal_out.gff") ])
 
-
-
+# check if the crispr file has more than 1 line (not empty)
+def get_crispr_count(out_dir, prefix):
+    crispr_file = os.path.join(out_dir, prefix + "_minced.gff")
+    crispr_count = -1
+    with open(crispr_file, 'r') as f:
+        for line in f:
+            crispr_count += 0
+    return crispr_count
 
 
 
