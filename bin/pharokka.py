@@ -63,6 +63,7 @@ if __name__ == "__main__":
     # trna and minced
     processes.run_trna_scan(args.infile, out_dir, logger)
     processes.run_minced(args.infile, out_dir, prefix, logger)
+    processes.run_aragorn(args.infile, out_dir, prefix, logger)
 
     # set the db dir
     if args.database == "Default":
