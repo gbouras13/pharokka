@@ -176,7 +176,6 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix, loc
     if locustag == "Random":
         # locus tag header 8 random letters
         locustag = ''.join(random.choice(string.ascii_uppercase) for _ in range(8))
-        
     
     phanotate_mmseqs_df['phase'] = 0
     phanotate_mmseqs_df['attributes'] = "ID=" + locustag + "_CDS_" + phanotate_mmseqs_df.index.astype(str)  + ";" + "phrog=" + phanotate_mmseqs_df["phrog"] + ";" + "top_hit=" + phanotate_mmseqs_df["top_hit"] + ";" + "locus_tag=" + locustag + "_" + phanotate_mmseqs_df.index.astype(str) + ";" + "function=" + phanotate_mmseqs_df["category"] + ";"  + "product=" + phanotate_mmseqs_df["annot"]
@@ -344,6 +343,7 @@ def remove_post_processing_files(out_dir, gene_predictor):
     sp.run(["rm", "-rf", os.path.join(out_dir, "cleaned_" + gene_predictor + ".tsv") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "input_fasta_delim.fasta") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "mmseqs_results.tsv") ])
+    sp.run(["rm", "-rf", os.path.join(out_dir, "top_hits_mmseqs.tsv") ])
     # leave in tophits
     sp.run(["rm", "-rf", os.path.join(out_dir, gene_predictor + "_aas_tmp.fasta") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, gene_predictor + "_out_tmp.fasta") ])

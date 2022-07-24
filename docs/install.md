@@ -30,15 +30,13 @@ pharokka.py -h
 
 Before running pharokka, the PHROGs database needs to be downloaded using
 
-`install_databases.py -d Y`
+`install_databases.py -d `
 
+If you would like to specify a different database directory (recommended), that can be achieved as follows:
 
-If you would like to specify a different database directory, that can be achieved as follows:
-
-`install_databases.py -d N -o "<path/to/databse_dir>`
+`install_databases.py -o "<path/to/databse_dir>`
 
 If you have trouble downloading the databases using install_databases.py, they can be manually downloaded from the PHROGs website and placed in a directory of your choice:
 
 * [https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_mmseqs_db.tar.gz](https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_mmseqs_db.tar.gz)
-* [https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_hhsuite_db.tar.gz](https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_hhsuite_db.tar.gz)
 * [https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v4.tsv](https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v4.tsv).

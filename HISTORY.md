@@ -1,11 +1,14 @@
 History
 =======
 
-0.1.7 (2022-07-20)
+0.1.7 (2022-07-24)
 ------------------
 
-* Removes hh-suite dependency
+* Removes hh-suite dependency to reduce run-time (redundant with e-value option).
 * Adds e-value option for passing into mmseqs2.
+* Adds CRISPR detection using MinCED.
+* Adds tmRNA detection using Aragorn.
+* Adds CDS coding density to _length_gc_cds_density.tsv.
 
 0.1.6 (2022-07-16)
 ------------------
