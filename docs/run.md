@@ -18,6 +18,10 @@ To specify a custom locus tag in the gff/genbank file, use -l
 
 `pharokka.py -i <fasta file> -o <output folder> -d <path/to/databse_dir> -t <threads> -p <prefix>  -f -l <locus_tag>`
 
+In v0.1.7, the ability to specify an E-value threshold for CDS functional assignment using mmseqs2 was added using the -e flag. It defaults to 1E-5.
+
+`pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -e <E-value>`
+
 To use Prodigal gene predictions instead of PHANOTATE use `-g prodigal`
 
 `pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -g prodigal`

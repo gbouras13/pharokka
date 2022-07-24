@@ -177,3 +177,12 @@ def run_minced(filepath_in, out_dir, prefix, logger):
         write_to_log(minced_fast.stderr, logger)
     except:
         sys.exit("Error with MinCED\n")  
+
+def run_aragorn(filepath_in, out_dir, prefix, logger):
+    print("Running Aragorn.")
+    logger.info("Running Aragorn.")
+    try:
+        aragorn = sp.Popen(["aragorn", "-l", "-gcbact", "-w", "-o", os.path.join(out_dir, prefix + "_aragorn.txt"), "-m", filepath_in], stderr=sp.PIPE, stdout=sp.PIPE) 
+        write_to_log(aragorn.stderr, logger)
+    except:
+        sys.exit("Error with Aragorn\n")  
