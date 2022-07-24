@@ -80,10 +80,11 @@ if __name__ == "__main__":
     phan_mmseq_merge_df = post_processing.process_results(DBDIR, out_dir, prefix, gene_predictor)
     logger.info("Post Processing Output.")
     print("Post Processing Output.")
-    length_df = post_processing.get_contig_name_lengths(args.infile, out_dir, prefix)
-    post_processing.create_gff(phan_mmseq_merge_df, length_df, args.infile, out_dir, prefix, locustag)
-    post_processing.create_tbl(phan_mmseq_merge_df, length_df, out_dir, prefix, gene_predictor)
-    post_processing.create_txt(phan_mmseq_merge_df, length_df,out_dir, prefix)
+    length_df = post_processing.get_contig_name_lengths(args.infile)
+    tmrna_flag = post_processing.parse_aragorn(out_dir,length_df, prefix)
+    post_processing.create_gff(phan_mmseq_merge_df, length_df, args.infile, out_dir, prefix, locustag, tmrna_flag)
+    post_processing.create_tbl(phan_mmseq_merge_df, length_df, out_dir, prefix, gene_predictor, tmrna_flag)
+    post_processing.create_txt(phan_mmseq_merge_df, length_df,out_dir, prefix, tmrna_flag)
     
     # convert to genbank
     logger.info("Converting gff to genbank using seqret")

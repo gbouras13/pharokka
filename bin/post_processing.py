@@ -79,7 +79,7 @@ def process_results(db_dir,out_dir, prefix, gene_predictor):
     
     return merged_df
 
-def get_contig_name_lengths(fasta_input, out_dir, prefix):
+def get_contig_name_lengths(fasta_input):
     fasta_sequences = SeqIO.parse(open(fasta_input),'fasta')
     contig_names = []
     lengths = []
@@ -95,7 +95,7 @@ def get_contig_name_lengths(fasta_input, out_dir, prefix):
     })
     return(length_df)
 
-def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix):
+def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix, tmrna_flag):
 
     contigs = length_df["contig"]
     # instantiate the length_df['cds_coding_density']
@@ -109,12 +109,17 @@ def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix):
     # keep only trnas
     trna_df = trna_df[(trna_df['Region'] == 'tRNA') | (trna_df['Region'] == 'pseudogene')]
     # get crispr count
-    crispr_count = get_crispr_count(out_dir, prefix)
+    crispr_df = pd.read_csv(os.path.join(out_dir, prefix + "_minced.gff"), delimiter= '\t', index_col=False, names=col_list, comment = '#' ) 
+    tmrna_df = pd.read_csv(os.path.join(out_dir, prefix + "_aragorn.gff"), delimiter= '\t', index_col=False, names=col_list ) 
 
     for contig in contigs:
         phanotate_mmseqs_df_cont = phanotate_mmseqs_df[phanotate_mmseqs_df['contig'] == contig]
+        # counts of the cds trnas
         cds_count = len(phanotate_mmseqs_df_cont[phanotate_mmseqs_df_cont['Region'] == 'CDS'])
-        trna_count = len(trna_df['Region'])
+        trna_count = len(trna_df[trna_df['contig'] == contig])
+        tmrna_count = len(tmrna_df[tmrna_df['contig'] == contig])
+        crispr_count = len(crispr_df[crispr_df['contig'] == contig])
+
         # get the total length of the contig
         contig_length = length_df[length_df["contig"] == contig]['length']
         if cds_count > 0:
@@ -139,6 +144,7 @@ def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix):
         # add trna count
         trna_row = pd.DataFrame({ 'Description':['tRNAs'], 'Count':[trna_count], 'contig':[contig] })
         crispr_row = pd.DataFrame({ 'Description':['CRISPRs'], 'Count':[crispr_count], 'contig':[contig] })
+        tmrna_row = pd.DataFrame({ 'Description':['tmRNAs'], 'Count':[tmrna_count], 'contig':[contig] })
         # calculate the cds coding density and add to length_df
         cds_coding_density = cds_lengths * 100 / contig_length
         cds_coding_density = round(cds_coding_density, 2)
@@ -147,6 +153,7 @@ def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix):
         description_list.append(description_df)
         description_list.append(trna_row)
         description_list.append(crispr_row)
+        description_list.append(tmrna_row)
 
     # save the output
     description_total_df = pd.concat(description_list)
@@ -157,12 +164,7 @@ def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix):
 
 
   
-def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag):
-    # write the headers of the gff file
-    with open(os.path.join(out_dir, prefix + ".gff"), 'w') as f:
-        f.write('##gff-version 3\n')
-        for index, row in length_df.iterrows():
-            f.write('##sequence-region ' + row['contig'] + ' 1 ' + str(row['length']) +'\n')
+def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag, tmrna_flag):
   
     # rearrange start and stop so that start is always less than stop for gff
     cols = ["start","stop"]
@@ -186,7 +188,8 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix, loc
     gff_df["start"] = gff_df["start"].astype('int')
     gff_df["stop"] = gff_df["stop"].astype('int')
 
-    with open(os.path.join(out_dir, prefix + ".gff"), 'a') as f:
+    # write to tmp gff
+    with open(os.path.join(out_dir, "phrokka_tmp.gff"), 'w') as f:
         gff_df.to_csv(f, sep="\t", index=False, header=False)
       
     ### trnas
@@ -197,6 +200,7 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix, loc
         trna_df = pd.read_csv(os.path.join(out_dir,"trnascan_out.gff"), delimiter= '\t', index_col=False, names=col_list ) 
         # keep only trnas
         trna_df = trna_df[(trna_df['Region'] == 'tRNA') | (trna_df['Region'] == 'pseudogene')]
+        trna_df = trna_df.reset_index(drop=True)
         trna_df.start = trna_df.start.astype(int)
         trna_df.stop = trna_df.stop.astype(int)
         trna_df[['attributes','isotypes']] = trna_df['attributes'].str.split(';isotype=',expand=True)
@@ -206,7 +210,7 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix, loc
         trna_df = trna_df.drop(columns=['attributes'])
         trna_df['attributes'] = "ID=" + locustag + "_tRNA_" + trna_df.index.astype(str)  + ";" + "trna=" + trna_df["trna_product"] + ";" + "isotype=" + trna_df["isotypes"] + ";" + "anticodon=" + trna_df["anticodon"] + ";" + "locus_tag=" + locustag + "_tRNA_" + trna_df.index.astype(str)
         trna_df = trna_df.drop(columns=['isotypes', 'anticodon', 'rest', 'trna_product'])
-        with open(os.path.join(out_dir, prefix + ".gff"), 'a') as f:
+        with open(os.path.join(out_dir, "phrokka_tmp.gff"), 'a') as f:
             trna_df.to_csv(f, sep="\t", index=False, header=False)
 
     ### crisprs
@@ -214,7 +218,7 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix, loc
     # add to gff if yes
     if crispr_count > 0:
         col_list = ["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]
-        minced_df = pd.read_csv(os.path.join(out_dir, prefix + "_minced.gff"), delimiter= '\t', index_col=False, names=col_list, skiprows = 1 ) 
+        minced_df = pd.read_csv(os.path.join(out_dir, prefix + "_minced.gff"), delimiter= '\t', index_col=False, names=col_list, comment='#' ) 
         minced_df.start = minced_df.start.astype(int)
         minced_df.stop = minced_df.stop.astype(int)
         minced_df[['attributes','rpt_unit_seq']] = minced_df['attributes'].str.split(';rpt_unit_seq=',expand=True)
@@ -223,18 +227,44 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix, loc
         minced_df = minced_df.drop(columns=['attributes'])
         minced_df['attributes'] = "ID=" + locustag + "_CRISPR_" + minced_df.index.astype(str)  + ";" + "rpt_type=" + minced_df["rpt_type"] + ";" + "rpt_family=" + minced_df["rpt_family"] + ";" + "rpt_unit_seq=" + minced_df["rpt_unit_seq"] + ";" + "locus_tag=" + locustag + "_CRISPR_" + minced_df.index.astype(str)
         minced_df = minced_df.drop(columns=['rpt_unit_seq', 'rpt_family', 'rpt_type'])
-        with open(os.path.join(out_dir, prefix + ".gff"), 'a') as f:
+        with open(os.path.join(out_dir, "phrokka_tmp.gff"), 'a') as f:
             minced_df.to_csv(f, sep="\t", index=False, header=False)
 
-    # write fasta on the end 
+    ### tmrna
+    if tmrna_flag == True:
+        col_list = ["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]
+        tmrna_df = pd.read_csv(os.path.join(out_dir, prefix + "_aragorn.gff"), delimiter= '\t', index_col=False, names=col_list ) 
+        tmrna_df.start = tmrna_df.start.astype(int)
+        tmrna_df.stop = tmrna_df.stop.astype(int)
+        tmrna_df['attributes'] = "ID=" + locustag + "_tmRNA_" + tmrna_df.index.astype(str)  + ";" + tmrna_df['attributes'] + ';locus_tag=' + locustag + "_tmRNA_" + tmrna_df.index.astype(str)
+        with open(os.path.join(out_dir, "phrokka_tmp.gff"), 'a') as f:
+            tmrna_df.to_csv(f, sep="\t", index=False, header=False)
 
+    # write header
+    with open(os.path.join(out_dir, prefix + ".gff"), 'w') as f:
+        f.write('##gff-version 3\n')
+        for index, row in length_df.iterrows():
+            f.write('##sequence-region ' + row['contig'] + ' 1 ' + str(row['length']) +'\n')
+    
+    # sort gff
+    col_list = ["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]
+    total_gff = pd.read_csv(os.path.join(out_dir, "phrokka_tmp.gff"), delimiter= '\t', index_col=False, names=col_list ) 
+    total_gff.start = total_gff.start.astype(int)
+    total_gff.stop = total_gff.stop.astype(int)
+    total_gff = total_gff.sort_values(['contig', 'start'])
+
+    with open(os.path.join(out_dir, prefix + ".gff"), 'a') as f:
+        total_gff.to_csv(f, sep="\t", index=False, header=False)
+
+     # write fasta on the end 
+     
     ##FASTA
     with open(os.path.join(out_dir, prefix + ".gff"), 'a') as f:
         f.write('##FASTA\n')
         fasta_sequences = SeqIO.parse(open(fasta_input),'fasta')
         SeqIO.write(fasta_sequences, f, "fasta")
 
-def create_tbl(phanotate_mmseqs_df, length_df, out_dir, prefix, gene_predictor):
+def create_tbl(phanotate_mmseqs_df, length_df, out_dir, prefix, gene_predictor, tmrna_flag):
 
     ### readtrnas
 
@@ -258,10 +288,17 @@ def create_tbl(phanotate_mmseqs_df, length_df, out_dir, prefix, gene_predictor):
     # check if the file has more than 1 line (not empty)
     crispr_count = get_crispr_count(out_dir, prefix)
     if crispr_count > 0:
-        crispr_df = pd.read_csv(os.path.join(out_dir, prefix + "_minced.gff"), delimiter= '\t', index_col=False, names=col_list, skiprows = 1  ) 
+        crispr_df = pd.read_csv(os.path.join(out_dir, prefix + "_minced.gff"), delimiter= '\t', index_col=False, names=col_list, comment = "#"  ) 
         crispr_df.start = crispr_df.start.astype(int)
         crispr_df.stop = crispr_df.stop.astype(int)
         crispr_df[['attributes','rpt_unit_seq']] = crispr_df['attributes'].str.split(';rpt_unit_seq=',expand=True)
+
+    if tmrna_flag == True:
+        col_list = ["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]
+        tmrna_df = pd.read_csv(os.path.join(out_dir, prefix + "_aragorn.gff"), delimiter= '\t', index_col=False, names=col_list) 
+        tmrna_df.start = tmrna_df.start.astype(int)
+        tmrna_df.stop = tmrna_df.stop.astype(int)
+
     if gene_predictor == "phanotate":
         inf = "PHANOTATE"
     else:
@@ -291,6 +328,14 @@ def create_tbl(phanotate_mmseqs_df, length_df, out_dir, prefix, gene_predictor):
                     f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "MinCED")
                     f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ str(row['rpt_unit_seq']) + "\n")
                     f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
+            if tmrna_flag == True:
+                subset_tmrna_df = tmrna_df[tmrna_df['contig'] == contig]
+                for index, row in subset_tmrna_df.iterrows():
+                    f.write(str(row['start']) + "\t" + str(row['stop']) + "\t" + 'tmRNA' + "\n")
+                    f.write(""+"\t"+""+"\t"+""+"\t"+"inference" + "\t"+ "Aragorn")
+                    f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ 'transfer-messenger RNA, SsrA' + "\n")
+                    f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
+
 
 def remove_post_processing_files(out_dir, gene_predictor):
     sp.run(["rm", "-rf", os.path.join(out_dir, "target_dir") ])
@@ -302,6 +347,7 @@ def remove_post_processing_files(out_dir, gene_predictor):
     # leave in tophits
     sp.run(["rm", "-rf", os.path.join(out_dir, gene_predictor + "_aas_tmp.fasta") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, gene_predictor + "_out_tmp.fasta") ])
+    sp.run(["rm", "-rf", os.path.join(out_dir, "phrokka_tmp.gff") ])  
     if gene_predictor == "phanotate":
         sp.run(["rm", "-rf", os.path.join(out_dir, "phanotate_out.txt") ])
     if gene_predictor == "prodigal":
@@ -310,16 +356,150 @@ def remove_post_processing_files(out_dir, gene_predictor):
 # check if the crispr file has more than 1 line (not empty)
 def get_crispr_count(out_dir, prefix):
     crispr_file = os.path.join(out_dir, prefix + "_minced.gff")
-    num_lines = sum(1 for line in open(crispr_file))
-    crispr_count = num_lines - 1
+    with open(crispr_file) as file:
+        lines = file.readlines()
+    crispr_count = 0
+    for line in lines:
+        if line[0] != "#":
+            crispr_count +=1
     return crispr_count
 
-# check if the crispr file has more than 1 line (not empty)
+# check if the trna file has more than 1 line (not empty)
 def is_trna_empty(out_dir):
     trna_empty = False
     if os.stat(os.path.join(out_dir, "trnascan_out.gff")).st_size == 0:
         trna_empty = True
     return trna_empty
+
+# # check if the trna file has more than 1 line (not empty)
+# def is_tmrna_empty(out_dir):
+#     tmrna_empty = False
+#     if os.stat(os.path.join(out_dir, prefix + "_aragorn.gff")).st_size == 0:
+#         tmrna_empty = True
+#     return tmrna_empty
+
+def parse_aragorn(out_dir,length_df, prefix):
+    aragorn_file = os.path.join(out_dir, prefix + "_aragorn.txt")
+    f=open(aragorn_file)
+    lines=f.readlines()
+    contig_count = len(length_df["contig"])
+    tmrna_flag = False
+    contig_names = []
+    methods = []
+    regions = []
+    starts = []
+    stops = []
+    scores = []
+    frames = []
+    phases = []
+    attributes = []
+    # if there is only one contig
+    if contig_count == 1:
+        # if no trnas
+        if int(lines[1][0]) == 0:
+            tmrna_df = pd.DataFrame(
+            {'contig': '',
+            'Method': '',
+            'Region': '',
+            'start': '',
+            'stop': '',
+            'score': '',
+            'frame': '',
+            'phase': '',
+            'attributes': '',
+            }, index=[0])
+        else:
+            tmrna_flag = True
+            # get all lines with tmrnas
+            tmrna_lines = lines[2:]
+            for line in tmrna_lines:
+                split = line.split()
+                start_stops = split[2].replace("[", "").replace("]", "").split(',')
+                contig = length_df["contig"][0]
+                method = "Aragorn"
+                region = "tmRNA"
+                start = start_stops[0]
+                stop = start_stops[1]
+                score = "."
+                frame = "."
+                phase = "."
+                tag_peptide = split[3]
+                tag_peptide_seq = split[4]
+                attribute = "product=transfer-messenger RNA SsrA;tag_peptide=" + tag_peptide + ";tag_peptide_sequence=" + tag_peptide_seq
+                contig_names.append(contig)
+                methods.append(method)
+                regions.append(region)
+                starts.append(start)
+                stops.append(stop)
+                scores.append(score)
+                frames.append(frame)
+                phases.append(phase)
+                attributes.append(attribute)
+            tmrna_df = pd.DataFrame(
+            {'contig': contig_names,
+            'Method': methods,
+            'Region': regions,
+            'start': starts,
+            'stop': stops,
+            'score': scores,
+            'frame': frames,
+            'phase': phases,
+            'attributes': attributes,
+            })
+    # two or more contigs
+    else:
+        i = 0 # line counter
+        j = 0 # contig counter
+        for line in lines:
+            # contig meets these reqs
+            if line[0] == ">" and line[1:4] != "end":
+                if lines[i+1][0] != 0:
+                    tmrna_flag = True
+                    # number of trnas for this contig
+                    tmrna_count = int(lines[i+1][0])
+                    # iterate over them
+                    for k in range(tmrna_count):
+                        tmrna_line = lines[i+2+k]
+                        split = tmrna_line.split()
+                        start_stops = split[2].replace("[", "").replace("]", "").split(',')
+                        contig = length_df["contig"][j]
+                        method = "Aragorn"
+                        region = "tmRNA"
+                        start = start_stops[0]
+                        stop = start_stops[1]
+                        score = "."
+                        frame = "."
+                        phase = "."
+                        tag_peptide = split[3]
+                        tag_peptide_seq = split[4]
+                        attribute = "product=transfer-messenger RNA SsrA;tag_peptide=" + tag_peptide + ";tag_peptide_sequence=" + tag_peptide_seq
+                        contig_names.append(contig)
+                        methods.append(method)
+                        regions.append(region)
+                        starts.append(start)
+                        stops.append(stop)
+                        scores.append(score)
+                        frames.append(frame)
+                        phases.append(phase)
+                        attributes.append(attribute)
+                j +=1 # iterate contig
+            # iterate line
+            i += 1 
+        # write out the df
+        tmrna_df = pd.DataFrame(
+        {'contig': contig_names,
+        'Method': methods,
+        'Region': regions,
+        'start': starts,
+        'stop': stops,
+        'score': scores,
+        'frame': frames,
+        'phase': phases,
+        'attributes': attributes,
+        })
+    tmrna_df.to_csv(os.path.join(out_dir, prefix + "_aragorn.gff"), sep="\t", index=False, header=False)
+    return tmrna_flag
+
 
 
 

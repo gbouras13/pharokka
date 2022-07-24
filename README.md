@@ -11,11 +11,11 @@ If you are looking for rapid standardised annotation of prokaryotes, please use 
 
 Method
 ----
-Briefly, default gene prediction is done using PHANOTATE (https://github.com/deprekate/PHANOTATE) and function annotation is based on the PHROGs database (https://phrogs.lmge.uca.fr).
+Briefly, default gene prediction is done using PHANOTATE (https://github.com/deprekate/PHANOTATE) and function annotation is based on the PHROGs database (https://phrogs.lmge.uca.fr) with mmseqs2.
 
 The main output is a gff file that is suitable for use downstream pangenomic pipelines such as Roary (https://sanger-pathogens.github.io/Roary/).
 
-The other important output is `cds_functions.tsv`, which includes counts of CDSs, tRNAs, and functions assigned to CDSs according to the PHROGs database.
+The other important output is `cds_functions.tsv`, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database.
 
 For full documentation, please visit https://pharokka.readthedocs.io.
 
@@ -29,10 +29,6 @@ The easiest way to install pharokka is via conda.
 `conda install -c bioconda pharokka`
 
 This will install all the dependencies along with pharokka.
-
-If this fails, please try downloading from my channel:
-
-`conda install -c gbouras13 pharokka`
 
 Alternatively, the development version of pharokka can be installed manually via github.
 
@@ -56,15 +52,14 @@ Running pharokka
 
 First the PHROGs databases need to be installed
 
-`install_databses.py -d Y`
+`install_databses.py -d `
 
 If you would like to specify a different database directory (recommended), that can be achieved as follows:
 
-`install_databases.py -d N -o "<path/to/databse_dir>`
+`install_databases.py -o "<path/to/databse_dir>`
 
 If you have trouble downloading the databases using `install_databases.py`, they can be manually downloaded from the PHROGs website links, untared and placed in a directory of your choice:
 * https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_mmseqs_db.tar.gz
-* https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_hhsuite_db.tar.gz
 * https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v4.tsv.
 
 Once the databases have finished downloading, run pharokka
@@ -91,6 +86,10 @@ pharokka should work with metagenome assembled viral contigs with PHANOTATE auto
 
 `pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -g prodigal -m`
 
+In v0.1.7, the ability to specify an E-value threshold for CDS functional assignment using mmseqs2 was added using the -e flag. It defaults to 1E-5.
+
+`pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -e <E-value>`
+
 pharokka defaults to 1 thread.
 
 System
@@ -99,11 +98,11 @@ pharokka has been tested on Linux and MacOS (M1 and Intel).
 
 Time
 --------
-On a standard 16GB laptop specifying 8 threads, pharokka should take between 5-20 minutes, depending on the genome size.
+On a standard 16GB RAM laptop specifying 8 threads, pharokka should take between 3-10 minutes to run for a single phage, depending on the genome size.
 
 Version Log
 --------
-A brief description of what is new in easy update of pharokka can be found in the HISTORY.md file.
+A brief description of what is new in each update of pharokka can be found in the HISTORY.md file.
 
 Bugs and Suggestions
 --------
@@ -117,3 +116,5 @@ If you use pharokka, please also cite:
 * tRNAscan-SE: Chan, P.P., Lin, B.Y., Mak, A.J. and Lowe, T.M. (2021) "tRNAscan-SE 2.0: improved detection and functional classification of transfer RNA genes", Nucleic Acids Res., https://doi.org/10.1093/nar/gkab688.
 * Steinegger M. and Soeding J. (2017), "MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets", Nature Biotechnology (https://doi.org/10.1038/nbt.3988).
 * Terzian P., Olo Ndela E., Galiez C., Lossouarn J., Pérez Bucio R.E., Mom R., Toussaint A., Petit M.A., Enault F., "PHROG : families of prokaryotic virus proteins clustered using remote homology", NAR Genomics and Bioinformatics, (2021), (https://doi.org/10.1093/nargab/lqab067).
+* Bland C., Ramsey L., Sabree F., Lowe M., Brown K., Kyrpides N.C., Hugenholtz P. , "CRISPR Recognition Tool (CRT): a tool for automatic detection of clustered regularly interspaced palindromic repeats", BMC Bioinformatics, (2007), (https://doi.org/10.1186/1471-2105-8-209).
+* Laslett D., Canback B., "ARAGORN, a program to detect tRNA genes and tmRNA genes in nucleotide sequences.", Nucleic Acids Res, (2004), (https://doi.org/10.1093/nar/gkh152).
