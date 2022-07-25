@@ -1,4 +1,4 @@
-**pharokka v0.1.6 is now available on bioconda**
+**pharokka v0.1.7 is now available on bioconda**
 
 The easiest way to install pharokka is via conda.
 

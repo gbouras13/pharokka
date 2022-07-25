@@ -22,7 +22,7 @@ For full documentation, please visit https://pharokka.readthedocs.io.
 Usage
 ------
 
-**pharokka v0.1.6 is now available on bioconda**
+**pharokka v0.1.7 is now available on bioconda**
 
 The easiest way to install pharokka is via conda.
 
@@ -92,6 +92,10 @@ In v0.1.7, the ability to specify an E-value threshold for CDS functional assign
 
 pharokka defaults to 1 thread.
 
+Version Log
+--------
+A brief description of what is new in each update of pharokka can be found in the HISTORY.md file.
+
 System
 ------
 pharokka has been tested on Linux and MacOS (M1 and Intel).
@@ -99,10 +103,6 @@ pharokka has been tested on Linux and MacOS (M1 and Intel).
 Time
 --------
 On a standard 16GB RAM laptop specifying 8 threads, pharokka should take between 3-10 minutes to run for a single phage, depending on the genome size.
-
-Version Log
---------
-A brief description of what is new in each update of pharokka can be found in the HISTORY.md file.
 
 Bugs and Suggestions
 --------
