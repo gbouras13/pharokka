@@ -17,3 +17,9 @@ nav:
       - Usage: run.md
     - OUTPUT:
       - Output: output.md
+
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.snippets
