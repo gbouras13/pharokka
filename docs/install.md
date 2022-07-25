@@ -12,7 +12,7 @@ If this fails, please try downloading from my channel:
 
 Alternatively, pharokka can be installed manually via github
 
-`git clone [https://github.com/gbouras13/pharokka.git](https://github.com/gbouras13/pharokka.git)`
+`git clone https://github.com/gbouras13/pharokka.git`
 
 The dependencies found in other_files/requirements.yaml will then need to be installed manually.
 
@@ -20,7 +20,7 @@ For example using conda:
 
 
 ```
-git clone [https://github.com/gbouras13/pharokka.git](https://github.com/gbouras13/pharokka.git)
+git clone https://github.com/gbouras13/pharokka.git
 cd pharokka
 conda env create -f environment.yml
 conda activate pharokka_env
