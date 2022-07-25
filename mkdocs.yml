@@ -1,5 +1,6 @@
 site_name: pharokka
 site_url: "https://github.com/gbouras13/pharokka"
+site_author: George Bouras
 theme:
     name: readthedocs
     highlightjs: true
@@ -18,8 +19,3 @@ nav:
     - OUTPUT:
       - Output: output.md
 
-markdown_extensions:
-  - pymdownx.highlight
-  - pymdownx.inlinehilite
-  - pymdownx.superfences
-  - pymdownx.snippets
