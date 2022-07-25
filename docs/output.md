@@ -4,7 +4,7 @@ Main Output
 ----------
 The main output is a gff3 file that is suitable for use downstream pangenomic pipelines such as Roary ([https://sanger-pathogens.github.io/Roary/](https://sanger-pathogens.github.io/Roary/)) to generate pangenomes.
 
-* The 'phrog=' section shows the closest matching PHROG. The 'top_hit=' section shows the closest matching protein in the PHROGs database.
+* The 'phrog=' section shows the closest matching PHROG, or "No_PHROG" if there are no matching PHROGs below the E-value threshold. The 'top_hit=' section shows the closest matching protein in the PHROGs database.
 
 Other Files
 ------
@@ -26,7 +26,9 @@ Other Files
 
 * `_minced_spacers.txt` and `_minced.gff`, which hold the output from MinCED.
 
-* A `_final_merged_output.tsv`, which gives the parsed output from mmseqs2. In general, mmseqs2 will identify a PHROG for most CDSs, while small (80-200bp) hypothetical proteins often will have no matching PHROG. pharokka should be used as a rough guide only in these cases. If you are interesting in these CDSs is also recommended that pharokka be re-run with a less restrcitive e-value threshold (e.g. -e 0.1).
+* A `_trnascan.gff` which holds the output from tRNAscan-SE 2.
+
+* A `_final_merged_output.tsv`, which gives the parsed output from mmseqs2. In general, using the default E-value threshold, mmseqs2 should identify a PHROG for most CDSs, while small (80-200bp) hypothetical proteins often will have no matching PHROG. This may also be the case for phages from uncommon sources where few phage have been isolates (such as environment samples).  pharokka should be used as a rough guide only in these cases. It is also recommended that pharokka be re-run with a less restrictive e-value threshold in these cases (e.g. -e 0.1).
 
 * Further, the 'score' column contains the PHANOTATE score for each CDS. In general, the closer the score to 0, the smaller the CDS and the more likely that a PHROG will not be identified by mmseqs2.
 
