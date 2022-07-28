@@ -1,6 +1,13 @@
 History
 =======
 
+0.1.8 (2022-07-24)
+------------------
+
+* Minor release.
+* Fixes bug with install_databases.py. 
+* Adds locustag to .tbl output.
+
 0.1.7 (2022-07-24)
 ------------------
 
