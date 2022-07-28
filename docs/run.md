@@ -30,5 +30,4 @@ pharokka should work with metagenome assembled viral contigs with PHANOTATE auto
 
 `pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -g prodigal -m`
 
-
 pharokka defaults to 1 thread.
