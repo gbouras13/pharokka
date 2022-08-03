@@ -46,7 +46,7 @@ git clone https://github.com/gbouras13/pharokka.git
 cd pharokka
 conda env create -f environment.yml
 conda activate pharokka_env
-install_databses.py -h
+install_databases.py -h
 pharokka.py -h
 ```
 
