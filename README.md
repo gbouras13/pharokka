@@ -11,6 +11,9 @@ If you are looking for rapid standardised annotation of prokaryotes, please use 
 
 Method
 ----
+
+![pharokka workflow](img/pharokka_workflow.png?raw=true "Pharokka Workflow")
+
 Briefly, default gene prediction is done using PHANOTATE (https://github.com/deprekate/PHANOTATE) and function annotation is based on the PHROGs database (https://phrogs.lmge.uca.fr) with mmseqs2.
 
 The main output is a gff file that is suitable for use downstream pangenomic pipelines such as Roary (https://sanger-pathogens.github.io/Roary/).
