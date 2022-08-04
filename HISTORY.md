@@ -1,11 +1,17 @@
 History
 =======
 
+0.1.9 (2022-08-04)
+------------------
+
+* Fixes bug with parsing Aragorn output for some phages.
+* Fixes bug with phages with no mmseqs2 PHROGs hits (for some very small phages).
+
 0.1.8 (2022-07-24)
 ------------------
 
 * Minor release.
-* Fixes bug with install_databases.py. 
+* Fixes bug with install_databases.py.
 * Adds locustag to .tbl output.
 
 0.1.7 (2022-07-24)
