@@ -161,12 +161,6 @@ def run_mmseqs(db_dir, out_dir, threads, logger, gene_predictor, evalue):
     sp.run(["rm", "-r", target_db_dir], check=True)
 
 
-# def convert_gff_to_gbk(fasta_input, out_dir, prefix, logger):
-#     gff_file = os.path.join(out_dir, prefix + ".gff")
-#     out_pref = os.path.join(out_dir, prefix)
-#     seqret = sp.Popen(["seqret", "-sequence", fasta_input, "-feature", "-fformat", "gff", "-fopenfile", gff_file, "-osformat", "genbank", "-osname_outseq", out_pref, "-auto"], stderr=sp.PIPE)
-#     write_to_log(seqret.stderr, logger)
-
 def convert_gff_to_gbk(fasta_input, out_dir, prefix, logger):
     gff_file = os.path.join(out_dir, prefix + ".gff")
     gbk_file = os.path.join(out_dir, prefix + ".gbk")
