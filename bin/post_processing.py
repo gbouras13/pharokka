@@ -34,11 +34,15 @@ def process_results(db_dir,out_dir, prefix, gene_predictor):
     phan_df = pd.read_csv(phan_file, sep="\t", index_col=False )
     phan_df['gene']=phan_df['gene'].astype(str)
     tophits_df['gene']=tophits_df['gene'].astype(str)
-    # merge top hit
     phan_df = phan_df[phan_df['start'].notna()]
     phan_df = phan_df.dropna()
+    # merge top hits into the phanotate df
     merged_df = phan_df.merge(tophits_df, on='gene', how='left')
-    merged_df[['phrog','top_hit']] = merged_df['phrog'].str.split(' ## ',expand=True)
+    # add test if empty
+    if len(tophits_df['phrog']) == 0:
+        merged_df['top_hit'] = 'No_PHROG'
+    else:
+        merged_df[['phrog','top_hit']] = merged_df['phrog'].str.split(' ## ',expand=True)
     merged_df["phrog"] = merged_df["phrog"].str.replace("phrog_", "")
     
     # get phrog annotaion file
@@ -424,7 +428,7 @@ def parse_aragorn(out_dir,length_df, prefix):
                 contig = length_df["contig"][0]
                 method = "Aragorn"
                 region = "tmRNA"
-                start = start_stops[0]
+                start = start_stops[0].replace("c", "")  # tmrna output is [start,stop] or c[start, stop] so need to remove c also for some phages
                 stop = start_stops[1]
                 score = "."
                 frame = "."
@@ -471,7 +475,7 @@ def parse_aragorn(out_dir,length_df, prefix):
                         contig = length_df["contig"][j]
                         method = "Aragorn"
                         region = "tmRNA"
-                        start = start_stops[0]
+                        start = start_stops[0].replace("c", "")  # tmrna output is [start,stop] or c[start, stop] so need to remove c also for some phages
                         stop = start_stops[1]
                         score = "."
                         frame = "."

@@ -46,7 +46,7 @@ git clone https://github.com/gbouras13/pharokka.git
 cd pharokka
 conda env create -f environment.yml
 conda activate pharokka_env
-install_databses.py -h
+install_databases.py -h
 pharokka.py -h
 ```
 
@@ -55,7 +55,7 @@ Running pharokka
 
 First the PHROGs databases need to be installed
 
-`install_databses.py -d `
+`install_databases.py -d `
 
 If you would like to specify a different database directory (recommended), that can be achieved as follows:
 
