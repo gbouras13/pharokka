@@ -1,6 +1,6 @@
-{% set version = "0.1.8" %}
+{% set version = "0.1.9" %}
 {% set name = "pharokka" %}
-{% set sha256 = "ac7cd3971636b9f22ece957faff87351dc55c8ec746a6cdd2d5a7abc0b7cf14e" %}
+{% set sha256 = "de458d4d587f8eaa19e4582fdb6cff61305db19d0d906282f200d3165e8dd7da" %}
 {% set user = "gbouras13" %}
 
 package:
@@ -17,14 +17,14 @@ source:
 
 requirements:
  run:
-  - biopython==1.78
-  - phanotate==1.5.0
-  - mmseqs2==13.45111
-  - trnascan-se==2.0.9
-  - hhsuite==3.3.0
-  - emboss==6.6.0
-  - prodigal==2.6.3
-  - minced>= 0.4.2
+  - biopython>=1.78
+  - phanotate>=1.5.0
+  - mmseqs2>=13.45111
+  - trnascan-se>=2.0.9
+  - hhsuite>=3.3.0
+  - emboss>=6.6.0
+  - prodigal>=2.6.3
+  - minced>=0.4.2
   - aragorn>=1.2.41
 
 test:
