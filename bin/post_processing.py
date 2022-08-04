@@ -467,7 +467,7 @@ def parse_aragorn(out_dir,length_df, prefix):
                     for k in range(tmrna_count):
                         tmrna_line = lines[i+2+k]
                         split = tmrna_line.split()
-                        start_stops = split[2].replace("[", "").replace("]", "").split(',')
+                        start_stops = split[2].replace("[", "").replace("]", "").replace("c", "").split(',') # tmrna output is [start,stop] or c[start, stop] so need to remove c also
                         contig = length_df["contig"][j]
                         method = "Aragorn"
                         region = "tmRNA"
