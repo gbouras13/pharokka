@@ -8,7 +8,7 @@ dependencies:
   - phanotate>=1.5.0
   - mmseqs2>=13.45111
   - trnascan-se>=2.0.9
-  - emboss>=6.6.0
   - prodigal>=2.6.3
   - minced>= 0.4.2
   - aragorn>=1.2.41
+  - bcbio-gff >= 0.6.9
