@@ -6,6 +6,7 @@ from Bio.SeqRecord import SeqRecord
 import pandas as pd
 import logging
 from BCBio import GFF
+from Bio.Seq import Seq
 
 def write_to_log(s, logger):
            while True:
@@ -167,6 +168,8 @@ def convert_gff_to_gbk(fasta_input, out_dir, prefix, logger):
     with open(gbk_file, "wt") as gbk_handler:
         fasta_handler = SeqIO.to_dict(SeqIO.parse(fasta_input, "fasta"))
         for record in GFF.parse(gff_file, fasta_handler):
+            for feature in record.features:
+                feature.qualifiers.update({'translation': Seq.translate(record.seq[feature.location.start.position:feature.location.end.position], to_stop=True)})
             record.annotations["molecule_type"] = "DNA"
             SeqIO.write(record, gbk_handler, "genbank")
 
