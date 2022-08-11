@@ -55,7 +55,7 @@ if __name__ == "__main__":
         processes.run_phanotate(args.infile, out_dir, logger)
     if gene_predictor == "prodigal":
         logger.info("Starting Prodigal")
-        processes.run_prodigal(args.infile, out_dir, logger, args.meta)
+        processes.run_prodigal(args.infile, out_dir, logger, args.meta, args.coding_table)
 
     # translate fastas
     logger.info("Translating gene predicted fastas.")

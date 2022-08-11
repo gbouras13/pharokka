@@ -28,15 +28,15 @@ def run_phanotate(filepath_in, out_dir,logger):
     except:
         sys.exit("Error with Phanotate\n")  
 
-def run_prodigal(filepath_in, out_dir,logger, meta):
+def run_prodigal(filepath_in, out_dir,logger, meta, coding_table):
     print("Running Prodigal.")
     try:
         if meta == True:
             print("Prodigal Meta Mode Enabled.")
             logger.info("Prodigal Meta Mode Enabled.")
-            prodigal = sp.Popen(["prodigal", "-i", filepath_in, "-d", os.path.join(out_dir, "prodigal_out_tmp.fasta"), "-f", "gff", "-o", os.path.join(out_dir, "prodigal_out.gff"), "-p", "meta" ], stdout=sp.PIPE, stderr=sp.DEVNULL) 
+            prodigal = sp.Popen(["prodigal", "-i", filepath_in, "-d", os.path.join(out_dir, "prodigal_out_tmp.fasta"), "-f", "gff", "-o", os.path.join(out_dir, "prodigal_out.gff"), "-p", "meta", "-g", str(coding_table) ], stdout=sp.PIPE, stderr=sp.DEVNULL) 
         else:
-            prodigal = sp.Popen(["prodigal", "-i", filepath_in, "-d", os.path.join(out_dir, "prodigal_out_tmp.fasta"), "-f", "gff", "-o", os.path.join(out_dir, "prodigal_out.gff") ], stdout=sp.PIPE, stderr=sp.DEVNULL) 
+            prodigal = sp.Popen(["prodigal", "-i", filepath_in, "-d", os.path.join(out_dir, "prodigal_out_tmp.fasta"), "-f", "gff", "-o", os.path.join(out_dir, "prodigal_out.gff"), "-g", str(coding_table) ], stdout=sp.PIPE, stderr=sp.DEVNULL) 
         write_to_log(prodigal.stdout, logger)
     except:
         sys.exit("Error with Prodigal\n")  
