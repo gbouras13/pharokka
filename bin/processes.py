@@ -21,8 +21,7 @@ def run_phanotate(filepath_in, out_dir,logger):
     print("Running Phanotate.")
     logger.info("Running Phanotate.")
     try:
-        # no phanotate stderr
-        phan_fast = sp.Popen(["phanotate.py", filepath_in, "-o", os.path.join(out_dir, "phanotate_out_tmp.fasta"), "-f", "fasta"], stderr=sp.PIPE, stdout=sp.DEVNULL) # , stderr=sp.DEVNULL, stdout=sp.DEVNULL silence the warnings (no trnaScan)
+        phan_fast = sp.Popen(["phanotate.py", filepath_in, "-o", os.path.join(out_dir, "phanotate_out_tmp.fasta"), "-f", "fasta"], stderr=sp.PIPE, stdout=sp.DEVNULL) 
         phan_txt = sp.Popen(["phanotate.py", filepath_in, "-o", os.path.join(out_dir, "phanotate_out.txt"), "-f", "tabular"], stderr=sp.PIPE, stdout=sp.DEVNULL)
         write_to_log(phan_fast.stderr, logger)
         write_to_log(phan_txt.stderr, logger)
@@ -32,7 +31,6 @@ def run_phanotate(filepath_in, out_dir,logger):
 def run_prodigal(filepath_in, out_dir,logger, meta):
     print("Running Prodigal.")
     try:
-        # no phanotate stderr
         if meta == True:
             print("Prodigal Meta Mode Enabled.")
             logger.info("Prodigal Meta Mode Enabled.")
@@ -51,14 +49,7 @@ def tidy_phanotate_output(out_dir):
     # get rid of the headers and reset the index
     phan_df = phan_df[phan_df['start'] != '#id:']
     phan_df = phan_df[phan_df['start'] != '#START'].reset_index(drop=True)
-
-    # to match with hmms
     phan_df['gene'] = phan_df['contig'] + phan_df.index.astype(str) + " " + phan_df['start'].astype(str) + "_" + phan_df['stop'].astype(str)
-    # old code
-    # for index, row in phan_df.iterrows():
-    #    # print(row['contig'] + str(index) + " " + str(row['start']) + "_" + str(row['stop']))
-    #     row["gene"] = row['contig'] + str(index) + " " + str(row['start']) + "_" + str(row['stop'])
-    #print(phan_df)
     phan_df.to_csv(os.path.join(out_dir,"cleaned_phanotate.tsv"), sep="\t", index=False)
     return phan_df
 
@@ -181,7 +172,6 @@ def run_minced(filepath_in, out_dir, prefix, logger):
     logger.info("Running MinCED.")
     try:
         # no phanotate stderr
-        #  minced CACUWS01.fasta CACUWS01.crisprs CACUWS01.gff
         minced_fast = sp.Popen(["minced", filepath_in, os.path.join(out_dir, prefix + "_minced_spacers.txt") , os.path.join(out_dir, prefix + "_minced.gff")], stderr=sp.PIPE, stdout=sp.PIPE) 
         write_to_log(minced_fast.stderr, logger)
     except:
