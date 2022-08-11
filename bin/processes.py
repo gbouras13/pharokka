@@ -171,7 +171,7 @@ def convert_gff_to_gbk(fasta_input, out_dir, prefix, logger):
             for feature in record.features:
                 if feature.strand == 1:
                     feature.qualifiers.update({'translation': Seq.translate(record.seq[feature.location.start.position:feature.location.end.position], to_stop=True)})
-                else: # rever strand need reverse compliment
+                else: # reverse strand -1 needs reverse compliment
                     feature.qualifiers.update({'translation': Seq.translate(record.seq[feature.location.start.position:feature.location.end.position].reverse_complement(), to_stop=True)})
             record.annotations["molecule_type"] = "DNA"
             SeqIO.write(record, gbk_handler, "genbank")
