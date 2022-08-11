@@ -42,6 +42,7 @@ if __name__ == "__main__":
     LOG_FILE = os.path.join(args.outdir, prefix + "_" + str(time_for_log) + ".log")
     logger = logging.getLogger()
     logging.basicConfig(level=logging.INFO,filename=LOG_FILE,format='%(asctime)s - %(levelname)s - %(message)s')
+    logging.captureWarnings(True)
     logger.info("Starting pharokka v " + v)
 
     # instantiation/checking fasta and gene_predictor
@@ -88,8 +89,8 @@ if __name__ == "__main__":
     post_processing.create_txt(phan_mmseq_merge_df, length_df,out_dir, prefix, tmrna_flag)
     
     # convert to genbank
-    logger.info("Converting gff to genbank using seqret")
-    print("Converting gff to genbank using seqret")
+    logger.info("Converting gff to genbank.")
+    print("Converting gff to genbank.")
     processes.convert_gff_to_gbk(args.infile, out_dir, prefix, logger)
     
     # delete tmp files
