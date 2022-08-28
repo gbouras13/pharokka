@@ -7,6 +7,7 @@ import pandas as pd
 import logging
 from BCBio import GFF
 from Bio.Seq import Seq
+from datetime import datetime
 
 def write_to_log(s, logger):
            while True:
@@ -167,6 +168,9 @@ def convert_gff_to_gbk(fasta_input, out_dir, prefix, logger):
                     else: # reverse strand -1 needs reverse compliment
                         feature.qualifiers.update({'translation': Seq.translate(record.seq[feature.location.start.position:feature.location.end.position].reverse_complement(), to_stop=True)})
                 record.annotations["molecule_type"] = "DNA"
+                record.annotations["date"] = datetime.today()
+                record.annotations["topology"] = "linear"
+                record.annotations["data_file_division"] = "VRL"
             SeqIO.write(record, gbk_handler, "genbank")
 
 def run_minced(filepath_in, out_dir, prefix, logger):
