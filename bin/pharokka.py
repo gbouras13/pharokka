@@ -52,7 +52,7 @@ if __name__ == "__main__":
     # gene predictor
     if gene_predictor == "phanotate":
         logger.info("Starting Phanotate")
-        processes.run_phanotate(args.infile, out_dir, logger)
+        processes.run_phanotate(args.infile, out_dir, logger, args.TAG, args.TGA, args.TAA)
     if gene_predictor == "prodigal":
         logger.info("Starting Prodigal")
         processes.run_prodigal(args.infile, out_dir, logger, args.meta, args.coding_table)

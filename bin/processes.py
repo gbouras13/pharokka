@@ -17,16 +17,39 @@ def write_to_log(s, logger):
                     break
 
 
-def run_phanotate(filepath_in, out_dir,logger):
+def run_phanotate(filepath_in, out_dir,logger, TAG, TGA, TAA):
+    codon_reassign = ""
+    if TAG == True:
+        codon_reassign=codon_reassign+"TAG"
+    if TGA == True:
+        if codon_reassign != "":
+            codon_reassign=codon_reassign+",TGA"
+        else:
+            codon_reassign=codon_reassign+"TGA"
+    if TAA == True:
+        if codon_reassign != "":
+            codon_reassign=codon_reassign+",TAA"
+        else:
+            codon_reassign=codon_reassign+"TAA"
     print("Running Phanotate.")
     logger.info("Running Phanotate.")
-    try:
-        phan_fast = sp.Popen(["phanotate.py", filepath_in, "-o", os.path.join(out_dir, "phanotate_out_tmp.fasta"), "-f", "fasta"], stderr=sp.PIPE, stdout=sp.DEVNULL) 
-        phan_txt = sp.Popen(["phanotate.py", filepath_in, "-o", os.path.join(out_dir, "phanotate_out.txt"), "-f", "tabular"], stderr=sp.PIPE, stdout=sp.DEVNULL)
-        write_to_log(phan_fast.stderr, logger)
-        write_to_log(phan_txt.stderr, logger)
-    except:
-        sys.exit("Error with Phanotate\n")  
+    if codon_reassign == "":
+        try:
+            phan_fast = sp.Popen(["phanotate.py", "-o", os.path.join(out_dir, "phanotate_out_tmp.fasta"), "-f", "fasta", filepath_in], stderr=sp.PIPE, stdout=sp.DEVNULL) 
+            phan_txt = sp.Popen(["phanotate.py",  "-o", os.path.join(out_dir, "phanotate_out.txt"), "-f", "tabular", filepath_in], stderr=sp.PIPE, stdout=sp.DEVNULL)
+            write_to_log(phan_fast.stderr, logger)
+            write_to_log(phan_txt.stderr, logger)
+        except:
+            sys.exit("Error with Phanotate\n")  
+    else:
+        try:
+            phan_fast = sp.Popen(["phanotate.py", "-o", os.path.join(out_dir, "phanotate_out_tmp.fasta"), "-f", "fasta", "-e", codon_reassign, filepath_in], stderr=sp.PIPE, stdout=sp.DEVNULL) 
+            phan_txt = sp.Popen(["phanotate.py", "-o", os.path.join(out_dir, "phanotate_out.txt"), "-f", "tabular","-e", codon_reassign, filepath_in], stderr=sp.PIPE, stdout=sp.DEVNULL)
+            write_to_log(phan_fast.stderr, logger)
+            write_to_log(phan_txt.stderr, logger)
+        except:
+            sys.exit("Error with Phanotate\n")  
+
 
 def run_prodigal(filepath_in, out_dir,logger, meta, coding_table):
     print("Running Prodigal.")
@@ -160,11 +183,13 @@ def convert_gff_to_gbk(fasta_input, out_dir, prefix, logger):
         fasta_handler = SeqIO.to_dict(SeqIO.parse(fasta_input, "fasta"))
         for record in GFF.parse(gff_file, fasta_handler):
             for feature in record.features:
-                if feature.strand == 1:
-                    feature.qualifiers.update({'translation': Seq.translate(record.seq[feature.location.start.position:feature.location.end.position], to_stop=True)})
-                else: # reverse strand -1 needs reverse compliment
-                    feature.qualifiers.update({'translation': Seq.translate(record.seq[feature.location.start.position:feature.location.end.position].reverse_complement(), to_stop=True)})
-            record.annotations["molecule_type"] = "DNA"
+                # add translation only if CDS
+                if feature.type == "CDS":
+                    if feature.strand == 1:
+                        feature.qualifiers.update({'translation': Seq.translate(record.seq[feature.location.start.position:feature.location.end.position], to_stop=True)})
+                    else: # reverse strand -1 needs reverse compliment
+                        feature.qualifiers.update({'translation': Seq.translate(record.seq[feature.location.start.position:feature.location.end.position].reverse_complement(), to_stop=True)})
+                record.annotations["molecule_type"] = "DNA"
             SeqIO.write(record, gbk_handler, "genbank")
 
 def run_minced(filepath_in, out_dir, prefix, logger):
