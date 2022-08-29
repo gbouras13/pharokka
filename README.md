@@ -25,7 +25,7 @@ For full documentation, please visit https://pharokka.readthedocs.io.
 Usage
 ------
 
-**pharokka v0.1.7 is now available on bioconda**
+**pharokka v0.1.9 is now available on bioconda**
 
 The easiest way to install pharokka is via conda.
 
@@ -50,16 +50,50 @@ install_databases.py -h
 pharokka.py -h
 ```
 
+Beginner Conda Install
+--------
+
+If you are new to using the command-line, please install conda using the following instructions.
+
+1. Install [Anaconda](https://www.anaconda.com/products/distribution). I would recommend [miniconda](https://docs.conda.io/en/latest/miniconda.html).
+2. Assuming you are using a Linux x86_64 machine (for other architectures, please replace the URL with the appropriate one on the [miniconda](https://docs.conda.io/en/latest/miniconda.html) website).
+
+`curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh`
+
+For Mac (Intel, will also work with M1):
+
+`curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh`
+
+3. Install miniconda and follow the propmts.
+
+`sh Miniconda3-latest-Linux-x86_64.sh`
+
+4. After installation is complete, you should add the following channels to your conda configuration:
+
+```
+conda config --add channels defaults
+conda config --add channels bioconda
+conda config --add channels conda-forge
+```
+
+5. After this, conda should be installed (you may need to restart your terminal). I would recommend installing pharokka into a fresh environment e.g. to create an environment called pharokkaENV with pharokka installed:
+
+```
+conda create -n pharokkaENV pharokka
+conda activate pharokkaENV
+pharokka.py -h
+```
+
 Running pharokka
 --------
 
 First the PHROGs databases need to be installed
 
-`install_databases.py -d `
+`install_databases.py -d`
 
 If you would like to specify a different database directory (recommended), that can be achieved as follows:
 
-`install_databases.py -o "<path/to/databse_dir>`
+`install_databases.py -o <path/to/databse_dir>`
 
 If you have trouble downloading the databases using `install_databases.py`, they can be manually downloaded from the PHROGs website links, untared and placed in a directory of your choice:
 * https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_mmseqs_db.tar.gz
