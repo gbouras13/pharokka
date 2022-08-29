@@ -50,7 +50,7 @@ install_databases.py -h
 pharokka.py -h
 ```
 
-Beginner Conda Install
+Beginner Conda Installation
 --------
 
 If you are new to using the command-line, please install conda using the following instructions.
