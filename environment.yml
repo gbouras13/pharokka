@@ -4,6 +4,7 @@ channels:
   - bioconda
   - defaults
 dependencies:
+  - bcbio-gff
   - biopython>=1.78
   - phanotate>=1.5.0
   - mmseqs2>=13.45111
@@ -11,4 +12,4 @@ dependencies:
   - prodigal>=2.6.3
   - minced>= 0.4.2
   - aragorn>=1.2.41
-  - bcbio-gff>=0.6.9
+
