@@ -1,6 +1,6 @@
 {% set version = "0.1.10" %}
 {% set name = "pharokka" %}
-{% set sha256 = "b534cb1f9712e24f27fcf30141f3fa01479c4bbe883ff5320c7598262420c78b" %}
+{% set sha256 = "f8e8ee6da7228d893af1be5f7f4d21dd4171f499f0cf6110860cc1f935489526" %}
 {% set user = "gbouras13" %}
 
 package:
