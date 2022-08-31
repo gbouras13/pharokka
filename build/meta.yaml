@@ -1,4 +1,4 @@
-{% set version = "0.1.9" %}
+{% set version = "0.1.10" %}
 {% set name = "pharokka" %}
 {% set sha256 = "de458d4d587f8eaa19e4582fdb6cff61305db19d0d906282f200d3165e8dd7da" %}
 {% set user = "gbouras13" %}
