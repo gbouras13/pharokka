@@ -18,9 +18,7 @@ def get_db_input():
 	args = parser.parse_args()
 	return args
 
-
 args = get_db_input()
-print(args.outdir)
 
 if args.default == True:
     db_dir = os.path.join(os.path.dirname(__file__),'../',"databases/")  

@@ -76,15 +76,22 @@ if __name__ == "__main__":
     # running mmseqs2
     logger.info("Starting mmseqs2")
     processes.run_mmseqs(DBDIR, out_dir, args.threads, logger, gene_predictor, args.evalue)
+    # run vfdb
+    if args.vfdb == True:
+        logger.info("Starting vfdb database")
+        processes.run_mmseqs_vfdb(DBDIR, out_dir, args.threads, logger, gene_predictor, args.evalue)
 
     # post processing
     phan_mmseq_merge_df = post_processing.process_results(DBDIR, out_dir, prefix, gene_predictor)
+    if args.vfdb == True:
+        logger.info("Starting vfdb database")
+        phan_mmseq_merge_df = post_processing.process_vfdb_results(out_dir, prefix)
     logger.info("Post Processing Output.")
     print("Post Processing Output.")
     length_df = post_processing.get_contig_name_lengths(args.infile)
     tmrna_flag = post_processing.parse_aragorn(out_dir,length_df, prefix)
     # return locus_tag for table
-    locustag = post_processing.create_gff(phan_mmseq_merge_df, length_df, args.infile, out_dir, prefix, locustag, tmrna_flag)
+    locustag = post_processing.create_gff(phan_mmseq_merge_df, length_df, args.infile, out_dir, prefix, locustag, tmrna_flag, args.vfdb)
     post_processing.create_tbl(phan_mmseq_merge_df, length_df, out_dir, prefix, gene_predictor, tmrna_flag, locustag)
     post_processing.create_txt(phan_mmseq_merge_df, length_df,out_dir, prefix, tmrna_flag)
     

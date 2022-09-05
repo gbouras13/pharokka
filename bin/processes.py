@@ -191,3 +191,59 @@ def run_aragorn(filepath_in, out_dir, prefix, logger):
         write_to_log(aragorn.stderr, logger)
     except:
         sys.exit("Error with Aragorn\n")  
+
+
+def run_mmseqs_vfdb(db_dir, out_dir, threads, logger, gene_predictor, evalue):
+    print("Running mmseqs2 for vfdb.")
+    vfdb_db_dir = os.path.join(db_dir, "vfdb/")
+    vfdb_dir = os.path.join(out_dir, "vfdb/")
+    amino_acid_fasta = gene_predictor + "_aas_tmp.fasta"
+    target_db_dir =  os.path.join(out_dir, "vfdb_target_dir/") 
+    tmp_dir = os.path.join(out_dir, "vfdb_tmp_dir/") 
+
+    # make dir for target db
+    if os.path.isdir(target_db_dir) == False:
+        os.mkdir(target_db_dir)
+
+    # creates db for input
+    vfdb_createdb = sp.Popen(["mmseqs", "createdb", os.path.join(out_dir, amino_acid_fasta), os.path.join(target_db_dir, "target_seqs")], stdout=sp.PIPE)
+    write_to_log(vfdb_createdb.stdout, logger)
+    # runs the seacrh
+    vfdb_searc = sp.Popen(["mmseqs", "search", "-e", evalue ,os.path.join(vfdb_db_dir, "vfdb"), os.path.join(target_db_dir, "target_seqs"), os.path.join(vfdb_dir, "results_vfdb"), tmp_dir, "-s", "8.5",
+    "--threads", threads], stdout=sp.PIPE)
+    write_to_log(vfdb_searc.stdout, logger)
+    # creates the tsv
+    vfdb_createtsv = sp.Popen(["mmseqs", "createtsv", os.path.join(vfdb_db_dir, "vfdb"), os.path.join(target_db_dir, "target_seqs"), os.path.join(vfdb_dir, "results_vfdb"), 
+    os.path.join(out_dir,"vfdb_results.tsv"), "--full-header", "--threads", threads], stdout=sp.PIPE)
+    write_to_log(vfdb_createtsv.stdout, logger)
+    # remove the target dir when finished 
+    sp.run(["rm", "-r", target_db_dir], check=True)
+
+
+def run_mmseqs_vfdb(db_dir, out_dir, threads, logger, gene_predictor, evalue):
+    print("Running mmseqs2 for vfdb.")
+    vfdb_db_dir = os.path.join(db_dir, "vfdb/")
+    vfdb_dir = os.path.join(out_dir, "vfdb/")
+    amino_acid_fasta = gene_predictor + "_aas_tmp.fasta"
+    target_db_dir =  os.path.join(out_dir, "vfdb_target_dir/") 
+    tmp_dir = os.path.join(out_dir, "vfdb_tmp_dir/") 
+
+    # make dir for target db
+    if os.path.isdir(target_db_dir) == False:
+        os.mkdir(target_db_dir)
+
+    # creates db for input
+    vfdb_createdb = sp.Popen(["mmseqs", "createdb", os.path.join(out_dir, amino_acid_fasta), os.path.join(target_db_dir, "target_seqs")], stdout=sp.PIPE)
+    write_to_log(vfdb_createdb.stdout, logger)
+    # runs the seacrh
+    vfdb_searc = sp.Popen(["mmseqs", "search", "--min-seq-id", "0.8", "-c", "0.4", os.path.join(vfdb_db_dir, "vfdb"), os.path.join(target_db_dir, "target_seqs"), os.path.join(vfdb_dir, "results_vfdb"), tmp_dir, "-s", "8.5",
+    "--threads", threads], stdout=sp.PIPE)
+    write_to_log(vfdb_searc.stdout, logger)
+    # creates the tsv
+    vfdb_createtsv = sp.Popen(["mmseqs", "createtsv", os.path.join(vfdb_db_dir, "vfdb"), os.path.join(target_db_dir, "target_seqs"), os.path.join(vfdb_dir, "results_vfdb"), 
+    os.path.join(out_dir,"vfdb_results.tsv"), "--full-header", "--threads", threads], stdout=sp.PIPE)
+    write_to_log(vfdb_createtsv.stdout, logger)
+    # remove the target dir when finished 
+    sp.run(["rm", "-r", target_db_dir], check=True)
+
+    # https://card.mcmaster.ca/download/0/broadstreet-v3.2.4.tar.bz2

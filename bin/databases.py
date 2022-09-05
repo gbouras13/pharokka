@@ -7,6 +7,7 @@ def instantiate_install(db_dir):
     instantiate_dir(db_dir)
     get_phrog_mmseqs(db_dir)
     get_phrog_annot_table(db_dir)
+    get_vfdb(db_dir)
 
 
 def instantiate_dir(db_dir):
@@ -52,3 +53,19 @@ def get_phrog_annot_table(db_dir):
             sys.stderr.write("Error: PHROGs annotation file not found - link likely broken\n")  
             return 0
 
+def get_vfdb(db_dir):
+    print("Getting VFDB Annotation Table")
+    filepath = "http://www.mgc.ac.cn/VFs/Down/VFDB_setB_pro.fas.gz"
+    file = "VFDB_setB_pro.fas.gz"
+    #if the file already exists
+    if os.path.isfile(os.path.join(db_dir,file)) == True:
+        print("VFDB already downloaded")
+    else:
+        try:
+            instantiate_dir(os.path.join(db_dir, "vfdb"))
+            sp.call(["curl", filepath, "-o", os.path.join(db_dir,"vfdb",file)])
+            sp.Popen(["gunzip",  os.path.join(db_dir,"vfdb", file)], stdout=sp.PIPE)
+            sp.call(["mmseqs", "createdb", os.path.join(db_dir, "vfdb", "VFDB_setB_pro.fas"), os.path.join(db_dir, "vfdb", "vfdb")])
+        except:
+            sys.stderr.write("Error: VFDB  not found - link likely broken\n")  
+            return 0
