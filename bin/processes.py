@@ -160,6 +160,11 @@ def convert_gff_to_gbk(fasta_input, out_dir, prefix, logger):
     with open(gbk_file, "wt") as gbk_handler:
         fasta_handler = SeqIO.to_dict(SeqIO.parse(fasta_input, "fasta"))
         for record in GFF.parse(gff_file, fasta_handler):
+            # instantiate record
+            record.annotations["molecule_type"] = "DNA"
+            record.annotations["date"] = datetime.today()
+            record.annotations["topology"] = "linear"
+            record.annotations["data_file_division"] = "VRL"
             for feature in record.features:
                 # add translation only if CDS
                 if feature.type == "CDS":
@@ -167,10 +172,6 @@ def convert_gff_to_gbk(fasta_input, out_dir, prefix, logger):
                         feature.qualifiers.update({'translation': Seq.translate(record.seq[feature.location.start.position:feature.location.end.position], to_stop=True)})
                     else: # reverse strand -1 needs reverse compliment
                         feature.qualifiers.update({'translation': Seq.translate(record.seq[feature.location.start.position:feature.location.end.position].reverse_complement(), to_stop=True)})
-                record.annotations["molecule_type"] = "DNA"
-                record.annotations["date"] = datetime.today()
-                record.annotations["topology"] = "linear"
-                record.annotations["data_file_division"] = "VRL"
             SeqIO.write(record, gbk_handler, "genbank")
 
 def run_minced(filepath_in, out_dir, prefix, logger):
@@ -193,34 +194,7 @@ def run_aragorn(filepath_in, out_dir, prefix, logger):
         sys.exit("Error with Aragorn\n")  
 
 
-def run_mmseqs_vfdb(db_dir, out_dir, threads, logger, gene_predictor, evalue):
-    print("Running mmseqs2 for vfdb.")
-    vfdb_db_dir = os.path.join(db_dir, "vfdb/")
-    vfdb_dir = os.path.join(out_dir, "vfdb/")
-    amino_acid_fasta = gene_predictor + "_aas_tmp.fasta"
-    target_db_dir =  os.path.join(out_dir, "vfdb_target_dir/") 
-    tmp_dir = os.path.join(out_dir, "vfdb_tmp_dir/") 
-
-    # make dir for target db
-    if os.path.isdir(target_db_dir) == False:
-        os.mkdir(target_db_dir)
-
-    # creates db for input
-    vfdb_createdb = sp.Popen(["mmseqs", "createdb", os.path.join(out_dir, amino_acid_fasta), os.path.join(target_db_dir, "target_seqs")], stdout=sp.PIPE)
-    write_to_log(vfdb_createdb.stdout, logger)
-    # runs the seacrh
-    vfdb_searc = sp.Popen(["mmseqs", "search", "-e", evalue ,os.path.join(vfdb_db_dir, "vfdb"), os.path.join(target_db_dir, "target_seqs"), os.path.join(vfdb_dir, "results_vfdb"), tmp_dir, "-s", "8.5",
-    "--threads", threads], stdout=sp.PIPE)
-    write_to_log(vfdb_searc.stdout, logger)
-    # creates the tsv
-    vfdb_createtsv = sp.Popen(["mmseqs", "createtsv", os.path.join(vfdb_db_dir, "vfdb"), os.path.join(target_db_dir, "target_seqs"), os.path.join(vfdb_dir, "results_vfdb"), 
-    os.path.join(out_dir,"vfdb_results.tsv"), "--full-header", "--threads", threads], stdout=sp.PIPE)
-    write_to_log(vfdb_createtsv.stdout, logger)
-    # remove the target dir when finished 
-    sp.run(["rm", "-r", target_db_dir], check=True)
-
-
-def run_mmseqs_vfdb(db_dir, out_dir, threads, logger, gene_predictor, evalue):
+def run_mmseqs_vfdb(db_dir, out_dir, threads, logger, gene_predictor):
     print("Running mmseqs2 for vfdb.")
     vfdb_db_dir = os.path.join(db_dir, "vfdb/")
     vfdb_dir = os.path.join(out_dir, "vfdb/")
@@ -243,6 +217,36 @@ def run_mmseqs_vfdb(db_dir, out_dir, threads, logger, gene_predictor, evalue):
     vfdb_createtsv = sp.Popen(["mmseqs", "createtsv", os.path.join(vfdb_db_dir, "vfdb"), os.path.join(target_db_dir, "target_seqs"), os.path.join(vfdb_dir, "results_vfdb"), 
     os.path.join(out_dir,"vfdb_results.tsv"), "--full-header", "--threads", threads], stdout=sp.PIPE)
     write_to_log(vfdb_createtsv.stdout, logger)
+    # remove the target dir when finished 
+    sp.run(["rm", "-r", target_db_dir], check=True)
+
+
+    # https://card.mcmaster.ca/download/0/broadstreet-v3.2.4.tar.bz2
+
+
+def run_mmseqs_card(db_dir, out_dir, threads, logger, gene_predictor):
+    print("Running mmseqs2 for CARD.")
+    CARD_db_dir = os.path.join(db_dir, "CARD_mmseqs/")
+    CARD_dir = os.path.join(out_dir, "CARD/")
+    amino_acid_fasta = gene_predictor + "_aas_tmp.fasta"
+    target_db_dir =  os.path.join(out_dir, "CARD_target_dir/") 
+    tmp_dir = os.path.join(out_dir, "CARD_tmp_dir/") 
+
+    # make dir for target db
+    if os.path.isdir(target_db_dir) == False:
+        os.mkdir(target_db_dir)
+
+    # creates db for input
+    CARD_createdb = sp.Popen(["mmseqs", "createdb", os.path.join(out_dir, amino_acid_fasta), os.path.join(target_db_dir, "target_seqs")], stdout=sp.PIPE)
+    write_to_log(CARD_createdb.stdout, logger)
+    # runs the seacrh
+    CARD_searc = sp.Popen(["mmseqs", "search", "--min-seq-id", "0.8", "-c", "0.4", os.path.join(CARD_db_dir, "CARD"), os.path.join(target_db_dir, "target_seqs"), os.path.join(CARD_dir, "results_CARD"), tmp_dir, "-s", "8.5",
+    "--threads", threads], stdout=sp.PIPE)
+    write_to_log(CARD_searc.stdout, logger)
+    # creates the tsv
+    CARD_createtsv = sp.Popen(["mmseqs", "createtsv", os.path.join(CARD_db_dir, "CARD"), os.path.join(target_db_dir, "target_seqs"), os.path.join(CARD_dir, "results_CARD"), 
+    os.path.join(out_dir,"CARD_results.tsv"), "--full-header", "--threads", threads], stdout=sp.PIPE)
+    write_to_log(CARD_createtsv.stdout, logger)
     # remove the target dir when finished 
     sp.run(["rm", "-r", target_db_dir], check=True)
 
