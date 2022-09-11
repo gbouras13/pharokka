@@ -4,7 +4,7 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - biopython
+  - biopython>=1.7.8
   - phanotate>=1.5.0
   - mmseqs2>=13.45111
   - trnascan-se>=2.0.9
@@ -12,5 +12,4 @@ dependencies:
   - minced>= 0.4.2
   - aragorn>=1.2.41
   - bcbio-gff>= 0.6.9
-  - abricate=1.0.0
 
