@@ -57,7 +57,7 @@ install_databases.py -h
 pharokka.py -h
 ```
 
-Beginner Conda Install
+Beginner Conda Installation
 --------
 
 If you are new to using the command-line, please install conda using the following instructions.
@@ -71,7 +71,7 @@ For Mac (Intel, will also work with M1):
 
 `curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh`
 
-3. Install miniconda and follow the propmts.
+3. Install miniconda and follow the prompts.
 
 `sh Miniconda3-latest-Linux-x86_64.sh`
 
@@ -92,7 +92,6 @@ conda config --add channels conda-forge
 ```
 mamba create -n pharokkaENV pharokka
 conda activate pharokkaENV
-pharokka.py -h
 ```
 
 Running pharokka

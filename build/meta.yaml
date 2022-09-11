@@ -1,6 +1,6 @@
-{% set version = "0.1.9" %}
+{% set version = "0.1.10" %}
 {% set name = "pharokka" %}
-{% set sha256 = "de458d4d587f8eaa19e4582fdb6cff61305db19d0d906282f200d3165e8dd7da" %}
+{% set sha256 = "f8e8ee6da7228d893af1be5f7f4d21dd4171f499f0cf6110860cc1f935489526" %}
 {% set user = "gbouras13" %}
 
 package:
@@ -17,6 +17,7 @@ source:
 
 requirements:
  run:
+  - bcbio-gff
   - biopython>=1.78
   - phanotate>=1.5.0
   - mmseqs2>=13.45111
@@ -25,7 +26,7 @@ requirements:
   - prodigal>=2.6.3
   - minced>=0.4.2
   - aragorn>=1.2.41
-  - bcbio-gff >= 0.6.9
+
 
 test:
   commands:
