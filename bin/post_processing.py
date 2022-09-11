@@ -99,7 +99,7 @@ def get_contig_name_lengths(fasta_input):
     })
     return(length_df)
 
-def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix, tmrna_flag):
+def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix):
 
     contigs = length_df["contig"]
     # instantiate the length_df['cds_coding_density']
@@ -115,6 +115,29 @@ def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix, tmrna_flag):
     # get crispr count
     crispr_df = pd.read_csv(os.path.join(out_dir, prefix + "_minced.gff"), delimiter= '\t', index_col=False, names=col_list, comment = '#' ) 
     tmrna_df = pd.read_csv(os.path.join(out_dir, prefix + "_aragorn.gff"), delimiter= '\t', index_col=False, names=col_list ) 
+    # get vfdb 
+    # gene has the contig 
+    try:
+        vfdb_df = pd.read_csv(os.path.join(out_dir, "top_hits_vfdb.tsv"), delimiter= '\t', index_col=False ) 
+        vfdb_df[['gene','coordinate']] = vfdb_df['gene'].str.split(' ',expand=True)
+        # strip off the index with the last period delimiter
+        vfdb_df['contig'] = vfdb_df['gene'].str.rsplit("\\.",1)
+    except:
+        # instantiate empty dataframe if there are no hits
+        vfdb_df = pd.DataFrame(columns=['vfdb_hit', 'gene', 'coordinate', 'contig', 'vfdb_alnScore', 'vfdb_seqIdentity', 'vfdb_eVal'])
+
+    # get card 
+    # gene has the contig 
+    try:
+        card_df = pd.read_csv(os.path.join(out_dir, "top_hits_card.tsv"), delimiter= '\t', index_col=False ) 
+        card_df[['gene','coordinate']] = card_df['gene'].str.split(' ',expand=True)
+        # strip off the index with the last period delimiter
+        card_df['contig'] = card_df['gene'].str.rsplit("\\.",1)
+    except:
+        # instantiate empty dataframe if there are no hits
+        card_df = pd.DataFrame(columns=['CARD_hit', 'gene', 'coordinate', 'contig', 'CARD_alnScore', 'CARD_seqIdentity', 'CARD_eVal'])
+    
+
 
     for contig in contigs:
         phanotate_mmseqs_df_cont = phanotate_mmseqs_df[phanotate_mmseqs_df['contig'] == contig]
@@ -123,7 +146,16 @@ def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix, tmrna_flag):
         trna_count = len(trna_df[trna_df['contig'] == contig])
         tmrna_count = len(tmrna_df[tmrna_df['contig'] == contig])
         crispr_count = len(crispr_df[crispr_df['contig'] == contig])
-
+        if len(vfdb_df['contig']) != 0:
+            vfdb_count = len(vfdb_df[vfdb_df['contig'] == contig])
+            vfdb_count = vfdb_df['gene'].str.contains(contig).sum()
+        else:
+            vfdb_count = 0
+        if len(card_df['contig']) != 0:
+            CARD_count = len(card_df[card_df['contig'] == contig])
+            CARD_count = card_df['gene'].str.contains(contig).sum()
+        else:
+            CARD_count = 0
         # get the total length of the contig
         contig_length = length_df[length_df["contig"] == contig]['length']
         if cds_count > 0:
@@ -149,6 +181,8 @@ def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix, tmrna_flag):
         trna_row = pd.DataFrame({ 'Description':['tRNAs'], 'Count':[trna_count], 'contig':[contig] })
         crispr_row = pd.DataFrame({ 'Description':['CRISPRs'], 'Count':[crispr_count], 'contig':[contig] })
         tmrna_row = pd.DataFrame({ 'Description':['tmRNAs'], 'Count':[tmrna_count], 'contig':[contig] })
+        vfdb_row = pd.DataFrame({ 'Description':['VFDB_Virulence_Factors'], 'Count':[vfdb_count], 'contig':[contig] })
+        CARD_row = pd.DataFrame({ 'Description':['CARD_AMR_Genes'], 'Count':[CARD_count], 'contig':[contig] })
         # calculate the cds coding density and add to length_df
         cds_coding_density = cds_lengths * 100 / contig_length
         cds_coding_density = round(cds_coding_density, 2)
@@ -158,6 +192,8 @@ def create_txt(phanotate_mmseqs_df, length_df, out_dir, prefix, tmrna_flag):
         description_list.append(trna_row)
         description_list.append(crispr_row)
         description_list.append(tmrna_row)
+        description_list.append(vfdb_row)
+        description_list.append(CARD_row)
 
     # save the output
     description_total_df = pd.concat(description_list)
@@ -184,8 +220,15 @@ def create_gff(phanotate_mmseqs_df, length_df, fasta_input, out_dir, prefix, loc
     phanotate_mmseqs_df['phase'] = 0
     phanotate_mmseqs_df['attributes'] = "ID=" + locustag + "_CDS_" + phanotate_mmseqs_df.index.astype(str)  + ";" + "phrog=" + phanotate_mmseqs_df["phrog"] + ";" + "top_hit=" + phanotate_mmseqs_df["top_hit"] + ";" + "locus_tag=" + locustag + "_" + phanotate_mmseqs_df.index.astype(str) + ";" + "function=" + phanotate_mmseqs_df["category"] + ";"  + "product=" + phanotate_mmseqs_df["annot"]
 
+    # VFDB
+    phanotate_mmseqs_df.loc[phanotate_mmseqs_df['vfdb_short_name'] != "None", 'attributes'] = phanotate_mmseqs_df['attributes']  + ";"  + "vfdb_short_name=" + phanotate_mmseqs_df['vfdb_short_name'] + ";"  + "vfdb_description="  +  phanotate_mmseqs_df['vfdb_description'] + ";" + "vfdb_species=" + phanotate_mmseqs_df['vfdb_species'] 
+    # CARD
+    phanotate_mmseqs_df.loc[phanotate_mmseqs_df['CARD_short_name'] != "None", 'attributes'] = phanotate_mmseqs_df['attributes']  + ";"  + "CARD_short_name=" + phanotate_mmseqs_df['CARD_short_name'] + ";"  + "AMR_Gene_Family="  +  phanotate_mmseqs_df['AMR_Gene_Family'] + ";" + "CARD_species=" + phanotate_mmseqs_df['CARD_species']
+
+
     # get gff dataframe in correct order 
     gff_df = phanotate_mmseqs_df[["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]]
+    
 
     # change start and stop to int 
     gff_df["start"] = gff_df["start"].astype('int')
@@ -350,6 +393,12 @@ def remove_post_processing_files(out_dir, gene_predictor):
     sp.run(["rm", "-rf", os.path.join(out_dir, "target_dir") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "tmp_dir/") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "mmseqs/") ])
+    sp.run(["rm", "-rf", os.path.join(out_dir, "vfdb_tmp_dir/") ])
+    sp.run(["rm", "-rf", os.path.join(out_dir, "vfdb/") ])
+    sp.run(["rm", "-rf", os.path.join(out_dir, "vfdb_results.tsv") ])  
+    sp.run(["rm", "-rf", os.path.join(out_dir, "CARD_tmp_dir/") ])
+    sp.run(["rm", "-rf", os.path.join(out_dir, "CARD/") ])
+    sp.run(["rm", "-rf", os.path.join(out_dir, "CARD_results.tsv") ])  
     sp.run(["rm", "-rf", os.path.join(out_dir, "cleaned_" + gene_predictor + ".tsv") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "input_fasta_delim.fasta") ])
     sp.run(["rm", "-rf", os.path.join(out_dir, "mmseqs_results.tsv") ])
@@ -380,6 +429,7 @@ def is_trna_empty(out_dir):
     if os.stat(os.path.join(out_dir, "trnascan_out.gff")).st_size == 0:
         trna_empty = True
     return trna_empty
+
 
 # # check if the trna file has more than 1 line (not empty)
 # def is_tmrna_empty(out_dir):
@@ -511,7 +561,130 @@ def parse_aragorn(out_dir,length_df, prefix):
     return tmrna_flag
 
 
+#### process vfdb files
+def process_vfdb_results(out_dir, prefix):
+    ##vfdb
+    vfdb_file = os.path.join(out_dir, "vfdb_results.tsv")
+    print("Processing vfdb output.")
+    col_list = ["vfdb_hit", "gene", "vfdb_alnScore", "vfdb_seqIdentity", "vfdb_eVal", "qStart", "qEnd", "qLen", "tStart", "tEnd", "tLen"] 
+    vfdb_df = pd.read_csv(vfdb_file, delimiter= '\t', index_col=False , names=col_list) 
+    genes = vfdb_df.gene.unique()
+
+    # get top hit 
+    tophits = []
+
+    for gene in genes:
+        tmp_df = vfdb_df.loc[vfdb_df['gene'] == gene].sort_values('vfdb_eVal').reset_index(drop=True).loc[0]
+        tophits.append([tmp_df.vfdb_hit, tmp_df.gene, tmp_df.vfdb_alnScore, tmp_df.vfdb_seqIdentity, tmp_df.vfdb_eVal])
+
+    tophits_df = pd.DataFrame(tophits, columns=['vfdb_hit', 'gene', 'vfdb_alnScore', 'vfdb_seqIdentity', 'vfdb_eVal'])
+    tophits_df.to_csv(os.path.join(out_dir, "top_hits_vfdb.tsv"), sep="\t", index=False)
+
+    # left join vfdb to final_output_file
+    final_output_file = os.path.join(out_dir, prefix + "_final_merged_output.tsv")
+    # automatically picks up the names
+    final_df = pd.read_csv(final_output_file, sep="\t", index_col=False)
+    final_df['gene']=final_df['gene'].astype(str)
+    tophits_df['gene']=tophits_df['gene'].astype(str)
+
+    # merge top hits into the merged df
+    merged_df = final_df.merge(tophits_df, on='gene', how='left')
+    merged_df["vfdb_hit"] = merged_df["vfdb_hit"].replace(nan, 'None', regex=True)
+    merged_df["vfdb_alnScore"] = merged_df["vfdb_alnScore"].replace(nan, 'None', regex=True)
+    merged_df["vfdb_seqIdentity"] = merged_df["vfdb_seqIdentity"].replace(nan, 'None', regex=True)
+    merged_df["vfdb_eVal"] = merged_df["vfdb_eVal"].replace(nan, 'None', regex=True)
 
 
+    # if there is a hit
+    if len(tophits_df['vfdb_hit']) > 0:
+        merged_df[['genbank','desc_tmp', 'vfdb_species']] = merged_df['vfdb_hit'].str.split('[',expand=True)
+        merged_df['vfdb_species'] = merged_df['vfdb_species'].str.replace("]", "")
+        merged_df['vfdb_species'] = merged_df['vfdb_species'].str.strip()
+        merged_df[['genbank','vfdb_short_name', 'vfdb_description']] = merged_df['genbank'].str.split(')',expand=True)
+        merged_df["vfdb_short_name"] = merged_df["vfdb_short_name"].str.replace("(", "")
+        merged_df["vfdb_short_name"] = merged_df["vfdb_short_name"].str.strip()
+        merged_df["vfdb_description"] = merged_df["vfdb_description"].str.strip()
+        merged_df = merged_df.drop(columns = ['genbank', 'desc_tmp'])
+        merged_df["vfdb_short_name"] = merged_df["vfdb_short_name"].replace(nan, 'None', regex=True)
+        merged_df["vfdb_description"] = merged_df["vfdb_description"].replace(nan, 'None', regex=True)
+        merged_df["vfdb_species"] = merged_df["vfdb_species"].replace(nan, 'None', regex=True)
+    else:
+        merged_df["vfdb_short_name"] = 'None'
+        merged_df["vfdb_description"] = 'None'
+        merged_df["vfdb_species"] = 'None'
+
+    merged_df.to_csv( os.path.join(out_dir, prefix + "_final_merged_output.tsv"), sep="\t", index=False)
+
+    return merged_df
+    
+
+#### process CARD files
+def process_card_results(out_dir, prefix, db_dir):
+    ##card
+    card_file = os.path.join(out_dir, "CARD_results.tsv")
+    print("Processing CARD output.")
+    col_list = ["CARD_hit", "gene", "CARD_alnScore", "CARD_seqIdentity", "CARD_eVal", "qStart", "qEnd", "qLen", "tStart", "tEnd", "tLen"] 
+    card_df = pd.read_csv(card_file, delimiter= '\t', index_col=False , names=col_list) 
+    genes = card_df.gene.unique()
+
+    # get top hit 
+    tophits = []
+
+    for gene in genes:
+        tmp_df = card_df.loc[card_df['gene'] == gene].sort_values('CARD_eVal').reset_index(drop=True).loc[0]
+        tophits.append([tmp_df.CARD_hit, tmp_df.gene, tmp_df.CARD_alnScore, tmp_df.CARD_seqIdentity, tmp_df.CARD_eVal])
+
+    tophits_df = pd.DataFrame(tophits, columns=['CARD_hit', 'gene', 'CARD_alnScore', 'CARD_seqIdentity', 'CARD_eVal'])
+    tophits_df.to_csv(os.path.join(out_dir, "top_hits_card.tsv"), sep="\t", index=False)
+
+    # left join vfdb to final_output_file
+    final_output_file = os.path.join(out_dir, prefix + "_final_merged_output.tsv")
+    # automatically picks up the names
+    final_df = pd.read_csv(final_output_file, sep="\t", index_col=False)
+    final_df['gene']=final_df['gene'].astype(str)
+    tophits_df['gene']=tophits_df['gene'].astype(str)
+
+    # merge top hits into the merged df
+    merged_df = final_df.merge(tophits_df, on='gene', how='left')
+    merged_df["CARD_hit"] = merged_df["CARD_hit"].replace(nan, 'None', regex=True)
+    merged_df["CARD_alnScore"] = merged_df["CARD_alnScore"].replace(nan, 'None', regex=True)
+    merged_df["CARD_seqIdentity"] = merged_df["CARD_seqIdentity"].replace(nan, 'None', regex=True)
+    merged_df["CARD_eVal"] = merged_df["CARD_eVal"].replace(nan, 'None', regex=True)
+    # if there is a hit
+    if len(tophits_df['CARD_hit']) > 0:
+        merged_df[['genbank', 'CARD_species']] = merged_df['CARD_hit'].str.split('[',expand=True)
+        merged_df['CARD_species'] = merged_df['CARD_species'].str.replace("]", "")
+        merged_df['CARD_species'] = merged_df['CARD_species'].str.strip()
+        merged_df[['gb','genbank', 'ARO_Accession', 'CARD_short_name']] = merged_df['genbank'].str.split('|',expand=True)
+        merged_df["CARD_short_name"] = merged_df["CARD_short_name"].str.strip()
+    # read in aro_index
+        CARD_index_file = os.path.join(db_dir, "CARD", "aro_index.tsv")
+        col_list = ["ARO_Accession", "CVTERM_ID", "Model_Sequence_ID", "Model_ID", "Model_Name", "ARO_Name", "Protein_Accession", "DNA_Accession", "AMR_Gene_Family", "Drug_Class", "Resistance_Mechanism", "CARD_Short_Name"] 
+        card_index_df = pd.read_csv(CARD_index_file, delimiter= '\t', index_col=False , names=col_list, skiprows=1) 
+        card_index_df = card_index_df.drop(columns = ['CVTERM_ID', 'Model_Sequence_ID', 'Model_ID', 'Model_Name', 'ARO_Name', 'CARD_Short_Name'])
+        merged_df = merged_df.merge(card_index_df, on='ARO_Accession', how='left')
+        merged_df = merged_df.drop(columns = ['gb', 'genbank'])
+        merged_df["CARD_species"] = merged_df["CARD_species"].replace(nan, 'None', regex=True)
+        merged_df["ARO_Accession"] = merged_df["ARO_Accession"].replace(nan, 'None', regex=True)
+        merged_df["CARD_short_name"] = merged_df["CARD_short_name"].replace(nan, 'None', regex=True)
+        merged_df["Protein_Accession"] = merged_df["Protein_Accession"].replace(nan, 'None', regex=True)
+        merged_df["DNA_Accession"] = merged_df["DNA_Accession"].replace(nan, 'None', regex=True)
+        merged_df["AMR_Gene_Family"] = merged_df["AMR_Gene_Family"].replace(nan, 'None', regex=True)
+        merged_df["Drug_Class"] = merged_df["Drug_Class"].replace(nan, 'None', regex=True)
+        merged_df["Resistance_Mechanism"] = merged_df["Resistance_Mechanism"].replace(nan, 'None', regex=True)
+    # if no hits just Nones
+    else: 
+        merged_df["CARD_species"] = 'None'
+        merged_df["ARO_Accession"] = 'None'
+        merged_df["CARD_short_name"] = 'None'
+        merged_df["Protein_Accession"] = 'None'
+        merged_df["DNA_Accession"] = 'None'
+        merged_df["AMR_Gene_Family"] = 'None'
+        merged_df["Drug_Class"] = 'None'
+        merged_df["Resistance_Mechanism"] = 'None'
+
+    merged_df.to_csv( os.path.join(out_dir, prefix + "_final_merged_output.tsv"), sep="\t", index=False)
+
+    return merged_df
 
 

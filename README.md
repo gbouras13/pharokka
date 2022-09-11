@@ -33,6 +33,13 @@ The easiest way to install pharokka is via conda.
 
 This will install all the dependencies along with pharokka.
 
+If conda is taking a long time to solve the environment, try using mamba:
+
+```
+conda install mamba
+mamba install -c bioconda pharokka
+```
+
 Alternatively, the development version of pharokka can be installed manually via github.
 
 `git clone https://github.com/gbouras13/pharokka.git`
@@ -76,10 +83,14 @@ conda config --add channels bioconda
 conda config --add channels conda-forge
 ```
 
-5. After this, conda should be installed (you may need to restart your terminal). I would recommend installing pharokka into a fresh environment e.g. to create an environment called pharokkaENV with pharokka installed:
+5. After this, conda should be installed (you may need to restart your terminal). It is recommended that mamba is also installed, as it will solve the enviroment quicker than conda:
+
+`conda install mamba`
+
+ 6. Finally, I would recommend installing pharokka into a fresh environment e.g. to create an environment called pharokkaENV with pharokka installed:
 
 ```
-conda create -n pharokkaENV pharokka
+mamba create -n pharokkaENV pharokka
 conda activate pharokkaENV
 ```
 

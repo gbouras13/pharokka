@@ -4,7 +4,6 @@ import input_commands
 import processes
 import post_processing
 import os
-import subprocess as sp
 import logging
 import time
 import datetime
@@ -36,9 +35,11 @@ if __name__ == "__main__":
     else:
         locustag = args.locustag
 
-    out_dir = input_commands.instantiate_dirs(args.outdir, args.force) # incase there is already an outdir
+    # instantiate outdir
+    out_dir = input_commands.instantiate_dirs(args.outdir, args.force)
     gene_predictor = args.gene_predictor
 
+    # start logging
     LOG_FILE = os.path.join(args.outdir, prefix + "_" + str(time_for_log) + ".log")
     logger = logging.getLogger()
     logging.basicConfig(level=logging.INFO,filename=LOG_FILE,format='%(asctime)s - %(levelname)s - %(message)s')
@@ -72,21 +73,24 @@ if __name__ == "__main__":
     else:
         DBDIR = args.database
 
-
     # running mmseqs2
     logger.info("Starting mmseqs2")
     processes.run_mmseqs(DBDIR, out_dir, args.threads, logger, gene_predictor, args.evalue)
+    processes.run_mmseqs_card(DBDIR, out_dir, args.threads, logger, gene_predictor)
+    processes.run_mmseqs_vfdb(DBDIR, out_dir, args.threads, logger, gene_predictor)
 
     # post processing
-    phan_mmseq_merge_df = post_processing.process_results(DBDIR, out_dir, prefix, gene_predictor)
     logger.info("Post Processing Output.")
     print("Post Processing Output.")
+    phan_mmseq_merge_df = post_processing.process_results(DBDIR, out_dir, prefix, gene_predictor)
+    phan_mmseq_merge_df = post_processing.process_vfdb_results(out_dir, prefix)
+    phan_mmseq_merge_df = post_processing.process_card_results(out_dir, prefix, DBDIR)
     length_df = post_processing.get_contig_name_lengths(args.infile)
     tmrna_flag = post_processing.parse_aragorn(out_dir,length_df, prefix)
     # return locus_tag for table
     locustag = post_processing.create_gff(phan_mmseq_merge_df, length_df, args.infile, out_dir, prefix, locustag, tmrna_flag)
     post_processing.create_tbl(phan_mmseq_merge_df, length_df, out_dir, prefix, gene_predictor, tmrna_flag, locustag)
-    post_processing.create_txt(phan_mmseq_merge_df, length_df,out_dir, prefix, tmrna_flag)
+    post_processing.create_txt(phan_mmseq_merge_df, length_df,out_dir, prefix)
     
     # convert to genbank
     logger.info("Converting gff to genbank.")
