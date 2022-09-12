@@ -55,7 +55,7 @@ def get_phrog_annot_table(db_dir):
             return 0
 
 def get_vfdb(db_dir):
-    print("Getting VFDB Annotation Table")
+    print("Getting VFDB Database")
     filepath = "http://www.mgc.ac.cn/VFs/Down/VFDB_setB_pro.fas.gz"
     file = "VFDB_setB_pro.fas.gz"
     #if the file already exists
@@ -72,7 +72,7 @@ def get_vfdb(db_dir):
             return 0
 
 def get_card(db_dir):
-    print("Getting CARD Database Annotation Table")
+    print("Getting CARD Database")
     filepath = "https://card.mcmaster.ca/download/0/broadstreet-v3.2.4.tar.bz2"
     file = "card.tar.bz2"
     #if the file already exists
