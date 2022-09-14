@@ -86,7 +86,7 @@ def get_card(db_dir):
             # download the database 
             sp.call(["curl", filepath, "-o", os.path.join(db_dir,"CARD",file)])
             # untar 
-            sp.call(["tar", "-xzf", os.path.join(db_dir,"CARD",file), "-C",os.path.join(db_dir,"CARD") ])
+            sp.call(["tar", "-xf", os.path.join(db_dir,"CARD",file), "-C",os.path.join(db_dir,"CARD") ])
             # create mmseqs db
             sp.call(["mmseqs", "createdb", os.path.join(db_dir, "CARD", "protein_fasta_protein_homolog_model.fasta"), os.path.join(db_dir, "CARD_mmseqs", "CARD")])
         except:
