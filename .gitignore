@@ -103,3 +103,6 @@ ENV/
 # IDE settings
 .vscode/
 .idea/
+
+# DSstore
+.DS_Store
