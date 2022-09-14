@@ -25,7 +25,10 @@ For full documentation, please visit https://pharokka.readthedocs.io.
 Usage
 ------
 
-**pharokka v0.1.9 is now available on bioconda**
+**pharokka v0.1.11 is now available on bioconda**
+
+* v0.1.11 adds VFDB and CARD databases for virulence factor and AMR gene identification. 
+* These should install using the install_databases.py script. If this does not work, the additional databases can be found in the databases directory in this repository. These can then be copied into your desired database directory.
 
 The easiest way to install pharokka is via conda.
 
