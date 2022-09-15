@@ -19,6 +19,13 @@ def write_to_log(s, logger):
 
 
 def run_phanotate(filepath_in, out_dir,logger):
+    """
+    Runs phanotate
+    :param filepath_in: input filepath
+    :param out_dir: output directory
+    :param logger logger
+    :return:
+    """
     print("Running Phanotate.")
     logger.info("Running Phanotate.")
     try:
@@ -30,11 +37,20 @@ def run_phanotate(filepath_in, out_dir,logger):
         sys.exit("Error with Phanotate\n")  
 
 def run_prodigal(filepath_in, out_dir,logger, meta, coding_table):
-    print("Running Prodigal.")
+    """
+    Gets number of crisprs
+    :param filepath_in: input filepath
+    :param out_dir: output directory
+    :param logger logger
+    :param meta Boolean - metagenomic mode flag 
+    :param coding_table coding table for prodigal (default 11)
+    :return:
+    """
+    print("Running Prodigal")
     try:
         if meta == True:
-            print("Prodigal Meta Mode Enabled.")
-            logger.info("Prodigal Meta Mode Enabled.")
+            print("Prodigal Meta Mode Enabled")
+            logger.info("Prodigal Meta Mode Enabled")
             prodigal = sp.Popen(["prodigal", "-i", filepath_in, "-d", os.path.join(out_dir, "prodigal_out_tmp.fasta"), "-f", "gff", "-o", os.path.join(out_dir, "prodigal_out.gff"), "-p", "meta", "-g", str(coding_table) ], stdout=sp.PIPE, stderr=sp.DEVNULL) 
         else:
             prodigal = sp.Popen(["prodigal", "-i", filepath_in, "-d", os.path.join(out_dir, "prodigal_out_tmp.fasta"), "-f", "gff", "-o", os.path.join(out_dir, "prodigal_out.gff"), "-g", str(coding_table) ], stdout=sp.PIPE, stderr=sp.DEVNULL) 
@@ -44,6 +60,11 @@ def run_prodigal(filepath_in, out_dir,logger, meta, coding_table):
 
 
 def tidy_phanotate_output(out_dir):
+    """
+    Tidies phanotate output
+    :param out_dir: output directory
+    :return: phan_df pandas dataframe
+    """
     phan_file = os.path.join(out_dir, "phanotate_out.txt")
     col_list = ["start", "stop", "frame", "contig", "score"] 
     phan_df = pd.read_csv(phan_file, delimiter= '\t', index_col=False , names=col_list, skiprows=2 ) 
@@ -55,6 +76,11 @@ def tidy_phanotate_output(out_dir):
     return phan_df
 
 def tidy_prodigal_output(out_dir):
+    """
+    Tidies prodigal output
+    :param out_dir: output directory
+    :return: prod_filt_df pandas dataframe
+    """
     prod_file = os.path.join(out_dir, "prodigal_out.gff")
     col_list = ["contig", "prod", "orf", "start", "stop","score", "frame", "phase", "description" ] 
     prod_df = pd.read_csv(prod_file, delimiter= '\t', index_col=False , names=col_list, skiprows=3 ) 
@@ -62,7 +88,8 @@ def tidy_prodigal_output(out_dir):
     # meta mode brings in some Nas so remove them
     prod_df = prod_df.dropna()
     prod_filt_df = prod_df[["start", "stop", "frame", "contig", "score"]]
-    #convert staet stop to int
+
+    #convert start stop to int
     prod_filt_df["start"] = prod_filt_df["start"].astype('int')
     prod_filt_df["stop"] = prod_filt_df["stop"].astype('int')
     # rearrange start and stop so that for negative strand, the stop is before start (like phanotate_out)
@@ -77,6 +104,12 @@ def tidy_prodigal_output(out_dir):
 
 
 def translate_fastas(out_dir, gene_predictor):
+    """
+    Translates input CDSs to amino acids. For now will use 11 translation table. Will get around to alternative coding later
+    :param out_dir: output directory
+    :param gene_predictor: phanotate or prodigal
+    :return: 
+    """
     if gene_predictor == "phanotate":
         clean_df = tidy_phanotate_output(out_dir)
         fasta_input_tmp = "phanotate_out_tmp.fasta"
@@ -116,6 +149,13 @@ def translate_fastas(out_dir, gene_predictor):
     
 
 def run_trna_scan(filepath_in, out_dir, logger):
+    """
+    Runs trna scan
+    :param filepath_in: input filepath
+    :param out_dir: output directory
+    :param logger logger
+    :return:
+    """
     print("Running tRNAscan-SE.")
     logger.info("Starting tRNA-scanSE")
     try:
@@ -128,8 +168,20 @@ def run_trna_scan(filepath_in, out_dir, logger):
 
     
 def run_mmseqs(db_dir, out_dir, threads, logger, gene_predictor, evalue):
-    print("Running mmseqs2.")
-    phrog_db_dir = os.path.join(db_dir, "phrogs_mmseqs_db/")
+    """
+    Runs mmseqs2 on phrogs 
+    :param db_dir: database path
+    :param out_dir: output directory
+    :param logger: logger
+    :params threads: threads
+    :param gene_predictor: phanotate or prodigal
+    :param evalue: evalue for mmseqs2
+    :return:
+    """
+    print("Running mmseqs2 on PHROGs Database.")
+    logger.info("Running mmseqs2 on PHROGs Database.")
+    # declare directories - phrog_db_dir is now the db_dir
+    phrog_db_dir = db_dir
     mmseqs_dir = os.path.join(out_dir, "mmseqs/")
     amino_acid_fasta = gene_predictor + "_aas_tmp.fasta"
     target_db_dir =  os.path.join(out_dir, "target_dir/") 
@@ -142,11 +194,11 @@ def run_mmseqs(db_dir, out_dir, threads, logger, gene_predictor, evalue):
     # creates db for input
     mmseqs_createdb = sp.Popen(["mmseqs", "createdb", os.path.join(out_dir, amino_acid_fasta), os.path.join(target_db_dir, "target_seqs")], stdout=sp.PIPE)
     write_to_log(mmseqs_createdb.stdout, logger)
-    # runs the seacrh
-    mmseqs_searc = sp.Popen(["mmseqs", "search", "-e", evalue ,os.path.join(phrog_db_dir, "phrogs_profile_db"), os.path.join(target_db_dir, "target_seqs"), os.path.join(mmseqs_dir, "results_mmseqs"), tmp_dir, "-s", "8.5",
+    # runs the mmseqs seacrh
+    mmseqs_search = sp.Popen(["mmseqs", "search", "-e", evalue ,os.path.join(phrog_db_dir, "phrogs_profile_db"), os.path.join(target_db_dir, "target_seqs"), os.path.join(mmseqs_dir, "results_mmseqs"), tmp_dir, "-s", "8.5",
     "--threads", threads], stdout=sp.PIPE)
-    write_to_log(mmseqs_searc.stdout, logger)
-    # creates the tsv
+    write_to_log(mmseqs_search.stdout, logger)
+    # creates the tsv output
     mmseqs_createtsv = sp.Popen(["mmseqs", "createtsv", os.path.join(phrog_db_dir, "phrogs_profile_db"), os.path.join(target_db_dir, "target_seqs"), os.path.join(mmseqs_dir, "results_mmseqs"), 
     os.path.join(out_dir,"mmseqs_results.tsv"), "--full-header", "--threads", threads], stdout=sp.PIPE)
     write_to_log(mmseqs_createtsv.stdout, logger)
@@ -154,17 +206,25 @@ def run_mmseqs(db_dir, out_dir, threads, logger, gene_predictor, evalue):
     sp.run(["rm", "-r", target_db_dir], check=True)
 
 
-def convert_gff_to_gbk(fasta_input, out_dir, prefix, logger):
+def convert_gff_to_gbk(filepath_in, out_dir, prefix):
+    """
+    Converts the gff to genbank
+    :param filepath_in: input fasta file
+    :param out_dir: output directory
+    :param prefix: prefix
+    :return:
+    """
     gff_file = os.path.join(out_dir, prefix + ".gff")
     gbk_file = os.path.join(out_dir, prefix + ".gbk")
     with open(gbk_file, "wt") as gbk_handler:
-        fasta_handler = SeqIO.to_dict(SeqIO.parse(fasta_input, "fasta"))
+        fasta_handler = SeqIO.to_dict(SeqIO.parse(filepath_in, "fasta"))
         for record in GFF.parse(gff_file, fasta_handler):
             # instantiate record
             record.annotations["molecule_type"] = "DNA"
             record.annotations["date"] = datetime.today()
             record.annotations["topology"] = "linear"
             record.annotations["data_file_division"] = "VRL"
+            # add features to the record
             for feature in record.features:
                 # add translation only if CDS
                 if feature.type == "CDS":
@@ -175,16 +235,31 @@ def convert_gff_to_gbk(fasta_input, out_dir, prefix, logger):
             SeqIO.write(record, gbk_handler, "genbank")
 
 def run_minced(filepath_in, out_dir, prefix, logger):
+    """
+    Runs MinCED 
+    :param filepath_in: input fasta file
+    :param out_dir: output directory
+    :param logger: logger
+    :params prefix: prefix
+    :return:
+    """
     print("Running MinCED.")
     logger.info("Running MinCED.")
     try:
-        # no phanotate stderr
         minced_fast = sp.Popen(["minced", filepath_in, os.path.join(out_dir, prefix + "_minced_spacers.txt") , os.path.join(out_dir, prefix + "_minced.gff")], stderr=sp.PIPE, stdout=sp.PIPE) 
         write_to_log(minced_fast.stderr, logger)
     except:
         sys.exit("Error with MinCED\n")  
 
 def run_aragorn(filepath_in, out_dir, prefix, logger):
+    """
+    Runs run_aragorn 
+    :param filepath_in: input fasta file
+    :param out_dir: output directory
+    :param logger: logger
+    :params prefix: prefix
+    :return:
+    """
     print("Running Aragorn.")
     logger.info("Running Aragorn.")
     try:
@@ -193,10 +268,20 @@ def run_aragorn(filepath_in, out_dir, prefix, logger):
     except:
         sys.exit("Error with Aragorn\n")  
 
-
 def run_mmseqs_vfdb(db_dir, out_dir, threads, logger, gene_predictor):
-    print("Running mmseqs2 for vfdb.")
-    vfdb_db_dir = os.path.join(db_dir, "vfdb/")
+    """
+    Runs mmseqs2 on VFDB 
+    :param db_dir: database path
+    :param out_dir: output directory
+    :param logger: logger
+    :params threads: threads
+    :param gene_predictor: phanotate or prodigal
+    No evalue - settings as Enault et al. recommend 80% identify 40% coverage https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5315482/ 
+    :return:
+    """
+    print("Running mmseqs2 on vfdb.")
+    logger.info("Running mmseqs2 on vfdb.")
+    vfdb_db_dir = db_dir
     vfdb_dir = os.path.join(out_dir, "vfdb/")
     amino_acid_fasta = gene_predictor + "_aas_tmp.fasta"
     target_db_dir =  os.path.join(out_dir, "vfdb_target_dir/") 
@@ -206,14 +291,14 @@ def run_mmseqs_vfdb(db_dir, out_dir, threads, logger, gene_predictor):
     if os.path.isdir(target_db_dir) == False:
         os.mkdir(target_db_dir)
 
-    # creates db for input
+    # creates db for input fasta
     vfdb_createdb = sp.Popen(["mmseqs", "createdb", os.path.join(out_dir, amino_acid_fasta), os.path.join(target_db_dir, "target_seqs")], stdout=sp.PIPE)
     write_to_log(vfdb_createdb.stdout, logger)
-    # runs the seacrh
-    vfdb_searc = sp.Popen(["mmseqs", "search", "--min-seq-id", "0.8", "-c", "0.4", os.path.join(vfdb_db_dir, "vfdb"), os.path.join(target_db_dir, "target_seqs"), os.path.join(vfdb_dir, "results_vfdb"), tmp_dir, "-s", "8.5",
+    # runs the search
+    vfdb_search = sp.Popen(["mmseqs", "search", "--min-seq-id", "0.8", "-c", "0.4", os.path.join(vfdb_db_dir, "vfdb"), os.path.join(target_db_dir, "target_seqs"), os.path.join(vfdb_dir, "results_vfdb"), tmp_dir, "-s", "8.5",
     "--threads", threads], stdout=sp.PIPE)
-    write_to_log(vfdb_searc.stdout, logger)
-    # creates the tsv
+    write_to_log(vfdb_search.stdout, logger)
+    # creates the tsv output
     vfdb_createtsv = sp.Popen(["mmseqs", "createtsv", os.path.join(vfdb_db_dir, "vfdb"), os.path.join(target_db_dir, "target_seqs"), os.path.join(vfdb_dir, "results_vfdb"), 
     os.path.join(out_dir,"vfdb_results.tsv"), "--full-header", "--threads", threads], stdout=sp.PIPE)
     write_to_log(vfdb_createtsv.stdout, logger)
@@ -221,12 +306,20 @@ def run_mmseqs_vfdb(db_dir, out_dir, threads, logger, gene_predictor):
     sp.run(["rm", "-r", target_db_dir], check=True)
 
 
-    # https://card.mcmaster.ca/download/0/broadstreet-v3.2.4.tar.bz2
-
-
 def run_mmseqs_card(db_dir, out_dir, threads, logger, gene_predictor):
-    print("Running mmseqs2 for CARD.")
-    CARD_db_dir = os.path.join(db_dir, "CARD_mmseqs/")
+    """
+    Runs mmseqs2 on card 
+    :param db_dir: database path
+    :param out_dir: output directory
+    :param logger: logger
+    :params threads: threads
+    :param gene_predictor: phanotate or prodigal
+    No evalue - settings as Enault et al. recommend 80% identify 40% coverage https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5315482/ 
+    :return:
+    """
+    print("Running mmseqs2 on CARD.")
+    logger.info("Running mmseqs2 on CARD.")
+    CARD_db_dir = db_dir
     CARD_dir = os.path.join(out_dir, "CARD/")
     amino_acid_fasta = gene_predictor + "_aas_tmp.fasta"
     target_db_dir =  os.path.join(out_dir, "CARD_target_dir/") 
@@ -240,14 +333,12 @@ def run_mmseqs_card(db_dir, out_dir, threads, logger, gene_predictor):
     CARD_createdb = sp.Popen(["mmseqs", "createdb", os.path.join(out_dir, amino_acid_fasta), os.path.join(target_db_dir, "target_seqs")], stdout=sp.PIPE)
     write_to_log(CARD_createdb.stdout, logger)
     # runs the seacrh
-    CARD_searc = sp.Popen(["mmseqs", "search", "--min-seq-id", "0.8", "-c", "0.4", os.path.join(CARD_db_dir, "CARD"), os.path.join(target_db_dir, "target_seqs"), os.path.join(CARD_dir, "results_CARD"), tmp_dir, "-s", "8.5",
+    CARD_search = sp.Popen(["mmseqs", "search", "--min-seq-id", "0.8", "-c", "0.4", os.path.join(CARD_db_dir, "CARD"), os.path.join(target_db_dir, "target_seqs"), os.path.join(CARD_dir, "results_CARD"), tmp_dir, "-s", "8.5",
     "--threads", threads], stdout=sp.PIPE)
-    write_to_log(CARD_searc.stdout, logger)
+    write_to_log(CARD_search.stdout, logger)
     # creates the tsv
     CARD_createtsv = sp.Popen(["mmseqs", "createtsv", os.path.join(CARD_db_dir, "CARD"), os.path.join(target_db_dir, "target_seqs"), os.path.join(CARD_dir, "results_CARD"), 
     os.path.join(out_dir,"CARD_results.tsv"), "--full-header", "--threads", threads], stdout=sp.PIPE)
     write_to_log(CARD_createtsv.stdout, logger)
     # remove the target dir when finished 
     sp.run(["rm", "-r", target_db_dir], check=True)
-
-    # https://card.mcmaster.ca/download/0/broadstreet-v3.2.4.tar.bz2

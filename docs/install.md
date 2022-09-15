@@ -1,4 +1,4 @@
-**pharokka v0.1.9 is now available on bioconda**
+**pharokka v0.1.11 is now available on bioconda**
 
 The easiest way to install pharokka is via conda.
 
@@ -68,7 +68,15 @@ If you would like to specify a different database directory (recommended), that 
 
 `install_databases.py -o <path/to/databse_dir>`
 
-If you have trouble downloading the databases using install_databases.py, they can be manually downloaded from the PHROGs website and placed in a directory of your choice:
+Version 0.1.11 adds VFDB and CARD databases for virulence factor and AMR gene identification. These should install using the install_databases.py script as outlined above. You will need to run this before running pharokka v0.1.11.
 
-* [https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_mmseqs_db.tar.gz](https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_mmseqs_db.tar.gz)
-* [https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v4.tsv](https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v4.tsv).
+If this does not work, you an alternatively download the databases from Zenodo at https://zenodo.org/record/7080544/files/pharokka_v0.1.11_databases.zip and unzip the directory in a location of your choice.
+
+If you prefer to use the command line:
+
+```
+wget "https://zenodo.org/record/7080544/files/pharokka_v0.1.11_databases.zip"
+unzip pharokka_v0.1.11_databases.zip
+```
+
+which will create a directory called "pharokka_v0.1.11_databases" containing the databases.

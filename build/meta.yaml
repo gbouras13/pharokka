@@ -22,7 +22,6 @@ requirements:
   - phanotate>=1.5.0
   - mmseqs2>=13.45111
   - trnascan-se>=2.0.9
-  - hhsuite>=3.3.0
   - prodigal>=2.6.3
   - minced>=0.4.2
   - aragorn>=1.2.41
