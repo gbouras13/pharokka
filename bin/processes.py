@@ -26,8 +26,8 @@ def run_phanotate(filepath_in, out_dir,logger):
     :param logger logger
     :return:
     """
-    print("Running Phanotate")
-    logger.info("Running Phanotate")
+    print("Running Phanotate.")
+    logger.info("Running Phanotate.")
     try:
         phan_fast = sp.Popen(["phanotate.py", filepath_in, "-o", os.path.join(out_dir, "phanotate_out_tmp.fasta"), "-f", "fasta"], stderr=sp.PIPE, stdout=sp.DEVNULL) 
         phan_txt = sp.Popen(["phanotate.py", filepath_in, "-o", os.path.join(out_dir, "phanotate_out.txt"), "-f", "tabular"], stderr=sp.PIPE, stdout=sp.DEVNULL)
@@ -178,7 +178,8 @@ def run_mmseqs(db_dir, out_dir, threads, logger, gene_predictor, evalue):
     :param evalue: evalue for mmseqs2
     :return:
     """
-    print("Running mmseqs2.")
+    print("Running mmseqs2 on PHROGs Database.")
+    logger.info("Running mmseqs2 on PHROGs Database.")
     # declare directories - phrog_db_dir is now the db_dir
     phrog_db_dir = db_dir
     mmseqs_dir = os.path.join(out_dir, "mmseqs/")
@@ -278,7 +279,8 @@ def run_mmseqs_vfdb(db_dir, out_dir, threads, logger, gene_predictor):
     No evalue - settings as Enault et al. recommend 80% identify 40% coverage https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5315482/ 
     :return:
     """
-    print("Running mmseqs2 for vfdb.")
+    print("Running mmseqs2 on vfdb.")
+    logger.info("Running mmseqs2 on vfdb.")
     vfdb_db_dir = db_dir
     vfdb_dir = os.path.join(out_dir, "vfdb/")
     amino_acid_fasta = gene_predictor + "_aas_tmp.fasta"
@@ -315,7 +317,8 @@ def run_mmseqs_card(db_dir, out_dir, threads, logger, gene_predictor):
     No evalue - settings as Enault et al. recommend 80% identify 40% coverage https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5315482/ 
     :return:
     """
-    print("Running mmseqs2 for CARD.")
+    print("Running mmseqs2 on CARD.")
+    logger.info("Running mmseqs2 on CARD.")
     CARD_db_dir = db_dir
     CARD_dir = os.path.join(out_dir, "CARD/")
     amino_acid_fasta = gene_predictor + "_aas_tmp.fasta"

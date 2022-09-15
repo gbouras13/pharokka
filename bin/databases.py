@@ -58,21 +58,21 @@ def check_db_installation(db_dir):
     for file_name in PHROG_DB_NAMES:
         path = os.path.join(db_dir, file_name)
         if os.path.isfile(path) == False:
-            print("PHROGs Databases Need to be Downloaded")
+            print("PHROGs Databases are missing. Pharokka Database Will be Downloaded")
             downloaded_flag = False
             break
     # VFDB
     for file_name in VFDB_DB_NAMES:
         path = os.path.join(db_dir, file_name)
         if os.path.isfile(path) == False:
-            print("VFDB Databases Need to be Downloaded")
+            print("VFDB Databases are missing. Pharokka Database Will be Downloaded")
             downloaded_flag = False
             break
     # CARD
     for file_name in CARD_DB_NAMES:
         path = os.path.join(db_dir, file_name)
         if os.path.isfile(path) == False:
-            print("CARD Databases Need to be Downloaded")
+            print("CARD Databases are missing. Pharokka Database Will be Downloaded")
             downloaded_flag = False
             break
     # annot.tsv
