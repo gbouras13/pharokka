@@ -3,92 +3,97 @@ import os
 import sys
 import subprocess as sp
 
+PHROG_DB_NAMES = ['phrogs_db','phrogs_db.dbtype',
+'phrogs_db.index',
+'phrogs_profile_db',
+'phrogs_profile_db.dbtype',
+'phrogs_profile_db.index',
+'phrogs_profile_db_consensus',
+'phrogs_profile_db_consensus.dbtype',
+'phrogs_profile_db_consensus.index',
+'phrogs_profile_db_h',
+'phrogs_profile_db_h.index',
+'phrogs_profile_db_seq',
+'phrogs_profile_db_seq.dbtype',
+'phrogs_profile_db_seq.index',
+'phrogs_profile_db_seq_h',
+'phrogs_profile_db_seq_h.index']
+
+VFDB_DB_NAMES = ['VFDB_setB_pro.fas'
+'vfdb',
+'vfdb.dbtype',
+'vfdb.index',
+'vfdb.lookup',
+'vfdb.source',
+'vfdb_h',
+'vfdb_h.dbtype',
+'vfdb_h.index']
+
+CARD_DB_NAMES = [
+'CARD',
+'CARD.dbtype',
+'CARD.index',
+'CARD.lookup',
+'CARD.source',
+'CARD_h',
+'CARD_h.dbtype',
+'CARD_h.index']
+
 def instantiate_install(db_dir):
     instantiate_dir(db_dir)
-    get_phrog_mmseqs(db_dir)
-    get_phrog_annot_table(db_dir)
-    get_vfdb(db_dir)
-    get_card(db_dir)
-
+    downloaded_flag = check_db_installation(db_dir)
+    if downloaded_flag == True:
+        print("All Databases have been Downloaded and Checked")
+    else:
+        get_database_zenodo(db_dir)
 
 def instantiate_dir(db_dir):
     if os.path.isdir(db_dir) == False:
         os.mkdir(db_dir)
  
-def get_phrog_mmseqs(db_dir):
-    print("Getting PHROGs MMSeqs DB")
-    filepath = "https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_mmseqs_db.tar.gz"
-    tarball = "phrogs_mmseqs_db.tar.gz"
-    folder = "phrogs_mmseqs_db"
+def check_db_installation(db_dir):
+
+    downloaded_flag = True
+
+    for file_name in PHROG_DB_NAMES:
+        path = os.path.isfile(os.path.join(db_dir,'phrogs_mmseqs_db', file_name))
+        if os.path.isfile(path) == False:
+            print("PHROGs Databases Need to be Downloaded")
+            downloaded_flag = False
+            break
+    # VFDB
+    for file_name in VFDB_DB_NAMES:
+        path = os.path.isfile(os.path.join(db_dir,'vfdb', file_name))
+        if os.path.isfile(path) == False:
+            print("VFDB Databases Need to be Downloaded")
+            downloaded_flag = False
+            break
+    # CARD
+    for file_name in CARD_DB_NAMES:
+        path = os.path.isfile(os.path.join(db_dir,'CARD_mmseqs', file_name))
+        if os.path.isfile(path) == False:
+            print("CARD Databases Need to be Downloaded")
+            downloaded_flag = False
+            break
+    # annot.tsv
+    path = os.path.isfile(os.path.join(db_dir,'phrog_annot_v4.tsv'))
+    if os.path.isfile(path) == False:
+            print("PHROGs Annotation File Needs to be Downloaded")
+            downloaded_flag = False
     
-    # get tarball if not already present
-    if os.path.isfile(os.path.join(db_dir,tarball)) == True: 
-         print("PHROGs Database already downloaded")
-        # download tarball and untar
-    else:
-        try:
-            sp.call(["curl", filepath, "-o", os.path.join(db_dir,tarball)])
-        except:
-            sys.stderr.write("Error: PHROGs MMSeqs Database not found - link likely broken\n")  
-            return 0
-
-    # delete folder if it exists already
-    if os.path.isfile(os.path.join(db_dir,folder)) == True:
-        sp.call(["rm", os.path.join(db_dir,folder)])
+    return downloaded_flag
     
-    # download untar -C for specifying the directory
-    sp.call(["tar", "-xzf", os.path.join(db_dir, tarball), "-C", db_dir])
+
+def get_database_zenodo(db_dir):
+    print("Downloading Pharokka Database")
+    file = 'pharokka_v0.1.11_databases.zip'
+    url = "https://zenodo.org/record/7080544/files/pharokka_v0.1.11_databases.zip"
+    try:
+        sp.call(["rm", os.path.join(db_dir,file)])
+        sp.call(["curl", url, "-o", os.path.join(db_dir,file)])
+        sp.call(["unzip", '-j', os.path.join(db_dir,file), '-d', db_dir])
+    except:
+        sys.stderr.write("Error: Pharokka Database Install Failed. \n Please try again or use the manual option detailed at https://github.com/gbouras13/pharokka.git \n")  
+        return 0
 
 
-def get_phrog_annot_table(db_dir):
-    print("Getting PHROGs Annotation Table")
-    filepath = "https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v4.tsv"
-    file = "phrog_annot_v4.tsv"
-    #if the file already exists
-    if os.path.isfile(os.path.join(db_dir,file)) == True:
-        print("PHROGs annotation file already downloaded")
-    else:
-        try:
-            sp.call(["curl", filepath, "-o", os.path.join(db_dir,file)])
-        except:
-            sys.stderr.write("Error: PHROGs annotation file not found - link likely broken\n")  
-            return 0
-
-def get_vfdb(db_dir):
-    print("Getting VFDB Database")
-    filepath = "http://www.mgc.ac.cn/VFs/Down/VFDB_setB_pro.fas.gz"
-    file = "VFDB_setB_pro.fas.gz"
-    #if the file already exists
-    if os.path.isfile(os.path.join(db_dir,"vfdb", "vfdb")) == True:
-        print("VFDB already downloaded")
-    else:
-        try:
-            instantiate_dir(os.path.join(db_dir, "vfdb"))
-            sp.call(["curl", filepath, "-o", os.path.join(db_dir,"vfdb",file)])
-            sp.Popen(["gunzip",  os.path.join(db_dir,"vfdb", file)], stdout=sp.PIPE)
-            sp.call(["mmseqs", "createdb", os.path.join(db_dir, "vfdb", "VFDB_setB_pro.fas"), os.path.join(db_dir, "vfdb", "vfdb")])
-        except:
-            sys.stderr.write("Error: VFDB  not found - link likely broken\n")  
-            return 0
-
-def get_card(db_dir):
-    print("Getting CARD Database")
-    filepath = "https://card.mcmaster.ca/download/0/broadstreet-v3.2.4.tar.bz2"
-    file = "card.tar.bz2"
-    #if the file already exists
-    if os.path.isfile( os.path.join(db_dir, "CARD_mmseqs", "CARD")) == True:
-        print("CARD already downloaded")
-    else:
-        try:
-            # make the CARD dir
-            instantiate_dir(os.path.join(db_dir, "CARD"))
-            instantiate_dir(os.path.join(db_dir, "CARD_mmseqs"))
-            # download the database 
-            sp.call(["curl", filepath, "-o", os.path.join(db_dir,"CARD",file)])
-            # untar 
-            sp.call(["tar", "-xf", os.path.join(db_dir,"CARD",file), "-C",os.path.join(db_dir,"CARD") ])
-            # create mmseqs db
-            sp.call(["mmseqs", "createdb", os.path.join(db_dir, "CARD", "protein_fasta_protein_homolog_model.fasta"), os.path.join(db_dir, "CARD_mmseqs", "CARD")])
-        except:
-            sys.stderr.write("Error: CARD  not found - link likely broken\n")  
-            return 0

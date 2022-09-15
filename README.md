@@ -28,7 +28,8 @@ Usage
 **pharokka v0.1.11 is now available on bioconda**
 
 * v0.1.11 adds VFDB and CARD databases for virulence factor and AMR gene identification. 
-* These should install using the install_databases.py script. If this does not work, the additional databases can be found in the databases directory in this repository. These can then be copied into your desired database directory. See the Installation Section for more details.
+* These should install using the install_databases.py script. 
+* If this does not work, you an alternatively download the databases from Zenodo at https://zenodo.org/record/7080544 and unzip the directory in a location of your choice. Please see the Installation Section for more details.
 
 The easiest way to install pharokka is via conda.
 
@@ -108,17 +109,18 @@ If you would like to specify a different database directory (recommended), that 
 
 `install_databases.py -o <path/to/databse_dir>`
 
-If you have trouble downloading the databases using `install_databases.py`, they can be manually downloaded from the PHROGs website links, untared and placed in a directory of your choice:
-* https://phrogs.lmge.uca.fr/downloads_from_website/phrogs_mmseqs_db.tar.gz
-* https://phrogs.lmge.uca.fr/downloads_from_website/phrog_annot_v4.tsv.
+Version 0.1.11 adds VFDB and CARD databases for virulence factor and AMR gene identification. These should install using the install_databases.py script as outlined above. You will need to run this before running pharokka v0.1.11.
 
-Version 0.1.11 adds VFDB and CARD databases for virulence factor and AMR gene identification. These should install using the install_databases.py script as outlined above. If this does not work, the additional databases can be found in the databases directory in this github repository. These can then be copied into your desired database directory as follows:
+If this does not work, you an alternatively download the databases from Zenodo at https://zenodo.org/record/7080544 and unzip the directory in a location of your choice.
+
+If you prefer to use the command line:
 
 ```
-git clone "https://github.com/gbouras13/pharokka.git"
-cd pharokka
-cp -r databases/* <path/to/databse_dir>
+wget "https://zenodo.org/record/7080544/files/pharokka_v0.1.11_databases.zip"
+unzip pharokka_v0.1.11_databases.zip
 ```
+
+which will create a directory called pharokka_v0.1.11_databases containing the databases.
 
 Once the databases have finished downloading, to run pharokka
 
