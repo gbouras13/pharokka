@@ -23,7 +23,7 @@ def get_input():
 	parser.add_argument('-l', '--locustag', action="store", help='User specified locus tag for the gff/gbk files. This is not required. A random locus tag will be generated instead.',  default='Default')
 	parser.add_argument('-g', '--gene_predictor', action="store", help='User specified gene predictor. Use "-g phanotate" or "-g prodigal". Defaults to phanotate (not required unless prodigal is desired).',  default='phanotate' )
 	parser.add_argument('-m', '--meta', help='Metagenomic option for Prodigal', action="store_true")
-	parser.add_argument('-c', '--coding_table', help='translation table for prodigal', action="store", default = "11")
+	parser.add_argument('-c', '--coding_table', help='translation table for prodigal. Defaults to 11. Experimental only.', action="store", default = "11")
 	parser.add_argument('-e', '--evalue', help='E-value threshold for mmseqs2. Defaults to 1E-05', action="store", default = "1E-05")
 	parser.add_argument('-V', '--version', help='Version', action='version', version=v)
 	args = parser.parse_args()
@@ -34,7 +34,8 @@ def instantiate_dirs(output_dir, force):
 	# remove outdir on force
 	if force == True:
 		if os.path.isdir(output_dir) == True:
-			shutil.rmtree(output_dir)
+			#shutil.rmtree(output_dir)
+			print('l')
 		else:
 			print("\n--force was specified even though the outdir does not already exist. Continuing \n")
 	else:

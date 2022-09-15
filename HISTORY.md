@@ -1,6 +1,17 @@
 History
 =======
 
+0.1.11 (2022-09-13)
+------------------
+
+*  Adds CARD and VFDB databases.
+
+0.1.10 (2022-08-31)
+------------------
+
+* Fixes issues with Genbank output files.
+
+
 0.1.9 (2022-08-04)
 ------------------
 

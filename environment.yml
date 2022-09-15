@@ -12,5 +12,5 @@ dependencies:
   - prodigal>=2.6.3
   - minced>=0.4.2
   - aragorn>=1.2.41
-  - unzip
+
 
