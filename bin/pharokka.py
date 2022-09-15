@@ -92,9 +92,9 @@ if __name__ == "__main__":
 
     # running mmseqs2
     logger.info("Starting mmseqs2.")
-    #processes.run_mmseqs(db_dir, out_dir, args.threads, logger, gene_predictor, args.evalue)
-    #processes.run_mmseqs_card(db_dir, out_dir, args.threads, logger, gene_predictor)
-    #processes.run_mmseqs_vfdb(db_dir, out_dir, args.threads, logger, gene_predictor)
+    processes.run_mmseqs(db_dir, out_dir, args.threads, logger, gene_predictor, args.evalue)
+    processes.run_mmseqs_card(db_dir, out_dir, args.threads, logger, gene_predictor)
+    processes.run_mmseqs_vfdb(db_dir, out_dir, args.threads, logger, gene_predictor)
 
     # post processing
     logger.info("Post Processing Output.")
@@ -120,7 +120,7 @@ if __name__ == "__main__":
     processes.convert_gff_to_gbk(args.infile, out_dir, prefix)
     
     # delete tmp files
-    #post_processing.remove_post_processing_files(out_dir, gene_predictor)
+    post_processing.remove_post_processing_files(out_dir, gene_predictor)
 
     # Determine elapsed time
     elapsed_time = time.time() - start_time
