@@ -60,6 +60,7 @@ def instantiate_dirs(output_dir, force):
 def validate_fasta(filename):
 	with open(filename, "r") as handle:
 		fasta = SeqIO.parse(handle, "fasta")
+		print("Checking Input FASTA")
 		if any(fasta):
 			print("FASTA checked")
 		else:

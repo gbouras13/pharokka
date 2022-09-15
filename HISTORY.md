@@ -1,6 +1,14 @@
 History
 =======
 
+1.0.0 (2022-09-16)
+------------------
+
+* Removes errors (with post_processing functions not being parsed as strings) to improve robustness.
+* Codebase more reliable and consistent
+* Overhaul of install_databases.py
+* Adds pre-existing Pharokka Database available at https://zenodo.org/record/7081772
+
 0.1.11 (2022-09-13)
 ------------------
 

@@ -28,7 +28,11 @@ Other Files
 
 * A `_trnascan.gff` which holds the output from tRNAscan-SE 2.
 
-* A `_final_merged_output.tsv`, which gives the parsed output from mmseqs2. In general, using the default E-value threshold, mmseqs2 should identify a PHROG for most CDSs, while small (80-200bp) hypothetical proteins often will have no matching PHROG. This may also be the case for phages from uncommon sources where few phage have been isolates (such as environment samples).  pharokka should be used as a rough guide only in these cases. It is also recommended that pharokka be re-run with a less restrictive e-value threshold in these cases (e.g. -e 0.1).
+* A `_final_merged_output.tsv`, which gives the parsed output from mmseqs2. In general, using the default E-value threshold, mmseqs2 should identify a PHROG for most CDSs, while small (80-200bp) hypothetical proteins often will have no matching PHROG. This may also be the case for phages from uncommon sources where few phage have been isolates (such as environment samples).  Pharokka should be used as a rough guide only in these cases. It is also recommended that pharokka be re-run with a less restrictive e-value threshold in these cases (e.g. -e 0.1).
+
+* A `top_hits_card.tsv` file, which contains any CARD database hits.
+
+* A `top_hits_vfdb.tsv` file, which contains any VFDB database hits.
 
 * Further, the 'score' column contains the PHANOTATE score for each CDS. In general, the closer the score to 0, the smaller the CDS and the more likely that a PHROG will not be identified by mmseqs2.
 

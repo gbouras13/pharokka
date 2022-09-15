@@ -9,8 +9,22 @@ pharokka is designed for rapid standardised annotation of bacteriophages.
 
 If you are looking for rapid standardised annotation of prokaryotes, please use prokka (https://github.com/tseemann/prokka), which inspired the creation of pharokka.
 
-Method
-----
+Table of Contents
+-----------
+- [pharokka](#pharokka)
+  - [Fast Phage Annotation Program](#fast-phage-annotation-program)
+  - [Table of Contents](#table-of-contents)
+- [Method](#method)
+- [Installation](#installation)
+- [Beginner Conda Installation](#beginner-conda-installation)
+- [Usage](#usage)
+- [Version Log](#version-log)
+- [System](#system)
+- [Time](#time)
+- [Bugs and Suggestions](#bugs-and-suggestions)
+- [Citation](#citation)
+
+# Method
 
 ![pharokka workflow](img/pharokka_workflow.png?raw=true "Pharokka Workflow")
 
@@ -22,8 +36,7 @@ The other important output is `cds_functions.tsv`, which includes counts of CDSs
 
 For full documentation, please visit https://pharokka.readthedocs.io.
 
-Usage
-------
+# Installation
 
 **pharokka v0.1.11 is now available on bioconda**
 
@@ -61,8 +74,7 @@ install_databases.py -h
 pharokka.py -h
 ```
 
-Beginner Conda Installation
---------
+# Beginner Conda Installation
 
 If you are new to using the command-line, please install conda using the following instructions.
 
@@ -98,8 +110,7 @@ mamba create -n pharokkaENV pharokka
 conda activate pharokkaENV
 ```
 
-Running pharokka
---------
+# Usage
 
 First the PHROGs databases need to be installed
 
@@ -152,29 +163,31 @@ In v0.1.7, the ability to specify an E-value threshold for CDS functional assign
 
 pharokka defaults to 1 thread.
 
-Version Log
---------
+# Version Log
+
 A brief description of what is new in each update of pharokka can be found in the HISTORY.md file.
 
-System
-------
+# System
+
 pharokka has been tested on Linux and MacOS (M1 and Intel).
 
-Time
---------
+# Time
+
 On a standard 16GB RAM laptop specifying 8 threads, pharokka should take between 3-10 minutes to run for a single phage, depending on the genome size.
 
-Bugs and Suggestions
---------
+# Bugs and Suggestions
+
 If you come across bugs with pharokka, or would like to make any suggestions to improve the program, please open an issue or email george.bouras@adelaide.edu.au
 
-Citation
---------
+# Citation
+
 If you use pharokka, please also cite:
 
 * McNair K., Zhou C., Dinsdale E.A., Souza B., Edwards R.A. (2019) "PHANOTATE: a novel approach to gene identification in phage genomes", Bioinformatics, https://doi.org/10.1093/bioinformatics/btz26.
 * Chan, P.P., Lin, B.Y., Mak, A.J. and Lowe, T.M. (2021) "tRNAscan-SE 2.0: improved detection and functional classification of transfer RNA genes", Nucleic Acids Res., https://doi.org/10.1093/nar/gkab688.
-* Steinegger M. and Soeding J. (2017), "MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets", Nature Biotechnology (https://doi.org/10.1038/nbt.3988).
-* Terzian P., Olo Ndela E., Galiez C., Lossouarn J., Pérez Bucio R.E., Mom R., Toussaint A., Petit M.A., Enault F., "PHROG : families of prokaryotic virus proteins clustered using remote homology", NAR Genomics and Bioinformatics, (2021), (https://doi.org/10.1093/nargab/lqab067).
-* Bland C., Ramsey L., Sabree F., Lowe M., Brown K., Kyrpides N.C., Hugenholtz P. , "CRISPR Recognition Tool (CRT): a tool for automatic detection of clustered regularly interspaced palindromic repeats", BMC Bioinformatics, (2007), (https://doi.org/10.1186/1471-2105-8-209).
-* Laslett D., Canback B., "ARAGORN, a program to detect tRNA genes and tmRNA genes in nucleotide sequences.", Nucleic Acids Res, (2004), (https://doi.org/10.1093/nar/gkh152).
+* Steinegger M. and Soeding J. (2017), "MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets", Nature Biotechnology https://doi.org/10.1038/nbt.3988.
+* Terzian P., Olo Ndela E., Galiez C., Lossouarn J., Pérez Bucio R.E., Mom R., Toussaint A., Petit M.A., Enault F., "PHROG : families of prokaryotic virus proteins clustered using remote homology", NAR Genomics and Bioinformatics, (2021), https://doi.org/10.1093/nargab/lqab067.
+* Bland C., Ramsey L., Sabree F., Lowe M., Brown K., Kyrpides N.C., Hugenholtz P. , "CRISPR Recognition Tool (CRT): a tool for automatic detection of clustered regularly interspaced palindromic repeats", BMC Bioinformatics, (2007), https://doi.org/10.1186/1471-2105-8-209.
+* Laslett D., Canback B., "ARAGORN, a program to detect tRNA genes and tmRNA genes in nucleotide sequences.", Nucleic Acids Research (2004) https://doi.org/10.1093/nar/gkh152.
+* Chen L., Yang J., Yao Z., Sun L., Shen Y., Jin Q., "VFDB: a reference database for bacterial virulence factors", Nucleic Acids Research (2005) https://doi.org/10.1093/nar/gki008.
+* Alcock et al, "CARD 2020: antibiotic resistome surveillance with the comprehensive antibiotic resistance database." Nucleic Acids Research (2020) https:doi.org/10.1093/nar/gkz935.

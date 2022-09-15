@@ -224,21 +224,20 @@ def create_txt(cds_mmseqs_merge_df, length_df, out_dir, prefix):
             tail_count = len(cds_mmseqs_merge_cont_df[cds_mmseqs_merge_cont_df['function'] == 'tail'])
             transcription_count = len(cds_mmseqs_merge_cont_df[cds_mmseqs_merge_cont_df['function'] == 'transcription regulation'])
             unknown_count = len(cds_mmseqs_merge_cont_df[cds_mmseqs_merge_cont_df['function'] == 'unknown function'])
-            # create cols for the dataframe 
-            description_list = ['CDS', 'connector', 'DNA, RNA and nucleotide metabolism',  'head and packaging', 'integration and excision','lysis',
-            'moron, auxiliary metabolic gene and host takeover', 'other', 'tail', 'transcription regulation', 'unknown function']
+            # create count list  for the dataframe 
             count_list = [cds_count, connector_count, metabolism_count, head_count, integration_count, lysis_count,
             moron_count, other_count, tail_count, transcription_count, unknown_count]
-            contig_list = [contig, contig, contig, contig, contig, contig, contig, contig, contig, contig, contig]
         else:
             cds_lengths = 0
-            description_list = ['CDS', 'connector','DNA, RNA and nucleotide metabolism',  'head and packaging', 'integration and excision','lysis',
-            'moron, auxiliary metabolic gene and host takeover','other', 'tail', 'transcription regulation', 'unknown function']
+
             count_list = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-            contig_list = [contig, contig, contig, contig, contig, contig, contig, contig, contig, contig, contig]
 
-
+        description_list = ['CDS', 'connector','DNA, RNA and nucleotide metabolism',  'head and packaging', 'integration and excision','lysis',
+        'moron, auxiliary metabolic gene and host takeover','other', 'tail', 'transcription regulation', 'unknown function']
+        contig_list = [contig, contig, contig, contig, contig, contig, contig, contig, contig, contig, contig]
+        # cds df
         cds_df = pd.DataFrame({'Description': description_list, 'Count': count_list, 'contig': contig_list})
+
         # add other features 
         trna_row = pd.DataFrame({ 'Description':['tRNAs'], 'Count':[trna_count], 'contig':[contig] })
         crispr_row = pd.DataFrame({ 'Description':['CRISPRs'], 'Count':[crispr_count], 'contig':[contig] })
@@ -287,7 +286,7 @@ def create_gff(cds_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag,
     # Where ixs is True, values are swapped
     cds_mmseqs_df.loc[ixs,cols] = cds_mmseqs_df.loc[ixs, cols].reindex(columns=cols[::-1]).values
 
-
+    # locustag creation
     if locustag == "Random":
         # locus tag header 8 random letters
         locustag = ''.join(random.choice(string.ascii_uppercase) for _ in range(8))
@@ -763,7 +762,7 @@ def process_card_results(out_dir, merged_df, db_dir):
         merged_df[['gb','genbank', 'ARO_Accession', 'CARD_short_name']] = merged_df['genbank'].str.split('|',expand=True)
         merged_df["CARD_short_name"] = merged_df["CARD_short_name"].str.strip()
     # read in aro_index 
-        CARD_index_file = os.path.join(db_dir, "CARD", "aro_index.tsv")
+        CARD_index_file = os.path.join(db_dir, "aro_index.tsv")
         col_list = ["ARO_Accession", "CVTERM_ID", "Model_Sequence_ID", "Model_ID", "Model_Name", "ARO_Name", "Protein_Accession", "DNA_Accession", "AMR_Gene_Family", "Drug_Class", "Resistance_Mechanism", "CARD_Short_Name"] 
         card_index_df = pd.read_csv(CARD_index_file, delimiter= '\t', index_col=False , names=col_list, skiprows=1) 
         card_index_df = card_index_df.drop(columns = ['CVTERM_ID', 'Model_Sequence_ID', 'Model_ID', 'Model_Name', 'ARO_Name', 'CARD_Short_Name'])
