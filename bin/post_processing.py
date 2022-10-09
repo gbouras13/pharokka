@@ -703,10 +703,14 @@ def process_vfdb_results(out_dir, merged_df):
         merged_df[['genbank','desc_tmp', 'vfdb_species']] = merged_df['vfdb_hit'].str.split('[',expand=True)
         merged_df['vfdb_species'] = merged_df['vfdb_species'].str.replace("]", "")
         merged_df['vfdb_species'] = merged_df['vfdb_species'].str.strip()
-        merged_df[['genbank','vfdb_short_name', 'vfdb_description']] = merged_df['genbank'].str.split(')',expand=True)
+        # genbank has the info 
+        merged_df['vfdb_short_name'] = merged_df['genbank'].str.split(')', 1).str[1]
+        merged_df['vfdb_description'] = merged_df['genbank'].str.split(')', 2).str[2]
         merged_df["vfdb_short_name"] = merged_df["vfdb_short_name"].str.replace("(", "")
+        merged_df['vfdb_short_name'] = merged_df['vfdb_short_name'].str.split(')', 1).str[0]
         merged_df["vfdb_short_name"] = merged_df["vfdb_short_name"].str.strip()
         merged_df["vfdb_description"] = merged_df["vfdb_description"].str.strip()
+        # remove and add None
         merged_df = merged_df.drop(columns = ['genbank', 'desc_tmp'])
         merged_df["vfdb_short_name"] = merged_df["vfdb_short_name"].replace(nan, 'None', regex=True)
         merged_df["vfdb_description"] = merged_df["vfdb_description"].replace(nan, 'None', regex=True)
