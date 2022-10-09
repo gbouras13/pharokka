@@ -700,18 +700,25 @@ def process_vfdb_results(out_dir, merged_df):
 
     # if there is a hit extract information about it
     if len(tophits_df['vfdb_hit']) > 0:
+        number_vfs = len(tophits_df['vfdb_hit'])
+        print( str(number_vfs) + ' VFDB virulence factors identified.')
         merged_df[['genbank','desc_tmp', 'vfdb_species']] = merged_df['vfdb_hit'].str.split('[',expand=True)
         merged_df['vfdb_species'] = merged_df['vfdb_species'].str.replace("]", "")
         merged_df['vfdb_species'] = merged_df['vfdb_species'].str.strip()
-        merged_df[['genbank','vfdb_short_name', 'vfdb_description']] = merged_df['genbank'].str.split(')',expand=True)
+        # genbank has the info 
+        merged_df['vfdb_short_name'] = merged_df['genbank'].str.split(')', 1).str[1]
+        merged_df['vfdb_description'] = merged_df['genbank'].str.split(')', 2).str[2]
         merged_df["vfdb_short_name"] = merged_df["vfdb_short_name"].str.replace("(", "")
+        merged_df['vfdb_short_name'] = merged_df['vfdb_short_name'].str.split(')', 1).str[0]
         merged_df["vfdb_short_name"] = merged_df["vfdb_short_name"].str.strip()
         merged_df["vfdb_description"] = merged_df["vfdb_description"].str.strip()
+        # remove and add None
         merged_df = merged_df.drop(columns = ['genbank', 'desc_tmp'])
         merged_df["vfdb_short_name"] = merged_df["vfdb_short_name"].replace(nan, 'None', regex=True)
         merged_df["vfdb_description"] = merged_df["vfdb_description"].replace(nan, 'None', regex=True)
         merged_df["vfdb_species"] = merged_df["vfdb_species"].replace(nan, 'None', regex=True)
     else:
+        print('0 VFDB virulence factors identified.')
         merged_df["vfdb_short_name"] = 'None'
         merged_df["vfdb_description"] = 'None'
         merged_df["vfdb_species"] = 'None'
@@ -756,6 +763,8 @@ def process_card_results(out_dir, merged_df, db_dir):
     merged_df["CARD_eVal"] = merged_df["CARD_eVal"].replace(nan, 'None', regex=True)
     # if there is a hit extract info
     if len(tophits_df['CARD_hit']) > 0:
+        number_cards = len(tophits_df['CARD_hit'])
+        print( str(number_cards) + ' CARD AMR genes identified.')
         merged_df[['genbank', 'CARD_species']] = merged_df['CARD_hit'].str.split('[',expand=True)
         merged_df['CARD_species'] = merged_df['CARD_species'].str.replace("]", "")
         merged_df['CARD_species'] = merged_df['CARD_species'].str.strip()
@@ -778,6 +787,7 @@ def process_card_results(out_dir, merged_df, db_dir):
         merged_df["Resistance_Mechanism"] = merged_df["Resistance_Mechanism"].replace(nan, 'None', regex=True)
     # if no hits just Nones
     else: 
+        print('0 CARD AMR genes identified.')
         merged_df["CARD_species"] = 'None'
         merged_df["ARO_Accession"] = 'None'
         merged_df["CARD_short_name"] = 'None'
