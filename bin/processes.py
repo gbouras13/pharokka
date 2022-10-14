@@ -114,14 +114,14 @@ def translate_fastas(out_dir, gene_predictor):
         clean_df = tidy_phanotate_output(out_dir)
         fasta_input_tmp = "phanotate_out_tmp.fasta"
         fasta_output_aas_tmp = "phanotate_aas_tmp.fasta"
-        fasta_output_aas_gd = "phanotate_aas.fasta"
-        fasta_output_nts_gd = "phanotate_nts.fasta"
+        fasta_output_aas_gd = "phanotate.faa"
+        fasta_output_nts_gd = "phanotate.ffn"
     if gene_predictor == "prodigal":
         clean_df = tidy_prodigal_output(out_dir)
         fasta_input_tmp = "prodigal_out_tmp.fasta"
         fasta_output_aas_tmp = "prodigal_aas_tmp.fasta"
-        fasta_output_aas_gd = "prodigal_aas.fasta"
-        fasta_output_nts_gd = "prodigal_nts.fasta"
+        fasta_output_aas_gd = "prodigal.faa"
+        fasta_output_nts_gd = "prodigal.ffn"
     with open(os.path.join(out_dir, fasta_output_aas_tmp), 'w') as aa_fa:
         i = 0 
         for dna_record in SeqIO.parse(os.path.join(out_dir, fasta_input_tmp), 'fasta'): 

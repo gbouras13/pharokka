@@ -120,7 +120,7 @@ if __name__ == "__main__":
     processes.convert_gff_to_gbk(args.infile, out_dir, prefix)
     
     # delete tmp files
-    post_processing.remove_post_processing_files(out_dir, gene_predictor)
+    #post_processing.remove_post_processing_files(out_dir, gene_predictor)
 
     # Determine elapsed time
     elapsed_time = time.time() - start_time

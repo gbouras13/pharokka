@@ -310,6 +310,16 @@ def create_gff(cds_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag,
     # write to tmp gff
     with open(os.path.join(out_dir, "phrokka_tmp.gff"), 'w') as f:
         gff_df.to_csv(f, sep="\t", index=False, header=False)
+
+    # write df for locus tag parsing
+
+    locus_df = cds_mmseqs_df[["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "annot"]] 
+    locus_df['locus_tag'] = locustag + "_CDS_" + cds_mmseqs_df.index.astype(str)
+
+    # write to locus tag gff
+    with open(os.path.join(out_dir, "cds_locus_tag_tmp.gff"), 'w') as f:
+        locus_df.to_csv(f, sep="\t", index=False, header=False)
+
       
     ### trnas
     # check if no trnas
@@ -385,6 +395,16 @@ def create_gff(cds_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag,
         SeqIO.write(fasta_sequences, f, "fasta")
 
     return locustag
+
+
+def update_fasta_headers():
+    
+
+
+
+
+
+
 
 def create_tbl(cds_mmseqs_df, length_df, out_dir, prefix, gene_predictor, tmrna_flag, locustag):
     """
