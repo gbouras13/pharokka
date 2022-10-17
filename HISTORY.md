@@ -1,6 +1,18 @@
 History
 =======
 
+1.1.0 (2022-10-17)
+------------------
+
+* Renames the CDS output files to *.faa for amino acids and *.fna for nulceotide sequences
+* Implementation of consistent CDS name (equal to the locus_tag) across all output files
+* terL.faa and terL.fna, which contain the sequences of any identified terminase large subunit CDSs
+
+1.0.1 (2022-10-10)
+------------------
+
+* Minor release to fix a string-parsing bug where pharokka v1.0.0 would crash when certain VFDB virulence factors were detected.
+
 1.0.0 (2022-09-16)
 ------------------
 

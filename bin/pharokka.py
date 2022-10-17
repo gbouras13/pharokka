@@ -102,14 +102,15 @@ if __name__ == "__main__":
 
     # post process results
     # includes vfdb and card
-    cds_mmseqs_merge_df = post_processing.process_results(db_dir, out_dir, prefix, gene_predictor)
+    # return the merged df, vfdb and card top hits
+    (cds_mmseqs_merge_df,vfdb_results, card_results) = post_processing.process_results(db_dir, out_dir, prefix, gene_predictor)
 
     # gets df of length and gc for each contig
     length_df = post_processing.get_contig_name_lengths(args.infile)
     tmrna_flag = post_processing.parse_aragorn(out_dir,length_df, prefix)
 
     # create gff and return locustag for table
-    locustag = post_processing.create_gff(cds_mmseqs_merge_df, length_df, args.infile, out_dir, prefix, locustag, tmrna_flag)
+    (locustag, locus_df) = post_processing.create_gff(cds_mmseqs_merge_df, length_df, args.infile, out_dir, prefix, locustag, tmrna_flag)
     post_processing.create_tbl(cds_mmseqs_merge_df, length_df, out_dir, prefix, gene_predictor, tmrna_flag, locustag)
     # write the summary tsv outputs
     post_processing.create_txt(cds_mmseqs_merge_df, length_df,out_dir, prefix)
@@ -118,6 +119,12 @@ if __name__ == "__main__":
     logger.info("Converting gff to genbank.")
     print("Converting gff to genbank.")
     processes.convert_gff_to_gbk(args.infile, out_dir, prefix)
+
+    # update fasta headers and final output tsv
+    post_processing.update_fasta_headers(locus_df, out_dir, gene_predictor )
+    post_processing.update_final_output(cds_mmseqs_merge_df, vfdb_results, card_results, locus_df, prefix, out_dir )
+    # extract terL
+    post_processing.extract_terl(locus_df, out_dir, gene_predictor, logger )
     
     # delete tmp files
     post_processing.remove_post_processing_files(out_dir, gene_predictor)

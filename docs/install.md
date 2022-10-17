@@ -1,31 +1,46 @@
-**pharokka v1.0.0 is now available on bioconda**
+**pharokka v1.0.1 is now available on bioconda**
 
-The easiest way to install pharokka is via conda.
+* v1.0.0 adds VFDB (current as of 15-09-22) and CARD (v3.2.4) databases for virulence factor and AMR gene identification.
+* These should install using the install_databases.py script, with the databases downloaded from a Zenodo repository.
+* You will need to re-install the databases if you updating from an earlier version of pharokka.
+* If the script does not work, you an alternatively download the databases manually from Zenodo at https://zenodo.org/record/7081772/files/pharokka_database_v1.0.0.tar.gz and untar the directory in a location of your choice. Please see the Installation Section for more details.
+
+The easiest way to install pharokka is via conda. For inexperienced command line users, this method is highly recommended.
 
 `conda install -c bioconda pharokka`
 
-This will install all the dependencies along with pharokka.
+This will install all the dependencies along with pharokka. The dependencies are listed in environment.yml.
 
-Alternatively, pharokka can be installed manually via github
+If conda is taking a long time to solve the environment, try using mamba:
+
+```
+conda install mamba
+mamba install -c bioconda pharokka
+```
+
+Alternatively, the development version of pharokka can be installed manually via github. 
 
 `git clone https://github.com/gbouras13/pharokka.git`
 
-The dependencies found in requirements.yml will then need to be installed manually.
+The dependencies found in environment.yml will then need to be installed manually.
 
-For example using conda:
+For example using conda to install the required dependencies:
 
 ```
 git clone https://github.com/gbouras13/pharokka.git
 cd pharokka
 conda env create -f environment.yml
 conda activate pharokka_env
-install_databses.py -h
-pharokka.py -h
 ```
 
+And then to run pharokka (assuming you are still in the pharokka directory)
 
-Beginner Conda Installation
---------
+```
+./bin/install_databases.py -h
+./bin/pharokka.py -h
+```
+
+# Beginner Conda Installation
 
 If you are new to using the command-line, please install conda using the following instructions.
 
@@ -50,35 +65,16 @@ conda config --add channels bioconda
 conda config --add channels conda-forge
 ```
 
-5. After this, conda should be installed (you may need to restart your terminal). I would recommend installing pharokka into a fresh environment e.g. to create an environment called pharokkaENV with pharokka installed:
+5. After this, conda should be installed (you may need to restart your terminal). It is recommended that mamba is also installed, as it will solve the enviroment quicker than conda:
+
+`conda install mamba`
+
+ 6. Finally, I would recommend installing pharokka into a fresh environment. For example to create an environment called pharokkaENV with pharokka installed:
 
 ```
-conda create -n pharokkaENV pharokka
+mamba create -n pharokkaENV pharokka
 conda activate pharokkaENV
+install_databases.py -h
+pharokka.py -h
 ```
 
-Database Installation
------------------
-
-Before running pharokka, the PHROGs database needs to be downloaded using
-
-`install_databases.py -d`
-
-If you would like to specify a different database directory (recommended), that can be achieved as follows:
-
-`install_databases.py -o <path/to/databse_dir>`
-
-v1.0.0 adds VFDB and CARD databases for virulence factor and AMR gene identification. These should install using the install_databases.py script as outlined above. You will need to run this before running pharokka v1.0.0.
-
-If this does not work, you an alternatively download the databases from Zenodo at https://zenodo.org/record/7081772/files/pharokka_database_v1.0.0.tar.gz and untar the directory in a location of your choice.
-
-If you prefer to use the command line:
-
-```
-wget "https://zenodo.org/record/7081772/files/pharokka_database_v1.0.0.tar.gz"
-tar -xzf pharokka_database_v1.0.0.tar.gz
-```
-
-which will create a directory called "pharokka_database_v1.0.0" containing the databases.
-
-If you have already downloaded databases for earlier versions of pharokka, these will need to be re-downloaded.

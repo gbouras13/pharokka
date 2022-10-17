@@ -2,25 +2,27 @@ pharokka creates a number of output files in different formats.
 
 Main Output
 ----------
-The main output is a gff3 file that is suitable for use downstream pangenomic pipelines such as Roary ([https://sanger-pathogens.github.io/Roary/](https://sanger-pathogens.github.io/Roary/)) to generate pangenomes.
+The main output is a gff3 file that is suitable for use downstream pangenomic pipelines such as [Roary](https://sanger-pathogens.github.io/Roary/)) to generate pangenomes.
 
 * The 'phrog=' section shows the closest matching PHROG, or "No_PHROG" if there are no matching PHROGs below the E-value threshold. The 'top_hit=' section shows the closest matching protein in the PHROGs database.
 
+* The 6th column of the gff is the PHANOTATE w_orf score (the more negative, the more likely the CDS is a gene) or the prodigal coding score (the larger, the more likely the CDS is a gene). Please see the PHANOTATE and Prodigal papers for more details.
+
 Other Files
 ------
-* A .genbank file, which is converted from the gff using seqret [http://emboss.open-bio.org](http://emboss.open-bio.org).
+* A .gbk genbank formatted file, which is converted from the gff. 
 
-* A .log file, which holds the output from tRNA-scanSE, mmseqs2 and hh-suite. It is time-stamped in the "%m%d%Y_%H%M%S" format.
+* A .log file, which holds the output from tRNA-scanSE, mmseqs2 and post-processing. It is time-stamped in the "%m%d%Y_%H%M%S" format.
 
 * A .tbl file, which is a flat-file table suitable to be uploaded to the NCBI's Bankit.
 
-* A `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, CRISPRs and tmRNAs and functions assigned to CDSs according to the PHROGs database.
+* A `_cds_functions.tsv` file, which includes counts of CDSs, tRNAs, CRISPRs and tmRNAs and functions assigned to CDSs according to the PHROGs database.
 
 * A `_length_gc_cds_density.tsv` file, which outputs the phage's length, GC percentage and CDS coding density.
 
-* A `_nts.fasta` which will hold all nucleotide sequences of predicted CDSs.
+* `phanotate.ffn` or `prodigal.ffn` which will hold all nucleotide sequences of predicted CDSs.
 
-* A `_aas.fasta` which will hold all Amino Acid sequences of predicted CDSs.
+* `phanotate.faa` or `prodigal.faa` which will hold all amino acid sequences of predicted CDSs.
 
 * `_aragorn.txt` and `_aragorn.gff` files, which hold the raw and parsed output from Aragorn, respectively.
 
@@ -28,11 +30,15 @@ Other Files
 
 * A `_trnascan.gff` which holds the output from tRNAscan-SE 2.
 
-* A `_final_merged_output.tsv`, which gives the parsed output from mmseqs2. In general, using the default E-value threshold, mmseqs2 should identify a PHROG for most CDSs, while small (80-200bp) hypothetical proteins often will have no matching PHROG. This may also be the case for phages from uncommon sources where few phage have been isolates (such as environment samples).  Pharokka should be used as a rough guide only in these cases. It is also recommended that pharokka be re-run with a less restrictive e-value threshold in these cases (e.g. -e 0.1).
+* A `_cds_final_merged_output.tsv`, which gives the parsed output from mmseqs2. In general, using the default E-value threshold of 1E-05, mmseqs2 should identify a PHROG for most CDSs, while small (80-200bp) hypothetical proteins often will have no matching PHROG. This may also be the case for phages from uncommon sources where few phage have been isolates (such as environment samples).  Pharokka should be used as a rough guide only in these cases. It is also recommended that pharokka be re-run with a less restrictive e-value threshold in these cases (e.g. -e 0.1).
 
 * A `top_hits_card.tsv` file, which contains any CARD database hits.
 
 * A `top_hits_vfdb.tsv` file, which contains any VFDB database hits.
+
+* A `terL.ffn` file, which contains the nulceotide sequences of all identified large terminase subunit (terL) CDSs.
+
+* A `terL.faa` file, which contains the amino acid sequences of all identified large terminase subunit (terL) CDSs.
 
 * Further, the 'score' column contains the PHANOTATE score for each CDS. In general, the closer the score to 0, the smaller the CDS and the more likely that a PHROG will not be identified by mmseqs2.
 
