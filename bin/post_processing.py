@@ -500,9 +500,18 @@ def update_final_output(cds_mmseqs_merge_df, vfdb_results, card_results, locus_d
     # rename gene with locus_tag
     locus_tag_series = locus_df['locus_tag']
     cds_mmseqs_merge_df['gene'] = locus_tag_series
-    # update start and stop (so that the order is the same as original)
-    cds_mmseqs_merge_df['start'] = locus_df['start']
-    cds_mmseqs_merge_df['stop'] = locus_df['stop']
+
+    #########
+    # rearrange start and stop for neg strang
+    #########
+
+    st_cols = ["start","stop"]
+    #indices where start is greater than stop
+    ixs = cds_mmseqs_merge_df['frame'] == '-'
+    # Where ixs is True, values are swapped
+    cds_mmseqs_merge_df.loc[ixs,st_cols] = cds_mmseqs_merge_df.loc[ixs, st_cols].reindex(columns=st_cols[::-1]).values
+
+
 
     # get a list of columns
     cols = list(cds_mmseqs_merge_df)
