@@ -74,12 +74,12 @@ if __name__ == "__main__":
     input_commands.validate_gene_predictor(gene_predictor)
 
     # CDS predicton
-    if gene_predictor == "phanotate":
-        logger.info("Starting Phanotate")
-        processes.run_phanotate(args.infile, out_dir, logger)
-    if gene_predictor == "prodigal":
-        logger.info("Starting Prodigal")
-        processes.run_prodigal(args.infile, out_dir, logger, args.meta, args.coding_table)
+    # if gene_predictor == "phanotate":
+    #     logger.info("Starting Phanotate")
+    #     processes.run_phanotate(args.infile, out_dir, logger)
+    # if gene_predictor == "prodigal":
+    #     logger.info("Starting Prodigal")
+    #     processes.run_prodigal(args.infile, out_dir, logger, args.meta, args.coding_table)
 
     # translate fastas
     logger.info("Translating gene predicted fastas.")
@@ -92,9 +92,9 @@ if __name__ == "__main__":
 
     # running mmseqs2
     logger.info("Starting mmseqs2.")
-    processes.run_mmseqs(db_dir, out_dir, args.threads, logger, gene_predictor, args.evalue)
-    processes.run_mmseqs_card(db_dir, out_dir, args.threads, logger, gene_predictor)
-    processes.run_mmseqs_vfdb(db_dir, out_dir, args.threads, logger, gene_predictor)
+    # processes.run_mmseqs(db_dir, out_dir, args.threads, logger, gene_predictor, args.evalue)
+    # processes.run_mmseqs_card(db_dir, out_dir, args.threads, logger, gene_predictor)
+    # processes.run_mmseqs_vfdb(db_dir, out_dir, args.threads, logger, gene_predictor)
 
     # post processing
     logger.info("Post Processing Output.")
@@ -109,7 +109,7 @@ if __name__ == "__main__":
     tmrna_flag = post_processing.parse_aragorn(out_dir,length_df, prefix)
 
     # create gff and return locustag for table
-    locustag = post_processing.create_gff(cds_mmseqs_merge_df, length_df, args.infile, out_dir, prefix, locustag, tmrna_flag)
+    (locustag, locus_df) = post_processing.create_gff(cds_mmseqs_merge_df, length_df, args.infile, out_dir, prefix, locustag, tmrna_flag)
     post_processing.create_tbl(cds_mmseqs_merge_df, length_df, out_dir, prefix, gene_predictor, tmrna_flag, locustag)
     # write the summary tsv outputs
     post_processing.create_txt(cds_mmseqs_merge_df, length_df,out_dir, prefix)
@@ -118,6 +118,10 @@ if __name__ == "__main__":
     logger.info("Converting gff to genbank.")
     print("Converting gff to genbank.")
     processes.convert_gff_to_gbk(args.infile, out_dir, prefix)
+
+    # update fasta headers and final output tsv
+    post_processing.update_fasta_headers(locus_df, out_dir, gene_predictor )
+    post_processing.update_final_output(cds_mmseqs_merge_df, locus_df, prefix, out_dir )
     
     # delete tmp files
     #post_processing.remove_post_processing_files(out_dir, gene_predictor)

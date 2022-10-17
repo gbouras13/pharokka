@@ -100,8 +100,6 @@ def process_results(db_dir,out_dir, prefix, gene_predictor):
     merged_df = process_vfdb_results(out_dir, merged_df)
     # process CARD results
     merged_df = process_card_results(out_dir, merged_df, db_dir)
-    # write to final output
-    merged_df.to_csv( os.path.join(out_dir, prefix + "_final_merged_output.tsv"), sep="\t", index=False)
     
     return merged_df
 
@@ -275,11 +273,13 @@ def create_gff(cds_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag,
     :param prefix: output prefix
     :param locustag: whether or not to create a random locustag - will be Random is so. Otherwise it is parsed
     :tmrna_flag boolean whether there are tmRNAs or not
-    :return: locustag for the creation of the .tbl file
+    :return: locustag for the creation of the .tbl file, locus_df as df with consistent locus_tags
     """
+
     #########
     # rearrange start and stop so that start is always less than stop for gff
     #########
+
     cols = ["start","stop"]
     #indices where start is greater than stop
     ixs = cds_mmseqs_df['frame'] == '-'
@@ -300,6 +300,9 @@ def create_gff(cds_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag,
     # adds CARD
     cds_mmseqs_df.loc[cds_mmseqs_df['CARD_short_name'] != "None", 'attributes'] = cds_mmseqs_df['attributes'].astype(str)  + ";"  + "CARD_short_name=" + cds_mmseqs_df['CARD_short_name'].astype(str) + ";"  + "AMR_Gene_Family="  +  cds_mmseqs_df['AMR_Gene_Family'].astype(str) + ";" + "CARD_species=" + cds_mmseqs_df['CARD_species'].astype(str)
 
+    # save back 
+    
+
     # get gff dataframe in correct order 
     gff_df = cds_mmseqs_df[["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]]
     
@@ -311,13 +314,12 @@ def create_gff(cds_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag,
     with open(os.path.join(out_dir, "phrokka_tmp.gff"), 'w') as f:
         gff_df.to_csv(f, sep="\t", index=False, header=False)
 
-    # write df for locus tag parsing
 
+    ############ locus tag #########
+    # write df for locus tag parsing
     locus_df = cds_mmseqs_df[["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "annot"]] 
     locus_df['locus_tag'] = locustag + "_CDS_" + cds_mmseqs_df.index.astype(str)
-
-    # returned by the function 
-
+    #################################
 
     ### trnas
     # check if no trnas
@@ -395,19 +397,75 @@ def create_gff(cds_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag,
     return (locustag, locus_df)
 
 
-def update_fasta_headers(locus_df, ):
+def update_fasta_headers(locus_df, out_dir, gene_predictor ):
     """
     Updates the fasta output headers to have a consistent locus tag & gene description for downstrea use
     :param 
     """
 
-    print('tmp')
+    #phanotate
+    fasta_input_nts_tmp = "phanotate_out_tmp.fasta"
+    fasta_input_aas_tmp = "phanotate_aas_tmp.fasta"
+    fasta_output_nts_gd = "phanotate.ffn"
+    fasta_output_aas_gd = "phanotate.faa"
 
 
-    
+    if gene_predictor == "prodigal":
+        fasta_input_nts_tmp = "prodigal_out_tmp.fasta"
+        fasta_input_aas_tmp = "prodigal_aas_tmp.fasta"
+        fasta_output_nts_gd = "prodigal.ffn"
+        fasta_output_aas_gd = "prodigal.faa"
+
+
+    # nucleotides
+
+    with open(os.path.join(out_dir, fasta_output_nts_gd), 'w') as nt_fa:   
+        i = 0 
+        for dna_record in SeqIO.parse(os.path.join(out_dir, fasta_input_nts_tmp), 'fasta'): 
+            dna_record.id = str(locus_df['locus_tag'].iloc[i]) 
+            dna_record.description = str(locus_df['annot'].iloc[i])
+            SeqIO.write(dna_record, nt_fa, 'fasta')
+            i += 1
+
+    # amino acids
+
+    with open(os.path.join(out_dir, fasta_output_aas_gd), 'w') as aa_fa:   
+        i = 0 
+        for dna_record in SeqIO.parse(os.path.join(out_dir, fasta_input_aas_tmp), 'fasta'): 
+            dna_record.id = str(locus_df['locus_tag'].iloc[i]) 
+            dna_record.description = str(locus_df['annot'].iloc[i])
+            SeqIO.write(dna_record, aa_fa, 'fasta')
+            i += 1
+
+
+def update_final_output(cds_mmseqs_merge_df, locus_df, prefix, out_dir ):
+    """
+    Updates the fasta output headers to have a consistent locus tag & gene description for downstrea use
+    :param cds_mmseqs_merge_df: a pandas df as output from process_results()
+    :param locus_df: a pandas df as output from create_gff()
+    :param out_dir: output directory path
+    :param prefix: output prefix
+    :return: 
+    """
 
 
 
+    # return back the cds_mmseqs_merge_df but with the locus tag instead of gene
+    # rename gene with locus_tag
+    cds_mmseqs_merge_df['gene'] = locus_df['locus_tag']
+
+    # get a list of columns
+    cols = list(cds_mmseqs_merge_df)
+    # move the column to head of list using index, pop and insert
+    cols.insert(0, cols.pop(cols.index('gene')))
+    cds_mmseqs_merge_df = cds_mmseqs_merge_df.loc[:, cols]
+
+    # drop last 2 cols 
+    cds_mmseqs_merge_df = cds_mmseqs_merge_df.drop(columns=['phase', 'attributes'])
+
+    # write output
+    final_output_path = os.path.join(out_dir, prefix + "_cds_final_merged_output.tsv")
+    cds_mmseqs_merge_df.to_csv( final_output_path, sep="\t", index=False)
 
 
 

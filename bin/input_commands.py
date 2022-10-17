@@ -34,13 +34,13 @@ def instantiate_dirs(output_dir, force):
 	# remove outdir on force
 	if force == True:
 		if os.path.isdir(output_dir) == True:
-			shutil.rmtree(output_dir)
+			#shutil.rmtree(output_dir)
 			print('placeholder')
 		else:
 			print("\n--force was specified even though the outdir does not already exist. Continuing \n")
 	else:
 		if os.path.isdir(output_dir) == True:
-			sys.exit("\nOutput directory already exists and force was not specified. Please specify -f or --force to overwrite the output directory. \n")  
+			#sys.exit("\nOutput directory already exists and force was not specified. Please specify -f or --force to overwrite the output directory. \n")  
 			print('continuing')
 
 	# instantiate outdir
