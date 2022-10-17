@@ -73,7 +73,7 @@ if __name__ == "__main__":
     input_commands.validate_fasta(args.infile)
     input_commands.validate_gene_predictor(gene_predictor)
 
-    #@ CDS predicton
+    # CDS predicton
     if gene_predictor == "phanotate":
         logger.info("Starting Phanotate")
         processes.run_phanotate(args.infile, out_dir, logger)

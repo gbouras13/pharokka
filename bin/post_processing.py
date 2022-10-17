@@ -858,7 +858,6 @@ def process_vfdb_results(out_dir, merged_df):
         tophits.append([tmp_df.vfdb_hit, tmp_df.gene, tmp_df.vfdb_alnScore, tmp_df.vfdb_seqIdentity, tmp_df.vfdb_eVal])
 
     tophits_df = pd.DataFrame(tophits, columns=['vfdb_hit', 'gene', 'vfdb_alnScore', 'vfdb_seqIdentity', 'vfdb_eVal'])
-    #tophits_df.to_csv(os.path.join(out_dir, "top_hits_vfdb.tsv"), sep="\t", index=False)
 
     # left join vfdb to merged_df
     tophits_df['gene']=tophits_df['gene'].astype(str)
@@ -923,8 +922,7 @@ def process_card_results(out_dir, merged_df, db_dir):
         tophits.append([tmp_df.CARD_hit, tmp_df.gene, tmp_df.CARD_alnScore, tmp_df.CARD_seqIdentity, tmp_df.CARD_eVal])
 
     tophits_df = pd.DataFrame(tophits, columns=['CARD_hit', 'gene', 'CARD_alnScore', 'CARD_seqIdentity', 'CARD_eVal'])
-    #tophits_df.to_csv(os.path.join(out_dir, "top_hits_card.tsv"), sep="\t", index=False)
-
+    
     # left join tophits_df to merged_df
     tophits_df['gene']=tophits_df['gene'].astype(str)
 

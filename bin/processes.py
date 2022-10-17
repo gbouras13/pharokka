@@ -133,23 +133,6 @@ def translate_fastas(out_dir, gene_predictor):
             SeqIO.write(aa_record, aa_fa, 'fasta')
             i += 1
 
-    # with open(os.path.join(out_dir, fasta_output_aas_gd), 'w') as aa_fa:
-    #     i = 0 
-    #     for dna_record in SeqIO.parse(os.path.join(out_dir, fasta_input_tmp), 'fasta'): 
-    #         dna_header = str(clean_df['contig'].iloc[i]) + "_" + str(i) 
-    #         dna_description = str(clean_df['start'].iloc[i]) + "_" + str(clean_df['stop'].iloc[i])
-    #         aa_record = SeqRecord(dna_record.seq.translate(to_stop=True), id=dna_header, description = dna_description )
-    #         SeqIO.write(aa_record, aa_fa, 'fasta')
-    #         i += 1
-    # with open(os.path.join(out_dir, fasta_output_nts_gd), 'w') as aa_fa:
-    #     i = 0 
-    #     for dna_record in SeqIO.parse(os.path.join(out_dir, fasta_input_tmp), 'fasta'): 
-    #         dna_header = str(clean_df['contig'].iloc[i]) + "_" + str(i) 
-    #         dna_description = str(clean_df['start'].iloc[i]) + "_" + str(clean_df['stop'].iloc[i])
-    #         aa_record = SeqRecord(dna_record.seq, id=dna_header, description = dna_description )
-    #         SeqIO.write(aa_record, aa_fa, 'fasta')
-    #         i += 1
-    
 
 def run_trna_scan(filepath_in, out_dir, logger):
     """
