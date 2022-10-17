@@ -73,13 +73,13 @@ if __name__ == "__main__":
     input_commands.validate_fasta(args.infile)
     input_commands.validate_gene_predictor(gene_predictor)
 
-    # CDS predicton
-    # if gene_predictor == "phanotate":
-    #     logger.info("Starting Phanotate")
-    #     processes.run_phanotate(args.infile, out_dir, logger)
-    # if gene_predictor == "prodigal":
-    #     logger.info("Starting Prodigal")
-    #     processes.run_prodigal(args.infile, out_dir, logger, args.meta, args.coding_table)
+    #@ CDS predicton
+    if gene_predictor == "phanotate":
+        logger.info("Starting Phanotate")
+        processes.run_phanotate(args.infile, out_dir, logger)
+    if gene_predictor == "prodigal":
+        logger.info("Starting Prodigal")
+        processes.run_prodigal(args.infile, out_dir, logger, args.meta, args.coding_table)
 
     # translate fastas
     logger.info("Translating gene predicted fastas.")
@@ -92,9 +92,9 @@ if __name__ == "__main__":
 
     # running mmseqs2
     logger.info("Starting mmseqs2.")
-    # processes.run_mmseqs(db_dir, out_dir, args.threads, logger, gene_predictor, args.evalue)
-    # processes.run_mmseqs_card(db_dir, out_dir, args.threads, logger, gene_predictor)
-    # processes.run_mmseqs_vfdb(db_dir, out_dir, args.threads, logger, gene_predictor)
+    processes.run_mmseqs(db_dir, out_dir, args.threads, logger, gene_predictor, args.evalue)
+    processes.run_mmseqs_card(db_dir, out_dir, args.threads, logger, gene_predictor)
+    processes.run_mmseqs_vfdb(db_dir, out_dir, args.threads, logger, gene_predictor)
 
     # post processing
     logger.info("Post Processing Output.")
@@ -102,6 +102,7 @@ if __name__ == "__main__":
 
     # post process results
     # includes vfdb and card
+    # return the merged df, vfdb and card top hits
     (cds_mmseqs_merge_df,vfdb_results, card_results) = post_processing.process_results(db_dir, out_dir, prefix, gene_predictor)
 
     # gets df of length and gc for each contig
@@ -121,10 +122,12 @@ if __name__ == "__main__":
 
     # update fasta headers and final output tsv
     post_processing.update_fasta_headers(locus_df, out_dir, gene_predictor )
-    post_processing.update_final_output(cds_mmseqs_merge_df, locus_df, prefix, out_dir )
+    post_processing.update_final_output(cds_mmseqs_merge_df, vfdb_results, card_results, locus_df, prefix, out_dir )
+    # extract terL
+    post_processing.extract_terl(locus_df, out_dir, gene_predictor, logger )
     
     # delete tmp files
-    #post_processing.remove_post_processing_files(out_dir, gene_predictor)
+    post_processing.remove_post_processing_files(out_dir, gene_predictor)
 
     # Determine elapsed time
     elapsed_time = time.time() - start_time

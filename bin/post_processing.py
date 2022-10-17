@@ -96,6 +96,7 @@ def process_results(db_dir,out_dir, prefix, gene_predictor):
     merged_df["annot"] = merged_df["annot"].replace(nan, 'hypothetical protein', regex=True)
     merged_df["category"] = merged_df["category"].replace(nan, 'unknown function', regex=True)
     merged_df["color"] = merged_df["color"].replace(nan, 'None', regex=True)
+
     # process vfdb results
     (merged_df, vfdb_results) = process_vfdb_results(out_dir, merged_df)
     # process CARD results
@@ -276,6 +277,20 @@ def create_gff(cds_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag,
     :return: locustag for the creation of the .tbl file, locus_df as df with consistent locus_tags
     """
 
+    # create locus tag and get temp df
+
+
+    # locustag creation
+    if locustag == "Random":
+        # locus tag header 8 random letters
+        locustag = ''.join(random.choice(string.ascii_uppercase) for _ in range(8))
+    
+    ############ locus tag #########
+    # write df for locus tag parsing
+    locus_df = cds_mmseqs_df
+    locus_df['locus_tag'] = locustag + "_CDS_" + cds_mmseqs_df.index.astype(str)
+    #################################
+
     #########
     # rearrange start and stop so that start is always less than stop for gff
     #########
@@ -286,22 +301,16 @@ def create_gff(cds_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag,
     # Where ixs is True, values are swapped
     cds_mmseqs_df.loc[ixs,cols] = cds_mmseqs_df.loc[ixs, cols].reindex(columns=cols[::-1]).values
 
-    # locustag creation
-    if locustag == "Random":
-        # locus tag header 8 random letters
-        locustag = ''.join(random.choice(string.ascii_uppercase) for _ in range(8))
-    
     # set phase to be 0
     cds_mmseqs_df['phase'] = 0
     # create attributes
-    cds_mmseqs_df['attributes'] = "ID=" + locustag + "_CDS_" + cds_mmseqs_df.index.astype(str)  + ";" + "phrog=" + cds_mmseqs_df["phrog"].astype(str) + ";" + "top_hit=" + cds_mmseqs_df["top_hit"].astype(str) + ";" + "locus_tag=" + locustag + "_" + cds_mmseqs_df.index.astype(str) + ";" + "function=" + cds_mmseqs_df["category"].astype(str) + ";"  + "product=" + cds_mmseqs_df["annot"].astype(str)
+    cds_mmseqs_df['attributes'] = "ID=" + locus_df['locus_tag'].astype(str)  + ";" + "phrog=" + cds_mmseqs_df["phrog"].astype(str) + ";" + "top_hit=" + cds_mmseqs_df["top_hit"].astype(str) + ";" + "locus_tag=" + locus_df['locus_tag'].astype(str) + ";" + "function=" + cds_mmseqs_df["category"].astype(str) + ";"  + "product=" + cds_mmseqs_df["annot"].astype(str)
     # adds VFDB
     cds_mmseqs_df.loc[cds_mmseqs_df['vfdb_short_name'] != "None", 'attributes'] = cds_mmseqs_df['attributes'].astype(str)  + ";"  + "vfdb_short_name=" + cds_mmseqs_df['vfdb_short_name'].astype(str) + ";"  + "vfdb_description="  +  cds_mmseqs_df['vfdb_description'].astype(str) + ";" + "vfdb_species=" + cds_mmseqs_df['vfdb_species'].astype(str)
     # adds CARD
     cds_mmseqs_df.loc[cds_mmseqs_df['CARD_short_name'] != "None", 'attributes'] = cds_mmseqs_df['attributes'].astype(str)  + ";"  + "CARD_short_name=" + cds_mmseqs_df['CARD_short_name'].astype(str) + ";"  + "AMR_Gene_Family="  +  cds_mmseqs_df['AMR_Gene_Family'].astype(str) + ";" + "CARD_species=" + cds_mmseqs_df['CARD_species'].astype(str)
 
     # save back 
-    
 
     # get gff dataframe in correct order 
     gff_df = cds_mmseqs_df[["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "attributes"]]
@@ -310,16 +319,8 @@ def create_gff(cds_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag,
     gff_df["start"] = gff_df["start"].astype('int')
     gff_df["stop"] = gff_df["stop"].astype('int')
 
-    # write to tmp gff
-    with open(os.path.join(out_dir, "phrokka_tmp.gff"), 'w') as f:
+    with open(os.path.join(out_dir, "phrokka_tmp.gff"), 'a') as f:
         gff_df.to_csv(f, sep="\t", index=False, header=False)
-
-
-    ############ locus tag #########
-    # write df for locus tag parsing
-    locus_df = cds_mmseqs_df
-    locus_df['locus_tag'] = locustag + "_CDS_" + cds_mmseqs_df.index.astype(str)
-    #################################
 
     ### trnas
     # check if no trnas
@@ -400,22 +401,16 @@ def create_gff(cds_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag,
 def update_fasta_headers(locus_df, out_dir, gene_predictor ):
     """
     Updates the fasta output headers to have a consistent locus tag & gene description for downstrea use
-    :param 
+    :param locus_df a pandas df as output from create_gff()
+    :param out_dir: output directory path
+    :gene_predictor: string 'phanotate' or 'prodigal' with the gene predictor used
     """
 
-    #phanotate
-    fasta_input_nts_tmp = "phanotate_out_tmp.fasta"
-    fasta_input_aas_tmp = "phanotate_aas_tmp.fasta"
-    fasta_output_nts_gd = "phanotate.ffn"
-    fasta_output_aas_gd = "phanotate.faa"
-
-
-    if gene_predictor == "prodigal":
-        fasta_input_nts_tmp = "prodigal_out_tmp.fasta"
-        fasta_input_aas_tmp = "prodigal_aas_tmp.fasta"
-        fasta_output_nts_gd = "prodigal.ffn"
-        fasta_output_aas_gd = "prodigal.faa"
-
+    #define outputs
+    fasta_input_nts_tmp = gene_predictor + "_out_tmp.fasta"
+    fasta_input_aas_tmp = gene_predictor + "_aas_tmp.fasta"
+    fasta_output_nts_gd = gene_predictor + ".ffn"
+    fasta_output_aas_gd = gene_predictor + ".faa"
 
     # nucleotides
 
@@ -438,6 +433,56 @@ def update_fasta_headers(locus_df, out_dir, gene_predictor ):
             i += 1
 
 
+def extract_terl(locus_df, out_dir, gene_predictor, logger ):
+    """
+    Updates the fasta output headers to have a consistent locus tag & gene description for downstrea use
+    :param locus_df a pandas df as output from create_gff()
+    :param out_dir: output directory path
+    :gene_predictor: string 'phanotate' or 'prodigal' with the gene predictor used
+    :logger: logger
+    """
+
+    #phanotate
+    fasta_input_nts_tmp = gene_predictor + "_out_tmp.fasta"
+    fasta_input_aas_tmp = gene_predictor + "_aas_tmp.fasta"
+
+    # nucleotide
+
+    with open(os.path.join(out_dir, "terL.ffn"), 'w') as aa_fa:   
+        # i loops over the rows of the dataframe
+        # j counts the number of terLs
+        i = 0 
+        j = 0
+        for dna_record in SeqIO.parse(os.path.join(out_dir, fasta_input_nts_tmp), 'fasta'): 
+            dna_record.id = str(locus_df['locus_tag'].iloc[i]) 
+            dna_record.description = str(locus_df['annot'].iloc[i])
+            if locus_df['annot'].iloc[i] == "terminase large subunit":
+                SeqIO.write(dna_record, aa_fa, 'fasta')
+                # report terL found the first time
+                if j < 1:
+                    print('Terminase large subunit found.')
+                    logger.info("Terminase large subunit found.")
+                    # report multiple found the second time
+                if j == 1:
+                    print('More than one CDS annotated as terminase large subunit found. \nSaving all.') 
+                    logger.info('More than one CDS annotated as terminase large subunit found. \nSaving all.') 
+                j += 1
+            i += 1
+
+
+    # amino acid no need to print
+
+    with open(os.path.join(out_dir, "terL.faa"), 'w') as aa_fa:   
+        # i loops over the rows of the dataframe
+        i = 0 
+        for dna_record in SeqIO.parse(os.path.join(out_dir, fasta_input_aas_tmp), 'fasta'): 
+            dna_record.id = str(locus_df['locus_tag'].iloc[i]) 
+            dna_record.description = str(locus_df['annot'].iloc[i])
+            if locus_df['annot'].iloc[i] == "terminase large subunit":
+                SeqIO.write(dna_record, aa_fa, 'fasta')
+            i += 1
+
+
 def update_final_output(cds_mmseqs_merge_df, vfdb_results, card_results, locus_df, prefix, out_dir ):
     """
     Updates the fasta output headers to have a consistent locus tag & gene description for downstrea use
@@ -448,32 +493,60 @@ def update_final_output(cds_mmseqs_merge_df, vfdb_results, card_results, locus_d
     :return: 
     """
 
+    # needed for vfdb card matching later
+    genes_for_vfdb_card = cds_mmseqs_merge_df['gene']
+
     # return back the cds_mmseqs_merge_df but with the locus tag instead of gene
     # rename gene with locus_tag
-    cds_mmseqs_merge_df['gene'] = locus_df['locus_tag']
+    locus_tag_series = locus_df['locus_tag']
+    cds_mmseqs_merge_df['gene'] = locus_tag_series
+    # update start and stop (so that the order is the same as original)
+    cds_mmseqs_merge_df['start'] = locus_df['start']
+    cds_mmseqs_merge_df['stop'] = locus_df['stop']
 
     # get a list of columns
     cols = list(cds_mmseqs_merge_df)
     # move the column to head of list using index, pop and insert
     cols.insert(0, cols.pop(cols.index('gene')))
     cds_mmseqs_merge_df = cds_mmseqs_merge_df.loc[:, cols]
-
     # drop last 2 cols 
-    cds_mmseqs_merge_df = cds_mmseqs_merge_df.drop(columns=['phase', 'attributes'])
+    cds_mmseqs_merge_df = cds_mmseqs_merge_df.drop(columns=['phase', 'attributes', 'locus_tag'])
 
     # write output
     final_output_path = os.path.join(out_dir, prefix + "_cds_final_merged_output.tsv")
     cds_mmseqs_merge_df.to_csv( final_output_path, sep="\t", index=False)
 
-    # update vfdb with locus tag
-    print(locus_df)
-    #tophits_df.to_csv(os.path.join(out_dir, "top_hits_card.tsv"), sep="\t", index=False)
+    ######################################
+    ##### update vfdb with locus tag #####
+    ###### merge locus into the vfdb ####
+    locus_df['gene'] = genes_for_vfdb_card
+    vfdb_results = vfdb_results.merge(locus_df, how='left', on='gene')
+    # get a list of columns
+    cols = list(vfdb_results)
+    # move the column to head of list using index, pop and insert
+    cols.insert(0, cols.pop(cols.index('locus_tag')))
+    vfdb_results = vfdb_results.loc[:, cols]
+    # keep only desired columns  and save
+    vfdb_results = vfdb_results[['locus_tag', 'vfdb_hit_x', 'vfdb_alnScore_x', 'vfdb_seqIdentity_x', 'start', 'stop', 'frame']]
+    vfdb_results.columns = ['gene', 'vfdb_hit', 'vfdb_alnScore', 'vfdb_seqIdentity', 'start', 'stop', 'frame']
+    vfdb_results = vfdb_results.sort_values(by=['start'])
+    vfdb_results.to_csv(os.path.join(out_dir, "top_hits_vfdb.tsv"), sep="\t", index=False)
 
-    os.path.join(out_dir, "top_hits_vfdb.tsv")
+    ######################################
+    ##### update card with locus tag #####
+    ###### merge locus into the card ####
+    card_results = card_results.merge(locus_df, how='left', on='gene')
+    # get a list of columns
+    cols = list(card_results)
+    # move the column to head of list using index, pop and insert
+    cols.insert(0, cols.pop(cols.index('locus_tag')))
+    card_results = card_results.loc[:, cols]
 
-
-
-
+    # keep only desired columns   sand save
+    card_results = card_results[['locus_tag', 'CARD_hit_x', 'CARD_alnScore_x', 'CARD_seqIdentity_x', 'start', 'stop', 'frame']]
+    card_results.columns = ['gene', 'card_hit', 'card_alnScore', 'card_seqIdentity', 'start', 'stop', 'frame']
+    card_results = card_results.sort_values(by=['start'])
+    card_results.to_csv(os.path.join(out_dir, "top_hits_card.tsv"), sep="\t", index=False)
 
 
 

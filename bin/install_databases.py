@@ -11,7 +11,6 @@ import argparse
 from argparse import RawTextHelpFormatter
 
 def get_db_input():
-	usage = 'install_databases.py -o "path/to/dir'
 	parser = argparse.ArgumentParser(description='script to download required phrog databases', formatter_class=RawTextHelpFormatter)
 	parser.add_argument('-d', '--default', action="store_true" , help='Determines whether you want databases stored in the default location.')
 	parser.add_argument('-o', '--outdir', action="store", help='Database Directory - will be created and must be specificed if -d is not used. ')
