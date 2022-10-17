@@ -97,11 +97,11 @@ def process_results(db_dir,out_dir, prefix, gene_predictor):
     merged_df["category"] = merged_df["category"].replace(nan, 'unknown function', regex=True)
     merged_df["color"] = merged_df["color"].replace(nan, 'None', regex=True)
     # process vfdb results
-    merged_df = process_vfdb_results(out_dir, merged_df)
+    (merged_df, vfdb_results) = process_vfdb_results(out_dir, merged_df)
     # process CARD results
-    merged_df = process_card_results(out_dir, merged_df, db_dir)
-    
-    return merged_df
+    (merged_df, card_results) = process_card_results(out_dir, merged_df, db_dir)
+
+    return (merged_df,vfdb_results, card_results)
 
 def get_contig_name_lengths(fasta_input):
     """
@@ -317,7 +317,7 @@ def create_gff(cds_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag,
 
     ############ locus tag #########
     # write df for locus tag parsing
-    locus_df = cds_mmseqs_df[["contig", "Method", "Region", "start", "stop", "score", "frame", "phase", "annot"]] 
+    locus_df = cds_mmseqs_df
     locus_df['locus_tag'] = locustag + "_CDS_" + cds_mmseqs_df.index.astype(str)
     #################################
 
@@ -438,7 +438,7 @@ def update_fasta_headers(locus_df, out_dir, gene_predictor ):
             i += 1
 
 
-def update_final_output(cds_mmseqs_merge_df, locus_df, prefix, out_dir ):
+def update_final_output(cds_mmseqs_merge_df, vfdb_results, card_results, locus_df, prefix, out_dir ):
     """
     Updates the fasta output headers to have a consistent locus tag & gene description for downstrea use
     :param cds_mmseqs_merge_df: a pandas df as output from process_results()
@@ -447,8 +447,6 @@ def update_final_output(cds_mmseqs_merge_df, locus_df, prefix, out_dir ):
     :param prefix: output prefix
     :return: 
     """
-
-
 
     # return back the cds_mmseqs_merge_df but with the locus tag instead of gene
     # rename gene with locus_tag
@@ -466,6 +464,12 @@ def update_final_output(cds_mmseqs_merge_df, locus_df, prefix, out_dir ):
     # write output
     final_output_path = os.path.join(out_dir, prefix + "_cds_final_merged_output.tsv")
     cds_mmseqs_merge_df.to_csv( final_output_path, sep="\t", index=False)
+
+    # update vfdb with locus tag
+    print(locus_df)
+    #tophits_df.to_csv(os.path.join(out_dir, "top_hits_card.tsv"), sep="\t", index=False)
+
+    os.path.join(out_dir, "top_hits_vfdb.tsv")
 
 
 
@@ -772,7 +776,7 @@ def process_vfdb_results(out_dir, merged_df):
         tophits.append([tmp_df.vfdb_hit, tmp_df.gene, tmp_df.vfdb_alnScore, tmp_df.vfdb_seqIdentity, tmp_df.vfdb_eVal])
 
     tophits_df = pd.DataFrame(tophits, columns=['vfdb_hit', 'gene', 'vfdb_alnScore', 'vfdb_seqIdentity', 'vfdb_eVal'])
-    tophits_df.to_csv(os.path.join(out_dir, "top_hits_vfdb.tsv"), sep="\t", index=False)
+    #tophits_df.to_csv(os.path.join(out_dir, "top_hits_vfdb.tsv"), sep="\t", index=False)
 
     # left join vfdb to merged_df
     tophits_df['gene']=tophits_df['gene'].astype(str)
@@ -809,7 +813,7 @@ def process_vfdb_results(out_dir, merged_df):
         merged_df["vfdb_short_name"] = 'None'
         merged_df["vfdb_description"] = 'None'
         merged_df["vfdb_species"] = 'None'
-    return merged_df
+    return (merged_df, tophits_df)
 
 
     
@@ -837,7 +841,7 @@ def process_card_results(out_dir, merged_df, db_dir):
         tophits.append([tmp_df.CARD_hit, tmp_df.gene, tmp_df.CARD_alnScore, tmp_df.CARD_seqIdentity, tmp_df.CARD_eVal])
 
     tophits_df = pd.DataFrame(tophits, columns=['CARD_hit', 'gene', 'CARD_alnScore', 'CARD_seqIdentity', 'CARD_eVal'])
-    tophits_df.to_csv(os.path.join(out_dir, "top_hits_card.tsv"), sep="\t", index=False)
+    #tophits_df.to_csv(os.path.join(out_dir, "top_hits_card.tsv"), sep="\t", index=False)
 
     # left join tophits_df to merged_df
     tophits_df['gene']=tophits_df['gene'].astype(str)
@@ -884,6 +888,6 @@ def process_card_results(out_dir, merged_df, db_dir):
         merged_df["Drug_Class"] = 'None'
         merged_df["Resistance_Mechanism"] = 'None'
 
-    return merged_df
+    return (merged_df, tophits_df)
 
 

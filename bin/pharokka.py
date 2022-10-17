@@ -102,7 +102,7 @@ if __name__ == "__main__":
 
     # post process results
     # includes vfdb and card
-    cds_mmseqs_merge_df = post_processing.process_results(db_dir, out_dir, prefix, gene_predictor)
+    (cds_mmseqs_merge_df,vfdb_results, card_results) = post_processing.process_results(db_dir, out_dir, prefix, gene_predictor)
 
     # gets df of length and gc for each contig
     length_df = post_processing.get_contig_name_lengths(args.infile)
