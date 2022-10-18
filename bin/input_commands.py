@@ -41,6 +41,7 @@ def instantiate_dirs(output_dir, force):
 		if os.path.isdir(output_dir) == True:
 			sys.exit("\nOutput directory already exists and force was not specified. Please specify -f or --force to overwrite the output directory. \n")  
 
+
 	# instantiate outdir
 	if os.path.isdir(output_dir) == False:
 		os.mkdir(output_dir)
