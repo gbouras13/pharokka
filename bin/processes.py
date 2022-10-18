@@ -86,7 +86,10 @@ def tidy_prodigal_output(out_dir):
     prod_df = pd.read_csv(prod_file, delimiter= '\t', index_col=False , names=col_list, skiprows=3 ) 
     
     # meta mode brings in some Nas so remove them
-    prod_df = prod_df.dropna()
+    # need to reset index!!!! and drop, or else will cause rubbish results for metagenomics
+    prod_df = prod_df.dropna().reset_index(drop=True)
+
+
     prod_filt_df = prod_df[["start", "stop", "frame", "contig", "score"]]
 
     #convert start stop to int
@@ -112,17 +115,12 @@ def translate_fastas(out_dir, gene_predictor):
     """
     if gene_predictor == "phanotate":
         clean_df = tidy_phanotate_output(out_dir)
-        fasta_input_tmp = "phanotate_out_tmp.fasta"
-        fasta_output_aas_tmp = "phanotate_aas_tmp.fasta"
-        fasta_output_aas_gd = "phanotate.faa"
-        fasta_output_nts_gd = "phanotate.ffn"
     if gene_predictor == "prodigal":
         clean_df = tidy_prodigal_output(out_dir)
-        fasta_input_tmp = "prodigal_out_tmp.fasta"
-        fasta_output_aas_tmp = "prodigal_aas_tmp.fasta"
-        fasta_output_aas_gd = "prodigal.faa"
-        fasta_output_nts_gd = "prodigal.ffn"
     
+    fasta_input_tmp = gene_predictor + "_out_tmp.fasta"
+    fasta_output_aas_tmp = gene_predictor + "_aas_tmp.fasta"
+
     # translate for temporary AA output
     with open(os.path.join(out_dir, fasta_output_aas_tmp), 'w') as aa_fa:
         i = 0 
@@ -166,6 +164,7 @@ def run_mmseqs(db_dir, out_dir, threads, logger, gene_predictor, evalue):
     """
     print("Running mmseqs2 on PHROGs Database.")
     logger.info("Running mmseqs2 on PHROGs Database.")
+
     # declare directories - phrog_db_dir is now the db_dir
     phrog_db_dir = db_dir
     mmseqs_dir = os.path.join(out_dir, "mmseqs/")

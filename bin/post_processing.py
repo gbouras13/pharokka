@@ -380,10 +380,13 @@ def create_gff(cds_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag,
             f.write('##sequence-region ' + row['contig'] + ' 1 ' + str(row['length']) +'\n')
     
     # sort gff by start
-    total_gff = pd.read_csv(os.path.join(out_dir, "phrokka_tmp.gff"), delimiter= '\t', index_col=False, names=col_list ) 
+    total_gff = pd.read_csv(os.path.join(out_dir, "phrokka_tmp.gff"), delimiter= '\t', index_col=False, names=col_list, low_memory=False ) 
     total_gff.start = total_gff.start.astype(int)
     total_gff.stop = total_gff.stop.astype(int)
-    total_gff = total_gff.sort_values(['contig', 'start'])
+    # sorts all features
+    total_gff = total_gff.groupby(['contig'], sort=False, as_index=False).apply(pd.DataFrame.sort_values, 'start', ascending =True)
+
+    
 
     # write final gff to file
     with open(os.path.join(out_dir, prefix + ".gff"), 'a') as f:
