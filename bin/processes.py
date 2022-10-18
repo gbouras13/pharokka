@@ -134,7 +134,7 @@ def translate_fastas(out_dir, gene_predictor):
             i += 1
 
 
-def run_trna_scan(filepath_in, out_dir, logger):
+def run_trna_scan(filepath_in,threads, out_dir, logger):
     """
     Runs trna scan
     :param filepath_in: input filepath
@@ -146,7 +146,7 @@ def run_trna_scan(filepath_in, out_dir, logger):
     logger.info("Starting tRNA-scanSE")
     try:
         # needs stderr for trna scan
-        trna = sp.Popen(["tRNAscan-SE", filepath_in, "-G", "-Q", "-j",  os.path.join(out_dir, "trnascan_out.gff")], stderr=sp.PIPE, stdout=sp.DEVNULL)
+        trna = sp.Popen(["tRNAscan-SE", filepath_in, "--thread",threads, "-G", "-Q", "-j",  os.path.join(out_dir, "trnascan_out.gff")], stderr=sp.PIPE, stdout=sp.DEVNULL)
         write_to_log(trna.stderr, logger)
     except:
         sys.stderr.write("Error: tRNAscan-SE not found\n")  
