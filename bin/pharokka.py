@@ -86,7 +86,7 @@ if __name__ == "__main__":
     processes.translate_fastas(out_dir,gene_predictor)
 
     # run trna-scan and minced
-    processes.run_trna_scan(args.infile, out_dir, logger)
+    processes.run_trna_scan(args.infile,args.threads, out_dir, logger)
     processes.run_minced(args.infile, out_dir, prefix, logger)
     processes.run_aragorn(args.infile, out_dir, prefix, logger)
 
