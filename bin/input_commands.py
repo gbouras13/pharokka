@@ -22,7 +22,7 @@ def get_input():
 	parser.add_argument('-p', '--prefix', action="store", help='Prefix for output files. This is not required.',  default='Default')
 	parser.add_argument('-l', '--locustag', action="store", help='User specified locus tag for the gff/gbk files. This is not required. A random locus tag will be generated instead.',  default='Default')
 	parser.add_argument('-g', '--gene_predictor', action="store", help='User specified gene predictor. Use "-g phanotate" or "-g prodigal". Defaults to phanotate (not required unless prodigal is desired).',  default='phanotate' )
-	parser.add_argument('-m', '--meta', help='Metagenomic mode', action="store_true")
+	parser.add_argument('-m', '--meta', help='meta mode for metavirome imput samples', action="store_true")
 	parser.add_argument('-c', '--coding_table', help='translation table for prodigal. Defaults to 11. Experimental only.', action="store", default = "11")
 	parser.add_argument('-e', '--evalue', help='E-value threshold for mmseqs2 PHROGs database search. Defaults to 1E-05.', action="store", default = "1E-05")
 	parser.add_argument('-V', '--version', help='Version', action='version', version=v)

@@ -59,6 +59,8 @@ if __name__ == "__main__":
     logging.captureWarnings(True)
     logger.info("Starting pharokka v" + v)
 
+    logging.info("Input args: %r", args)
+
     # check the database is installed
     print("Checking database installation")
     logger.info("Checking database installation")

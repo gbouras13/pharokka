@@ -21,6 +21,7 @@ Table of Contents
 - [Version Log](#version-log)
 - [System](#system)
 - [Time](#time)
+- [Benchmarking](#Benchmarking)
 - [Bugs and Suggestions](#bugs-and-suggestions)
 - [Citation](#citation)
 
@@ -214,6 +215,14 @@ pharokka has been tested on Linux and MacOS (M1 and Intel).
 # Time
 
 On a standard 16GB RAM laptop specifying 8 threads, pharokka should take between 3-10 minutes to run for a single phage, depending on the genome size.
+
+# Benchmarking
+
+The 673 crAss-like phage genomes were taken from Yutin, N., Benler, S., Shmakov, S.A. et al. Analysis of metagenome-assembled viral genomes from the human gut reveals diverse putative CrAss-like phages with unique genomic features. Nat Commun 12, 1044 (2021). https://doi.org/10.1038/s41467-021-21350-w
+
+
+
+
 
 # Bugs and Suggestions
 
