@@ -3,14 +3,12 @@ import sys
 import subprocess as sp
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
-from numpy import spacing
 import pandas as pd
 import logging
 from BCBio import GFF
 from Bio.Seq import Seq
 from datetime import datetime
-import post_processing
-import math
+
 
 def write_to_log(s, logger):
            while True:
