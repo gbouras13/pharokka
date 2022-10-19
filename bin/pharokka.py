@@ -108,13 +108,6 @@ if __name__ == "__main__":
     # running mmseqs2
     logger.info("Starting mmseqs2.")
     processes.run_mmseqs(db_dir, out_dir, args.threads, logger, gene_predictor, args.evalue)
-
-    # sensitive 
-
-    if args.meta == False:
-        processes.get_unannotated_cds(out_dir, gene_predictor)
-        processes.hmmscan( db_dir, out_dir,logger, args.threads, args.evalue)
-
     processes.run_mmseqs_card(db_dir, out_dir, args.threads, logger, gene_predictor)
     processes.run_mmseqs_vfdb(db_dir, out_dir, args.threads, logger, gene_predictor)
 
