@@ -22,7 +22,7 @@ def get_input():
 	parser.add_argument('-p', '--prefix', action="store", help='Prefix for output files. This is not required.',  default='Default')
 	parser.add_argument('-l', '--locustag', action="store", help='User specified locus tag for the gff/gbk files. This is not required. A random locus tag will be generated instead.',  default='Default')
 	parser.add_argument('-g', '--gene_predictor', action="store", help='User specified gene predictor. Use "-g phanotate" or "-g prodigal". Defaults to phanotate (not required unless prodigal is desired).',  default='phanotate' )
-	parser.add_argument('-m', '--meta', help='Metagenomic option for Prodigal', action="store_true")
+	parser.add_argument('-m', '--meta', help='Metagenomic mode', action="store_true")
 	parser.add_argument('-c', '--coding_table', help='translation table for prodigal. Defaults to 11. Experimental only.', action="store", default = "11")
 	parser.add_argument('-e', '--evalue', help='E-value threshold for mmseqs2 PHROGs database search. Defaults to 1E-05.', action="store", default = "1E-05")
 	parser.add_argument('-V', '--version', help='Version', action='version', version=v)
@@ -30,7 +30,7 @@ def get_input():
 
 	return args
 
-def instantiate_dirs(output_dir, force):
+def instantiate_dirs(output_dir, meta, gene_predictor, force):
 	# remove outdir on force
 	if force == True:
 		if os.path.isdir(output_dir) == True:
@@ -54,6 +54,13 @@ def instantiate_dirs(output_dir, force):
 	CARD_dir = os.path.join(output_dir, "CARD/")
 	if os.path.isdir(CARD_dir) == False:
 		os.mkdir(CARD_dir)
+
+	# tmp dir for phanotate meta mode
+	phanotate_tmp_dir = os.path.join(output_dir, "phanotate_tmp/")
+	if meta == True and gene_predictor == 'phanotate':
+		if os.path.isdir(phanotate_tmp_dir) == False:
+			os.mkdir(phanotate_tmp_dir)
+
 	return output_dir
 
 
@@ -74,6 +81,15 @@ def validate_gene_predictor(gene_predictor):
 		print("Prodigal will be used for gene prediction")
 	else:
 		sys.exit("Error: gene predictor was incorrectly specified. Please use 'phanotate' or 'prodigal' .\n")  
+
+def validata_meta(filepath_in, meta):
+	num_fastas = len([1 for line in open(filepath_in) if line.startswith(">")])
+	if meta == True:
+		if num_fastas < 2:
+			sys.exit("Error: -m meta mode specified when the input file only contains 1 contig. Please re-run without specifying -m. \n")  
+	else:
+		if num_fastas > 1:
+			print("More than one contig detected in the input file. Re-running pharokka with -m meta mode is recommended. \n Continuing.")
 
 
 
