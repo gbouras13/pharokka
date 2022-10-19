@@ -10,14 +10,8 @@ import pandas as pd
 import numpy as np
 pd.options.mode.chained_assignment = None
 
-def process_results(db_dir,out_dir, prefix, gene_predictor):
+def create_mmseqs_tophits(out_dir):
     """
-    Processes and combines PHROGS, CARD and VFDB mmseqs output
-    :param db_dir: database directory path
-    :param out_dir: output directory path 
-    :param prefix: output prefix
-    :param gene_predictor: CDS predictor (phanotate or prodigal)
-    :return: merged_df a pandas dataframe of the final merged output
     """
 
     ##mmseqs
@@ -38,6 +32,20 @@ def process_results(db_dir,out_dir, prefix, gene_predictor):
     # create tophits df
     tophits_df = pd.DataFrame(tophits, columns=['phrog', 'gene', 'alnScore', 'seqIdentity', 'eVal'])
     tophits_df.to_csv(os.path.join(out_dir, "top_hits_mmseqs.tsv"), sep="\t", index=False)
+    return tophits_df
+
+
+def process_results(db_dir,out_dir, prefix, gene_predictor):
+    """
+    Processes and combines PHROGS, CARD and VFDB mmseqs output
+    :param db_dir: database directory path
+    :param out_dir: output directory path 
+    :param prefix: output prefix
+    :param gene_predictor: CDS predictor (phanotate or prodigal)
+    :return: merged_df a pandas dataframe of the final merged output
+    """
+
+    tophits_df = create_mmseqs_tophits(out_dir)
 
     # left join mmseqs top hits to cds df
     cds_file = os.path.join(out_dir, "cleaned_" +  gene_predictor +  ".tsv") 
@@ -649,7 +657,7 @@ def create_tbl(cds_mmseqs_df, length_df, out_dir, prefix, gene_predictor, tmrna_
                     f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
 
 
-def remove_post_processing_files(out_dir, gene_predictor):
+def remove_post_processing_files(out_dir, gene_predictor, meta):
     """
     Cleans temporary files up
     :param out_dir: output directory path
@@ -675,6 +683,9 @@ def remove_post_processing_files(out_dir, gene_predictor):
     sp.run(["rm", "-rf", os.path.join(out_dir, "phrokka_tmp.gff") ])  
     if gene_predictor == "phanotate":
         sp.run(["rm", "-rf", os.path.join(out_dir, "phanotate_out.txt") ])
+        # delete the tmp meta files
+        if meta == True:
+            sp.run(["rm", "-rf", os.path.join(out_dir, "phanotate_tmp/") ])
     if gene_predictor == "prodigal":
         sp.run(["rm", "-rf", os.path.join(out_dir, "prodigal_out.gff") ])
 

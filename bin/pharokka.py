@@ -44,7 +44,7 @@ if __name__ == "__main__":
     gene_predictor = args.gene_predictor
 
     # instantiate outdir 
-    out_dir = input_commands.instantiate_dirs(args.outdir, args.force)
+    out_dir = input_commands.instantiate_dirs(args.outdir, args.meta, gene_predictor, args.force)
 
     # set the db dir
     if args.database == "Default":
@@ -73,10 +73,23 @@ if __name__ == "__main__":
     input_commands.validate_fasta(args.infile)
     input_commands.validate_gene_predictor(gene_predictor)
 
+    # validates meta mode 
+    input_commands.validata_meta(args.infile, args.meta)
+
     # CDS predicton
+    # phanotate 
     if gene_predictor == "phanotate":
-        logger.info("Starting Phanotate")
-        processes.run_phanotate(args.infile, out_dir, logger)
+        print("Running Phanotate.")
+        logger.info("Running Phanotate.")
+        if args.meta == True:
+            print("Applying meta mode.")
+            logger.info("Applying meta mode.")
+            num_fastas = processes.split_input_fasta(args.infile, out_dir)
+            processes.run_phanotate_fasta(args.infile, out_dir, args.threads, num_fastas)
+            processes.run_phanotate_txt(args.infile, out_dir, args.threads, num_fastas)
+            processes.concat_phanotate(out_dir, num_fastas)
+        else:
+            processes.run_phanotate(args.infile, out_dir, logger)
     if gene_predictor == "prodigal":
         logger.info("Starting Prodigal")
         processes.run_prodigal(args.infile, out_dir, logger, args.meta, args.coding_table)
@@ -93,6 +106,13 @@ if __name__ == "__main__":
     # running mmseqs2
     logger.info("Starting mmseqs2.")
     processes.run_mmseqs(db_dir, out_dir, args.threads, logger, gene_predictor, args.evalue)
+
+    # sensitive 
+
+    if args.meta == False:
+        processes.get_unannotated_cds(out_dir, gene_predictor)
+        processes.hmmscan( db_dir, out_dir,logger, args.threads, args.evalue)
+
     processes.run_mmseqs_card(db_dir, out_dir, args.threads, logger, gene_predictor)
     processes.run_mmseqs_vfdb(db_dir, out_dir, args.threads, logger, gene_predictor)
 
@@ -127,7 +147,7 @@ if __name__ == "__main__":
     post_processing.extract_terl(locus_df, out_dir, gene_predictor, logger )
     
     # delete tmp files
-    post_processing.remove_post_processing_files(out_dir, gene_predictor)
+    post_processing.remove_post_processing_files(out_dir, gene_predictor, args.meta)
 
     # Determine elapsed time
     elapsed_time = time.time() - start_time

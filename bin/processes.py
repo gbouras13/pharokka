@@ -3,11 +3,14 @@ import sys
 import subprocess as sp
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
+from numpy import spacing
 import pandas as pd
 import logging
 from BCBio import GFF
 from Bio.Seq import Seq
 from datetime import datetime
+import post_processing
+import math
 
 def write_to_log(s, logger):
            while True:
@@ -17,6 +20,134 @@ def write_to_log(s, logger):
                 else:
                     break
 
+##### phanotate meta mode ########
+
+def batch_iterator(iterator, batch_size):
+    """Returns lists of length batch_size.
+    https://biopython.org/wiki/Split_large_file
+
+    :param iterator: iterator for enumerating over
+    :param batch_size: number of fasta records in each file
+    :return:
+    """
+    batch = []
+    for entry in iterator:
+        batch.append(entry)
+        if len(batch) == batch_size:
+            yield batch
+            batch = []
+
+def split_input_fasta(filepath_in, out_dir):
+    """Splits the input fasta into separate single fasta files for multithreading with phanotate
+    https://biopython.org/wiki/Split_large_file
+
+    :param filepath_in: input multifasta file
+    :param out_dir: output director 
+    :return: num_fastas: int giving the number of fasta records in the multifasta
+    """
+    # iterate and count fastas
+    record_iter = SeqIO.parse(open(filepath_in), "fasta")
+    num_fastas = len([1 for line in open(filepath_in) if line.startswith(">")])
+
+    # each fasta gets its own file so batch size of 1
+    batch_size = 1
+
+    phanotate_tmp_dir = os.path.join(out_dir, "phanotate_tmp")
+
+    for i, batch in enumerate(batch_iterator(record_iter, batch_size)):
+        filename = "phanotate_subprocess%i.fasta" % (i + 1)
+        with open(os.path.join(phanotate_tmp_dir, filename), "w") as handle:
+            SeqIO.write(batch, handle, "fasta")
+    return num_fastas
+
+
+
+def run_phanotate_fasta(filepath_in, out_dir, threads, num_fastas):
+    """
+    Runs phanotate to output fastas
+    :param filepath_in: input filepath
+    :param out_dir: output directory
+    :param threads: threads
+    :param num_fastas: number of fastas in input multifasta
+    :return:
+    """
+
+    phanotate_tmp_dir = os.path.join(out_dir, "phanotate_tmp")
+    commands = []
+
+    for i in range(1,num_fastas+1):
+        in_file = "phanotate_subprocess" + str(i) +".fasta" 
+        out_file = "phanotate_out_tmp" + str(i) +".fasta"
+        filepath_in = os.path.join(phanotate_tmp_dir,in_file)
+        cmd = "phanotate.py " + filepath_in + " -o " + os.path.join(phanotate_tmp_dir, out_file) + " -f fasta"
+        commands.append(cmd)
+
+    n = int(threads) #the number of parallel processes you want
+
+    for j in range(max(int(len(commands)/n)+1, 1)):
+        procs = [sp.Popen(i, shell=True) for i in commands[j*n: min((j+1)*n, len(commands))] ]
+        for p in procs:
+            p.wait()
+
+
+def run_phanotate_txt(filepath_in, out_dir, threads, num_fastas):
+    """
+    Runs phanotate to output text file
+    :param filepath_in: input filepath
+    :param out_dir: output directory
+    :param threads: threads
+    :param num_fastas: number of fastas in input multifasta
+    :return:
+    """
+
+    phanotate_tmp_dir = os.path.join(out_dir, "phanotate_tmp")
+
+    commands = []
+
+    for i in range(1,num_fastas+1):
+        in_file = "phanotate_subprocess" + str(i) +".fasta" 
+        out_file = "phanotate_out_tmp" + str(i) +".txt"
+        filepath_in = os.path.join(phanotate_tmp_dir,in_file)
+        cmd = "phanotate.py " + filepath_in + " -o " + os.path.join(phanotate_tmp_dir, out_file) + " -f tabular"
+        commands.append(cmd)
+
+    n = int(threads) #the number of parallel processes you want
+    for j in range(max(int(len(commands)/n)+1, 1)):
+        procs = [sp.Popen(i, shell=True) for i in commands[j*n: min((j+1)*n, len(commands))] ]
+        for p in procs:
+            p.wait()
+
+def concat_phanotate(out_dir, num_fastas):
+    """
+    Concatenates phanotate output for downstream analysis
+    :param out_dir: output directory
+    :param threads: threads
+    :return:
+    """
+
+    phanotate_tmp_dir = os.path.join(out_dir, "phanotate_tmp")
+
+    tsvs = []
+    for i in range(1,int(num_fastas)+1):
+        out_tsv = "phanotate_out_tmp" + str(i) +".txt"
+        tsvs.append(os.path.join(phanotate_tmp_dir, out_tsv))
+
+    with open(os.path.join(out_dir, "phanotate_out.txt"), 'w') as outfile:
+        for fname in tsvs:
+            with open(fname) as infile:
+                outfile.write(infile.read())
+
+    fastas = []
+    for i in range(1,int(num_fastas)+1):
+        out_fasta = "phanotate_out_tmp" + str(i) +".fasta"
+        fastas.append(os.path.join(phanotate_tmp_dir, out_fasta))
+
+    with open(os.path.join(out_dir, "phanotate_out_tmp.fasta"), 'w') as outfile:
+        for fname in fastas:
+            with open(fname) as infile:
+                outfile.write(infile.read())
+
+##### single contig mode ######
 
 def run_phanotate(filepath_in, out_dir,logger):
     """
@@ -26,8 +157,6 @@ def run_phanotate(filepath_in, out_dir,logger):
     :param logger logger
     :return:
     """
-    print("Running Phanotate.")
-    logger.info("Running Phanotate.")
     try:
         phan_fast = sp.Popen(["phanotate.py", filepath_in, "-o", os.path.join(out_dir, "phanotate_out_tmp.fasta"), "-f", "fasta"], stderr=sp.PIPE, stdout=sp.DEVNULL) 
         phan_txt = sp.Popen(["phanotate.py", filepath_in, "-o", os.path.join(out_dir, "phanotate_out.txt"), "-f", "tabular"], stderr=sp.PIPE, stdout=sp.DEVNULL)
@@ -35,6 +164,7 @@ def run_phanotate(filepath_in, out_dir,logger):
         write_to_log(phan_txt.stderr, logger)
     except:
         sys.exit("Error with Phanotate\n")  
+
 
 def run_prodigal(filepath_in, out_dir,logger, meta, coding_table):
     """
@@ -57,7 +187,6 @@ def run_prodigal(filepath_in, out_dir,logger, meta, coding_table):
         write_to_log(prodigal.stdout, logger)
     except:
         sys.exit("Error with Prodigal\n")  
-
 
 def tidy_phanotate_output(out_dir):
     """
