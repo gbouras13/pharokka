@@ -225,14 +225,7 @@ Enterbacteria Phage Lambda (Genbank accession J02459) Staphylococcus Phage SAOMS
 
 
 
-| Time (min)                             | Pharokka PHANOTATE | Pharokka Prodigal |
-|----------------------------------------|--------------------|-------------------|
-| Enterobacteria Phage Lambda (48052bp)  | 3.43               | 3.28              | 
-| Staphylococcus Phage SAOMS1 (140315bp) | 5                  | 4.5               | 
-| 673 crAss-like Phage Genomes           | 120                | 30                | 
-
-
-Pharokka scales well for large metavirome datasets. In fact, as the size of the input file increases, the extra time taken is required for running gene prediction (particularly PHANOTATE) and tRNA-scan SE - the time taken to conduct mmseqs2 searches remain small. 
+Pharokka scales well for large metavirome datasets. In fact, as the size of the input file increases, the extra time taken is required for running gene prediction (particularly PHANOTATE) and tRNA-scan SE - the time taken to conduct mmseqs2 searches remain small due to its many vs many approach. 
  
 
 # Bugs and Suggestions
