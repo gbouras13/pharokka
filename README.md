@@ -175,7 +175,8 @@ In v0.1.7, the ability to specify an E-value threshold for PHROGs CDS functional
 pharokka defaults to 1 thread.
 
 ```
-usage: pharokka.py [-h] -i INFILE [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG] [-g GENE_PREDICTOR] [-m] [-c CODING_TABLE] [-e EVALUE] [-V]
+usage: pharokka.py [-h] -i INFILE [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG]
+                   [-g GENE_PREDICTOR] [-m] [-c CODING_TABLE] [-e EVALUE] [-V]
 
 pharokka: fast phage annotation program
 
@@ -196,7 +197,7 @@ optional arguments:
                         User specified locus tag for the gff/gbk files. This is not required. A random locus tag will be generated instead.
   -g GENE_PREDICTOR, --gene_predictor GENE_PREDICTOR
                         User specified gene predictor. Use "-g phanotate" or "-g prodigal". Defaults to phanotate (not required unless prodigal is desired).
-  -m, --meta            Metagenomic option for Prodigal
+  -m, --meta            meta mode for metavirome input samples
   -c CODING_TABLE, --coding_table CODING_TABLE
                         translation table for prodigal. Defaults to 11. Experimental only.
   -e EVALUE, --evalue EVALUE
@@ -218,11 +219,21 @@ On a standard 16GB RAM laptop specifying 8 threads, pharokka should take between
 
 # Benchmarking
 
-The 673 crAss-like phage genomes were taken from Yutin, N., Benler, S., Shmakov, S.A. et al. Analysis of metagenome-assembled viral genomes from the human gut reveals diverse putative CrAss-like phages with unique genomic features. Nat Commun 12, 1044 (2021). https://doi.org/10.1038/s41467-021-21350-w
+Pharokka (v1.1.0) has been benchmarked on an Intel Xeon CPU E5-4610 v2 @ 2.30 specifying 16 threads.
+
+Enterbacteria Phage Lambda (Genbank accession J02459) Staphylococcus Phage SAOMS1 (Genbank Accession MW460250) and 673 crAss-like phage genomes in one multiFASTA input taken from Yutin, N., Benler, S., Shmakov, S.A. et al. Analysis of metagenome-assembled viral genomes from the human gut reveals diverse putative CrAss-like phages with unique genomic features. Nat Commun 12, 1044 (2021) https://doi.org/10.1038/s41467-021-21350-w.
 
 
 
+| Time (min)                             | Pharokka PHANOTATE | Pharokka Prodigal |
+|----------------------------------------|--------------------|-------------------|
+| Enterobacteria Phage Lambda (48052bp)  | 3.43               | 3.28              | 
+| Staphylococcus Phage SAOMS1 (140315bp) | 5                  | 4.5               | 
+| 673 crAss-like Phage Genomes           | 120                | 30                | 
 
+
+Pharokka scales well for large metavirome datasets. In fact, as the size of the input file increases, the extra time taken is required for running gene prediction (particularly PHANOTATE) and tRNA-scan SE - the time taken to conduct mmseqs2 searches remain small. 
+ 
 
 # Bugs and Suggestions
 

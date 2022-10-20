@@ -22,7 +22,7 @@ def get_input():
 	parser.add_argument('-p', '--prefix', action="store", help='Prefix for output files. This is not required.',  default='Default')
 	parser.add_argument('-l', '--locustag', action="store", help='User specified locus tag for the gff/gbk files. This is not required. A random locus tag will be generated instead.',  default='Default')
 	parser.add_argument('-g', '--gene_predictor', action="store", help='User specified gene predictor. Use "-g phanotate" or "-g prodigal". Defaults to phanotate (not required unless prodigal is desired).',  default='phanotate' )
-	parser.add_argument('-m', '--meta', help='meta mode for metavirome imput samples', action="store_true")
+	parser.add_argument('-m', '--meta', help='meta mode for metavirome input samples', action="store_true")
 	parser.add_argument('-c', '--coding_table', help='translation table for prodigal. Defaults to 11. Experimental only.', action="store", default = "11")
 	parser.add_argument('-e', '--evalue', help='E-value threshold for mmseqs2 PHROGs database search. Defaults to 1E-05.', action="store", default = "1E-05")
 	parser.add_argument('-V', '--version', help='Version', action='version', version=v)
@@ -55,11 +55,11 @@ def instantiate_dirs(output_dir, meta, gene_predictor, force):
 	if os.path.isdir(CARD_dir) == False:
 		os.mkdir(CARD_dir)
 
-	# tmp dir for phanotate meta mode
-	phanotate_tmp_dir = os.path.join(output_dir, "phanotate_tmp/")
-	if meta == True and gene_predictor == 'phanotate':
-		if os.path.isdir(phanotate_tmp_dir) == False:
-			os.mkdir(phanotate_tmp_dir)
+	# tmp dir for  meta mode trnascan and phanotate
+	input_tmp_dir = os.path.join(output_dir, "input_split_tmp/")
+	if meta == True:
+		if os.path.isdir(input_tmp_dir) == False:
+			os.mkdir(input_tmp_dir)
 
 	return output_dir
 

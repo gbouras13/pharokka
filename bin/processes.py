@@ -50,17 +50,17 @@ def split_input_fasta(filepath_in, out_dir):
     # each fasta gets its own file so batch size of 1
     batch_size = 1
 
-    phanotate_tmp_dir = os.path.join(out_dir, "phanotate_tmp")
+    input_tmp_dir = os.path.join(out_dir, "input_split_tmp")
 
     for i, batch in enumerate(batch_iterator(record_iter, batch_size)):
-        filename = "phanotate_subprocess%i.fasta" % (i + 1)
-        with open(os.path.join(phanotate_tmp_dir, filename), "w") as handle:
+        filename = "input_subprocess%i.fasta" % (i + 1)
+        with open(os.path.join(input_tmp_dir, filename), "w") as handle:
             SeqIO.write(batch, handle, "fasta")
     return num_fastas
 
 
 
-def run_phanotate_fasta(filepath_in, out_dir, threads, num_fastas):
+def run_phanotate_fasta_meta(filepath_in, out_dir, threads, num_fastas):
     """
     Runs phanotate to output fastas
     :param filepath_in: input filepath
@@ -70,11 +70,11 @@ def run_phanotate_fasta(filepath_in, out_dir, threads, num_fastas):
     :return:
     """
 
-    phanotate_tmp_dir = os.path.join(out_dir, "phanotate_tmp")
+    phanotate_tmp_dir = os.path.join(out_dir, "input_split_tmp")
     commands = []
 
     for i in range(1,num_fastas+1):
-        in_file = "phanotate_subprocess" + str(i) +".fasta" 
+        in_file = "input_subprocess" + str(i) +".fasta" 
         out_file = "phanotate_out_tmp" + str(i) +".fasta"
         filepath_in = os.path.join(phanotate_tmp_dir,in_file)
         cmd = "phanotate.py " + filepath_in + " -o " + os.path.join(phanotate_tmp_dir, out_file) + " -f fasta"
@@ -88,7 +88,7 @@ def run_phanotate_fasta(filepath_in, out_dir, threads, num_fastas):
             p.wait()
 
 
-def run_phanotate_txt(filepath_in, out_dir, threads, num_fastas):
+def run_phanotate_txt_meta(filepath_in, out_dir, threads, num_fastas):
     """
     Runs phanotate to output text file
     :param filepath_in: input filepath
@@ -98,12 +98,12 @@ def run_phanotate_txt(filepath_in, out_dir, threads, num_fastas):
     :return:
     """
 
-    phanotate_tmp_dir = os.path.join(out_dir, "phanotate_tmp")
+    phanotate_tmp_dir = os.path.join(out_dir, "input_split_tmp")
 
     commands = []
 
     for i in range(1,num_fastas+1):
-        in_file = "phanotate_subprocess" + str(i) +".fasta" 
+        in_file = "input_subprocess" + str(i) +".fasta" 
         out_file = "phanotate_out_tmp" + str(i) +".txt"
         filepath_in = os.path.join(phanotate_tmp_dir,in_file)
         cmd = "phanotate.py " + filepath_in + " -o " + os.path.join(phanotate_tmp_dir, out_file) + " -f tabular"
@@ -115,7 +115,7 @@ def run_phanotate_txt(filepath_in, out_dir, threads, num_fastas):
         for p in procs:
             p.wait()
 
-def concat_phanotate(out_dir, num_fastas):
+def concat_phanotate_meta(out_dir, num_fastas):
     """
     Concatenates phanotate output for downstream analysis
     :param out_dir: output directory
@@ -123,7 +123,7 @@ def concat_phanotate(out_dir, num_fastas):
     :return:
     """
 
-    phanotate_tmp_dir = os.path.join(out_dir, "phanotate_tmp")
+    phanotate_tmp_dir = os.path.join(out_dir, "input_split_tmp")
 
     tsvs = []
     for i in range(1,int(num_fastas)+1):
@@ -144,6 +144,59 @@ def concat_phanotate(out_dir, num_fastas):
         for fname in fastas:
             with open(fname) as infile:
                 outfile.write(infile.read())
+
+
+def run_trnascan_meta(filepath_in, out_dir, threads, num_fastas):
+    """
+    Runs trnascan to output gffs one contig per thread
+    :param filepath_in: input filepath
+    :param out_dir: output directory
+    :param threads: threads
+    :param num_fastas: number of fastas in input multifasta
+    :return:
+    """
+
+    input_tmp_dir = os.path.join(out_dir, "input_split_tmp")
+    commands = []
+
+    for i in range(1,num_fastas+1):
+        in_file = "input_subprocess" + str(i) +".fasta" 
+        out_file = "trnascan_tmp" + str(i) +".gff"
+        filepath_in = os.path.join(input_tmp_dir,in_file)
+        filepath_out = os.path.join(input_tmp_dir,out_file)
+        cmd = "tRNAscan-SE " + filepath_in + " --thread 1 -G -Q -j " + filepath_out
+        commands.append(cmd)
+
+    n = int(threads) #the number of parallel processes you want
+
+    for j in range(max(int(len(commands)/n)+1, 1)):
+        procs = [sp.Popen(i, shell=True , stderr=sp.PIPE, stdout=sp.DEVNULL) for i in commands[j*n: min((j+1)*n, len(commands))] ]
+        for p in procs:
+            p.wait()
+
+def concat_trnascan_meta(out_dir, num_fastas):
+    """
+    Concatenates trnascan output for downstream analysis
+    :param out_dir: output directory
+    :param threads: threads
+    :return:
+    """
+
+    input_tmp_dir = os.path.join(out_dir, "input_split_tmp")
+
+    gffs = []
+    for i in range(1,int(num_fastas)+1):
+        out_gff = "trnascan_tmp" + str(i) +".gff"
+        gffs.append(os.path.join(input_tmp_dir, out_gff))
+
+    with open(os.path.join(out_dir, "trnascan_out.gff"), 'w') as outfile:
+        for fname in gffs:
+            with open(fname) as infile:
+                outfile.write(infile.read())
+
+ 
+
+
 
 ##### single contig mode ######
 
@@ -267,8 +320,6 @@ def run_trna_scan(filepath_in,threads, out_dir, logger):
     :param logger logger
     :return:
     """
-    print("Running tRNAscan-SE.")
-    logger.info("Starting tRNA-scanSE")
     try:
         # needs stderr for trna scan
         trna = sp.Popen(["tRNAscan-SE", filepath_in, "--thread",threads, "-G", "-Q", "-j",  os.path.join(out_dir, "trnascan_out.gff")], stderr=sp.PIPE, stdout=sp.DEVNULL)

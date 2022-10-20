@@ -683,11 +683,11 @@ def remove_post_processing_files(out_dir, gene_predictor, meta):
     sp.run(["rm", "-rf", os.path.join(out_dir, "phrokka_tmp.gff") ])  
     if gene_predictor == "phanotate":
         sp.run(["rm", "-rf", os.path.join(out_dir, "phanotate_out.txt") ])
-        # delete the tmp meta files
-        if meta == True:
-            sp.run(["rm", "-rf", os.path.join(out_dir, "phanotate_tmp/") ])
     if gene_predictor == "prodigal":
         sp.run(["rm", "-rf", os.path.join(out_dir, "prodigal_out.gff") ])
+    # delete the tmp meta files
+    if meta == True:
+        sp.run(["rm", "-rf", os.path.join(out_dir, "input_split_tmp/") ])
 
 
 def get_crispr_count(out_dir, prefix):
