@@ -36,7 +36,7 @@ pharokka.py -i <fasta file> -o <output folder> -t <threads>
 
 For more advanced commands see [usage](docs/run.md).
 
-# Database advance installation
+# Database advanced installation
 
 If normal installation does not work, you an alternatively download the databases from [Zenodo]( https://zenodo.org/record/7081772/files/pharokka_database_v1.0.0.tar.gz) and untar the directory in a location of your choice.
 
