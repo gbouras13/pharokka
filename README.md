@@ -4,196 +4,53 @@ pharokka
 
 >pharokka is a fast standardized annotation pipeline for bacteriophage genomes.
 
-
 <p align="center">
   <img src="img/pharokka_workflow.png" alt="pharokka Workflow" height=500>
 </p>
 
 pharokka uses [PHANOTATE](https://github.com/deprekate/PHANOTATE) as a default program for gene prediction and later assigns functional annotation by aligning prediction to the [PHROGs database](https://phrogs.lmge.uca.fr) thorough [mmseqs2](https://github.com/soedinglab/MMseqs2). pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). Moreover, pharokka generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage). Check the full documentation [here](https://pharokka.readthedocs.io).
 
-If you are looking for rapid standardised annotation of prokaryotes, please use [prokka](https://github.com/tseemann/prokka) or [bakta](https://github.com/oschwengers/bakta).
+If you are looking for rapid standardized annotation of prokaryotes, please use [prokka](https://github.com/tseemann/prokka) or [bakta](https://github.com/oschwengers/bakta).
 
 # Installation
 
-**pharokka v1.0.1 is now available on bioconda**
-
-* v1.0.0 adds VFDB (current as of 15-09-22) and CARD (v3.2.4) databases for virulence factor and AMR gene identification.
-* These should install using the install_databases.py script, with the databases downloaded from a Zenodo repository.
-* You will need to re-install the databases if you updating from an earlier version of pharokka than v1.0.0. The database should work for all versions from v1.0.0 and afterwards.
-* If the script does not work, you an alternatively download the databases manually from Zenodo at https://zenodo.org/record/7081772/files/pharokka_database_v1.0.0.tar.gz and untar the directory in a location of your choice. Please see the Installation Section for more details.
-
-The easiest way to install pharokka is via conda. For inexperienced command line users, this method is highly recommended.
-
-`conda install -c bioconda pharokka`
-
-This will install all the dependencies along with pharokka. The dependencies are listed in environment.yml.
-
-If conda is taking a long time to solve the environment, try using mamba:
-
 ```
-conda install mamba
-mamba install -c bioconda pharokka
+conda install -c bioconda pharokka
 ```
-
-Alternatively, the development version of pharokka can be installed manually via github. 
-
-`git clone https://github.com/gbouras13/pharokka.git`
-
-The dependencies found in environment.yml will then need to be installed manually.
-
-For example using conda to install the required dependencies:
-
-```
-git clone https://github.com/gbouras13/pharokka.git
-cd pharokka
-conda env create -f environment.yml
-conda activate pharokka_env
-```
-
-And then to run pharokka (assuming you are still in the pharokka directory)
-
-```
-./bin/install_databases.py -h
-./bin/pharokka.py -h
-```
-
-# Beginner Conda Installation
-
-If you are new to using the command-line, please install conda using the following instructions.
-
-1. Install [Anaconda](https://www.anaconda.com/products/distribution). I would recommend [miniconda](https://docs.conda.io/en/latest/miniconda.html).
-2. Assuming you are using a Linux x86_64 machine (for other architectures, please replace the URL with the appropriate one on the [miniconda](https://docs.conda.io/en/latest/miniconda.html) website).
-
-`curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh`
-
-For Mac (Intel, will also work with M1):
-
-`curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh`
-
-3. Install miniconda and follow the prompts.
-
-`sh Miniconda3-latest-Linux-x86_64.sh`
-
-4. After installation is complete, you should add the following channels to your conda configuration:
-
-```
-conda config --add channels defaults
-conda config --add channels bioconda
-conda config --add channels conda-forge
-```
-
-5. After this, conda should be installed (you may need to restart your terminal). It is recommended that mamba is also installed, as it will solve the enviroment quicker than conda:
-
-`conda install mamba`
-
- 6. Finally, I would recommend installing pharokka into a fresh environment. For example to create an environment called pharokkaENV with pharokka installed:
-
-```
-mamba create -n pharokkaENV pharokka
-conda activate pharokkaENV
-install_databases.py -h
-pharokka.py -h
-```
+For different installation details see the [install](docs/install.md) section.
 
 # Usage
 
-First the PHROGs databases need to be installed
-
-`install_databases.py -d`
-
-If you would like to specify a different database directory (recommended), that can be achieved as follows:
-
-`install_databases.py -o <path/to/databse_dir>`
-
-v1.0.0 adds VFDB and CARD databases for virulence factor and AMR gene identification. These should install using the install_databases.py script as outlined above. You will need to run this before running pharokka v1.0.0 or newer versions.
-
-If this does not work, you an alternatively download the databases from Zenodo at https://zenodo.org/record/7081772/files/pharokka_database_v1.0.0.tar.gz and untar the directory in a location of your choice.
-
-If you prefer to use the command line:
+First the install all databases with:
 
 ```
-wget "https://zenodo.org/record/7081772/files/pharokka_database_v1.0.0.tar.gz"
-tar -xzf pharokka_database_v1.0.0.tar.gz
+install_databases.py -d
 ```
+Or if you would like to specify a different database directory (recommended), that can be achieved as follows: `install_databases.py -o <path/to/databse_dir>`
 
-which will create a directory called "pharokka_database_v1.0.0" containing the databases.
-
-If you have already downloaded databases for earlier versions of pharokka, these will need to be re-downloaded.
-
-Once the databases have finished downloading, to run pharokka
+Then simply run
 
 ```
 pharokka.py -i <fasta file> -o <output folder> -t <threads>
 ```
 
-To specify a prefix for the output files:
+For more advanced commands see [usage](docs/run.md).
+
+# Database advance installation
+
+If normal installation does not work, you an alternatively download the databases from [Zenodo]( https://zenodo.org/record/7081772/files/pharokka_database_v1.0.0.tar.gz) and untar the directory in a location of your choice.
+
+If you prefer to use the command line:
 
 ```
-pharokka.py -i <fasta file> -o <output folder> -t <threads> -p <prefix>
+wget "https://zenodo.org/record/7081772/files/pharokka_database_v1.0.0.tar.gz"
+```
+and
+```
+tar -xzf pharokka_database_v1.0.0.tar.gz
 ```
 
-To specify a different database directory (recommended):
-
-```
-pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads> -p <prefix>
-```
-
-To overwrite an existing output directory, use -f
-
-```
-pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -p <prefix> -f
-```
-
-To use Prodigal instead of PHANOTATE use `-g prodigal`
-
-```
-pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -g prodigal
-```
-
-The `-m` option indicates meta mode designed for metavirome input. pharokka should work with metagenome assembled viral contigs with PHANOTATE automatically. With prodigal, please add the `-m` flag. As of v1.1.0, `-m` has added multi-threaded support for tRNAscan-SE2 and PHANOTATE, speeding their runtime considerably. 
-
-```
-pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -m
-```
-
-In v0.1.7, the ability to specify an E-value threshold for PHROGs CDS functional assignment using mmseqs2 was added using the -e flag. It defaults to 1E-5.
-
-```
-pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -e <E-value>
-```
-
-pharokka defaults to 1 thread.
-
-```
-usage: pharokka.py [-h] -i INFILE [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG]
-                   [-g GENE_PREDICTOR] [-m] [-c CODING_TABLE] [-e EVALUE] [-V]
-
-pharokka: fast phage annotation program
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -i INFILE, --infile INFILE
-                        Input genome file in fasta format.
-  -o OUTDIR, --outdir OUTDIR
-                        Directory to write the output to.
-  -d DATABASE, --database DATABASE
-                        Database directory. If the databases have been installed in the default directory, this is not required. Otherwise specify the path.
-  -t THREADS, --threads THREADS
-                        Number of threads for mmseqs and hhsuite. Defaults to 1.
-  -f, --force           Overwrites the output directory.
-  -p PREFIX, --prefix PREFIX
-                        Prefix for output files. This is not required.
-  -l LOCUSTAG, --locustag LOCUSTAG
-                        User specified locus tag for the gff/gbk files. This is not required. A random locus tag will be generated instead.
-  -g GENE_PREDICTOR, --gene_predictor GENE_PREDICTOR
-                        User specified gene predictor. Use "-g phanotate" or "-g prodigal". Defaults to phanotate (not required unless prodigal is desired).
-  -m, --meta            meta mode for metavirome input samples
-  -c CODING_TABLE, --coding_table CODING_TABLE
-                        translation table for prodigal. Defaults to 11. Experimental only.
-  -e EVALUE, --evalue EVALUE
-                        E-value threshold for mmseqs2 PHROGs database search. Defaults to 1E-05.
-  -V, --version         Version
-  ```
+which will create a directory called "pharokka_database_v1.0.0" containing all databases.
 
 # Version Log
 
