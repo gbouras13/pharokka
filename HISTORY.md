@@ -1,13 +1,13 @@
 History
 =======
 
-1.1.0 (2022-10-18)
+1.1.0 (2022-10-20)
 ------------------
 
-* Renames the CDS output files to *.faa for amino acids and *.fna for nulceotide sequences
+* Renames the CDS output files to *.faa for amino acids and *.ffn for nulceotide sequences
 * Implementation of consistent CDS name (equal to the locus_tag) across all output files
-* terL.faa and terL.fna, which contain the sequences of any identified terminase large subunit CDSs
-* Passes multithreading to tRNAscan-SE 
+* Creates terL.faa and terL.ffn, which contain the sequences of any identified terminase large subunit CDSs
+* Passes multithreading to PHANOTATE and tRNAscan-SE in meta mode indicated by flag -m, which provides approximately a t-fold improvement in run-time for large metavirome datasets. 
 
 1.0.1 (2022-10-10)
 ------------------
