@@ -78,6 +78,11 @@ if __name__ == "__main__":
     # validates meta mode 
     input_commands.validata_meta(args.infile, args.meta)
 
+    # meta mode split input for trnascan and maybe phanotate 
+    if args.meta == True:
+        num_fastas = processes.split_input_fasta(args.infile, out_dir)
+
+
     # CDS predicton
     # phanotate 
     if gene_predictor == "phanotate":
@@ -86,10 +91,9 @@ if __name__ == "__main__":
         if args.meta == True:
             print("Applying meta mode.")
             logger.info("Applying meta mode.")
-            num_fastas = processes.split_input_fasta(args.infile, out_dir)
-            processes.run_phanotate_fasta(args.infile, out_dir, args.threads, num_fastas)
-            processes.run_phanotate_txt(args.infile, out_dir, args.threads, num_fastas)
-            processes.concat_phanotate(out_dir, num_fastas)
+            processes.run_phanotate_fasta_meta(args.infile, out_dir, args.threads, num_fastas)
+            processes.run_phanotate_txt_meta(args.infile, out_dir, args.threads, num_fastas)
+            processes.concat_phanotate_meta(out_dir, num_fastas)
         else:
             processes.run_phanotate(args.infile, out_dir, logger)
     if gene_predictor == "prodigal":
@@ -100,8 +104,18 @@ if __name__ == "__main__":
     logger.info("Translating gene predicted fastas.")
     processes.translate_fastas(out_dir,gene_predictor)
 
-    # run trna-scan and minced
-    processes.run_trna_scan(args.infile,args.threads, out_dir, logger)
+
+    # run trna-scan meta mode if required
+    if args.meta == True:
+        print("Running tRNAscan-SE. Applying meta mode.")
+        logger.info("Starting tRNA-scanSE. Applying meta mode.")
+        processes.run_trnascan_meta(args.infile, out_dir, args.threads, num_fastas)
+        processes.concat_trnascan_meta(out_dir, num_fastas)
+    else:
+        print("Running tRNAscan-SE.")
+        logger.info("Starting tRNA-scanSE")
+        processes.run_trna_scan(args.infile,args.threads, out_dir, logger)
+    # run minced and aragorn 
     processes.run_minced(args.infile, out_dir, prefix, logger)
     processes.run_aragorn(args.infile, out_dir, prefix, logger)
 
