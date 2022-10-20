@@ -16,6 +16,7 @@ nav:
     - RUNNING:
       - Install: install.md
       - Usage: run.md
+      - Benchmarking: benchmarking.md
     - OUTPUT:
       - Output: output.md
 
