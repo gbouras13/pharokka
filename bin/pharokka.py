@@ -107,13 +107,13 @@ if __name__ == "__main__":
 
     # run trna-scan meta mode if required
     if args.meta == True:
-        print("Running tRNAscan-SE.")
-        logger.info("Starting tRNA-scanSE")
+        print("Running tRNAscan-SE. Applying meta mode.")
+        logger.info("Starting tRNA-scanSE. Applying meta mode.")
         processes.run_trnascan_meta(args.infile, out_dir, args.threads, num_fastas)
         processes.concat_trnascan_meta(out_dir, num_fastas)
     else:
-        print("Running tRNAscan-SE. Applying meta mode.")
-        logger.info("Starting tRNA-scanSE. Applying meta mode.")
+        print("Running tRNAscan-SE.")
+        logger.info("Starting tRNA-scanSE")
         processes.run_trna_scan(args.infile,args.threads, out_dir, logger)
     # run minced and aragorn 
     processes.run_minced(args.infile, out_dir, prefix, logger)
