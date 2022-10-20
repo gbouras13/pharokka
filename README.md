@@ -5,37 +5,16 @@ pharokka
 Fast Phage Annotation Program
 ------------
 
-pharokka is designed for rapid standardised annotation of bacteriophages.
+>pharokka is designed for rapid standardized annotation of bacteriophages.
 
-If you are looking for rapid standardised annotation of prokaryotes, please use [prokka](https://github.com/tseemann/prokka), which inspired the creation of pharokka.
 
-Table of Contents
------------
-- [pharokka](#pharokka)
-  - [Fast Phage Annotation Program](#fast-phage-annotation-program)
-  - [Table of Contents](#table-of-contents)
-- [Method](#method)
-- [Installation](#installation)
-- [Beginner Conda Installation](#beginner-conda-installation)
-- [Usage](#usage)
-- [Version Log](#version-log)
-- [System](#system)
-- [Time](#time)
-- [Benchmarking](#Benchmarking)
-- [Bugs and Suggestions](#bugs-and-suggestions)
-- [Citation](#citation)
+<p align="center">
+  <img src="img/pharokka_workflow.png" alt="pharokka Workflow" height=400>
+</p>
 
-# Method
+pharokka is a computational pipepline to annotate bacteriophage genomes, it uses [PHANOTATE](https://github.com/deprekate/PHANOTATE) as a default program for gene prediction and later assigns functional annotation by aligning prediction to the [PHROGs database](https://phrogs.lmge.uca.fr) thorough [mmseqs2](https://github.com/soedinglab/MMseqs2). pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). Moreover, pharokka generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage). Check the full documentation [here](https://pharokka.readthedocs.io)
 
-![pharokka workflow](img/pharokka_workflow.png?raw=true "Pharokka Workflow")
-
-Briefly, default gene prediction is done using PHANOTATE (https://github.com/deprekate/PHANOTATE) and function annotation is based on the PHROGs database (https://phrogs.lmge.uca.fr) with mmseqs2. 
-
-The main output is a *.gff file that is suitable for use downstream pangenomic pipelines such as Roary (https://sanger-pathogens.github.io/Roary/).
-
-The other important output is `cds_functions.tsv`, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database.
-
-For full documentation of output files, please visit https://pharokka.readthedocs.io.
+If you are looking for rapid standardised annotation of prokaryotes, please use [prokka](https://github.com/tseemann/prokka) or [bakta](https://github.com/oschwengers/bakta).
 
 # Installation
 
@@ -146,31 +125,45 @@ If you have already downloaded databases for earlier versions of pharokka, these
 
 Once the databases have finished downloading, to run pharokka
 
-`pharokka.py -i <fasta file> -o <output folder> -t <threads>`
+```
+pharokka.py -i <fasta file> -o <output folder> -t <threads>
+```
 
 To specify a prefix for the output files:
 
-`pharokka.py -i <fasta file> -o <output folder> -t <threads> -p <prefix>`
+```
+pharokka.py -i <fasta file> -o <output folder> -t <threads> -p <prefix>
+```
 
 To specify a different database directory (recommended):
 
-`pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads> -p <prefix>`
+```
+pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads> -p <prefix>
+```
 
 To overwrite an existing output directory, use -f
 
-`pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -p <prefix> -f`
+```
+pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -p <prefix> -f
+```
 
 To use Prodigal instead of PHANOTATE use `-g prodigal`
 
-`pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -g prodigal`
+```
+pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -g prodigal
+```
 
-`-m` indicated meta mode designed for metavirome input. Pharokka should work with metagenome assembled viral contigs with PHANOTATE automatically. With prodigal, please add the `-m` flag. As of v1.1.0, `-m` has added multi-threaded support for tRNAscan-SE2 and PHANOTATE, speeding their runtime considerably. 
+The `-m` option indicates meta mode designed for metavirome input. pharokka should work with metagenome assembled viral contigs with PHANOTATE automatically. With prodigal, please add the `-m` flag. As of v1.1.0, `-m` has added multi-threaded support for tRNAscan-SE2 and PHANOTATE, speeding their runtime considerably. 
 
-`pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -m`
+```
+pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -m
+```
 
 In v0.1.7, the ability to specify an E-value threshold for PHROGs CDS functional assignment using mmseqs2 was added using the -e flag. It defaults to 1E-5.
 
-`pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -e <E-value>`
+```
+pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -e <E-value>
+```
 
 pharokka defaults to 1 thread.
 
@@ -207,7 +200,7 @@ optional arguments:
 
 # Version Log
 
-A brief description of what is new in each update of pharokka can be found in the HISTORY.md file.
+A brief description of what is new in each update of pharokka can be found in the [HISTORY.md](HISTORY.md) file.
 
 # System
 
@@ -219,13 +212,13 @@ On a standard 16GB RAM laptop specifying 8 threads, pharokka should take between
 
 # Benchmarking
 
-Pharokka (v1.1.0) has been benchmarked on an Intel Xeon CPU E5-4610 v2 @ 2.30 specifying 16 threads. Below is benchamarking comparing Pharokka run with PHANOTATE and Prodigal against Prokka v1.14.6 run with PHROGs HMM profiles, as modified by Andrew Millard (https://millardlab.org/2021/11/21/phage-annotation-with-phrogs/).
+pharokka (v1.1.0) has been benchmarked on an Intel Xeon CPU E5-4610 v2 @ 2.30 specifying 16 threads. Below is benchamarking comparing pharokka run with PHANOTATE and Prodigal against Prokka v1.14.6 run with PHROGs HMM profiles, as modified by Andrew Millard (https://millardlab.org/2021/11/21/phage-annotation-with-phrogs/).
 
 Benchmarking was conducted on Enterbacteria Phage Lambda (Genbank accession J02459) Staphylococcus Phage SAOMS1 (Genbank Accession MW460250) and 673 crAss-like phage genomes in one multiFASTA input taken from Yutin, N., Benler, S., Shmakov, S.A. et al. Analysis of metagenome-assembled viral genomes from the human gut reveals diverse putative CrAss-like phages with unique genomic features. Nat Commun 12, 1044 (2021) https://doi.org/10.1038/s41467-021-21350-w.
 
-For the crAss-like phage genomes, Pharokka meta mode `-m` was enabled.
+For the crAss-like phage genomes, pharokka meta mode `-m` was enabled.
 
-| Phage Lambda            | Pharokka PHANOTATE | Pharokka Prodigal | Prokka with PHROGs | 
+| Phage Lambda            | pharokka PHANOTATE | pharokka Prodigal | Prokka with PHROGs | 
 |------------------------|--------------------|-------------------|--------------------|
 | Time (min)             | 4.19               | 3.88              | 0.27               |
 | CDS                    | 88                 | 61                | 62                 | 
@@ -233,7 +226,7 @@ For the crAss-like phage genomes, Pharokka meta mode `-m` was enabled.
 | Annotated Function CDS | 43                 | 37                | 45                 |  
 | Unknown Function CDS   | 45                 | 24                | 17                 | 
 
-| Phage SAOMS1           | Pharokka PHANOTATE | Pharokka Prodigal | Prokka with PHROGs |   
+| Phage SAOMS1           | pharokka PHANOTATE | pharokka Prodigal | Prokka with PHROGs |   
 |------------------------|--------------------|-------------------|--------------------|
 | Time (min)             | 4.26               | 3.89              | 0.93               | 
 | CDS                    | 246                | 212               | 212                | 
@@ -241,7 +234,7 @@ For the crAss-like phage genomes, Pharokka meta mode `-m` was enabled.
 | Annotated Function CDS | 92                 | 93                | 92                 | 
 | Unknown Function CDS   | 154                | 119               | 120                |  
 
-| 673 crAss-like genomes from Yutin et al., 2021 | Pharokka PHANOTATE Meta Mode | Pharokka Prodigal Meta Mode  | Prokka with PHROGs |
+| 673 crAss-like genomes from Yutin et al., 2021 | pharokka PHANOTATE Meta Mode | pharokka Prodigal Meta Mode  | Prokka with PHROGs |
 |------------------------------------------------|------------------------------|------------------------------|--------------------|
 | Time (min)                                     | 106.55                       | 11.88                        | 252.33             |
 | Time Gene Prediction (min)                     | 96.21                        | 3.4                          | 5.12               |
@@ -253,9 +246,9 @@ For the crAss-like phage genomes, Pharokka meta mode `-m` was enabled.
 | Annotated Function CDS                         | 9341                         | 9228                         | 14461              |
 | Unknown Function CDS                           | 129287                       | 81269                        | 75341              |
 
-Pharokka scales well for large metavirome datasets due to the speed of mmseqs2. In fact, as the size of the input file increases, the extra time taken is required for running gene prediction (particularly PHANOTATE) and tRNA-scan SE2 - the time taken to conduct mmseqs2 searches remain small due to its many vs many approach. 
+pharokka scales well for large metavirome datasets due to the speed of mmseqs2. In fact, as the size of the input file increases, the extra time taken is required for running gene prediction (particularly PHANOTATE) and tRNA-scan SE2 - the time taken to conduct mmseqs2 searches remain small due to its many vs many approach. 
 
-If you require  fast annotations of extremely large datasets (i.e. thousands of input contigs), running Pharokka with Prodigal is recommended.
+If you require  fast annotations of extremely large datasets (i.e. thousands of input contigs), running pharokka with Prodigal is recommended.
  
 
 # Bugs and Suggestions
