@@ -2,17 +2,14 @@
 pharokka
 ===============
 
-Fast Phage Annotation Program
-------------
-
->pharokka a rapid standardized annotation pipeline bacteriophage genomes.
+>pharokka is a fast standardized annotation pipeline for bacteriophage genomes.
 
 
 <p align="center">
   <img src="img/pharokka_workflow.png" alt="pharokka Workflow" height=500>
 </p>
 
-pharokka is a computational pipepline to annotate bacteriophage genomes, it uses [PHANOTATE](https://github.com/deprekate/PHANOTATE) as a default program for gene prediction and later assigns functional annotation by aligning prediction to the [PHROGs database](https://phrogs.lmge.uca.fr) thorough [mmseqs2](https://github.com/soedinglab/MMseqs2). pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). Moreover, pharokka generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage). Check the full documentation [here](https://pharokka.readthedocs.io).
+pharokka uses [PHANOTATE](https://github.com/deprekate/PHANOTATE) as a default program for gene prediction and later assigns functional annotation by aligning prediction to the [PHROGs database](https://phrogs.lmge.uca.fr) thorough [mmseqs2](https://github.com/soedinglab/MMseqs2). pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). Moreover, pharokka generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage). Check the full documentation [here](https://pharokka.readthedocs.io).
 
 If you are looking for rapid standardised annotation of prokaryotes, please use [prokka](https://github.com/tseemann/prokka) or [bakta](https://github.com/oschwengers/bakta).
 
