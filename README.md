@@ -43,6 +43,8 @@ For full documentation of output files, please visit https://pharokka.readthedoc
 # Installation
 
 **pharokka v1.1.0 is now available on bioconda**
+
+
 **Important: MMseqs2 has recently been updated to v14-7e284 and that version will not work with Pharokka. Please read below**
 
 * The MMseqs2 team have recently changed the internal MMseqs2 profile format in the new MMseqs2 version v14-7e284.
