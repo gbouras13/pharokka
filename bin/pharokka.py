@@ -62,14 +62,14 @@ if __name__ == "__main__":
     logging.info("Input args: %r", args)
 
     # check the database is installed
-    print("Checking database installation")
-    logger.info("Checking database installation")
-    database_installed = databases.check_db_installation(db_dir)
-    if database_installed == True:
-        print("All databases have been successfully checked")
-        logger.info("All databases have been successfully checked")
-    else:
-        sys.exit("\nThe database directory was unsuccessfully checked. Please run install_databases.py \n") 
+    # print("Checking database installation")
+    # logger.info("Checking database installation")
+    # database_installed = databases.check_db_installation(db_dir)
+    # if database_installed == True:
+    #     print("All databases have been successfully checked")
+    #     logger.info("All databases have been successfully checked")
+    # else:
+    #     sys.exit("\nThe database directory was unsuccessfully checked. Please run install_databases.py \n") 
 
     # instantiation/checking fasta and gene_predictor
     input_commands.validate_fasta(args.infile)
@@ -156,7 +156,7 @@ if __name__ == "__main__":
     post_processing.extract_terl(locus_df, out_dir, gene_predictor, logger )
     
     # delete tmp files
-    post_processing.remove_post_processing_files(out_dir, gene_predictor, args.meta)
+    #post_processing.remove_post_processing_files(out_dir, gene_predictor, args.meta)
 
     # Determine elapsed time
     elapsed_time = time.time() - start_time
