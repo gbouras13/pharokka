@@ -48,7 +48,7 @@ For full documentation of output files, please visit https://pharokka.readthedoc
 * As a result, pharokka needs to be run with MMseqs2 v13.4511.
 * As of v1.1.0, the pharokka bioconda dependencies are fixed to ensure that MMseqs2 is v13.4511. 
 * However, if you run into issues with pharokka (particularly pre v1.1.0 versions), please check that MMseqs2 is v13.4511 is installed (it will be clear in the pharokka***.log output file). I would recommend a fresh pharokka install in this instance, or trying `conda install -c bioconda pharokka mmseqs2==13.4511`.
-* If you are installing pharokka from the git repository, the environmwnt.yml file has been changed to fix MMseqs2 v13.4511, so proceed as below. 
+* If you are installing pharokka from the git repository, the environment.yml file has been changed to fix MMseqs2 v13.4511, so proceed as below. 
 
 The easiest way to install pharokka is via conda. For inexperienced command line users, this method is highly recommended.
 
