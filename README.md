@@ -16,12 +16,13 @@ Table of Contents
   - [Table of Contents](#table-of-contents)
 - [Method](#method)
 - [Installation](#installation)
+- [Databases](#databases)
 - [Beginner Conda Installation](#beginner-conda-installation)
 - [Usage](#usage)
 - [Version Log](#version-log)
 - [System](#system)
 - [Time](#time)
-- [Benchmarking](#Benchmarking)
+- [Benchmarking](#benchmarking)
 - [Bugs and Suggestions](#bugs-and-suggestions)
 - [Citation](#citation)
 
@@ -39,16 +40,20 @@ For full documentation of output files, please visit https://pharokka.readthedoc
 
 # Installation
 
-**pharokka v1.0.1 is now available on bioconda**
+**Important: MMseqs2 has recently been updated to v14-7e284 and will not work with Pharokka. Please read below**
 
-* v1.0.0 adds VFDB (current as of 15-09-22) and CARD (v3.2.4) databases for virulence factor and AMR gene identification.
-* These should install using the install_databases.py script, with the databases downloaded from a Zenodo repository.
-* You will need to re-install the databases if you updating from an earlier version of pharokka than v1.0.0. The database should work for all versions from v1.0.0 and afterwards.
-* If the script does not work, you an alternatively download the databases manually from Zenodo at https://zenodo.org/record/7081772/files/pharokka_database_v1.0.0.tar.gz and untar the directory in a location of your choice. Please see the Installation Section for more details.
+* MMseqs2 have recently changed the internal MMseqs2 profile format.
+* This means that the v 1.0.0 pharokka database will not work with MMseqs2 v14-7e284.
+* As a result, pharokka needs to be run with MMseqs2 v13.4511.
+* If you are installing Pharokka using bioconda (v1.0.0 and v1.0.1), a condition needs to be specified to force MMseqs2 v13.4511 installation (see below).
+* If you are installing Pharokka from the git repository, the environmwnt.yml file has been changed, so proceed as below. 
+* I am working on a fix for a new version of pharokka.
+
+**pharokka v1.0.1 is now available on bioconda**
 
 The easiest way to install pharokka is via conda. For inexperienced command line users, this method is highly recommended.
 
-`conda install -c bioconda pharokka`
+`conda install -c bioconda pharokka mmseqs2==13.4511`
 
 This will install all the dependencies along with pharokka. The dependencies are listed in environment.yml.
 
@@ -56,7 +61,7 @@ If conda is taking a long time to solve the environment, try using mamba:
 
 ```
 conda install mamba
-mamba install -c bioconda pharokka
+mamba install -c bioconda pharokka mmseqs2==13.4511
 ```
 
 Alternatively, the development version of pharokka can be installed manually via github. 
@@ -80,6 +85,13 @@ And then to run pharokka (assuming you are still in the pharokka directory)
 ./bin/install_databases.py -h
 ./bin/pharokka.py -h
 ```
+
+# Databases
+
+* v1.0.0 adds VFDB (current as of 15-09-22) and CARD (v3.2.4) databases for virulence factor and AMR gene identification.
+* These should install using the install_databases.py script, with the databases downloaded from a Zenodo repository.
+* You will need to re-install the databases if you updating from an earlier version of pharokka than v1.0.0. The database should work for all versions from v1.0.0 and afterwards.
+* If the script does not work, you an alternatively download the databases manually from Zenodo at https://zenodo.org/record/7081772/files/pharokka_database_v1.0.0.tar.gz and untar the directory in a location of your choice. Please see the Installation Section for more details.
 
 # Beginner Conda Installation
 
