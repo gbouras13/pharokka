@@ -28,7 +28,9 @@ Table of Contents
 
 # Method
 
-![pharokka workflow](img/pharokka_workflow.png?raw=true "pharokka Workflow")
+<p align="center">
+   <img src="img/pharokka_workflow.png" alt="pharokka Workflow" height=600>
+ </p>
 
 Briefly, default gene prediction is done using PHANOTATE (https://github.com/deprekate/PHANOTATE) and function annotation is based on the PHROGs database (https://phrogs.lmge.uca.fr) with mmseqs2. 
 
