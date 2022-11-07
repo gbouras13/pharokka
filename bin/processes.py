@@ -511,13 +511,15 @@ def run_mmseqs_card(db_dir, out_dir, threads, logger, gene_predictor):
 def reorient_terminase(filepath_in, out_dir, prefix, terminase_strand, terminase_start, logger):
     """
     re-orients phage to begin with large terminase subunit 
-    :param locus_df a pandas df as output from create_gff()
+    :param filepath_in input genome fasta
     :param out_dir: output directory path
-    :gene_predictor: string 'phanotate' or 'prodigal' with the gene predictor used
+    :param prefix: prefix for pharokka
+    :param terminase_strand: strandedness of the terminase large subunit. Is either 'pos' or 'neg'
+    :param terminase_start: start coordinate of terminase large subunit. 
     :logger: logger
     """
-    print("Input checked. Reorienting input genome to begin with terminase large subunit.")
-    logger.info("Input checked. Reorienting input genome to begin with terminase large subunit.")
+    print("Input checked. \nReorienting input genome to begin with terminase large subunit.")
+    logger.info("Input checked. \nReorienting input genome to begin with terminase large subunit.")
 
 
     # read in the fasta
@@ -525,6 +527,9 @@ def reorient_terminase(filepath_in, out_dir, prefix, terminase_strand, terminase
 
     # get length of the fasta
     length = len(record.seq)
+
+    if int(terminase_start) > length or int(terminase_start) < 1:
+        sys.exit("Error: terminase large subunit start coordinate specified is not within the provided genome length. Please check your input. \n")  
 
     # positive
 
