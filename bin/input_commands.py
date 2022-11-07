@@ -25,6 +25,9 @@ def get_input():
 	parser.add_argument('-m', '--meta', help='meta mode for metavirome input samples', action="store_true")
 	parser.add_argument('-c', '--coding_table', help='translation table for prodigal. Defaults to 11. Experimental only.', action="store", default = "11")
 	parser.add_argument('-e', '--evalue', help='E-value threshold for mmseqs2 PHROGs database search. Defaults to 1E-05.', action="store", default = "1E-05")
+	parser.add_argument('-te', '--terminase', help='Runs terminase large subunit re-orientation mode.', action="store_true")
+	parser.add_argument('-s', '--strand', help='Strand of terminase large subunit. Must be "pos" or "neg".', action="store", default = "+")
+	parser.add_argument('-ts', '--terminase_start', help='Start coordinate of the terminase large subunit.', action="store", default = "1")
 	parser.add_argument('-V', '--version', help='Version', action='version', version=v)
 	args = parser.parse_args()
 
@@ -63,8 +66,6 @@ def instantiate_dirs(output_dir, meta, gene_predictor, force):
 
 	return output_dir
 
-
-
 def validate_fasta(filename):
 	with open(filename, "r") as handle:
 		fasta = SeqIO.parse(handle, "fasta")
@@ -91,5 +92,20 @@ def validata_meta(filepath_in, meta):
 		if num_fastas > 1:
 			print("More than one contig detected in the input file. Re-running pharokka with -m meta mode is recommended. \n Continuing.")
 
+def validate_strand(strand):
+	if strand != "pos" and strand != "neg":
+		sys.exit("Error: terminase strand was incorrectly specified. It should be either 'pos' or 'neg'. Please check your input and try again. \n")  
+
+def validate_terminase_start(terminase_start):
+    try:
+        int(terminase_start)
+    except:
+        sys.exit("Error: terminase start coordinate specified is not an integer. Please check your input and try again. \n") 
 
 
+def validate_terminase(filepath_in, strand, terminase_start):
+	validate_strand(strand)
+	validate_terminase_start(terminase_start)
+	num_fastas = len([1 for line in open(filepath_in) if line.startswith(">")])
+	if num_fastas > 1:
+		sys.exit("Error: To reorient your phage genome to begin with the terminase large subunit, you can only input 1 phage genome. Multiple contigs were detected. Please try again. \n")  

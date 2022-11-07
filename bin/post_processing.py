@@ -144,7 +144,7 @@ def create_txt(cds_mmseqs_merge_df, length_df, out_dir, prefix):
     """
 
     # get contigs
-    contigs = length_df["contig"]
+    contigs = length_df["contig"].astype("string")
     # instantiate the length_df['cds_coding_density']
     length_df['cds_coding_density'] = 0.0
 
@@ -446,7 +446,7 @@ def update_fasta_headers(locus_df, out_dir, gene_predictor ):
 
 def extract_terl(locus_df, out_dir, gene_predictor, logger ):
     """
-    Updates the fasta output headers to have a consistent locus tag & gene description for downstrea use
+    Extract large terminase subunit
     :param locus_df a pandas df as output from create_gff()
     :param out_dir: output directory path
     :gene_predictor: string 'phanotate' or 'prodigal' with the gene predictor used

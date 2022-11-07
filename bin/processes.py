@@ -505,3 +505,56 @@ def run_mmseqs_card(db_dir, out_dir, threads, logger, gene_predictor):
     write_to_log(CARD_createtsv.stdout, logger)
     # remove the target dir when finished 
     sp.run(["rm", "-r", target_db_dir], check=True)
+
+
+
+def reorient_terminase(filepath_in, out_dir, prefix, terminase_strand, terminase_start, logger):
+    """
+    re-orients phage to begin with large terminase subunit 
+    :param filepath_in input genome fasta
+    :param out_dir: output directory path
+    :param prefix: prefix for pharokka
+    :param terminase_strand: strandedness of the terminase large subunit. Is either 'pos' or 'neg'
+    :param terminase_start: start coordinate of terminase large subunit. 
+    :logger: logger
+    """
+    print("Input checked. \nReorienting input genome to begin with terminase large subunit.")
+    logger.info("Input checked. \nReorienting input genome to begin with terminase large subunit.")
+
+
+    # read in the fasta
+    record = SeqIO.read(filepath_in, "fasta")
+
+    # get length of the fasta
+    length = len(record.seq)
+
+    if int(terminase_start) > length or int(terminase_start) < 1:
+        sys.exit("Error: terminase large subunit start coordinate specified is not within the provided genome length. Please check your input. \n")  
+
+    # positive
+
+    # reorient to start at the terminase  
+    # pos
+    if terminase_strand == "pos":
+        start = record.seq[(int(terminase_start) - 1):length]
+        end = record.seq[0:int(terminase_start)-1]
+        total = start + end
+
+    # neg
+    if terminase_strand == "neg":
+        record.seq = record.seq.reverse_complement()
+        start = record.seq[(length - int(terminase_start)):length]
+        end = record.seq[0:(length - int(terminase_start))]
+        total = start + end
+
+    # set sequence
+    record.seq = total
+
+    out_fasta = os.path.join(out_dir, prefix + '_genome_terminase_reoriented.fasta')
+
+    SeqIO.write(record, out_fasta, "fasta")
+
+
+
+
+
