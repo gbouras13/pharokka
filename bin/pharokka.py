@@ -75,12 +75,24 @@ if __name__ == "__main__":
     input_commands.validate_fasta(args.infile)
     input_commands.validate_gene_predictor(gene_predictor)
 
+
+    # define input - overwrite if terminase reorienter is true
+    input_fasta = args.infile
+
+    # terminase reorienting 
+    if args.terminase == True:
+        print("Checking terminase large subunit reorientation mode.")
+        logger.info("Checking terminase large subunit reorientation mode.")
+        input_commands.validata_terminase(args.infile)
+        processes.reorient_terminase(args.infile, out_dir, prefix, args.strand, args.terminase_start, logger)
+        input_fasta = os.path.join(out_dir, prefix + '_genome_terminase_reoriented.fasta')
+
     # validates meta mode 
-    input_commands.validata_meta(args.infile, args.meta)
+    input_commands.validata_meta(input_fasta, args.meta)
 
     # meta mode split input for trnascan and maybe phanotate 
     if args.meta == True:
-        num_fastas = processes.split_input_fasta(args.infile, out_dir)
+        num_fastas = processes.split_input_fasta(input_fasta, out_dir)
 
 
     # CDS predicton
@@ -91,14 +103,14 @@ if __name__ == "__main__":
         if args.meta == True:
             print("Applying meta mode.")
             logger.info("Applying meta mode.")
-            processes.run_phanotate_fasta_meta(args.infile, out_dir, args.threads, num_fastas)
-            processes.run_phanotate_txt_meta(args.infile, out_dir, args.threads, num_fastas)
+            processes.run_phanotate_fasta_meta(input_fasta, out_dir, args.threads, num_fastas)
+            processes.run_phanotate_txt_meta(input_fasta, out_dir, args.threads, num_fastas)
             processes.concat_phanotate_meta(out_dir, num_fastas)
         else:
-            processes.run_phanotate(args.infile, out_dir, logger)
+            processes.run_phanotate(input_fasta, out_dir, logger)
     if gene_predictor == "prodigal":
         logger.info("Starting Prodigal")
-        processes.run_prodigal(args.infile, out_dir, logger, args.meta, args.coding_table)
+        processes.run_prodigal(input_fasta, out_dir, logger, args.meta, args.coding_table)
 
     # translate fastas
     logger.info("Translating gene predicted fastas.")
@@ -109,15 +121,15 @@ if __name__ == "__main__":
     if args.meta == True:
         print("Running tRNAscan-SE. Applying meta mode.")
         logger.info("Starting tRNA-scanSE. Applying meta mode.")
-        processes.run_trnascan_meta(args.infile, out_dir, args.threads, num_fastas)
+        processes.run_trnascan_meta(input_fasta, out_dir, args.threads, num_fastas)
         processes.concat_trnascan_meta(out_dir, num_fastas)
     else:
         print("Running tRNAscan-SE.")
         logger.info("Starting tRNA-scanSE")
-        processes.run_trna_scan(args.infile,args.threads, out_dir, logger)
+        processes.run_trna_scan(input_fasta,args.threads, out_dir, logger)
     # run minced and aragorn 
-    processes.run_minced(args.infile, out_dir, prefix, logger)
-    processes.run_aragorn(args.infile, out_dir, prefix, logger)
+    processes.run_minced(input_fasta, out_dir, prefix, logger)
+    processes.run_aragorn(input_fasta, out_dir, prefix, logger)
 
     # running mmseqs2
     logger.info("Starting mmseqs2.")
@@ -135,11 +147,11 @@ if __name__ == "__main__":
     (cds_mmseqs_merge_df,vfdb_results, card_results) = post_processing.process_results(db_dir, out_dir, prefix, gene_predictor)
 
     # gets df of length and gc for each contig
-    length_df = post_processing.get_contig_name_lengths(args.infile)
+    length_df = post_processing.get_contig_name_lengths(input_fasta)
     tmrna_flag = post_processing.parse_aragorn(out_dir,length_df, prefix)
 
     # create gff and return locustag for table
-    (locustag, locus_df) = post_processing.create_gff(cds_mmseqs_merge_df, length_df, args.infile, out_dir, prefix, locustag, tmrna_flag)
+    (locustag, locus_df) = post_processing.create_gff(cds_mmseqs_merge_df, length_df, input_fasta, out_dir, prefix, locustag, tmrna_flag)
     post_processing.create_tbl(cds_mmseqs_merge_df, length_df, out_dir, prefix, gene_predictor, tmrna_flag, locustag)
     # write the summary tsv outputs
     post_processing.create_txt(cds_mmseqs_merge_df, length_df,out_dir, prefix)
@@ -147,7 +159,7 @@ if __name__ == "__main__":
     # convert to genbank
     logger.info("Converting gff to genbank.")
     print("Converting gff to genbank.")
-    processes.convert_gff_to_gbk(args.infile, out_dir, prefix)
+    processes.convert_gff_to_gbk(input_fasta, out_dir, prefix)
 
     # update fasta headers and final output tsv
     post_processing.update_fasta_headers(locus_df, out_dir, gene_predictor )
