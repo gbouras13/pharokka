@@ -25,9 +25,9 @@ def get_input():
 	parser.add_argument('-m', '--meta', help='meta mode for metavirome input samples', action="store_true")
 	parser.add_argument('-c', '--coding_table', help='translation table for prodigal. Defaults to 11. Experimental only.', action="store", default = "11")
 	parser.add_argument('-e', '--evalue', help='E-value threshold for mmseqs2 PHROGs database search. Defaults to 1E-05.', action="store", default = "1E-05")
-	parser.add_argument('-te', '--terminase', help='Runs terminase large subunit re-orientation mode.', action="store_true")
+	parser.add_argument('-te', '--terminase', help='Runs terminase large subunit re-orientation mode. Single genome input only and requires -s and -te to be specified.', action="store_true")
 	parser.add_argument('-s', '--strand', help='Strand of terminase large subunit. Must be "pos" or "neg".', action="store", default = "nothing")
-	parser.add_argument('-ts', '--terminase_start', help='Start coordinate of the terminase large subunit.', action="store", default = "0")
+	parser.add_argument('-ts', '--terminase_start', help='Start coordinate of the terminase large subunit.', action="store", default = "nothing")
 	parser.add_argument('-V', '--version', help='Version', action='version', version=v)
 	args = parser.parse_args()
 
@@ -106,7 +106,7 @@ def validate_terminase_start(terminase_start):
 def validate_terminase(filepath_in, strand, terminase_start):
 	if strand == "nothing":
 		sys.exit("Error: you specified -te to reorient your phage to begin with the terminase large subunit, but didn't specify its strand with -s. Please check your input and try again. \n") 
-	if terminase_start == "0":
+	if terminase_start == "nothing":
 		sys.exit("Error: you specified -te to reorient your phage to begin with the terminase large subunit, but didn't specify its start coordinate with -ts. Please check your input and try again. \n") 
 	validate_strand(strand)
 	validate_terminase_start(terminase_start)
