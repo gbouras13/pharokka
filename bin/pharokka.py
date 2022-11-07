@@ -81,8 +81,8 @@ if __name__ == "__main__":
 
     # terminase reorienting 
     if args.terminase == True:
-        print("Checking terminase large subunit reorientation mode.")
-        logger.info("Checking terminase large subunit reorientation mode.")
+        print("You have chosen to reorient your genome to start with the terminase large subunit. Checking the input file.")
+        logger.info("You have chosen to reorient your genome to start with the terminase large subunit. Checking the input file.")
         input_commands.validata_terminase(args.infile)
         processes.reorient_terminase(args.infile, out_dir, prefix, args.strand, args.terminase_start, logger)
         input_fasta = os.path.join(out_dir, prefix + '_genome_terminase_reoriented.fasta')
