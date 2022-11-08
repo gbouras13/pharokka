@@ -143,8 +143,11 @@ def create_txt(cds_mmseqs_merge_df, length_df, out_dir, prefix):
     :return:
     """
 
-    # get contigs
+    # get contigs - convert to string to make the match work for integer contigs
     contigs = length_df["contig"].astype("string")
+    # convert to string to make the match work for integer contigs
+    cds_mmseqs_merge_df['contig'] = cds_mmseqs_merge_df['contig'].astype("string")
+
     # instantiate the length_df['cds_coding_density']
     length_df['cds_coding_density'] = 0.0
 
