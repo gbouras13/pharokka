@@ -20,6 +20,7 @@ Table of Contents
 - [pharokka](#pharokka)
   - [Fast Phage Annotation Program](#fast-phage-annotation-program)
   - [Table of Contents](#table-of-contents)
+- [Quick Start](#quick-start)
 - [Installation](#installation)
 - [Database Installation](#database-installation)
 - [Beginner Conda Installation](#beginner-conda-installation)
@@ -31,6 +32,21 @@ Table of Contents
 - [Bugs and Suggestions](#bugs-and-suggestions)
 - [Citation](#citation)
 
+# Quick Start
+
+The easiest way to install pharokka is via conda:
+
+`conda install -c bioconda pharokka`
+
+Followed by database download and installation:
+
+`install_databases.py -o <path/to/databse_dir>`
+
+And finally annotation:
+
+`pharokka.py -i <phage fasta file> -o <output directory> -d <path/to/database_dir> -t <threads>`
+
+Please read below for more details, especially if you are an inexperienced command line user.
 
 # Installation
 
@@ -82,7 +98,7 @@ And then to run pharokka (assuming you are still in the pharokka directory)
 
 # Database Installation
 
-* v1.0.0 onwards adds VFDB (current as of 15-09-22) and CARD (v3.2.4) databases for virulence factor and AMR gene identification.
+* versions v1.0.0 and onwards add VFDB (current as of 15-09-22) and CARD (v3.2.4) databases for virulence factor and AMR gene identification.
 * These should install using the install_databases.py script, with the databases downloaded from a Zenodo repository.
 * You will need to re-install the databases if you updating from an earlier version of pharokka than v1.0.0. The database should work for all versions from v1.0.0 and afterwards.
 * If the script does not work, you an alternatively download the databases manually from Zenodo at https://zenodo.org/record/7081772/files/pharokka_database_v1.0.0.tar.gz and untar the directory in a location of your choice. Please see the Installation Section for more details.
@@ -148,11 +164,11 @@ pharokka.py -h
 
 Once the databases have finished downloading, to run pharokka:
 
-`pharokka.py -i <fasta file> -o <output folder> -t <threads>`
+`pharokka.py -i <fasta file> -o <output directory> -t <threads>`
 
 To specify a different database directory (recommended):
 
-`pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads> -p <prefix>`
+`pharokka.py -i <fasta file> -o <output directory> -d <path/to/database_dir> -t <threads> -p <prefix>`
 
 For a full explanation of all arguments, please see [usage](docs/run.md).
 
