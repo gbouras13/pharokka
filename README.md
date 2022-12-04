@@ -2,10 +2,10 @@
 pharokka
 ===============
 
-Fast Phage Annotation Program
+Fast Phage Annotation Tool
 ------------
 
->pharokka is a rapid standardised annotation pipeline for bacteriophage genomes.
+pharokka is a rapid standardised annotation tool for bacteriophage genomes and metagenomes.
 
 If you are looking for rapid standardised annotation of bacterial genomes, please use [prokka](https://github.com/tseemann/prokka), which inspired the creation of pharokka, or [bakta](https://github.com/oschwengers/bakta).
 
@@ -52,15 +52,6 @@ Please read below for more details, especially if you are an inexperienced comma
 
 **pharokka v1.1.0 is now available on bioconda**
 
-**Important: MMseqs2 has recently been updated to v14-7e284 and that version will not work with Pharokka. Please read below**
-
-* The MMseqs2 team have recently changed the internal MMseqs2 profile format in the new MMseqs2 version v14-7e284.
-* This means that the pharokka database will not work with MMseqs2 v14-7e284.
-* As a result, pharokka needs to be run with MMseqs2 v13.4511.
-* As of v1.1.0, the pharokka bioconda dependencies are fixed to ensure that MMseqs2 is installed with version v13.4511. 
-* However, if you run into issues with pharokka (particularly pre v1.1.0 versions), please check that MMseqs2 v13.4511 is installed (it will be clear in the pharokka***.log output file). I would recommend a fresh pharokka install in this instance, or trying `conda install -c bioconda pharokka mmseqs2==13.4511`.
-* If you are installing pharokka from the git repository, the environment.yml file has been changed to fix MMseqs2 v13.4511, so proceed as below. 
-
 The easiest way to install pharokka is via conda. For inexperienced command line users, this method is highly recommended.
 
 `conda install -c bioconda pharokka`
@@ -74,7 +65,7 @@ conda install mamba
 mamba install -c bioconda pharokka
 ```
 
-Alternatively, the development version of pharokka can be installed manually via github. 
+Alternatively, the development version of pharokka (which may include new, untested features) can be installed manually via github. 
 
 `git clone https://github.com/gbouras13/pharokka.git`
 
