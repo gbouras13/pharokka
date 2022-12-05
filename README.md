@@ -32,7 +32,7 @@ Table of Contents
 - [pharokka](#pharokka)
   - [Fast Phage Annotation Program](#fast-phage-annotation-program)
   - [Paper](#paper)
-  - [Brief Overview](#brief-overview
+  - [Brief Overview](#brief-overview)
   - [Table of Contents](#table-of-contents)
 - [Quick Start](#quick-start)
 - [Installation](#installation)
