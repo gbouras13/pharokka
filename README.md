@@ -7,6 +7,12 @@ Fast Phage Annotation Tool
 
 pharokka is a rapid standardised annotation tool for bacteriophage genomes and metagenomes.
 
+pharokka has been recently published in *Bioinformatics*
+
+Bouras G., Nepal R., Houtak G., Psaltis A.J., Wormald P-J., Vreugde S. (2022) "Pharokka: a fast scalable bacteriophage annotation tool", Bioinformatics, https://doi.org/10.1093/bioinformatics/btac776.
+
+If you use pharokka, please see the [Citation](#citation) section for a list of all programs pharokka uses, in order to fully recognise the creators of these tools for their work.
+
 If you are looking for rapid standardised annotation of bacterial genomes, please use [prokka](https://github.com/tseemann/prokka), which inspired the creation of pharokka, or [bakta](https://github.com/oschwengers/bakta).
 
 <p align="center">
@@ -271,4 +277,4 @@ With the following full citations for the constituent tools below:
 * Bland C., Ramsey L., Sabree F., Lowe M., Brown K., Kyrpides N.C., Hugenholtz P. , "CRISPR Recognition Tool (CRT): a tool for automatic detection of clustered regularly interspaced palindromic repeats", BMC Bioinformatics, (2007), https://doi.org/10.1186/1471-2105-8-209.
 * Laslett D., Canback B., "ARAGORN, a program to detect tRNA genes and tmRNA genes in nucleotide sequences.", Nucleic Acids Research (2004) https://doi.org/10.1093/nar/gkh152.
 * Chen L., Yang J., Yao Z., Sun L., Shen Y., Jin Q., "VFDB: a reference database for bacterial virulence factors", Nucleic Acids Research (2005) https://doi.org/10.1093/nar/gki008.
-* Alcock et al, "CARD 2020: antibiotic resistome surveillance with the comprehensive antibiotic resistance database." Nucleic Acids Research (2020) https:doi.org/10.1093/nar/gkz935.
+* Alcock et al, "CARD 2020: antibiotic resistome surveillance with the comprehensive antibiotic resistance database." Nucleic Acids Research (2020) https://doi.org/10.1093/nar/gkz935.
