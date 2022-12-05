@@ -7,13 +7,19 @@ Fast Phage Annotation Tool
 
 pharokka is a rapid standardised annotation tool for bacteriophage genomes and metagenomes.
 
-pharokka has been recently published in *Bioinformatics*
+If you are looking for rapid standardised annotation of bacterial genomes, please use [prokka](https://github.com/tseemann/prokka), which inspired the creation of pharokka, or [bakta](https://github.com/oschwengers/bakta).
+
+Paper
+-----------
+
+pharokka has been recently published in *Bioinformatics*:
 
 Bouras G., Nepal R., Houtak G., Psaltis A.J., Wormald P-J., Vreugde S. (2022) "Pharokka: a fast scalable bacteriophage annotation tool", Bioinformatics, https://doi.org/10.1093/bioinformatics/btac776.
 
-If you use pharokka, please see the [Citation](#citation) section for a list of all programs pharokka uses, in order to fully recognise the creators of these tools for their work.
+If you use pharokka, please see the full [Citation](#citation) section for a list of all programs pharokka uses, in order to fully recognise the creators of these tools for their work.
 
-If you are looking for rapid standardised annotation of bacterial genomes, please use [prokka](https://github.com/tseemann/prokka), which inspired the creation of pharokka, or [bakta](https://github.com/oschwengers/bakta).
+Brief Overview
+-----------
 
 <p align="center">
   <img src="img/pharokka_workflow.png" alt="pharokka Workflow" height=600>
@@ -25,6 +31,8 @@ Table of Contents
 -----------
 - [pharokka](#pharokka)
   - [Fast Phage Annotation Program](#fast-phage-annotation-program)
+  - [Paper](#paper)
+  - [Brief Overview](#brief-overview
   - [Table of Contents](#table-of-contents)
 - [Quick Start](#quick-start)
 - [Installation](#installation)
