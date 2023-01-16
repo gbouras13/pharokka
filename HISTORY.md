@@ -12,6 +12,7 @@ History
 * Adds --terminase terminase mode to re-orient a single contig phage to begin with a certain orientation and coordinate (most commonly, the large terminase subunit). With this, you must also specify --terminase_strand the strand of the terL gene and --terminase_start the start coordinate.
 * All locus tags end with 4 digits (trailing zeros) in order to play nice with vConTACT2 and start with 1 not 0.
 * In meta mode, the locus tags now begin with the contig header, not a random string (or chosen prefix).
+* Cleans up the .tbl so it should automatically be accepted by NCBI Bankit.
 
 
 1.1.0 (2022-10-20)
