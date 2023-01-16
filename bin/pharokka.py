@@ -133,7 +133,7 @@ if __name__ == "__main__":
         else:
             processes.run_phanotate(input_fasta, out_dir, logger)
     if gene_predictor == "prodigal":
-        print("Running Prodigal using Pyrodigal.")
+        print("Using Prodigal using Pyrodigal.")
         logger.info("Running Prodigal using Pyrodigal.")
         #processes.run_prodigal(input_fasta, out_dir, logger, args.meta, args.coding_table)
         processes.run_pyrodigal(input_fasta, out_dir,logger, args.meta, args.coding_table)

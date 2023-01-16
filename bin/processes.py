@@ -251,8 +251,6 @@ def run_pyrodigal(filepath_in, out_dir,logger, meta, coding_table):
     :param coding_table coding table for prodigal (default 11)
     :return:
     """
-    print("Running Pyrodigal.")
-    logger.info("Running Pyrodigal.")
 
     prodigal_metamode = False
     if meta == True:

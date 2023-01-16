@@ -375,11 +375,9 @@ def create_gff(cds_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag,
             subset_dfs = []
             for contig in contigs:
                 subset_df = trna_df[trna_df['contig'] == contig].reset_index()
-
                 # keep only trnas before indexing
-                subset_df = subset_df[(trna_df['Region'] == 'tRNA') | (subset_df['Region'] == 'pseudogene')]
+                subset_df = subset_df[(subset_df['Region'] == 'tRNA') | (subset_df['Region'] == 'pseudogene')]
                 subset_df = subset_df.reset_index(drop=True)
-
                 subset_df['count'] = subset_df.index
                 # so not 0 indexed
                 subset_df['count'] = subset_df['count'] + 1 
@@ -403,14 +401,10 @@ def create_gff(cds_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag,
         trna_df[['isotypes','anticodon']] = trna_df['isotypes'].str.split(';anticodon=',expand=True)
         trna_df[['anticodon','rest']] = trna_df['anticodon'].str.split(';gene_biotype',expand=True)
         trna_df['trna_product']='tRNA-'+trna_df['isotypes']+"("+trna_df['anticodon']+")"
-        print(trna_df['attributes'])
-        print(trna_df['isotypes'])
-        print(trna_df['anticodon'])
-        print(trna_df['rest'])
         trna_df = trna_df.drop(columns=['attributes'])
         trna_df['attributes'] = "ID=" + trna_df['locus_tag'] + ";" + "trna=" + trna_df["trna_product"].astype(str) + ";" + "isotype=" + trna_df["isotypes"].astype(str) + ";" + "anticodon=" + trna_df["anticodon"].astype(str) + ";" + "locus_tag="  + trna_df['locus_tag']
         trna_df = trna_df.drop(columns=['isotypes', 'anticodon', 'rest', 'trna_product', 'locus_tag'])
-        # append to teh end of the gff
+        # append to the end of the gff
         with open(os.path.join(out_dir, "pharokka_tmp.gff"), 'a') as f:
             trna_df.to_csv(f, sep="\t", index=False, header=False)
 
