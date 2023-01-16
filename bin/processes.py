@@ -8,6 +8,7 @@ import logging
 from BCBio import GFF
 from Bio.Seq import Seq
 from datetime import datetime
+import pyrodigal
 
 
 def write_to_log(s, logger):
@@ -219,7 +220,7 @@ def run_phanotate(filepath_in, out_dir,logger):
 
 def run_prodigal(filepath_in, out_dir,logger, meta, coding_table):
     """
-    Gets number of crisprs
+    Gets CDS using prodigal
     :param filepath_in: input filepath
     :param out_dir: output directory
     :param logger logger
@@ -238,6 +239,60 @@ def run_prodigal(filepath_in, out_dir,logger, meta, coding_table):
         write_to_log(prodigal.stdout, logger)
     except:
         sys.exit("Error with Prodigal\n")  
+
+
+def run_pyrodigal(filepath_in, out_dir,logger, meta, coding_table):
+    """
+    Gets CDS using pyrodigal
+    :param filepath_in: input filepath
+    :param out_dir: output directory
+    :param logger logger
+    :param meta Boolean - metagenomic mode flag 
+    :param coding_table coding table for prodigal (default 11)
+    :return:
+    """
+    print("Running Pyrodigal")
+    # try:
+    #     if meta == True:
+    #         print("Prodigal Meta Mode Enabled")
+    #         logger.info("Prodigal Meta Mode Enabled")
+    #         prodigal = sp.Popen(["prodigal", "-i", filepath_in, "-d", os.path.join(out_dir, "prodigal_out_tmp.fasta"), "-f", "gff", "-o", os.path.join(out_dir, "prodigal_out.gff"), "-p", "meta", "-g", str(coding_table) ], stdout=sp.PIPE, stderr=sp.DEVNULL) 
+    #     else:
+    #         prodigal = sp.Popen(["prodigal", "-i", filepath_in, "-d", os.path.join(out_dir, "prodigal_out_tmp.fasta"), "-f", "gff", "-o", os.path.join(out_dir, "prodigal_out.gff"), "-g", str(coding_table) ], stdout=sp.PIPE, stderr=sp.DEVNULL) 
+    #     write_to_log(prodigal.stdout, logger)
+    # except:
+    #     sys.exit("Error with Prodigal\n") 
+    # 
+    prodigal_metamode = False
+    if meta == True:
+        prodigal_metamode = True 
+        print("Prodigal Meta Mode Enabled")
+        logger.info("Prodigal Meta Mode Enabled")
+
+    # for training if you want different coding table
+    seqs = [bytes(record.seq) for record in SeqIO.parse(filepath_in, 'fasta' )]
+    record = SeqIO.parse(filepath_in, 'fasta' )
+    orf_finder = pyrodigal.OrfFinder(meta=prodigal_metamode  )
+
+    if prodigal_metamode == False:
+        trainings_info = orf_finder.train(*seqs, translation_table=int(coding_table))
+        orf_finder = pyrodigal.OrfFinder(trainings_info, meta=prodigal_metamode )
+
+    with open(os.path.join(out_dir, "prodigal_out.gff"), "w") as dst:
+        for i, record in enumerate(SeqIO.parse(filepath_in, 'fasta' )):
+            genes = orf_finder.find_genes(str(record.seq))
+            genes.write_gff(dst, sequence_id=record.id)
+    
+    with open(os.path.join(out_dir, "prodigal_out_tmp.fasta"), "w") as dst:
+        for i, record in enumerate(SeqIO.parse(filepath_in, 'fasta' )):
+            genes = orf_finder.find_genes(str(record.seq))
+            genes.write_genes(dst, sequence_id=record.id)
+
+    
+
+
+
+
 
 def tidy_phanotate_output(out_dir):
     """
@@ -340,8 +395,8 @@ def run_mmseqs(db_dir, out_dir, threads, logger, gene_predictor, evalue):
     :param evalue: evalue for mmseqs2
     :return:
     """
-    print("Running mmseqs2 on PHROGs Database.")
-    logger.info("Running mmseqs2 on PHROGs Database.")
+    print("Running MMseqs2 on PHROGs Database.")
+    logger.info("Running MMseqs2 on PHROGs Database.")
 
     # declare directories - phrog_db_dir is now the db_dir
     phrog_db_dir = db_dir
@@ -554,7 +609,35 @@ def reorient_terminase(filepath_in, out_dir, prefix, terminase_strand, terminase
 
     SeqIO.write(record, out_fasta, "fasta")
 
+def run_mash_sketch(filepath_in, out_dir, logger):
+    """
+    Runs mash sketch
+    :param filepath_in: input filepath
+    :param out_dir: output directory
+    :param logger logger
+    :return:
+    """
+    try:
+        mash_sketch = sp.Popen(["mash", "sketch", filepath_in, "-o", os.path.join(out_dir, "input_mash_sketch.msh"), "-i"], stderr=sp.PIPE, stdout=sp.DEVNULL) 
+        write_to_log(mash_sketch.stderr, logger)
+    except:
+        sys.exit("Error with mash sketch\n")  
 
 
+def run_mash_dist( out_dir,db_dir, logger):
+    """
+    Runs mash
+    :param filepath_in: input filepath
+    :param out_dir: output directory
+    :param logger logger
+    :return:
+    """
+    mash_tsv = os.path.join(out_dir,"mash_out.tsv")
+    outFile = open(mash_tsv, "w")
+    try:
+        mash_dist = sp.Popen(["mash", "dist", os.path.join(out_dir, "input_mash_sketch.msh"), os.path.join(db_dir, "5Jan2023_genomes.fa.msh"), "-d", "0.2", "-i" ], stdout=outFile, stderr=sp.PIPE) 
+        write_to_log(mash_dist.stderr, logger)
+    except:
+        sys.exit("Error with mash dist\n")  
 
 

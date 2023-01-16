@@ -13,6 +13,7 @@ nav:
     - ABOUT:
       - Overview: index.md
       - Why Use pharokka?: reasons.md
+      - Citation: citation.md
     - RUNNING:
       - Install: install.md
       - Usage: run.md
