@@ -108,9 +108,9 @@ def validate_terminase_start(terminase_start):
 
 def validate_terminase(filepath_in, terminase_strand, terminase_start):
 	if terminase_strand == "nothing":
-		sys.exit("Error: you specified -te to reorient your phage to begin with the terminase large subunit, but didn't specify its strand with -s. Please check your input and try again. \n") 
+		sys.exit("Error: you specified --terminase to reorient your phage to begin with the terminase large subunit, but didn't specify its strand with --terminase_strand. Please check your input and try again. \n") 
 	if terminase_start == "nothing":
-		sys.exit("Error: you specified -te to reorient your phage to begin with the terminase large subunit, but didn't specify its start coordinate with -ts. Please check your input and try again. \n") 
+		sys.exit("Error: you specified --terminase to reorient your phage to begin with the terminase large subunit, but didn't specify its start coordinate with --terminase_start. Please check your input and try again. \n") 
 	validate_strand(terminase_strand)
 	validate_terminase_start(terminase_start)
 	num_fastas = len([1 for line in open(filepath_in) if line.startswith(">")])

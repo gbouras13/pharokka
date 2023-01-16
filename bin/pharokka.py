@@ -96,19 +96,19 @@ if __name__ == "__main__":
 
     # terminase reorienting 
     if args.terminase == True:
-        print("You have chosen to reorient your genome to start with the terminase large subunit by specifying --terminase. Checking the input.")
-        logger.info("You have chosen to reorient your genome to start with the terminase large subunit by specifying --terminase. Checking the input.")
+        print("You have chosen to reorient your genome by specifying --terminase. Checking the input.")
+        logger.info("You have chosen to reorient your genome by specifying --terminase. Checking the input.")
         input_commands.validate_terminase(args.infile, args.terminase_strand, args.terminase_start)
         processes.reorient_terminase(args.infile, out_dir, prefix, args.terminase_strand, args.terminase_start, logger)
         input_fasta = os.path.join(out_dir, prefix + '_genome_terminase_reoriented.fasta')
 
     if args.terminase_strand != 'nothing' and args.terminase == False:
-        print("You have specified a terminase strand using --strand to reorient your genome to start, but you have not specified -te to activate terminase mode. \nContinuing without reorientation.")
-        logger.info("You have specified a terminase strand using --strand to reorient your genome to start, but you have not specified -te to activate terminase mode. \nContinuing without reorientation.")
+        print("You have specified a terminase strand using --strand to reorient your genome, but you have not specified --terminase to activate terminase mode. \nContinuing without reorientation.")
+        logger.info("You have specified a terminase strand using --strand to reorient your genome, but you have not specified --terminase to activate terminase mode. \nContinuing without reorientation.")
 
     if args.terminase_strand != 'nothing' and args.terminase_start == False:
-        print("You have specified a terminase start coordinate using --terminase_start to reorient your genome to start, but you have not specified -te to activate terminase mode. \nContinuing without reorientation.")
-        logger.info("You have specified a terminase start coordinate using --terminase_start to reorient your genome to start, but you have not specified -te to activate terminase mode. \nContinuing without reorientation.")
+        print("You have specified a terminase start coordinate using --terminase_start to reorient your genome, but you have not specified --terminase to activate terminase mode. \nContinuing without reorientation.")
+        logger.info("You have specified a terminase start coordinate using --terminase_start to reorient your genome, but you have not specified --terminase to activate terminase mode. \nContinuing without reorientation.")
 
 
     # validates meta mode 

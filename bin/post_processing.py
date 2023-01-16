@@ -382,7 +382,6 @@ def create_gff(cds_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag,
                 # so not 0 indexed
                 subset_df['count'] = subset_df['count'] + 1 
                 # z fill to make the locus tag 4
-                subset_df['count'] = subset_df['count'].astype(str).str.zfill(4)
                 subset_df['locus_tag'] = contig + "_tRNA_" + subset_df['count'].astype(str).str.zfill(4)
                 subset_df = subset_df.drop(columns=['count'])
                 subset_dfs.append(subset_df)
@@ -392,8 +391,10 @@ def create_gff(cds_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag,
             # keep only trnas
             trna_df = trna_df[(trna_df['Region'] == 'tRNA') | (trna_df['Region'] == 'pseudogene')]
             trna_df = trna_df.reset_index(drop=True)
-            trna_df['locus_tag'] = locustag + "_tRNA_" + trna_df.index.astype(str).str.zfill(4)    
-       
+            trna_df['count'] = trna_df.index 
+            trna_df['count'] = trna_df['count'] + 1 
+            trna_df['locus_tag'] = locustag + "_tRNA_" + trna_df['count'].astype(str).str.zfill(4)    
+            trna_df = trna_df.drop(columns=['count'])
 
         trna_df.start = trna_df.start.astype(int)
         trna_df.stop = trna_df.stop.astype(int)
@@ -435,8 +436,11 @@ def create_gff(cds_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag,
             minced_df = pd.concat(subset_dfs, axis=0, ignore_index=True)
             minced_df = minced_df.drop(columns=['index'])
         else:
-            minced_df['locus_tag'] = locustag + "_CRISPR_" + minced_df.index.astype(str).str.zfill(4)    
-       
+            minced_df['count'] = minced_df.index 
+            minced_df['count'] = minced_df['count'] + 1 
+            minced_df['locus_tag'] = locustag + "_CRISPR_" + minced_df['count'].astype(str).str.zfill(4)    
+            minced_df = minced_df.drop(columns=['count'])
+
         minced_df['attributes'] = "ID=" + minced_df['locus_tag']   + ";" + "rpt_type=" + minced_df["rpt_type"].astype(str) + ";" + "rpt_family=" + minced_df["rpt_family"].astype(str) + ";" + "rpt_unit_seq=" + minced_df["rpt_unit_seq"].astype(str) + ";" + "locus_tag=" + minced_df['locus_tag'] 
         minced_df = minced_df.drop(columns=['rpt_unit_seq', 'rpt_family', 'rpt_type', 'locus_tag'])
         # append to the end of the gff
@@ -465,9 +469,13 @@ def create_gff(cds_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag,
                 subset_dfs.append(subset_df)
             tmrna_df = pd.concat(subset_dfs, axis=0, ignore_index=True)
             tmrna_df = tmrna_df.drop(columns=['index'])
-        else:
-            tmrna_df['locus_tag'] = locustag + "_tmRNA_" + tmrna_df.index.astype(str).str.zfill(4)    
-       
+        else:  
+            tmrna_df['count'] = tmrna_df.index 
+            tmrna_df['count'] = tmrna_df['count'] + 1 
+            tmrna_df['locus_tag'] = locustag + "_tmRNA_" + tmrna_df['count'].astype(str).str.zfill(4)    
+            tmrna_df = tmrna_df.drop(columns=['count'])
+
+
         tmrna_df['attributes'] = "ID=" + tmrna_df['locus_tag']   + ";" + tmrna_df['attributes'].astype(str) + ';locus_tag=' + tmrna_df['locus_tag']  
         tmrna_df = tmrna_df.drop(columns=['locus_tag'])
         # append to the end of the gff
