@@ -96,8 +96,8 @@ if __name__ == "__main__":
 
     # terminase reorienting 
     if args.terminase == True:
-        print("You have chosen to reorient your genome to start with the terminase large subunit by specifying -te terminase mode. Checking the input.")
-        logger.info("You have chosen to reorient your genome to start with the terminase large subunit. Checking the input.")
+        print("You have chosen to reorient your genome to start with the terminase large subunit by specifying --terminase. Checking the input.")
+        logger.info("You have chosen to reorient your genome to start with the terminase large subunit by specifying --terminase. Checking the input.")
         input_commands.validate_terminase(args.infile, args.terminase_strand, args.terminase_start)
         processes.reorient_terminase(args.infile, out_dir, prefix, args.terminase_strand, args.terminase_start, logger)
         input_fasta = os.path.join(out_dir, prefix + '_genome_terminase_reoriented.fasta')
@@ -133,8 +133,8 @@ if __name__ == "__main__":
         else:
             processes.run_phanotate(input_fasta, out_dir, logger)
     if gene_predictor == "prodigal":
-        print("Using Prodigal using Pyrodigal.")
-        logger.info("Running Prodigal using Pyrodigal.")
+        print("Implementing Prodigal using Pyrodigal.")
+        logger.info("Implementing Prodigal using Pyrodigal.")
         #processes.run_prodigal(input_fasta, out_dir, logger, args.meta, args.coding_table)
         processes.run_pyrodigal(input_fasta, out_dir,logger, args.meta, args.coding_table)
 

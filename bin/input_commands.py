@@ -106,12 +106,12 @@ def validate_terminase_start(terminase_start):
         sys.exit("Error: terminase start coordinate specified is not an integer. Please check your input and try again. \n") 
 
 
-def validate_terminase(filepath_in, terminase, strand, terminase_start):
-	if strand == "nothing":
+def validate_terminase(filepath_in, terminase_strand, terminase_start):
+	if terminase_strand == "nothing":
 		sys.exit("Error: you specified -te to reorient your phage to begin with the terminase large subunit, but didn't specify its strand with -s. Please check your input and try again. \n") 
 	if terminase_start == "nothing":
 		sys.exit("Error: you specified -te to reorient your phage to begin with the terminase large subunit, but didn't specify its start coordinate with -ts. Please check your input and try again. \n") 
-	validate_strand(strand)
+	validate_strand(terminase_strand)
 	validate_terminase_start(terminase_start)
 	num_fastas = len([1 for line in open(filepath_in) if line.startswith(">")])
 	if num_fastas > 1:
