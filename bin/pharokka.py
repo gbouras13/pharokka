@@ -25,6 +25,16 @@ if __name__ == "__main__":
     # get the args
     args = input_commands.get_input()
 
+    if args.citation == True:
+        print("If you use pharokka in your research, please cite:")
+        print("George Bouras, Roshan Nepal, Ghais Houtak, Alkis James Psaltis, Peter-John Wormald, Sarah Vreugde.")
+        print("Pharokka: a fast scalable bacteriophage annotation tool.")
+        print("Bioinformatics, Volume 39, Issue 1, January 2023, btac776.")
+        print("https://doi.org/10.1093/bioinformatics/btac776.")
+        print("You should also cite the full list of tools pharokka uses, which can be found at https://github.com/gbouras13/pharokka#citation.")
+        sys.exit()
+
+
     # after input so that version is printed only
     print("Starting pharokka v" + v)
 
@@ -62,14 +72,19 @@ if __name__ == "__main__":
     logging.info("Input args: %r", args)
 
     # check the database is installed
-    print("Checking database installation")
-    logger.info("Checking database installation")
+    print("Checking database installation.")
+    logger.info("Checking database installation.")
     database_installed = databases.check_db_installation(db_dir)
     if database_installed == True:
-        print("All databases have been successfully checked")
-        logger.info("All databases have been successfully checked")
+        print("All databases have been successfully checked.")
+        logger.info("All databases have been successfully checked.")
     else:
         sys.exit("\nThe database directory was unsuccessfully checked. Please run install_databases.py \n") 
+
+    # dependencies
+    print("Checking dependencies.")
+    logger.info("Checking dependencies.")
+    input_commands.check_dependencies(logger)
 
     # instantiation/checking fasta and gene_predictor
     input_commands.validate_fasta(args.infile)
@@ -81,11 +96,20 @@ if __name__ == "__main__":
 
     # terminase reorienting 
     if args.terminase == True:
-        print("You have chosen to reorient your genome to start with the terminase large subunit. Checking the input.")
-        logger.info("You have chosen to reorient your genome to start with the terminase large subunit. Checking the input.")
-        input_commands.validate_terminase(args.infile, args.strand, args.terminase_start)
-        processes.reorient_terminase(args.infile, out_dir, prefix, args.strand, args.terminase_start, logger)
+        print("You have chosen to reorient your genome by specifying --terminase. Checking the input.")
+        logger.info("You have chosen to reorient your genome by specifying --terminase. Checking the input.")
+        input_commands.validate_terminase(args.infile, args.terminase_strand, args.terminase_start)
+        processes.reorient_terminase(args.infile, out_dir, prefix, args.terminase_strand, args.terminase_start, logger)
         input_fasta = os.path.join(out_dir, prefix + '_genome_terminase_reoriented.fasta')
+
+    if args.terminase_strand != 'nothing' and args.terminase == False:
+        print("You have specified a terminase strand using --strand to reorient your genome, but you have not specified --terminase to activate terminase mode. \nContinuing without reorientation.")
+        logger.info("You have specified a terminase strand using --strand to reorient your genome, but you have not specified --terminase to activate terminase mode. \nContinuing without reorientation.")
+
+    if args.terminase_strand != 'nothing' and args.terminase_start == False:
+        print("You have specified a terminase start coordinate using --terminase_start to reorient your genome, but you have not specified --terminase to activate terminase mode. \nContinuing without reorientation.")
+        logger.info("You have specified a terminase start coordinate using --terminase_start to reorient your genome, but you have not specified --terminase to activate terminase mode. \nContinuing without reorientation.")
+
 
     # validates meta mode 
     input_commands.validata_meta(input_fasta, args.meta)
@@ -109,8 +133,10 @@ if __name__ == "__main__":
         else:
             processes.run_phanotate(input_fasta, out_dir, logger)
     if gene_predictor == "prodigal":
-        logger.info("Starting Prodigal")
-        processes.run_prodigal(input_fasta, out_dir, logger, args.meta, args.coding_table)
+        print("Implementing Prodigal using Pyrodigal.")
+        logger.info("Implementing Prodigal using Pyrodigal.")
+        #processes.run_prodigal(input_fasta, out_dir, logger, args.meta, args.coding_table)
+        processes.run_pyrodigal(input_fasta, out_dir,logger, args.meta, args.coding_table)
 
     # translate fastas
     logger.info("Translating gene predicted fastas.")
@@ -132,7 +158,7 @@ if __name__ == "__main__":
     processes.run_aragorn(input_fasta, out_dir, prefix, logger)
 
     # running mmseqs2
-    logger.info("Starting mmseqs2.")
+    logger.info("Starting MMseqs2.")
     processes.run_mmseqs(db_dir, out_dir, args.threads, logger, gene_predictor, args.evalue)
     processes.run_mmseqs_card(db_dir, out_dir, args.threads, logger, gene_predictor)
     processes.run_mmseqs_vfdb(db_dir, out_dir, args.threads, logger, gene_predictor)
@@ -151,10 +177,10 @@ if __name__ == "__main__":
     tmrna_flag = post_processing.parse_aragorn(out_dir,length_df, prefix)
 
     # create gff and return locustag for table
-    (locustag, locus_df) = post_processing.create_gff(cds_mmseqs_merge_df, length_df, input_fasta, out_dir, prefix, locustag, tmrna_flag)
-    post_processing.create_tbl(cds_mmseqs_merge_df, length_df, out_dir, prefix, gene_predictor, tmrna_flag, locustag)
+    (locustag, locus_df, gff_df) = post_processing.create_gff(cds_mmseqs_merge_df, length_df, input_fasta, out_dir, prefix, locustag, tmrna_flag, args.meta)
+    post_processing.create_tbl(cds_mmseqs_merge_df, length_df, out_dir, prefix, gene_predictor, tmrna_flag, gff_df)
     # write the summary tsv outputs
-    post_processing.create_txt(cds_mmseqs_merge_df, length_df,out_dir, prefix)
+    post_processing.create_txt(cds_mmseqs_merge_df, length_df, out_dir, prefix)
     
     # convert to genbank
     logger.info("Converting gff to genbank.")
@@ -167,6 +193,13 @@ if __name__ == "__main__":
     # extract terL
     post_processing.extract_terl(locus_df, out_dir, gene_predictor, logger )
     
+    # run mash
+    logger.info("Finding the closest match for each contig in INPHARED using mash.")
+    print("Finding the closest match for each contig in INPHARED using mash.")
+    processes.run_mash_sketch(input_fasta, out_dir, logger)
+    processes.run_mash_dist(out_dir, db_dir, logger)
+    post_processing.inphared_top_hits(out_dir, db_dir, length_df, prefix)
+
     # delete tmp files
     post_processing.remove_post_processing_files(out_dir, gene_predictor, args.meta)
 
@@ -180,6 +213,23 @@ if __name__ == "__main__":
 
     print("pharokka has finished")
     print("Elapsed time: "+str(elapsed_time)+" seconds")
+
+    print("If you use pharokka in your research, please cite:")
+    print("George Bouras, Roshan Nepal, Ghais Houtak, Alkis James Psaltis, Peter-John Wormald, Sarah Vreugde.")
+    print("Pharokka: a fast scalable bacteriophage annotation tool.")
+    print("Bioinformatics, Volume 39, Issue 1, January 2023, btac776.")
+    print("https://doi.org/10.1093/bioinformatics/btac776.")
+    print("You should also cite the full list of tools pharokka uses, which can be found at https://github.com/gbouras13/pharokka#citation.")
+
+    logger.info("If you use pharokka in your research, please cite:")
+    logger.info("George Bouras, Roshan Nepal, Ghais Houtak, Alkis James Psaltis, Peter-John Wormald, Sarah Vreugde.")
+    logger.info("Pharokka: a fast scalable bacteriophage annotation tool.")
+    logger.info("Bioinformatics, Volume 39, Issue 1, January 2023, btac776.")
+    logger.info("https://doi.org/10.1093/bioinformatics/btac776.")
+    logger.info("You should also cite the full list of tools pharokka uses, which can be found at https://github.com/gbouras13/pharokka#citation.")
+
+
+
 
     
 
