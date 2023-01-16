@@ -251,18 +251,9 @@ def run_pyrodigal(filepath_in, out_dir,logger, meta, coding_table):
     :param coding_table coding table for prodigal (default 11)
     :return:
     """
-    print("Running Pyrodigal")
-    # try:
-    #     if meta == True:
-    #         print("Prodigal Meta Mode Enabled")
-    #         logger.info("Prodigal Meta Mode Enabled")
-    #         prodigal = sp.Popen(["prodigal", "-i", filepath_in, "-d", os.path.join(out_dir, "prodigal_out_tmp.fasta"), "-f", "gff", "-o", os.path.join(out_dir, "prodigal_out.gff"), "-p", "meta", "-g", str(coding_table) ], stdout=sp.PIPE, stderr=sp.DEVNULL) 
-    #     else:
-    #         prodigal = sp.Popen(["prodigal", "-i", filepath_in, "-d", os.path.join(out_dir, "prodigal_out_tmp.fasta"), "-f", "gff", "-o", os.path.join(out_dir, "prodigal_out.gff"), "-g", str(coding_table) ], stdout=sp.PIPE, stderr=sp.DEVNULL) 
-    #     write_to_log(prodigal.stdout, logger)
-    # except:
-    #     sys.exit("Error with Prodigal\n") 
-    # 
+    print("Running Pyrodigal.")
+    logger.info("Running Pyrodigal.")
+
     prodigal_metamode = False
     if meta == True:
         prodigal_metamode = True 
@@ -272,8 +263,9 @@ def run_pyrodigal(filepath_in, out_dir,logger, meta, coding_table):
     # for training if you want different coding table
     seqs = [bytes(record.seq) for record in SeqIO.parse(filepath_in, 'fasta' )]
     record = SeqIO.parse(filepath_in, 'fasta' )
-    orf_finder = pyrodigal.OrfFinder(meta=prodigal_metamode  )
+    orf_finder = pyrodigal.OrfFinder(meta=prodigal_metamode )
 
+    # coding table possible if false
     if prodigal_metamode == False:
         trainings_info = orf_finder.train(*seqs, translation_table=int(coding_table))
         orf_finder = pyrodigal.OrfFinder(trainings_info, meta=prodigal_metamode )

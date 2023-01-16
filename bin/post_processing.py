@@ -375,6 +375,11 @@ def create_gff(cds_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag,
             subset_dfs = []
             for contig in contigs:
                 subset_df = trna_df[trna_df['contig'] == contig].reset_index()
+
+                # keep only trnas before indexing
+                subset_df = subset_df[(trna_df['Region'] == 'tRNA') | (subset_df['Region'] == 'pseudogene')]
+                subset_df = subset_df.reset_index(drop=True)
+
                 subset_df['count'] = subset_df.index
                 # so not 0 indexed
                 subset_df['count'] = subset_df['count'] + 1 
@@ -386,17 +391,22 @@ def create_gff(cds_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag,
             trna_df = pd.concat(subset_dfs, axis=0, ignore_index=True) 
             trna_df = trna_df.drop(columns=['index'])
         else:
+            # keep only trnas
+            trna_df = trna_df[(trna_df['Region'] == 'tRNA') | (trna_df['Region'] == 'pseudogene')]
+            trna_df = trna_df.reset_index(drop=True)
             trna_df['locus_tag'] = locustag + "_tRNA_" + trna_df.index.astype(str).str.zfill(4)    
        
-        # keep only trnas
-        trna_df = trna_df[(trna_df['Region'] == 'tRNA') | (trna_df['Region'] == 'pseudogene')]
-        trna_df = trna_df.reset_index(drop=True)
+
         trna_df.start = trna_df.start.astype(int)
         trna_df.stop = trna_df.stop.astype(int)
         trna_df[['attributes','isotypes']] = trna_df['attributes'].str.split(';isotype=',expand=True)
         trna_df[['isotypes','anticodon']] = trna_df['isotypes'].str.split(';anticodon=',expand=True)
         trna_df[['anticodon','rest']] = trna_df['anticodon'].str.split(';gene_biotype',expand=True)
         trna_df['trna_product']='tRNA-'+trna_df['isotypes']+"("+trna_df['anticodon']+")"
+        print(trna_df['attributes'])
+        print(trna_df['isotypes'])
+        print(trna_df['anticodon'])
+        print(trna_df['rest'])
         trna_df = trna_df.drop(columns=['attributes'])
         trna_df['attributes'] = "ID=" + trna_df['locus_tag'] + ";" + "trna=" + trna_df["trna_product"].astype(str) + ";" + "isotype=" + trna_df["isotypes"].astype(str) + ";" + "anticodon=" + trna_df["anticodon"].astype(str) + ";" + "locus_tag="  + trna_df['locus_tag']
         trna_df = trna_df.drop(columns=['isotypes', 'anticodon', 'rest', 'trna_product', 'locus_tag'])
