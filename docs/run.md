@@ -32,15 +32,25 @@ If you are annotating more than 1 contig, it is recommended that you run pharokk
 
 There is also experimental support for alternative genetic codes if pharokka is run with prodigal as a gene predictor using the `-c` flag. See Prodigal's [documentation](https://github.com/hyattpd/prodigal/wiki/Advice-by-Input-Type#alternate-genetic-codes), along with [Yutin et al. 2021](https://doi.org/10.1038/s41467-022-32979-6) and [Peters et al. 2022](https://doi.org/10.1038/s41467-022-32979-6) for more information and background on phage stop codon reassignment.
 
+
+`pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -g prodigal`
+
+If you need to reorient your phage to begin at a certain point (for example, to reorient the phage to begin with the large terminase subunit), you can now acheive this using the --terminase command along with specifying the   --terminase_strand denoting the strandedness of the large terminase subunit (must be 'pos' or 'neg') and --terminase_start denoting the start co-ordinate. This requires the input to be a single contig, or else pharokka will fail and warn you. For example, if you annotate your phage using pharokka, and then see that your terminase large subunit begins at coordinate 9503 on the positive strand, you could run the following to reorient it to begin at the large terminase subunit:
+
+`pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  --terminase --terminase_start 9503 --terminase_strand pos `
+
+Of course, you can also use this functionality to reorient your phage however you wish!
+
 pharokka defaults to 1 thread.
 
 ```
-usage: pharokka.py [-h] -i INFILE [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG]
-                   [-g GENE_PREDICTOR] [-m] [-c CODING_TABLE] [-e EVALUE] [-V]
+usage: pharokka.py [-h] [-i INFILE] [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG] [-g GENE_PREDICTOR] [-m]
+                   [-c CODING_TABLE] [-e EVALUE] [--terminase] [--terminase_strand TERMINASE_STRAND] [--terminase_start TERMINASE_START]
+                   [-V] [--citation]
 
 pharokka: fast phage annotation program
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   -i INFILE, --infile INFILE
                         Input genome file in fasta format.
@@ -62,5 +72,11 @@ optional arguments:
                         translation table for prodigal. Defaults to 11. Experimental only.
   -e EVALUE, --evalue EVALUE
                         E-value threshold for mmseqs2 PHROGs database search. Defaults to 1E-05.
-  -V, --version         Version
+  --terminase           Runs "terminase large subunit" re-orientation mode. Single genome input only and requires --terminase_strand and --terminase_start to be specified.
+  --terminase_strand TERMINASE_STRAND
+                        Strand of terminase large subunit. Must be "pos" or "neg".
+  --terminase_start TERMINASE_START
+                        Start coordinate of the terminase large subunit.
+  -V, --version         Print pharokka Version
+  --citation            Print pharokka Citation
   ```
