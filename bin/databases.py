@@ -43,7 +43,7 @@ def instantiate_install(db_dir):
     instantiate_dir(db_dir)
     downloaded_flag = check_db_installation(db_dir)
     if downloaded_flag == True:
-        print("All Databases have already been Downloaded and Checked.")
+        print("All Pharokka Databases have already been Downloaded and Checked.")
     else:
         print("Some Databases are missing.")
         get_database_zenodo(db_dir)
@@ -99,8 +99,8 @@ def check_db_installation(db_dir):
 
 def get_database_zenodo(db_dir):
     print("Downloading Pharokka Database")
-    tarball = 'pharokka_v_1.0.0_databases.tar.gz'
-    url = "https://zenodo.org/record/7081772/files/pharokka_database_v1.0.0.tar.gz"
+    tarball = 'pharokka_v1.2.0_database.tar.gz'
+    url = "https://zenodo.org/record/7563578/files/pharokka_v1.2.0_database.tar.gz"
     try:
         # remvoe the directory
         sp.call(["rm", "-rf", os.path.join(db_dir)])
@@ -113,5 +113,5 @@ def get_database_zenodo(db_dir):
         # remove tarball
         sp.call(["rm","-f", os.path.join(db_dir,tarball)])
     except:
-        sys.stderr.write("Error: Pharokka Database Install Failed. \n Please try again or use the manual option detailed at https://github.com/gbouras13/pharokka.git \n downloading from https://zenodo.org/record/7081772/files/pharokka_database_v1.0.0_databases.tar.gz")  
+        sys.stderr.write("Error: Pharokka Database Install Failed. \n Please try again or use the manual option detailed at https://github.com/gbouras13/pharokka.git \n downloading from https://zenodo.org/record/7563578/files/pharokka_v1.2.0_database.tar.gz")  
         return 0

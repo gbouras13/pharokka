@@ -27,12 +27,22 @@ Brief Overview
 
 pharokka uses [PHANOTATE](https://github.com/deprekate/PHANOTATE), the only gene prediction program tailored to bacteriophages, as the default program for gene prediction. [Prodigal](https://github.com/hyattpd/Prodigal) is also available as an alternative. Following this, functional annotations are assigned by matching each predicted coding sequence (CDS) to the [PHROGs](https://phrogs.lmge.uca.fr), [CARD](https://card.mcmaster.ca) and [VFDB](http://www.mgc.ac.cn/VFs/main.htm) databases using [MMseqs2](https://github.com/soedinglab/MMseqs2). pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). pharokka also generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage) and check out the full documentation [here](https://pharokka.readthedocs.io). 
 
+Pharokka v 1.2.0 Update
+-----------
+
+Pharokka v1.2.0 implements a major new feature. It quickly matches each input contig against the  [INPHARED](https://github.com/RyanCook94/inphared) database (paper is [here](http://doi.org/10.1089/phage.2021.0007) using [mash](https://doi.org/10.1186/s13059-016-0997-x) distances), which may be useful if you are annotating novel phages or metagenomic input samples. If you use this feature, please make sure you cite INPHARED. Please see the full [Citation](#citation) section.
+
+v 1.2.0 also adds the ability to re-orient your phage specifying a coordinate and strandedness using the terminase large subunit reorientation mode. Please see the [usage](docs/run.md) section in the Documentation for more details.
+
+To use v1.2.0, you will need to update your Pharokka database to include INPHARED  by running `install_databases.py -o <path/to/databse_dir>`. 
+
 Table of Contents
 -----------
 - [pharokka](#pharokka)
   - [Fast Phage Annotation Tool](#fast-phage-annotation-tool)
   - [Paper](#paper)
   - [Brief Overview](#brief-overview)
+  - [Pharokka v 1.2.0 Update](#Pharokka-v-1.2.0-Update)
   - [Table of Contents](#table-of-contents)
 - [Quick Start](#quick-start)
 - [Installation](#installation)
@@ -63,8 +73,6 @@ And finally annotation:
 Please read below for more details, especially if you are an inexperienced command line user.
 
 # Installation
-
-**pharokka v1.1.0 is now available on bioconda**
 
 The easiest way to install pharokka is via conda. For inexperienced command line users, this method is highly recommended.
 
@@ -180,12 +188,13 @@ For a full explanation of all arguments, please see [usage](docs/run.md).
 pharokka defaults to 1 thread.
 
 ```
-usage: pharokka.py [-h] -i INFILE [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG]
-                   [-g GENE_PREDICTOR] [-m] [-c CODING_TABLE] [-e EVALUE] [-V]
+usage: pharokka.py [-h] [-i INFILE] [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG] [-g GENE_PREDICTOR] [-m]
+                   [-c CODING_TABLE] [-e EVALUE] [--terminase] [--terminase_strand TERMINASE_STRAND] [--terminase_start TERMINASE_START]
+                   [-V] [--citation]
 
 pharokka: fast phage annotation program
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   -i INFILE, --infile INFILE
                         Input genome file in fasta format.
@@ -207,7 +216,13 @@ optional arguments:
                         translation table for prodigal. Defaults to 11. Experimental only.
   -e EVALUE, --evalue EVALUE
                         E-value threshold for mmseqs2 PHROGs database search. Defaults to 1E-05.
-  -V, --version         Version
+  --terminase           Runs "terminase large subunit" re-orientation mode. Single genome input only and requires --terminase_strand and --terminase_start to be specified.
+  --terminase_strand TERMINASE_STRAND
+                        Strand of terminase large subunit. Must be "pos" or "neg".
+  --terminase_start TERMINASE_START
+                        Start coordinate of the terminase large subunit.
+  -V, --version         Print pharokka Version
+  --citation            Print pharokka Citation
   ```
 
 # Version Log

@@ -27,7 +27,7 @@ def get_input():
 	parser.add_argument('-m', '--meta', help='meta mode for metavirome input samples', action="store_true")
 	parser.add_argument('-c', '--coding_table', help='translation table for prodigal. Defaults to 11. Experimental only.', action="store", default = "11")
 	parser.add_argument('-e', '--evalue', help='E-value threshold for mmseqs2 PHROGs database search. Defaults to 1E-05.', action="store", default = "1E-05")
-	parser.add_argument('--terminase', help='Runs terminase large subunit re-orientation mode. Single genome input only and requires -s and -te to be specified.', action="store_true")
+	parser.add_argument('--terminase', help='Runs terminase large subunit re-orientation mode. Single genome input only and requires --terminase_strand and --terminase_start to be specified.', action="store_true")
 	parser.add_argument('--terminase_strand', help='Strand of terminase large subunit. Must be "pos" or "neg".', action="store", default = "nothing")
 	parser.add_argument('--terminase_start', help='Start coordinate of the terminase large subunit.', action="store", default = "nothing")
 	parser.add_argument('-V', '--version', help='Print pharokka Version', action='version', version=v)
