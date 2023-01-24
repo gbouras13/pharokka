@@ -27,12 +27,18 @@ Brief Overview
 
 pharokka uses [PHANOTATE](https://github.com/deprekate/PHANOTATE), the only gene prediction program tailored to bacteriophages, as the default program for gene prediction. [Prodigal](https://github.com/hyattpd/Prodigal) is also available as an alternative. Following this, functional annotations are assigned by matching each predicted coding sequence (CDS) to the [PHROGs](https://phrogs.lmge.uca.fr), [CARD](https://card.mcmaster.ca) and [VFDB](http://www.mgc.ac.cn/VFs/main.htm) databases using [MMseqs2](https://github.com/soedinglab/MMseqs2). pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). pharokka also generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage) and check out the full documentation [here](https://pharokka.readthedocs.io). 
 
+Pharokka v 1.2.0 Update
+-----------
+
+Pharokka v1.2.0 implements a major new feature. It quickly matches each input contig against the  [INPHARED](https://github.com/RyanCook94/inphared) database (paper is [here](http://doi.org/10.1089/phage.2021.0007) using [mash](https://doi.org/10.1186/s13059-016-0997-x) distances), which may be useful for novel phages or metagenomic inputs. If you use this feature, please make sure you cite INPHARED. Please see the full [Citation](#citation) section.
+
 Table of Contents
 -----------
 - [pharokka](#pharokka)
   - [Fast Phage Annotation Tool](#fast-phage-annotation-tool)
   - [Paper](#paper)
   - [Brief Overview](#brief-overview)
+  - [Pharokka v 1.2.0 Update](#Pharokka-v-1.2.0-Update)
   - [Table of Contents](#table-of-contents)
 - [Quick Start](#quick-start)
 - [Installation](#installation)
@@ -63,8 +69,6 @@ And finally annotation:
 Please read below for more details, especially if you are an inexperienced command line user.
 
 # Installation
-
-**pharokka v1.1.0 is now available on bioconda**
 
 The easiest way to install pharokka is via conda. For inexperienced command line users, this method is highly recommended.
 
