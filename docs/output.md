@@ -42,4 +42,8 @@ Other Files
 
 * Further, the 'score' column contains the PHANOTATE score for each CDS. In general, the closer the score to 0, the smaller the CDS and the more likely that a PHROG will not be identified by mmseqs2.
 
+* A `_top_hits_mash_inphared.tsv` file which from v1.2.0 holds the top hits of the INPHARED search.
+
+* Optionally, if you reorient the input contig, a `_genome_terminase_reoriented.fasta` with the reoriented genome FASTA.
+
 * For more information about PHROGs please consult the website [https://phrogs.lmge.uca.fr](https://phrogs.lmge.uca.fr) and paper [https://doi.org/10.1093/nargab/lqab067](https://doi.org/10.1093/nargab/lqab067).

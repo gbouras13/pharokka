@@ -111,11 +111,6 @@ And then to run pharokka (assuming you are still in the pharokka directory)
 
 # Database Installation
 
-* versions v1.0.0 and onwards add VFDB (current as of 15-09-22) and CARD (v3.2.4) databases for virulence factor and AMR gene identification.
-* These should install using the install_databases.py script, with the databases downloaded from a Zenodo repository.
-* You will need to re-install the databases if you updating from an earlier version of pharokka than v1.0.0. The database should work for all versions from v1.0.0 and afterwards.
-* If the script does not work, you an alternatively download the databases manually from Zenodo at https://zenodo.org/record/7081772/files/pharokka_database_v1.0.0.tar.gz and untar the directory in a location of your choice. Please see the Installation Section for more details.
-
 To install the pharokka database to the default directory:
 
 `install_databases.py -d`
@@ -124,16 +119,16 @@ If you would like to specify a different database directory (recommended), that 
 
 `install_databases.py -o <path/to/databse_dir>`
 
-If this does not work, you an alternatively download the databases from Zenodo at https://zenodo.org/record/7081772/files/pharokka_database_v1.0.0.tar.gz and untar the directory in a location of your choice.
+If this does not work, you an alternatively download the databases from Zenodo at https://zenodo.org/record/7563578/files/pharokka_v1.2.0_database.tar.gz and untar the directory in a location of your choice.
 
 If you prefer to use the command line:
 
 ```
-wget "https://zenodo.org/record/7081772/files/pharokka_database_v1.0.0.tar.gz"
-tar -xzf pharokka_database_v1.0.0.tar.gz
+wget "https://zenodo.org/record/7563578/files/pharokka_v1.2.0_database.tar.gz"
+tar -xzf pharokka_v1.2.0_database.tar.gz
 ```
 
-which will create a directory called "pharokka_database_v1.0.0" containing the databases.
+which will create a directory called "pharokka_v1.2.0_database" containing the databases.
 
 # Beginner Conda Installation
 
