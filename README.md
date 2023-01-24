@@ -9,6 +9,11 @@ pharokka is a rapid standardised annotation tool for bacteriophage genomes and m
 
 If you are looking for rapid standardised annotation of bacterial genomes, please use [prokka](https://github.com/tseemann/prokka), which inspired the creation of pharokka, or [bakta](https://github.com/oschwengers/bakta).
 
+Documentation
+-----------
+
+Check out the full documentation at [https://pharokka.readthedocs.io](https://pharokka.readthedocs.io).
+
 Paper
 -----------
 
@@ -25,12 +30,12 @@ Brief Overview
   <img src="img/pharokka_workflow.png" alt="pharokka Workflow" height=600>
 </p>
 
-pharokka uses [PHANOTATE](https://github.com/deprekate/PHANOTATE), the only gene prediction program tailored to bacteriophages, as the default program for gene prediction. [Prodigal](https://github.com/hyattpd/Prodigal) is also available as an alternative. Following this, functional annotations are assigned by matching each predicted coding sequence (CDS) to the [PHROGs](https://phrogs.lmge.uca.fr), [CARD](https://card.mcmaster.ca) and [VFDB](http://www.mgc.ac.cn/VFs/main.htm) databases using [MMseqs2](https://github.com/soedinglab/MMseqs2). pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). pharokka also generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage) and check out the full documentation [here](https://pharokka.readthedocs.io). 
+pharokka uses [PHANOTATE](https://github.com/deprekate/PHANOTATE), the only gene prediction program tailored to bacteriophages, as the default program for gene prediction. [Prodigal](https://github.com/hyattpd/Prodigal) is also available as an alternative. Following this, functional annotations are assigned by matching each predicted coding sequence (CDS) to the [PHROGs](https://phrogs.lmge.uca.fr), [CARD](https://card.mcmaster.ca) and [VFDB](http://www.mgc.ac.cn/VFs/main.htm) databases using [MMseqs2](https://github.com/soedinglab/MMseqs2). pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). pharokka also generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage) and check out the full [documentation](https://pharokka.readthedocs.io) for more details.  
 
 Pharokka v 1.2.0 Update
 -----------
 
-Pharokka v1.2.0 implements a major new feature. It quickly matches each input contig against the  [INPHARED](https://github.com/RyanCook94/inphared) database (paper is [here](http://doi.org/10.1089/phage.2021.0007) using [mash](https://doi.org/10.1186/s13059-016-0997-x) distances), which may be useful if you are annotating novel phages or metagenomic input samples. If you use this feature, please make sure you cite INPHARED. Please see the full [Citation](#citation) section.
+Pharokka v1.2.0 implements a major new feature. It quickly matches each input contig against the  [INPHARED](https://github.com/RyanCook94/inphared) database ([paper](http://doi.org/10.1089/phage.2021.0007)) using [mash](https://doi.org/10.1186/s13059-016-0997-x) distances, which may be useful if you are annotating novel phages or metagenomic input samples. If you use this feature, please make sure you cite INPHARED. Please see the  [Citation](#citation) section for details.
 
 v 1.2.0 also adds the ability to re-orient your phage specifying a coordinate and strandedness using the terminase large subunit reorientation mode, then annotate the re-oriented phage. Please see the [usage](docs/run.md) section in the Documentation for more details.
 
@@ -40,6 +45,7 @@ Table of Contents
 -----------
 - [pharokka](#pharokka)
   - [Fast Phage Annotation Tool](#fast-phage-annotation-tool)
+  - [Documentation](#Documentation)
   - [Paper](#paper)
   - [Brief Overview](#brief-overview)
   - [Pharokka v 1.2.0 Update](#Pharokka-v-1.2.0-Update)
