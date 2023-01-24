@@ -932,8 +932,8 @@ def parse_aragorn(out_dir,length_df, prefix):
         j = 0 # contig counter
         for line in lines:
             # contig meets these reqs
-            if line[0] == ">" and line[1:4] != "end":
-                if lines[i+1][0] != 0:
+            if line[0] == ">" and "sensitivity"  not in line : # sensititvity in the line at the end of the file
+                if "0 genes found" not in lines[i+1]: 
                     tmrna_flag = True
                     # number of trnas for this contig
                     tmrna_count = int(lines[i+1][0])

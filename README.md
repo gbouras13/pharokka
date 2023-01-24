@@ -32,7 +32,7 @@ Pharokka v 1.2.0 Update
 
 Pharokka v1.2.0 implements a major new feature. It quickly matches each input contig against the  [INPHARED](https://github.com/RyanCook94/inphared) database (paper is [here](http://doi.org/10.1089/phage.2021.0007) using [mash](https://doi.org/10.1186/s13059-016-0997-x) distances), which may be useful if you are annotating novel phages or metagenomic input samples. If you use this feature, please make sure you cite INPHARED. Please see the full [Citation](#citation) section.
 
-v 1.2.0 also adds the ability to re-orient your phage specifying a coordinate and strandedness using the terminase large subunit reorientation mode. Please see the [usage](docs/run.md) section in the Documentation for more details.
+v 1.2.0 also adds the ability to re-orient your phage specifying a coordinate and strandedness using the terminase large subunit reorientation mode, then annotate the re-oriented phage. Please see the [usage](docs/run.md) section in the Documentation for more details.
 
 To use v1.2.0, you will need to update your Pharokka database to include INPHARED  by running `install_databases.py -o <path/to/databse_dir>`. 
 
