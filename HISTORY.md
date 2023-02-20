@@ -1,6 +1,11 @@
 History
 =======
 
+1.2.1 (2023-02-20)
+------------------
+
+* Minor update to fix Biopython version <=1.80, due to a breaking change with 1.81 and bcbio-gff this [issue](https://github.com/chapmanb/bcbb/issues/136).
+
 1.2.0 (2023-01-17)
 ------------------
 

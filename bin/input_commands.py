@@ -19,7 +19,7 @@ def get_input():
 	parser.add_argument('-i', '--infile', action="store", help='Input genome file in fasta format.')
 	parser.add_argument('-o', '--outdir', action="store", help='Directory to write the output to.', default=os.path.join(os.getcwd(), "output/") )
 	parser.add_argument('-d', '--database', action="store", help='Database directory. If the databases have been installed in the default directory, this is not required. Otherwise specify the path.',  default='Default')
-	parser.add_argument('-t', '--threads', help="Number of threads for mmseqs and hhsuite. Defaults to 1.", action="store", default = str(1))
+	parser.add_argument('-t', '--threads', help="Number of threads. Defaults to 1.", action="store", default = str(1))
 	parser.add_argument('-f', '--force', help="Overwrites the output directory.", action="store_true" )
 	parser.add_argument('-p', '--prefix', action="store", help='Prefix for output files. This is not required.',  default='Default')
 	parser.add_argument('-l', '--locustag', action="store", help='User specified locus tag for the gff/gbk files. This is not required. A random locus tag will be generated instead.',  default='Default')
