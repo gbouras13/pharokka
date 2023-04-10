@@ -174,7 +174,8 @@ def create_txt(cds_mmseqs_merge_df, length_df, out_dir, prefix):
         # strip off the CDS part
         vfdb_df[['gene','coordinate']] = vfdb_df['gene'].str.split('_CDS_',expand=True)
         # # strip off the index with the last period delimiter
-        # vfdb_df['contig'] = vfdb_df['gene'].str.rsplit("\\.",1)
+        # just need this to set contig
+        vfdb_df['contig'] = vfdb_df['gene']#.str.rsplit("\\.",1)
     except:
         # instantiate empty dataframe if there are no hits
         vfdb_df = pd.DataFrame(columns=['vfdb_hit', 'gene', 'coordinate', 'contig', 'vfdb_alnScore', 'vfdb_seqIdentity', 'vfdb_eVal'])
@@ -185,7 +186,8 @@ def create_txt(cds_mmseqs_merge_df, length_df, out_dir, prefix):
         card_df = pd.read_csv(os.path.join(out_dir, "top_hits_card.tsv"), delimiter= '\t', index_col=False ) 
         card_df[['gene','coordinate']] = card_df['gene'].str.split('_CDS_',expand=True)
         # # strip off the index with the last period delimiter
-        # card_df['contig'] = card_df['gene'].str.rsplit("\\.",1)
+        # just need this to set contig
+        card_df['contig'] = card_df['gene']#.str.rsplit("\\.",1)
     except:
         # instantiate empty dataframe if there are no hits
         card_df = pd.DataFrame(columns=['CARD_hit', 'gene', 'coordinate', 'contig', 'CARD_alnScore', 'CARD_seqIdentity', 'CARD_eVal'])
