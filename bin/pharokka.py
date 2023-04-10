@@ -114,7 +114,7 @@ if __name__ == "__main__":
 
 
     # validates meta mode 
-    input_commands.validata_meta(input_fasta, args.meta)
+    input_commands.validate_meta(input_fasta, args.meta, logger)
 
     # meta mode split input for trnascan and maybe phanotate 
     if args.meta == True:
@@ -129,11 +129,12 @@ if __name__ == "__main__":
         if args.meta == True:
             print("Applying meta mode.")
             logger.info("Applying meta mode.")
-            processes.run_phanotate_fasta_meta(input_fasta, out_dir, args.threads, num_fastas)
-            processes.run_phanotate_txt_meta(input_fasta, out_dir, args.threads, num_fastas)
-            processes.concat_phanotate_meta(out_dir, num_fastas)
+            #processes.run_phanotate_fasta_meta(input_fasta, out_dir, args.threads, num_fastas)
+            #processes.run_phanotate_txt_meta(input_fasta, out_dir, args.threads, num_fastas)
+            #processes.concat_phanotate_meta(out_dir, num_fastas)
         else:
-            processes.run_phanotate(input_fasta, out_dir, logger)
+            #processes.run_phanotate(input_fasta, out_dir, logger)
+            print('skipping phanotate')
     if gene_predictor == "prodigal":
         print("Implementing Prodigal using Pyrodigal.")
         logger.info("Implementing Prodigal using Pyrodigal.")
@@ -207,7 +208,7 @@ if __name__ == "__main__":
     plot.create_plot(out_dir, prefix)
 
     # delete tmp files
-    post_processing.remove_post_processing_files(out_dir, gene_predictor, args.meta)
+    #post_processing.remove_post_processing_files(out_dir, gene_predictor, args.meta)
 
     # Determine elapsed time
     elapsed_time = time.time() - start_time

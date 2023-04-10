@@ -86,11 +86,15 @@ def validate_gene_predictor(gene_predictor):
 	else:
 		sys.exit("Error: gene predictor was incorrectly specified. Please use 'phanotate' or 'prodigal' .\n")  
 
-def validata_meta(filepath_in, meta):
+def validate_meta(filepath_in, meta, logger):
 	num_fastas = len([1 for line in open(filepath_in) if line.startswith(">")])
 	if meta == True:
 		if num_fastas < 2:
-			sys.exit("ERROR: -m meta mode specified when the input file only contains 1 contig. Please re-run without specifying -m. \n")  
+			sys.exit("ERROR: -m meta mode specified when the input file only contains 1 contig. Please re-run without specifying -m. \n") 
+		else:
+			message = str(num_fastas) + " input contigs detected."
+			print(message)
+			logger.info(message)
 	else:
 		if num_fastas > 1:
 			print("More than one contig detected in the input file. Re-running pharokka with -m meta mode is recommended unless this is a fragmented isolate genome. \nContinuing.")
