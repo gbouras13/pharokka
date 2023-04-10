@@ -4,6 +4,7 @@ import input_commands
 import databases
 import processes
 import post_processing
+import plot
 import os
 import logging
 import time
@@ -89,6 +90,7 @@ if __name__ == "__main__":
     # instantiation/checking fasta and gene_predictor
     input_commands.validate_fasta(args.infile)
     input_commands.validate_gene_predictor(gene_predictor)
+    input_commands.validate_threads(args.threads)
 
 
     # define input - overwrite if terminase reorienter is true
@@ -159,9 +161,9 @@ if __name__ == "__main__":
 
     # running mmseqs2
     logger.info("Starting MMseqs2.")
-    processes.run_mmseqs(db_dir, out_dir, args.threads, logger, gene_predictor, args.evalue)
-    processes.run_mmseqs_card(db_dir, out_dir, args.threads, logger, gene_predictor)
-    processes.run_mmseqs_vfdb(db_dir, out_dir, args.threads, logger, gene_predictor)
+    #processes.run_mmseqs(db_dir, out_dir, args.threads, logger, gene_predictor, args.evalue)
+    #processes.run_mmseqs_card(db_dir, out_dir, args.threads, logger, gene_predictor)
+    #processes.run_mmseqs_vfdb(db_dir, out_dir, args.threads, logger, gene_predictor)
 
     # post processing
     logger.info("Post Processing Output.")
@@ -199,6 +201,10 @@ if __name__ == "__main__":
     processes.run_mash_sketch(input_fasta, out_dir, logger)
     processes.run_mash_dist(out_dir, db_dir, logger)
     post_processing.inphared_top_hits(out_dir, db_dir, length_df, prefix)
+
+    # plot 
+
+    plot.create_plot(out_dir, prefix)
 
     # delete tmp files
     post_processing.remove_post_processing_files(out_dir, gene_predictor, args.meta)

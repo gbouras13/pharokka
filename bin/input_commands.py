@@ -40,13 +40,13 @@ def instantiate_dirs(output_dir, meta, gene_predictor, force):
 	# remove outdir on force
 	if force == True:
 		if os.path.isdir(output_dir) == True:
-			shutil.rmtree(output_dir)
+			#shutil.rmtree(output_dir)
+			print('l')
 		else:
 			print("\n--force was specified even though the outdir does not already exist. Continuing \n")
 	else:
 		if os.path.isdir(output_dir) == True:
 			sys.exit("\nOutput directory already exists and force was not specified. Please specify -f or --force to overwrite the output directory. \n")  
-
 
 	# instantiate outdir
 	if os.path.isdir(output_dir) == False:
@@ -117,6 +117,13 @@ def validate_terminase(filepath_in, terminase_strand, terminase_start):
 	if num_fastas > 1:
 		sys.exit("Error: To reorient your phage genome to begin with the terminase large subunit, you can only input 1 phage genome contig. Multiple contigs were detected. Please try again. \n")  
 
+def validate_threads(threads):
+	try:
+		x = int(threads) 
+		x += 1
+	except:
+		message = "Error: you specified a non-integer value for threads of " + threads + ". Please check your input and try Pharokka again."
+		sys.exit(message)
 
 #######
 # dependencies
@@ -325,3 +332,4 @@ def check_dependencies(logger):
 
 	print("mash version is ok.")
 	logger.info("mash version is ok.")
+
