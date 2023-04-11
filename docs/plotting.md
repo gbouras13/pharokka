@@ -1,6 +1,8 @@
 # Plotting
 
-Pharokka v1.3.0 implements `pharokka_plotter.py`, which creates a simple circular genome plot using [pyCirclize](https://github.com/moshi4/pyCirclize) with output in PNG format. It is quite customisable (I have tried to make the defaults as sensible as possible). It is designed for Pharokka run on single input phage contigs (if input with multiple contigs is entered, it will only plot the first contig) & requires the input FASTA, Pharokka output directory, and the `-p` or `--prefix` value used with Pharokka if specified. 
+Pharokka v1.3.0 implements `pharokka_plotter.py`, which creates a simple circular genome plot using [pyCirclize](https://github.com/moshi4/pyCirclize) with output in PNG format. All CDS are coloured according to their PHROG functional group. 
+
+It is reasonably customisable and is designed for single input phage contigs. If an input FASTA with multiple contigs is entered, it will only plot the first contig. It requires the input FASTA, Pharokka output directory, and the `-p` or `--prefix` value used with Pharokka if specified. 
 
 You can run `pharokka_plotter.py` in the following way (most basic command below).
 

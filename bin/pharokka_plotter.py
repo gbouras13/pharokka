@@ -4,7 +4,6 @@ import os
 from argparse import RawTextHelpFormatter
 import plot
 import sys
-import shutil
 
 
 
@@ -25,7 +24,7 @@ def get_input():
     parser.add_argument('--interval', action="store",  default='5000', help='Axis tick interval. Must be an integer. Defaults to 5000.Must be an integer. Defaults to 5000.')
     parser.add_argument('--truncate', action="store",  default='20', help='Number of characters to include in annoation labels before truncation with ellipsis. Must be an integer. Defaults to 20.')
     parser.add_argument('--dpi', action="store",  default='600', help='Resultion (dots per inch). Must be an integer. Defaults to 600.')
-    parser.add_argument('--annotations', action="store",  default='1', help='Controls the proporition of annotations labelled (between 0 and 1). 0 = no annotations, 1 = all annotations. Must be a float. Plots in order of CDS size.')
+    parser.add_argument('--annotations', action="store",  default='1', help='Controls the proporition of annotations labelled. Must be a number between 0 and 1 inclusive. 0 = no annotations, 0.5 = half of the annotations, 1 = all annotations. Defaults to 1. Chosen in order of CDS size.')
     args = parser.parse_args()
     return args
 
