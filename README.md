@@ -44,8 +44,10 @@ It requires the input FASTA, Pharokka output directory, and the `-p` or `--prefi
 You can run `pharokka_plotter.py` in the following form
 
 ```
-pharokka_plotter.py -i input.fasta -n pharokka_plot.png -o pharokka_output_directory 
+pharokka_plotter.py -i input.fasta -n pharokka_plot -o pharokka_output_directory 
 ```
+
+This will create `pharokka_plot.png` as an output file plot of your phage.
 
 An example plot is included below made with the following command (assuming Pharokka has been run with `SAOMS1_pharokka_output_directory` as the output directory).
 
