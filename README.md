@@ -32,14 +32,24 @@ Brief Overview
 
 pharokka uses [PHANOTATE](https://github.com/deprekate/PHANOTATE), the only gene prediction program tailored to bacteriophages, as the default program for gene prediction. [Prodigal](https://github.com/hyattpd/Prodigal) is also available as an alternative. Following this, functional annotations are assigned by matching each predicted coding sequence (CDS) to the [PHROGs](https://phrogs.lmge.uca.fr), [CARD](https://card.mcmaster.ca) and [VFDB](http://www.mgc.ac.cn/VFs/main.htm) databases using [MMseqs2](https://github.com/soedinglab/MMseqs2). pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). pharokka also generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage) and check out the full [documentation](https://pharokka.readthedocs.io) for more details.  
 
-Pharokka v 1.2.0 Update
+Pharokka v 1.3.0 Update
 -----------
 
-Pharokka v1.2.0 implements a major new feature. It quickly matches each input contig against the  [INPHARED](https://github.com/RyanCook94/inphared) database ([paper](http://doi.org/10.1089/phage.2021.0007)) using [mash](https://doi.org/10.1186/s13059-016-0997-x) distances, which may be useful if you are annotating novel phages or metagenomic input samples. If you use this feature, please make sure you cite INPHARED. Please see the  [Citation](#citation) section for details.
+Pharokka v1.3.0 implements `pharokka_plotter.py`, which creates a simple circular genome plot using [pyCirclize](https://github.com/moshi4/pyCirclize). It is somewhat customisable (I have tried to make the defaults as sensible as possible however). It is designed for single input phage contigs (if input with multiple contigs is entered, it will only plot the first contig) & requires the input FASTA, Pharokka output directory, and the `-p` or `--prefix` value used with Pharokka if specified. 
 
-v 1.2.0 also adds the ability to re-orient your phage specifying a coordinate and strandedness using the terminase large subunit reorientation mode, then annotate the re-oriented phage. Please see the [usage](docs/run.md) section in the Documentation for more details.
+You can run `pharokka_plotter.py` in the following form
 
-To use v1.2.0, you will need to update your Pharokka database to include INPHARED  by running `install_databases.py -o <path/to/databse_dir>`. 
+```
+pharokka_plotter.py -i input.fasta -o pharokka_plot.png -d pharokka_output_directory 
+```
+
+An example plot (with ` --interval 8000   --annotations 0.5 --plot_title 'Staphylococcus Phage SAOMS1') is included below.
+
+<p align="center">
+  <img src="SAOMS1_plot.png" alt="SAOMS1 example" height=600>
+</p>
+
+Please see the [documentation](https://pharokka.readthedocs.io) for details on all parameter options. 
 
 Table of Contents
 -----------
@@ -48,7 +58,7 @@ Table of Contents
   - [Documentation](#Documentation)
   - [Paper](#paper)
   - [Brief Overview](#brief-overview)
-  - [Pharokka v 1.2.0 Update](#Pharokka-v-1.2.0-Update)
+  - [Pharokka v 1.3.0 Update](#Pharokka-v-1.3.0-Update)
   - [Table of Contents](#table-of-contents)
 - [Quick Start](#quick-start)
 - [Installation](#installation)

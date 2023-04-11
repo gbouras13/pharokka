@@ -11,7 +11,7 @@ import numpy as np
 
 # Load GFF file
 
-def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title, truncate, outfile, dpi, label_size):
+def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title, truncate, outfile, dpi, label_size, label_hypotheticals):
     # read in gff file
     gff_file =  os.path.join(out_dir, prefix + ".gff")
     gff = Gff(gff_file)
@@ -354,8 +354,10 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
         pos = (start + end) / 2.
         length = end - start
         label = f.qualifiers.get("product", [""])[0]
-        if label == "" or label.startswith("hypothetical") or label.startswith("unknown") :
-            continue
+        # skip hypotheticals if the flag is false (default)
+        if label_hypotheticals == False:
+            if label == "" or label.startswith("hypothetical") or label.startswith("unknown") :
+                continue
         if len(label) > truncate:
             label = label[:truncate] + "..."
         pos_list.append(pos)

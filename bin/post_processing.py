@@ -1025,10 +1025,10 @@ def process_vfdb_results(out_dir, merged_df):
         merged_df['vfdb_species'] = merged_df['vfdb_species'].str.replace("]", "")
         merged_df['vfdb_species'] = merged_df['vfdb_species'].str.strip()
         # genbank has the info 
-        merged_df['vfdb_short_name'] = merged_df['genbank'].str.split(')', 1).str[1]
-        merged_df['vfdb_description'] = merged_df['genbank'].str.split(')', 2).str[2]
+        merged_df['vfdb_short_name'] = merged_df['genbank'].str.split(')', n=1).str[1]
+        merged_df['vfdb_description'] = merged_df['genbank'].str.split(')', n=2).str[2]
         merged_df["vfdb_short_name"] = merged_df["vfdb_short_name"].str.replace("(", "")
-        merged_df['vfdb_short_name'] = merged_df['vfdb_short_name'].str.split(')', 1).str[0]
+        merged_df['vfdb_short_name'] = merged_df['vfdb_short_name'].str.split(')', n=1).str[0]
         merged_df["vfdb_short_name"] = merged_df["vfdb_short_name"].str.strip()
         merged_df["vfdb_description"] = merged_df["vfdb_description"].str.strip()
         # remove and add None

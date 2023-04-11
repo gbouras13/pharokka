@@ -202,8 +202,6 @@ if __name__ == "__main__":
     processes.run_mash_dist(out_dir, db_dir, logger)
     post_processing.inphared_top_hits(out_dir, db_dir, length_df, prefix)
 
-    # plot 
-    plot.create_plot(out_dir, prefix)
 
     # delete tmp files
     post_processing.remove_post_processing_files(out_dir, gene_predictor, args.meta)
