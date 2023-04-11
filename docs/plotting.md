@@ -48,7 +48,7 @@ If you want to make the CDS labels bigger (defaults to 8):
 
 If you want to change the plot resolution (default 600 dpi)
 
-`pharokka_plotter.py -i input.fasta -n pharokka_plot.png -o pharokka_output_directory -opi 600`
+`pharokka_plotter.py -i input.fasta -n pharokka_plot.png -o pharokka_output_directory -dpi 600`
 
 ```
 usage: pharokka_plotter.py [-h] -i INFILE [-n PLOT_NAME] -o OUTDIR [-p PREFIX] [-t PLOT_TITLE] [-f]
