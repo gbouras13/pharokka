@@ -63,7 +63,7 @@ options:
   -i INFILE, --infile INFILE
                         Input genome file in FASTA format.
   -n PLOT_NAME, --plot_name PLOT_NAME
-                        Output png file name
+                        Output plot file name. ".png" suffix will be added to this automatically.
   -o OUTDIR, --outdir OUTDIR
                         Pharokka output directory.
   -p PREFIX, --prefix PREFIX
@@ -77,9 +77,9 @@ options:
                         Controls title size. Must be an integer. Defaults to 20.
   --label_size LABEL_SIZE
                         Controls annotation label size. Must be an integer. Defaults to 8.
-  --interval INTERVAL   Axis tick interval. Must be an integer. Defaults to 5000.Must be an integer. Defaults to 5000.
+  --interval INTERVAL   Axis tick interval. Must be an integer. Must be an integer. Defaults to 5000.
   --truncate TRUNCATE   Number of characters to include in annoation labels before truncation with ellipsis. Must be an integer. Defaults to 20.
   --dpi DPI             Resultion (dots per inch). Must be an integer. Defaults to 600.
   --annotations ANNOTATIONS
-                        Controls the proporition of annotations labelled (between 0 and 1). 0 = no annotations, 1 = all annotations. Must be a float. Plots in order of CDS size.
+                        Controls the proporition of annotations labelled. Must be a number between 0 and 1 inclusive. 0 = no annotations, 0.5 = half of the annotations, 1 = all annotations. Defaults to 1. Chosen in order of CDS size.
 ```
