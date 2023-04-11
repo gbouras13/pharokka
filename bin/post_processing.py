@@ -191,7 +191,6 @@ def create_txt(cds_mmseqs_merge_df, length_df, out_dir, prefix):
     except:
         # instantiate empty dataframe if there are no hits
         card_df = pd.DataFrame(columns=['CARD_hit', 'gene', 'coordinate', 'contig', 'CARD_alnScore', 'CARD_seqIdentity', 'CARD_eVal'])
-    print(vfdb_df)
     # write descriptions for each contig
     for contig in contigs:
         # get cds's in the contig
@@ -201,8 +200,6 @@ def create_txt(cds_mmseqs_merge_df, length_df, out_dir, prefix):
         trna_count = len(trna_df[trna_df['contig'] == contig])
         tmrna_count = len(tmrna_df[tmrna_df['contig'] == contig])
         crispr_count = len(crispr_df[crispr_df['contig'] == contig])
-        print(contig)
-        print(vfdb_df)
         if len(vfdb_df['contig']) != 0:
             vfdb_count = len(vfdb_df[vfdb_df['contig'] == contig])
             vfdb_count = vfdb_df['gene'].str.contains(contig).sum()

@@ -13,4 +13,5 @@ dependencies:
   - aragorn >=1.2.41
   - mash >=2.2
   - pyrodigal >=2.0.1
+  - pycicrlize >=0.3.1
 
