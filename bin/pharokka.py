@@ -129,16 +129,15 @@ if __name__ == "__main__":
         if args.meta == True:
             print("Applying meta mode.")
             logger.info("Applying meta mode.")
-            #processes.run_phanotate_fasta_meta(input_fasta, out_dir, args.threads, num_fastas)
-            #processes.run_phanotate_txt_meta(input_fasta, out_dir, args.threads, num_fastas)
-            #processes.concat_phanotate_meta(out_dir, num_fastas)
+            processes.run_phanotate_fasta_meta(input_fasta, out_dir, args.threads, num_fastas)
+            processes.run_phanotate_txt_meta(input_fasta, out_dir, args.threads, num_fastas)
+            processes.concat_phanotate_meta(out_dir, num_fastas)
         else:
-            #processes.run_phanotate(input_fasta, out_dir, logger)
+            processes.run_phanotate(input_fasta, out_dir, logger)
             print('skipping phanotate')
     if gene_predictor == "prodigal":
         print("Implementing Prodigal using Pyrodigal.")
         logger.info("Implementing Prodigal using Pyrodigal.")
-        #processes.run_prodigal(input_fasta, out_dir, logger, args.meta, args.coding_table)
         processes.run_pyrodigal(input_fasta, out_dir,logger, args.meta, args.coding_table)
 
     # translate fastas
@@ -162,9 +161,9 @@ if __name__ == "__main__":
 
     # running mmseqs2
     logger.info("Starting MMseqs2.")
-    #processes.run_mmseqs(db_dir, out_dir, args.threads, logger, gene_predictor, args.evalue)
-    #processes.run_mmseqs_card(db_dir, out_dir, args.threads, logger, gene_predictor)
-    #processes.run_mmseqs_vfdb(db_dir, out_dir, args.threads, logger, gene_predictor)
+    processes.run_mmseqs(db_dir, out_dir, args.threads, logger, gene_predictor, args.evalue)
+    processes.run_mmseqs_card(db_dir, out_dir, args.threads, logger, gene_predictor)
+    processes.run_mmseqs_vfdb(db_dir, out_dir, args.threads, logger, gene_predictor)
 
     # post processing
     logger.info("Post Processing Output.")
@@ -204,11 +203,10 @@ if __name__ == "__main__":
     post_processing.inphared_top_hits(out_dir, db_dir, length_df, prefix)
 
     # plot 
-
     plot.create_plot(out_dir, prefix)
 
     # delete tmp files
-    #post_processing.remove_post_processing_files(out_dir, gene_predictor, args.meta)
+    post_processing.remove_post_processing_files(out_dir, gene_predictor, args.meta)
 
     # Determine elapsed time
     elapsed_time = time.time() - start_time
