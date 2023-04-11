@@ -5,6 +5,7 @@ from matplotlib.patches import Patch
 from matplotlib.lines import Line2D
 import os
 import numpy as np
+import sys
 
 
 
@@ -14,6 +15,11 @@ import numpy as np
 def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title, truncate, outfile, dpi, label_size, label_hypotheticals):
     # read in gff file
     gff_file =  os.path.join(out_dir, prefix + ".gff")
+
+    # validate gff exists 
+    if os.path.isfile(gff_file) == False:
+        sys.exit( str(prefix) + ".gff was not found. Please check the prefix value `-p` matches the pharokka output and try again.")
+
     gff = Gff(gff_file)
 
     # Load Genbank file
