@@ -47,7 +47,6 @@ def instantiate_dirs(output_dir, meta, gene_predictor, force):
 		if os.path.isdir(output_dir) == True:
 			sys.exit("\nOutput directory already exists and force was not specified. Please specify -f or --force to overwrite the output directory. \n")  
 
-
 	# instantiate outdir
 	if os.path.isdir(output_dir) == False:
 		os.mkdir(output_dir)
@@ -86,11 +85,15 @@ def validate_gene_predictor(gene_predictor):
 	else:
 		sys.exit("Error: gene predictor was incorrectly specified. Please use 'phanotate' or 'prodigal' .\n")  
 
-def validata_meta(filepath_in, meta):
+def validate_meta(filepath_in, meta, logger):
 	num_fastas = len([1 for line in open(filepath_in) if line.startswith(">")])
 	if meta == True:
 		if num_fastas < 2:
-			sys.exit("ERROR: -m meta mode specified when the input file only contains 1 contig. Please re-run without specifying -m. \n")  
+			sys.exit("ERROR: -m meta mode specified when the input file only contains 1 contig. Please re-run without specifying -m. \n") 
+		else:
+			message = str(num_fastas) + " input contigs detected."
+			print(message)
+			logger.info(message)
 	else:
 		if num_fastas > 1:
 			print("More than one contig detected in the input file. Re-running pharokka with -m meta mode is recommended unless this is a fragmented isolate genome. \nContinuing.")
@@ -117,6 +120,13 @@ def validate_terminase(filepath_in, terminase_strand, terminase_start):
 	if num_fastas > 1:
 		sys.exit("Error: To reorient your phage genome to begin with the terminase large subunit, you can only input 1 phage genome contig. Multiple contigs were detected. Please try again. \n")  
 
+def validate_threads(threads):
+	try:
+		x = int(threads) 
+		x += 1
+	except:
+		message = "Error: you specified a non-integer value for threads of " + threads + ". Please check your input and try Pharokka again."
+		sys.exit(message)
 
 #######
 # dependencies
@@ -325,3 +335,4 @@ def check_dependencies(logger):
 
 	print("mash version is ok.")
 	logger.info("mash version is ok.")
+

@@ -1,16 +1,5 @@
 # Installation
 
-**pharokka v1.1.0 is now available on bioconda**
-
-**Important: MMseqs2 has recently been updated to v14-7e284 and that version will not work with Pharokka. Please read below**
-
-* The MMseqs2 team have recently changed the internal MMseqs2 profile format in the new MMseqs2 version v14-7e284.
-* This means that the pharokka database will not work with MMseqs2 v14-7e284.
-* As a result, pharokka needs to be run with MMseqs2 v13.4511.
-* As of v1.1.0, the pharokka bioconda dependencies are fixed to ensure that MMseqs2 is v13.4511. 
-* However, if you run into issues with pharokka (particularly pre v1.1.0 versions), please check that MMseqs2 is v13.4511 is installed (it will be clear in the pharokka***.log output file). I would recommend a fresh pharokka install in this instance, or trying `conda install -c bioconda pharokka mmseqs2==13.4511`.
-* If you are installing pharokka from the git repository, the environment.yml file has been changed to fix MMseqs2 v13.4511, so proceed as below. 
-
 The easiest way to install pharokka is via conda. For inexperienced command line users, this method is highly recommended.
 
 `conda install -c bioconda pharokka`
@@ -48,10 +37,9 @@ And then to run pharokka (assuming you are still in the pharokka directory)
 
 # Database Installation
 
-* v1.0.0 onwards adds VFDB (current as of 15-09-22) and CARD (v3.2.4) databases for virulence factor and AMR gene identification.
-* These should install using the install_databases.py script, with the databases downloaded from a Zenodo repository.
-* You will need to re-install the databases if you updating from an earlier version of pharokka than v1.0.0. The database should work for all versions from v1.0.0 and afterwards.
-* If the script does not work, you an alternatively download the databases manually from Zenodo at https://zenodo.org/record/7081772/files/pharokka_database_v1.0.0.tar.gz and untar the directory in a location of your choice. Please see the Installation Section for more details.
+* Pharokka v1.2.0 implements a major new feature. It quickly matches each input contig against the INPHARED database using mash distances,which may be useful if you are annotating novel phages or metagenomic input samples.
+* You will need to re-install the databases if you updating from an earlier version of pharokka than v1.2.0. 
+* This database will apply for all versions of Pharokka v1.2.0 and later.
 
 To install the pharokka database to the default directory:
 
@@ -61,16 +49,16 @@ If you would like to specify a different database directory (recommended), that 
 
 `install_databases.py -o <path/to/databse_dir>`
 
-If this does not work, you an alternatively download the databases from Zenodo at https://zenodo.org/record/7081772/files/pharokka_database_v1.0.0.tar.gz and untar the directory in a location of your choice.
+If this does not work, you an alternatively download the databases from Zenodo at https://zenodo.org/record/7563578/files/pharokka_v1.2.0_database.tar.gz and untar the directory in a location of your choice.
 
 If you prefer to use the command line:
 
 ```
-wget "https://zenodo.org/record/7081772/files/pharokka_database_v1.0.0.tar.gz"
-tar -xzf pharokka_database_v1.0.0.tar.gz
+wget "https://zenodo.org/record/7563578/files/pharokka_v1.2.0_database.tar.gz"
+tar -xzf pharokka_v1.2.0_database.tar.gz
 ```
 
-which will create a directory called "pharokka_database_v1.0.0" containing the databases.
+which will create a directory called "pharokka_v1.2.0_database" containing the databases.
 
 # Beginner Conda Installation
 

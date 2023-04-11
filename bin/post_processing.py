@@ -171,9 +171,11 @@ def create_txt(cds_mmseqs_merge_df, length_df, out_dir, prefix):
     # gene has the contig 
     try:
         vfdb_df = pd.read_csv(os.path.join(out_dir, "top_hits_vfdb.tsv"), delimiter= '\t', index_col=False ) 
-        vfdb_df[['gene','coordinate']] = vfdb_df['gene'].str.split(' ',expand=True)
-        # strip off the index with the last period delimiter
-        vfdb_df['contig'] = vfdb_df['gene'].str.rsplit("\\.",1)
+        # strip off the CDS part
+        vfdb_df[['gene','coordinate']] = vfdb_df['gene'].str.split('_CDS_',expand=True)
+        # # strip off the index with the last period delimiter
+        # just need this to set contig
+        vfdb_df['contig'] = vfdb_df['gene']#.str.rsplit("\\.",1)
     except:
         # instantiate empty dataframe if there are no hits
         vfdb_df = pd.DataFrame(columns=['vfdb_hit', 'gene', 'coordinate', 'contig', 'vfdb_alnScore', 'vfdb_seqIdentity', 'vfdb_eVal'])
@@ -182,14 +184,13 @@ def create_txt(cds_mmseqs_merge_df, length_df, out_dir, prefix):
     # gene has the contig 
     try:
         card_df = pd.read_csv(os.path.join(out_dir, "top_hits_card.tsv"), delimiter= '\t', index_col=False ) 
-        card_df[['gene','coordinate']] = card_df['gene'].str.split(' ',expand=True)
-        # strip off the index with the last period delimiter
-        card_df['contig'] = card_df['gene'].str.rsplit("\\.",1)
+        card_df[['gene','coordinate']] = card_df['gene'].str.split('_CDS_',expand=True)
+        # # strip off the index with the last period delimiter
+        # just need this to set contig
+        card_df['contig'] = card_df['gene']#.str.rsplit("\\.",1)
     except:
         # instantiate empty dataframe if there are no hits
         card_df = pd.DataFrame(columns=['CARD_hit', 'gene', 'coordinate', 'contig', 'CARD_alnScore', 'CARD_seqIdentity', 'CARD_eVal'])
-    
-
     # write descriptions for each contig
     for contig in contigs:
         # get cds's in the contig
@@ -593,7 +594,7 @@ def extract_terl(locus_df, out_dir, gene_predictor, logger ):
             i += 1
 
 
-def update_final_output(cds_mmseqs_merge_df, vfdb_results, card_results, locus_df, prefix, out_dir ):
+def update_final_output(cds_mmseqs_merge_df, locus_df, prefix, out_dir ):
     """
     Updates the fasta output headers to have a consistent locus tag & gene description for downstrea use
     :param cds_mmseqs_merge_df: a pandas df as output from process_results()
@@ -602,15 +603,10 @@ def update_final_output(cds_mmseqs_merge_df, vfdb_results, card_results, locus_d
     :param prefix: output prefix
     :return: 
     """
-
-    # needed for vfdb card matching later
-    genes_for_vfdb_card = cds_mmseqs_merge_df['gene']
-
     # return back the cds_mmseqs_merge_df but with the locus tag instead of gene
     # rename gene with locus_tag
     locus_tag_series = locus_df['locus_tag']
     cds_mmseqs_merge_df['gene'] = locus_tag_series
-
 
     #########
     # rearrange start and stop for neg strang
@@ -635,9 +631,22 @@ def update_final_output(cds_mmseqs_merge_df, vfdb_results, card_results, locus_d
     final_output_path = os.path.join(out_dir, prefix + "_cds_final_merged_output.tsv")
     cds_mmseqs_merge_df.to_csv( final_output_path, sep="\t", index=False)
 
+
+def write_tophits_vfdb_card(cds_mmseqs_merge_df, vfdb_results, card_results, locus_df, out_dir ):
+    """
+    Outputs top_hits_vfdb.tsv and top_hits_card.tsv
+    :param cds_mmseqs_merge_df: a pandas df as output from process_results()
+    :param locus_df: a pandas df as output from create_gff()
+    :param out_dir: output directory path
+    :param prefix: output prefix
+    :return: 
+    """
     ######################################
     ##### update vfdb with locus tag #####
     ###### merge locus into the vfdb ####
+    # needed for vfdb card matching later
+
+    genes_for_vfdb_card = cds_mmseqs_merge_df['gene']
     locus_df['gene'] = genes_for_vfdb_card
     vfdb_results = vfdb_results.merge(locus_df, how='left', on='gene')
     # get a list of columns
@@ -1023,10 +1032,10 @@ def process_vfdb_results(out_dir, merged_df):
         merged_df['vfdb_species'] = merged_df['vfdb_species'].str.replace("]", "")
         merged_df['vfdb_species'] = merged_df['vfdb_species'].str.strip()
         # genbank has the info 
-        merged_df['vfdb_short_name'] = merged_df['genbank'].str.split(')', 1).str[1]
-        merged_df['vfdb_description'] = merged_df['genbank'].str.split(')', 2).str[2]
+        merged_df['vfdb_short_name'] = merged_df['genbank'].str.split(')', n=1).str[1]
+        merged_df['vfdb_description'] = merged_df['genbank'].str.split(')', n=2).str[2]
         merged_df["vfdb_short_name"] = merged_df["vfdb_short_name"].str.replace("(", "")
-        merged_df['vfdb_short_name'] = merged_df['vfdb_short_name'].str.split(')', 1).str[0]
+        merged_df['vfdb_short_name'] = merged_df['vfdb_short_name'].str.split(')', n=1).str[0]
         merged_df["vfdb_short_name"] = merged_df["vfdb_short_name"].str.strip()
         merged_df["vfdb_description"] = merged_df["vfdb_description"].str.strip()
         # remove and add None

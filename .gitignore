@@ -106,3 +106,5 @@ ENV/
 
 # DSstore
 .DS_Store
+*/.DS_Store
+*/*/.DS_Store

@@ -1,6 +1,14 @@
 History
 =======
 
+1.3.0 (2023-04-11)
+------------------
+
+* Adds pharokka_plotter.py to create plots with pyCirclize.
+* Fixes issue with VFDB and CARD counts in _cds_functions.tsv being 0 even is a virulence factor or AMR gene is detected.
+* Adds better error checking for --threads.
+
+
 1.2.1 (2023-02-20)
 ------------------
 
