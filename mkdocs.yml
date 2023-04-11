@@ -18,6 +18,7 @@ nav:
       - Install: install.md
       - Usage: run.md
       - Benchmarking: benchmarking.md
+      - Plotting: plotting.md
     - OUTPUT:
       - Output: output.md
 
