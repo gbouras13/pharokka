@@ -39,6 +39,7 @@ And then to run pharokka (assuming you are still in the pharokka directory)
 
 * Pharokka v1.2.0 implements a major new feature. It quickly matches each input contig against the INPHARED database using mash distances,which may be useful if you are annotating novel phages or metagenomic input samples.
 * You will need to re-install the databases if you updating from an earlier version of pharokka than v1.2.0. 
+* This database will apply for all versions of Pharokka v1.2.0 and later.
 
 To install the pharokka database to the default directory:
 

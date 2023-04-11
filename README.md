@@ -55,10 +55,10 @@ Table of Contents
 -----------
 - [pharokka](#pharokka)
   - [Fast Phage Annotation Tool](#fast-phage-annotation-tool)
-  - [Documentation](#Documentation)
+  - [Documentation](#documentation)
   - [Paper](#paper)
   - [Brief Overview](#brief-overview)
-  - [Pharokka v 1.3.0 Update](#Pharokka-v-1.3.0-Update)
+  - [Pharokka v 1.3.0 Update](#pharokka-v-130-update)
   - [Table of Contents](#table-of-contents)
 - [Quick Start](#quick-start)
 - [Installation](#installation)
@@ -145,6 +145,8 @@ tar -xzf pharokka_v1.2.0_database.tar.gz
 ```
 
 which will create a directory called "pharokka_v1.2.0_database" containing the databases.
+
+These databases will work with Pharokka v1.2.0 and all later versions.
 
 # Beginner Conda Installation
 
