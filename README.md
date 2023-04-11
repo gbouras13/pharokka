@@ -37,7 +37,9 @@ Pharokka v 1.3.0 Update
 
 Pharokka v1.3.0 implements `pharokka_plotter.py`, which creates a simple circular genome plot using the amazing [pyCirclize](https://github.com/moshi4/pyCirclize) package with output in PNG format. All CDS are coloured according to their PHROG functional group. 
 
-It is reasonably customisable and is designed for single input phage contigs. If an input FASTA with multiple contigs is entered, it will only plot the first contig. It requires the input FASTA, Pharokka output directory, and the `-p` or `--prefix` value used with Pharokka if specified. 
+It is reasonably customisable and is designed for single input phage contigs. If an input FASTA with multiple contigs is entered, it will only plot the first contig. 
+
+It requires the input FASTA, Pharokka output directory, and the `-p` or `--prefix` value used with Pharokka if specified. 
 
 You can run `pharokka_plotter.py` in the following form
 
@@ -45,10 +47,14 @@ You can run `pharokka_plotter.py` in the following form
 pharokka_plotter.py -i input.fasta -n pharokka_plot.png -o pharokka_output_directory 
 ```
 
-An example plot (specifying ` pharokka_plotter.py -i test_data/SAOMS1.fasta -n SAOMS1_plot.png -o SAOMS1_pharokka_output_directory --interval 8000 --annotations 0.5 --plot_title 'Staphylococcus Phage SAOMS1'`) is included below.
+An example plot is included below made with the following command (assuming Pharokka has been run with `SAOMS1_pharokka_output_directory` as the output directory).
+
+``` 
+pharokka_plotter.py -i test_data/SAOMS1.fasta -n SAOMS1_plot.png -o SAOMS1_pharokka_output_directory --interval 8000 --annotations 0.5 --plot_title 'Staphylococcus Phage SAOMS1'
+```
 
 <p align="center">
-  <img src="SAOMS1_plot.png" alt="SAOMS1 example" height=600>
+  <img src="img/SAOMS1_plot.png" alt="SAOMS1 example" height=600>
 </p>
 
 Please see [plotting](docs/plotting.md) for details on all plotting parameter options. 
