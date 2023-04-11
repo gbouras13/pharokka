@@ -40,16 +40,16 @@ Pharokka v1.3.0 implements `pharokka_plotter.py`, which creates a simple circula
 You can run `pharokka_plotter.py` in the following form
 
 ```
-pharokka_plotter.py -i input.fasta -o pharokka_plot.png -d pharokka_output_directory 
+pharokka_plotter.py -i input.fasta -n pharokka_plot.png -o pharokka_output_directory 
 ```
 
-An example plot (with ` --interval 8000   --annotations 0.5 --plot_title 'Staphylococcus Phage SAOMS1') is included below.
+An example plot (specifying ` pharokka_plotter.py -i test_data/SAOMS1.fasta -n SAOMS1_plot.png -o SAOMS1_pharokka_output_directory --interval 8000 --annotations 0.5 --plot_title 'Staphylococcus Phage SAOMS1'`) is included below.
 
 <p align="center">
   <img src="SAOMS1_plot.png" alt="SAOMS1 example" height=600>
 </p>
 
-Please see the [documentation](https://pharokka.readthedocs.io) for details on all parameter options. 
+Please see [plotting](docs/plotting.md) for details on all plotting parameter options. 
 
 Table of Contents
 -----------

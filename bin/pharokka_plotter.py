@@ -14,8 +14,8 @@ def get_input():
     """
     parser = argparse.ArgumentParser(description='pharokka_plotter.py: pharokka plotting function', formatter_class=RawTextHelpFormatter)
     parser.add_argument('-i', '--infile', action="store", required = True, help='Input genome file in FASTA format.')
-    parser.add_argument('-d', '--directory', action="store", required = True, help='Pharokka output directory.')
-    parser.add_argument('-o', '--outfile', action="store", default='pharokka_plot.png', help='Output png file name')
+    parser.add_argument('-n', '--plot_name', action="store", default='pharokka_plot.png', help='Output png file name')
+    parser.add_argument('-o', '--outdir', action="store", required = True, help='Pharokka output directory.')
     parser.add_argument('-p', '--prefix', action="store", help='Prefix used to create pharokka output. Will default to pharokka.',  default='pharokka')
     parser.add_argument('-t', '--plot_title', action="store",  default='Phage', help='Plot name.')
     parser.add_argument('-f', '--force', help="Overwrites the output file.", action="store_true" )
@@ -64,12 +64,12 @@ if __name__ == "__main__":
     # check if plot already exists 
 
     if args.force == True:
-            if os.path.isfile(args.outfile) == True:
-                os.remove(args.outfile)
+            if os.path.isfile(args.plot_name) == True:
+                os.remove(args.plot_name)
             else:
                 print("\n--force was specified even though the output plot file does not already exist. Continuing \n")
     else:
-        if os.path.isfile(args.outfile) == True:
+        if os.path.isfile(args.plot_name) == True:
             sys.exit("\nOutput plot file already exists and force was not specified. Please specify -f or --force to overwrite the output plot file. \n")  
 
     print("Inputs checked.")
@@ -79,5 +79,5 @@ if __name__ == "__main__":
     num_contigs = len([1 for line in open(args.infile) if line.startswith(">")])
     if num_contigs > 1:
         print("More than one contig detected in the input file. Only the first phage contig will be plotted. \nContinuing.")
-    plot.create_plot(args.directory, args.prefix, args.interval, args.annotations, args.title_size, args.plot_title, args.truncate, args.outfile, args.dpi, args.label_size, args.label_hypotheticals)
+    plot.create_plot(args.outdir, args.prefix, args.interval, args.annotations, args.title_size, args.plot_title, args.truncate, args.plot_name, args.dpi, args.label_size, args.label_hypotheticals)
 
