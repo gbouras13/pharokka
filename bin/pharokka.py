@@ -204,7 +204,7 @@ if __name__ == "__main__":
 
 
     # delete tmp files
-    post_processing.remove_post_processing_files(out_dir, gene_predictor, args.meta)
+    #post_processing.remove_post_processing_files(out_dir, gene_predictor, args.meta)
 
     # Determine elapsed time
     elapsed_time = time.time() - start_time
