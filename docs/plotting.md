@@ -6,49 +6,51 @@ It is reasonably customisable and is designed for single input phage contigs. If
 
 You can run `pharokka_plotter.py` in the following way (most basic command below).
 
-`pharokka_plotter.py -i input.fasta -n pharokka_plot.png -o pharokka_output_directory`
+`pharokka_plotter.py -i input.fasta -n pharokka_plot -o pharokka_output_directory`
+
+This will create `pharokka_plot.png` as an output file of your plot.
 
 A prefix is not required for pharokka by default. If you used a prefix to create your pharokka output, please specify it: 
 
-`pharokka_plotter.py -i input.fasta -n pharokka_plot.png -o pharokka_output_directory -p my_prefix`
+`pharokka_plotter.py -i input.fasta -n pharokka_plot -o pharokka_output_directory -p my_prefix`
 
 If you want to give your plot a title (e.g. Escherichia phage lambda): 
 
-`pharokka_plotter.py -i input.fasta -n pharokka_plot.png -o pharokka_output_directory -t 'Escherichia phage lambda' `
+`pharokka_plotter.py -i input.fasta -n pharokka_plot -o pharokka_output_directory -t 'Escherichia phage lambda' `
 
 If you want to make the title bigger:
 
-`pharokka_plotter.py -i input.fasta -n pharokka_plot.png -o pharokka_output_directory -t 'Escherichia phage lambda' --title_size 30 `
+`pharokka_plotter.py -i input.fasta -n pharokka_plot -o pharokka_output_directory -t 'Escherichia phage lambda' --title_size 30 `
 
 By default all CDSs that are not hypothetical or unknown are labelled. If you want to reduce this (if the plot is overcrowded for example), use `--annotations` to chose the proportion of annotations that you want labelled (descending based on size).
 For example, the following command will label half the annotations
 
-`pharokka_plotter.py -i input.fasta -n pharokka_plot.png -o pharokka_output_directory --annotations 0.5 `
+`pharokka_plotter.py -i input.fasta -n pharokka_plot -o pharokka_output_directory --annotations 0.5 `
 
 You can also use this to remove all CDS labels by specifying `--annotations 0`
 
-`pharokka_plotter.py -i input.fasta -n pharokka_plot.png -o pharokka_output_directory --annotations 0 `
+`pharokka_plotter.py -i input.fasta -n pharokka_plot -o pharokka_output_directory --annotations 0 `
 
 By default hypothetical or unknown genes are not labelled. If you want to label them use `--label_hypotheticals`:
 
-`pharokka_plotter.py -i input.fasta -n pharokka_plot.png -o pharokka_output_directory --label_hypotheticals `
+`pharokka_plotter.py -i input.fasta -n pharokka_plot -o pharokka_output_directory --label_hypotheticals `
 
 If you want the axis intervals to be changed (e.g. 10kbp here):
 
-`pharokka_plotter.py -i input.fasta -n pharokka_plot.png -o pharokka_output_directory -t 'Escherichia phage lambda' --title_size 30 --interval 10000 `
+`pharokka_plotter.py -i input.fasta -n pharokka_plot -o pharokka_output_directory -t 'Escherichia phage lambda' --title_size 30 --interval 10000 `
 
 By default all axis labels longer than 20 characters are truncated. To change this number to whatever you want, use `--truncate`. 
 For example this will truncate all labels to 15 characters:
 
-`pharokka_plotter.py -i input.fasta -n pharokka_plot.png -o pharokka_output_directory --truncate 15`
+`pharokka_plotter.py -i input.fasta -n pharokka_plot -o pharokka_output_directory --truncate 15`
 
 If you want to make the CDS labels bigger (defaults to 8):
 
-`pharokka_plotter.py -i input.fasta -n pharokka_plot.png -o pharokka_output_directory -t label_size 10`
+`pharokka_plotter.py -i input.fasta -n pharokka_plot -o pharokka_output_directory -t label_size 10`
 
 If you want to change the plot resolution (default 600 dpi)
 
-`pharokka_plotter.py -i input.fasta -n pharokka_plot.png -o pharokka_output_directory -dpi 600`
+`pharokka_plotter.py -i input.fasta -n pharokka_plot -o pharokka_output_directory -dpi 600`
 
 ```
 usage: pharokka_plotter.py [-h] -i INFILE [-n PLOT_NAME] -o OUTDIR [-p PREFIX] [-t PLOT_TITLE] [-f]

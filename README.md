@@ -30,7 +30,7 @@ Brief Overview
   <img src="img/pharokka_workflow.png" alt="pharokka Workflow" height=600>
 </p>
 
-pharokka uses [PHANOTATE](https://github.com/deprekate/PHANOTATE), the only gene prediction program tailored to bacteriophages, as the default program for gene prediction. [Prodigal](https://github.com/hyattpd/Prodigal) is also available as an alternative. Following this, functional annotations are assigned by matching each predicted coding sequence (CDS) to the [PHROGs](https://phrogs.lmge.uca.fr), [CARD](https://card.mcmaster.ca) and [VFDB](http://www.mgc.ac.cn/VFs/main.htm) databases using [MMseqs2](https://github.com/soedinglab/MMseqs2). pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). pharokka also generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage) and check out the full [documentation](https://pharokka.readthedocs.io) for more details.  
+pharokka uses [PHANOTATE](https://github.com/deprekate/PHANOTATE), the only gene prediction program tailored to bacteriophages, as the default program for gene prediction. [Prodigal](https://github.com/hyattpd/Prodigal) is also available as an alternative. Following this, functional annotations are assigned by matching each predicted coding sequence (CDS) to the [PHROGs](https://phrogs.lmge.uca.fr), [CARD](https://card.mcmaster.ca) and [VFDB](http://www.mgc.ac.cn/VFs/main.htm) databases using [MMseqs2](https://github.com/soedinglab/MMseqs2). Pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). pharokka also generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage) and check out the full [documentation](https://pharokka.readthedocs.io) for more details.  
 
 Pharokka v 1.3.0 Update
 -----------
@@ -44,13 +44,15 @@ It requires the input FASTA, Pharokka output directory, and the `-p` or `--prefi
 You can run `pharokka_plotter.py` in the following form
 
 ```
-pharokka_plotter.py -i input.fasta -n pharokka_plot.png -o pharokka_output_directory 
+pharokka_plotter.py -i input.fasta -n pharokka_plot -o pharokka_output_directory 
 ```
+
+This will create `pharokka_plot.png` as an output file plot of your phage.
 
 An example plot is included below made with the following command (assuming Pharokka has been run with `SAOMS1_pharokka_output_directory` as the output directory).
 
 ``` 
-pharokka_plotter.py -i test_data/SAOMS1.fasta -n SAOMS1_plot.png -o SAOMS1_pharokka_output_directory --interval 8000 --annotations 0.5 --plot_title 'Staphylococcus Phage SAOMS1'
+pharokka_plotter.py -i test_data/SAOMS1.fasta -n SAOMS1_plot -o SAOMS1_pharokka_output_directory --interval 8000 --annotations 0.5 --plot_title 'Staphylococcus Phage SAOMS1'
 ```
 
 <p align="center">
