@@ -48,12 +48,12 @@ If you want to make the CDS labels bigger (defaults to 8):
 
 If you want to change the plot resolution (default 600 dpi)
 
-`pharokka_plotter.py -i input.fasta -n pharokka_plot.png -o pharokka_output_directory -opi 600`
+`pharokka_plotter.py -i input.fasta -n pharokka_plot.png -o pharokka_output_directory -dpi 600`
 
 ```
 usage: pharokka_plotter.py [-h] -i INFILE [-n PLOT_NAME] -o OUTDIR [-p PREFIX] [-t PLOT_TITLE] [-f]
                            [--label_hypotheticals] [--title_size TITLE_SIZE] [--label_size LABEL_SIZE]
-                           [--interval INTERVAL] [--truncate TRUNCATE] [--opi DPI]
+                           [--interval INTERVAL] [--truncate TRUNCATE] [--dpi DPI]
                            [--annotations ANNOTATIONS]
 
 pharokka_plotter.py: pharokka plotting function
@@ -79,7 +79,7 @@ options:
                         Controls annotation label size. Must be an integer. Defaults to 8.
   --interval INTERVAL   Axis tick interval. Must be an integer. Defaults to 5000.Must be an integer. Defaults to 5000.
   --truncate TRUNCATE   Number of characters to include in annoation labels before truncation with ellipsis. Must be an integer. Defaults to 20.
-  --opi DPI             Resultion (dots per inch). Must be an integer. Defaults to 600.
+  --dpi DPI             Resultion (dots per inch). Must be an integer. Defaults to 600.
   --annotations ANNOTATIONS
                         Controls the proporition of annotations labelled (between 0 and 1). 0 = no annotations, 1 = all annotations. Must be a float. Plots in order of CDS size.
 ```
