@@ -50,7 +50,7 @@ pharokka_plotter.py -i input.fasta -n pharokka_plot.png -o pharokka_output_direc
 An example plot is included below made with the following command (assuming Pharokka has been run with `SAOMS1_pharokka_output_directory` as the output directory).
 
 ``` 
-pharokka_plotter.py -i test_data/SAOMS1.fasta -n SAOMS1_plot.png -o SAOMS1_pharokka_output_directory --interval 8000 --annotations 0.5 --plot_title 'Staphylococcus Phage SAOMS1'
+pharokka_plotter.py -i test_data/SAOMS1.fasta -n SAOMS1_plot -o SAOMS1_pharokka_output_directory --interval 8000 --annotations 0.5 --plot_title 'Staphylococcus Phage SAOMS1'
 ```
 
 <p align="center">
