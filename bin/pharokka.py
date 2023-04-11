@@ -134,7 +134,6 @@ if __name__ == "__main__":
             processes.concat_phanotate_meta(out_dir, num_fastas)
         else:
             processes.run_phanotate(input_fasta, out_dir, logger)
-            print('skipping phanotate')
     if gene_predictor == "prodigal":
         print("Implementing Prodigal using Pyrodigal.")
         logger.info("Implementing Prodigal using Pyrodigal.")
