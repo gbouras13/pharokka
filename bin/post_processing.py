@@ -191,7 +191,7 @@ def create_txt(cds_mmseqs_merge_df, length_df, out_dir, prefix):
     except:
         # instantiate empty dataframe if there are no hits
         card_df = pd.DataFrame(columns=['CARD_hit', 'gene', 'coordinate', 'contig', 'CARD_alnScore', 'CARD_seqIdentity', 'CARD_eVal'])
-
+    print(vfdb_df)
     # write descriptions for each contig
     for contig in contigs:
         # get cds's in the contig
@@ -201,6 +201,8 @@ def create_txt(cds_mmseqs_merge_df, length_df, out_dir, prefix):
         trna_count = len(trna_df[trna_df['contig'] == contig])
         tmrna_count = len(tmrna_df[tmrna_df['contig'] == contig])
         crispr_count = len(crispr_df[crispr_df['contig'] == contig])
+        print(contig)
+        print(vfdb_df)
         if len(vfdb_df['contig']) != 0:
             vfdb_count = len(vfdb_df[vfdb_df['contig'] == contig])
             vfdb_count = vfdb_df['gene'].str.contains(contig).sum()
@@ -595,7 +597,7 @@ def extract_terl(locus_df, out_dir, gene_predictor, logger ):
             i += 1
 
 
-def update_final_output(cds_mmseqs_merge_df, vfdb_results, card_results, locus_df, prefix, out_dir ):
+def update_final_output(cds_mmseqs_merge_df, locus_df, prefix, out_dir ):
     """
     Updates the fasta output headers to have a consistent locus tag & gene description for downstrea use
     :param cds_mmseqs_merge_df: a pandas df as output from process_results()
@@ -604,15 +606,10 @@ def update_final_output(cds_mmseqs_merge_df, vfdb_results, card_results, locus_d
     :param prefix: output prefix
     :return: 
     """
-
-    # needed for vfdb card matching later
-    genes_for_vfdb_card = cds_mmseqs_merge_df['gene']
-
     # return back the cds_mmseqs_merge_df but with the locus tag instead of gene
     # rename gene with locus_tag
     locus_tag_series = locus_df['locus_tag']
     cds_mmseqs_merge_df['gene'] = locus_tag_series
-
 
     #########
     # rearrange start and stop for neg strang
@@ -637,9 +634,22 @@ def update_final_output(cds_mmseqs_merge_df, vfdb_results, card_results, locus_d
     final_output_path = os.path.join(out_dir, prefix + "_cds_final_merged_output.tsv")
     cds_mmseqs_merge_df.to_csv( final_output_path, sep="\t", index=False)
 
+
+def write_tophits_vfdb_card(cds_mmseqs_merge_df, vfdb_results, card_results, locus_df, out_dir ):
+    """
+    Outputs top_hits_vfdb.tsv and top_hits_card.tsv
+    :param cds_mmseqs_merge_df: a pandas df as output from process_results()
+    :param locus_df: a pandas df as output from create_gff()
+    :param out_dir: output directory path
+    :param prefix: output prefix
+    :return: 
+    """
     ######################################
     ##### update vfdb with locus tag #####
     ###### merge locus into the vfdb ####
+    # needed for vfdb card matching later
+
+    genes_for_vfdb_card = cds_mmseqs_merge_df['gene']
     locus_df['gene'] = genes_for_vfdb_card
     vfdb_results = vfdb_results.merge(locus_df, how='left', on='gene')
     # get a list of columns

@@ -172,7 +172,7 @@ if __name__ == "__main__":
     # post process results
     # includes vfdb and card
     # return the merged df, vfdb and card top hits
-    (cds_mmseqs_merge_df,vfdb_results, card_results) = post_processing.process_results(db_dir, out_dir, prefix, gene_predictor)
+    (cds_mmseqs_merge_df, vfdb_results, card_results) = post_processing.process_results(db_dir, out_dir, prefix, gene_predictor)
 
     # gets df of length and gc for each contig
     length_df = post_processing.get_contig_name_lengths(input_fasta)
@@ -181,6 +181,11 @@ if __name__ == "__main__":
     # create gff and return locustag for table
     (locustag, locus_df, gff_df) = post_processing.create_gff(cds_mmseqs_merge_df, length_df, input_fasta, out_dir, prefix, locustag, tmrna_flag, args.meta)
     post_processing.create_tbl(cds_mmseqs_merge_df, length_df, out_dir, prefix, gene_predictor, tmrna_flag, gff_df)
+    
+    # write vfdb and card tophits
+    # needs to be before .create_txt or else won't count properly
+    post_processing.write_tophits_vfdb_card(cds_mmseqs_merge_df, vfdb_results, card_results, locus_df, out_dir )
+    
     # write the summary tsv outputs
     post_processing.create_txt(cds_mmseqs_merge_df, length_df, out_dir, prefix)
     
@@ -191,7 +196,8 @@ if __name__ == "__main__":
 
     # update fasta headers and final output tsv
     post_processing.update_fasta_headers(locus_df, out_dir, gene_predictor )
-    post_processing.update_final_output(cds_mmseqs_merge_df, vfdb_results, card_results, locus_df, prefix, out_dir )
+    post_processing.update_final_output(cds_mmseqs_merge_df, locus_df, prefix, out_dir )
+
     # extract terL
     post_processing.extract_terl(locus_df, out_dir, gene_predictor, logger )
     
