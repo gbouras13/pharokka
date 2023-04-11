@@ -18,7 +18,7 @@ def get_input():
     parser.add_argument('-o', '--outdir', action="store", required = True, help='Pharokka output directory.')
     parser.add_argument('-p', '--prefix', action="store", help='Prefix used to create pharokka output. Will default to pharokka.',  default='pharokka')
     parser.add_argument('-t', '--plot_title', action="store",  default='Phage', help='Plot name.')
-    parser.add_argument('-f', '--force', help="Overwrites the output file.", action="store_true" )
+    parser.add_argument('-f', '--force', help="Overwrites the output file.", action="store_true")
     parser.add_argument('--label_hypotheticals', help="Flag to label  hypothetical or unknown proteins. By default these are not labelled.", action="store_true" )
     parser.add_argument('--title_size', action="store",  default='20', help='Controls title size. Must be an integer. Defaults to 20.')
     parser.add_argument('--label_size', action="store",  default='8', help='Controls annotation label size. Must be an integer. Defaults to 8.')
