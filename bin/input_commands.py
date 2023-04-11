@@ -71,9 +71,9 @@ def instantiate_dirs(output_dir, meta, gene_predictor, force):
 def validate_fasta(filename):
 	with open(filename, "r") as handle:
 		fasta = SeqIO.parse(handle, "fasta")
-		print("Checking Input FASTA")
+		print("Checking Input FASTA.")
 		if any(fasta):
-			print("FASTA checked")
+			print("FASTA checked.")
 		else:
 			sys.exit("Error: Input file is not in the FASTA format.\n")  
 

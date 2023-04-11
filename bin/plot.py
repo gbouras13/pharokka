@@ -38,13 +38,6 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
     cds_track = sector.add_track((70, 80))
     cds_track.axis(fc="#EEEEEE", ec="none")
 
-    # Plot forward CDS
-    # cds_track.genomic_features(
-    #     gff.extract_features("CDS", target_strand=1),
-    #     plotstyle="arrow",
-    #     r_lim=(75, 80),
-    #     fc="salmon",
-    # )
 
 
 #### plot each PHROG fwd and reverse
