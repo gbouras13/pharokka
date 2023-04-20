@@ -46,7 +46,7 @@ For example this will truncate all labels to 15 characters:
 
 If you want to make the CDS labels bigger (defaults to 8):
 
-`pharokka_plotter.py -i input.fasta -n pharokka_plot -o pharokka_output_directory -t label_size 10`
+`pharokka_plotter.py -i input.fasta -n pharokka_plot -o pharokka_output_directory --label_size 10`
 
 If you want to change the plot resolution (default 600 dpi)
 
