@@ -4,7 +4,6 @@ import input_commands
 import databases
 import processes
 import post_processing
-import plot
 import os
 import logging
 import time
@@ -119,7 +118,8 @@ if __name__ == "__main__":
     # meta mode split input for trnascan and maybe phanotate 
     if args.meta == True:
         num_fastas = processes.split_input_fasta(input_fasta, out_dir)
-
+        # will generate split output gffs if meta flag is true
+        input_commands.instantiate_split_output(out_dir, args.meta)
 
     # CDS predicton
     # phanotate 
@@ -178,9 +178,14 @@ if __name__ == "__main__":
     tmrna_flag = post_processing.parse_aragorn(out_dir,length_df, prefix)
 
     # create gff and return locustag for table
-    (locustag, locus_df, gff_df) = post_processing.create_gff(cds_mmseqs_merge_df, length_df, input_fasta, out_dir, prefix, locustag, tmrna_flag, args.meta)
+    (locustag, locus_df, gff_df, total_gff) = post_processing.create_gff(cds_mmseqs_merge_df, length_df, input_fasta, out_dir, prefix, locustag, tmrna_flag, args.meta)
     post_processing.create_tbl(cds_mmseqs_merge_df, length_df, out_dir, prefix, gene_predictor, tmrna_flag, gff_df)
-    
+
+
+    # output single gffs in meta mode
+    post_processing.create_gff_singles(length_df, input_fasta, out_dir, total_gff)
+    post_processing.convert_singles_gff_to_gbk(length_df, out_dir)
+
     # write vfdb and card tophits
     # needs to be before .create_txt or else won't count properly
     post_processing.write_tophits_vfdb_card(cds_mmseqs_merge_df, vfdb_results, card_results, locus_df, out_dir )
@@ -191,7 +196,8 @@ if __name__ == "__main__":
     # convert to genbank
     logger.info("Converting gff to genbank.")
     print("Converting gff to genbank.")
-    processes.convert_gff_to_gbk(input_fasta, out_dir, prefix)
+    processes.convert_gff_to_gbk(input_fasta, out_dir, out_dir, prefix)
+    
 
     # update fasta headers and final output tsv
     post_processing.update_fasta_headers(locus_df, out_dir, gene_predictor )

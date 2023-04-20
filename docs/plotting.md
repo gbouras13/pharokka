@@ -8,7 +8,7 @@ You can run `pharokka_plotter.py` in the following way (most basic command below
 
 `pharokka_plotter.py -i input.fasta -n pharokka_plot -o pharokka_output_directory`
 
-This will create `pharokka_plot.png` as an output file of your plot.
+This will create `pharokka_plot.png` as an output file plot of your phage.
 
 A prefix is not required for pharokka by default. If you used a prefix to create your pharokka output, please specify it: 
 

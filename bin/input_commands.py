@@ -336,3 +336,17 @@ def check_dependencies(logger):
 	print("mash version is ok.")
 	logger.info("mash version is ok.")
 
+
+def instantiate_split_output(out_dir, meta):
+
+	if meta == True:
+
+		single_gff_dir = os.path.join(out_dir, 'single_gffs') 
+		single_gbk_dir = os.path.join(out_dir, 'single_gbks') 
+
+		if os.path.isdir(single_gff_dir) == False:
+			os.mkdir(single_gff_dir)
+		if os.path.isdir(single_gbk_dir) == False:
+			os.mkdir(single_gbk_dir)
+
+

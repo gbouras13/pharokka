@@ -196,9 +196,6 @@ def concat_trnascan_meta(out_dir, num_fastas):
                 outfile.write(infile.read())
 
  
-
-
-
 ##### single contig mode ######
 
 def run_phanotate(filepath_in, out_dir,logger):
@@ -414,15 +411,16 @@ def run_mmseqs(db_dir, out_dir, threads, logger, gene_predictor, evalue):
     sp.run(["rm", "-r", target_db_dir], check=True)
 
 
-def convert_gff_to_gbk(filepath_in, out_dir, prefix):
+def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix):
     """
     Converts the gff to genbank
     :param filepath_in: input fasta file
-    :param out_dir: output directory
+    :param input_dir: input directory of the gff. same as output_dir for the overall gff, diff for meta mode
+    :param out_dir: output directory of the gbk 
     :param prefix: prefix
     :return:
     """
-    gff_file = os.path.join(out_dir, prefix + ".gff")
+    gff_file = os.path.join(input_dir, prefix + ".gff")
     gbk_file = os.path.join(out_dir, prefix + ".gbk")
     with open(gbk_file, "wt") as gbk_handler:
         fasta_handler = SeqIO.to_dict(SeqIO.parse(filepath_in, "fasta"))
@@ -441,6 +439,8 @@ def convert_gff_to_gbk(filepath_in, out_dir, prefix):
                     else: # reverse strand -1 needs reverse compliment
                         feature.qualifiers.update({'translation': Seq.translate(record.seq[feature.location.start.position:feature.location.end.position].reverse_complement(), to_stop=True)})
             SeqIO.write(record, gbk_handler, "genbank")
+
+
 
 def run_minced(filepath_in, out_dir, prefix, logger):
     """

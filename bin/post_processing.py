@@ -8,6 +8,7 @@ import string
 from Bio.SeqUtils import GC
 import pandas as pd
 import numpy as np
+import processes
 pd.options.mode.chained_assignment = None
 
 def create_mmseqs_tophits(out_dir):
@@ -506,7 +507,7 @@ def create_gff(cds_mmseqs_df, length_df, fasta_input, out_dir, prefix, locustag,
         fasta_sequences = SeqIO.parse(open(fasta_input),'fasta')
         SeqIO.write(fasta_sequences, f, "fasta")
 
-    return (locustag, locus_df, gff_df)
+    return (locustag, locus_df, gff_df, total_gff)
 
 
 def update_fasta_headers(locus_df, out_dir, gene_predictor ):
@@ -1184,11 +1185,71 @@ def inphared_top_hits(out_dir, db_dir, length_df, prefix):
 
     combined_df.to_csv(os.path.join(out_dir, prefix + "_top_hits_mash_inphared.tsv"), sep="\t", index=False)        
 
- 
+
+def create_gff_singles(length_df, fasta_input, out_dir,  total_gff):
+    """
+    Creates the single gff3 files for each inout contig in meta 
+    :param length_df: a pandas df as output from get_contig_name_lengths()
+    :param fasta_input: input fasta file
+    :param out_dir: output directory path
+    :param locus_df: output from create_gff
+    :param total_gff: output from create_gff
+    """
+
+    single_gff_dir = os.path.join(out_dir, 'single_gffs') 
+
+    if os.path.isdir(single_gff_dir) == False:
+        os.mkdir(single_gff_dir)
+
+#     # get the 
+
+    # write header of final gff files 
+
+    for index, row in length_df.iterrows():
+        contig = row['contig']
+        with open(os.path.join(single_gff_dir, contig + ".gff"), 'w') as f:
+            f.write('##gff-version 3\n')
+            f.write('##sequence-region ' + contig + ' 1 ' + str(row['length']) +'\n')
+
+        subset_df = total_gff[total_gff['contig'] == contig]
+
+        # write final gff to file
+        with open(os.path.join(single_gff_dir, contig + ".gff"), 'a') as f:
+            subset_df.to_csv(f, sep="\t", index=False, header=False)
+
+        # write fasta on the end
+        with open(os.path.join(single_gff_dir, contig + ".gff"), 'a') as f:
+            f.write('##FASTA\n')
+            fasta_sequences = SeqIO.parse(open(fasta_input),'fasta')
+            # match id to contig header 
+            for dna_record in fasta_sequences:
+                if dna_record.id == contig:
+                    SeqIO.write(dna_record, f, 'fasta')
 
 
 
-        
+def convert_singles_gff_to_gbk(length_df, out_dir ):
+    """
+    Converts all single gffs to gbks
+    :param length_df: a pandas df as output from get_contig_name_lengths()
+    :param out_dir: output directory path
+    :param num_fastas: int, number of fasta in input 
+    """
+
+    single_gff_dir = os.path.join(out_dir, 'single_gffs') 
+    single_gbk_dir = os.path.join(out_dir, 'single_gbks') 
+
+    if os.path.isdir(single_gbk_dir) == False:
+        os.mkdir(single_gbk_dir)
+
+    # directory of all split fastas
+    split_fasta_dir = os.path.join(out_dir, "input_split_tmp")
+
+    for index, row in length_df.iterrows():
+        # get the input fasta for each contig
+        fasta_file = os.path.join(split_fasta_dir, "input_subprocess" + str(index+1) +".fasta" )
+        contig = row['contig']
+        processes.convert_gff_to_gbk(fasta_file, single_gff_dir, single_gbk_dir, contig)
 
 
 
