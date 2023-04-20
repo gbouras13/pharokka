@@ -12,18 +12,10 @@ import sys
 
 # Load GFF file
 
-def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title, truncate, outfile, dpi, label_size, label_hypotheticals):
-    # read in gff file
-    gff_file =  os.path.join(out_dir, prefix + ".gff")
-
-    # validate gff exists 
-    if os.path.isfile(gff_file) == False:
-        sys.exit( str(prefix) + ".gff was not found. Please check the prefix value `-p` matches the pharokka output and try again.")
+def create_plot( gff_file,gbk_file,  interval, annotations, title_size, plot_title, truncate, outfile, dpi, label_size, label_hypotheticals, other_features):
 
     gff = Gff(gff_file)
 
-    # Load Genbank file
-    gbk_file = os.path.join(out_dir, prefix + ".gbk")
     # get only to range of gff - as by default gbk takes all contigs, gff only the first
     gbk = Genbank(gbk_file, max_range = gff.range_size)
 
@@ -38,10 +30,7 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
     cds_track = sector.add_track((70, 80))
     cds_track.axis(fc="#EEEEEE", ec="none")
 
-
-
 #### plot each PHROG fwd and reverse
-
 ## colours 
 
 #4deeea              
@@ -389,9 +378,6 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
     annotations = float(annotations)
 
 
-    # if sparse > 1:
-    #     pos_list = pos_list[::sparse]
-    #     labels = labels[::sparse]
 
     if annotations == 0:
         print("by inputting --annotations 0 you have chosen to plot no annotations. Continuing.")
@@ -400,7 +386,7 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
     elif annotations > 1:
         print("You have input a --annotations value greater than 1. Setting to 1 (will plot all annotations). Continuing.")
         annotations = 1
-    elif annotations < 0: # sparse < 0
+    elif annotations < 0: 
         print("You have input a --annotations value less than 1. Setting to 0 (will plot no annotations). Continuing.")
         annotations = 0
 
@@ -433,8 +419,29 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
         line_kws=dict(ec="grey"),
     )
 
+
+
+    if other_features == False:
+        gc_content_start = 42.5
+        gc_content_end = 60
+        gc_skew_start = 25 
+        gc_skew_end = 42.5
+    else:
+        gc_content_start = 30
+        gc_content_end = 47.5
+        gc_skew_start = 12.5
+        gc_skew_end = 30
+
+    
+
+
+
+
+
+
+
         # Plot GC content
-    gc_content_track = sector.add_track((42.5, 60))
+    gc_content_track = sector.add_track((gc_content_start, gc_content_end))
 
     pos_list, gc_contents = gbk.calc_gc_content()
     gc_contents = gc_contents - gbk.calc_genome_gc_content()
@@ -449,8 +456,9 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
         pos_list, negative_gc_contents, 0, vmin=vmin, vmax=vmax, color="grey"
     )
 
+
     # Plot GC skew
-    gc_skew_track = sector.add_track((25, 42.5))
+    gc_skew_track = sector.add_track((gc_skew_start, gc_skew_end))
 
     pos_list, gc_skews = gbk.calc_gc_skew()
     positive_gc_skews = np.where(gc_skews > 0, gc_skews, 0)
@@ -477,6 +485,18 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
         label_size=8
     )
 
+
+    # other features 
+
+    if other_features == True:
+        trna_track = sector.add_track((50, 55), r_pad_ratio=0.05)
+        trna_track.genomic_features(gff.extract_features("tRNA"), fc="red")
+        trna_track.genomic_features(gff.extract_features("tmRNA"), fc="purple")
+        trna_track.genomic_features(gff.extract_features("repeat_region"), fc="green")
+        trna_track.axis(fc="#EEEEEE", ec="none")
+
+
+
     # # Add legend
     handle_phrogs = [
         Patch(color=unk_col, label="Unknown/Other Function"),
@@ -489,8 +509,6 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
         Patch(color=head_col, label="Head & packaging"),
         Patch(color=con_col, label="Connector")
     ]
-
-
 
 
     fig = circos.plotfig()
@@ -516,16 +534,27 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
         Line2D([], [], color="purple", label="Negative GC Skew", marker="v", ms=6, ls="None")
     ]
 
+
+
     # shrink plot a bit (0.8)
     box = circos.ax.get_position()
     circos.ax.set_position([box.x0, box.y0, box.width * 0.65, box.height*0.9])
 
+    if other_features == True:
+        gc_content_anchor = (0.08, 1.305)
+        gc_skew_anchor = (0.08, 1.205)
+    else:
+        gc_content_anchor = (0.08, 1.205)
+        gc_skew_anchor = (0.08, 1.105)
+
+
+
     gc_legend_cont = circos.ax.legend(
     handles=handle_gc_content,
-    bbox_to_anchor=(0.08, 1.25),
+    bbox_to_anchor=gc_content_anchor,
     loc="center",
     fontsize=9.5,
-    title="GC Content (Outer Ring)",
+    title="GC Content",
     handlelength=2,
     )
 
@@ -533,15 +562,38 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
 
     gc_legend_skew = circos.ax.legend(
     handles=handle_gc_skew,
-    bbox_to_anchor=(0.08, 1.15),
+    bbox_to_anchor=gc_skew_anchor,
     loc="center",
     fontsize=9.5,
-    title="GC Skew (Inner Ring)",
+    title="GC Skew",
     handlelength=2,
     )
-    
+
     circos.ax.add_artist(gc_legend_skew)
 
+    if other_features == True:
+
+
+        other_features_anchor = (0.08, 1.08)
+
+        other_features_handle = [
+        Patch(color="red", label="tRNA"),
+        Patch(color="purple", label="tmRNA"),
+        Patch(color="green", label="CRISPR")
+        ]
+        
+        other_features = circos.ax.legend(
+        handles=other_features_handle,
+        bbox_to_anchor=other_features_anchor,
+        loc="center",
+        fontsize=9.5,
+        title="Other Features (Inner Ring)",
+        handlelength=2,
+        )
+        
+        circos.ax.add_artist(other_features)
+
+    
     dpi = int(dpi)
     
     fig.savefig(outfile, dpi=dpi)

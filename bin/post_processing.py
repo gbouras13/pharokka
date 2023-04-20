@@ -1198,16 +1198,12 @@ def create_gff_singles(length_df, fasta_input, out_dir,  total_gff):
 
     single_gff_dir = os.path.join(out_dir, 'single_gffs') 
 
-    if os.path.isdir(single_gff_dir) == False:
-        os.mkdir(single_gff_dir)
-
-#     # get the 
-
-    # write header of final gff files 
+    check_and_create_directory(single_gff_dir)
 
     for index, row in length_df.iterrows():
         contig = row['contig']
         with open(os.path.join(single_gff_dir, contig + ".gff"), 'w') as f:
+    # write header of final gff files 
             f.write('##gff-version 3\n')
             f.write('##sequence-region ' + contig + ' 1 ' + str(row['length']) +'\n')
 
@@ -1239,8 +1235,7 @@ def convert_singles_gff_to_gbk(length_df, out_dir ):
     single_gff_dir = os.path.join(out_dir, 'single_gffs') 
     single_gbk_dir = os.path.join(out_dir, 'single_gbks') 
 
-    if os.path.isdir(single_gbk_dir) == False:
-        os.mkdir(single_gbk_dir)
+    check_and_create_directory(single_gbk_dir)
 
     # directory of all split fastas
     split_fasta_dir = os.path.join(out_dir, "input_split_tmp")
@@ -1252,4 +1247,27 @@ def convert_singles_gff_to_gbk(length_df, out_dir ):
         processes.convert_gff_to_gbk(fasta_file, single_gff_dir, single_gbk_dir, contig)
 
 
+def split_fasta_singles(input_fasta, out_dir ):
+    """Splits the input fasta into separate single fasta files for output based on contig names
+
+    :param input_fasta: input multifasta file
+    :param out_dir: output director 
+    """
+
+    single_fastas = os.path.join(out_dir, 'single_fastas') 
+    check_and_create_directory(single_fastas)
+    fasta_sequences = SeqIO.parse(open(input_fasta),'fasta')
+
+    for dna_record in fasta_sequences:
+        contig = dna_record.id
+        with open(os.path.join(single_fastas, contig + ".fasta"), "w") as f:
+            SeqIO.write(dna_record, f, 'fasta')
+
+
+def check_and_create_directory(directory):
+    """Checks if directory exists, creates it if not
+    :param directory: director 
+    """
+    if os.path.isdir(directory) == False:
+        os.mkdir(directory)
 

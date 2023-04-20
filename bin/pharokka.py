@@ -54,7 +54,7 @@ if __name__ == "__main__":
     gene_predictor = args.gene_predictor
 
     # instantiate outdir 
-    out_dir = input_commands.instantiate_dirs(args.outdir, args.meta, gene_predictor, args.force)
+    out_dir = input_commands.instantiate_dirs(args.outdir, args.meta, args.force)
 
     # set the db dir
     if args.database == "Default":
@@ -113,7 +113,7 @@ if __name__ == "__main__":
 
 
     # validates meta mode 
-    input_commands.validate_meta(input_fasta, args.meta, logger)
+    input_commands.validate_meta(input_fasta, args.meta, args.split, logger)
 
     # meta mode split input for trnascan and maybe phanotate 
     if args.meta == True:
@@ -183,8 +183,10 @@ if __name__ == "__main__":
 
 
     # output single gffs in meta mode
-    post_processing.create_gff_singles(length_df, input_fasta, out_dir, total_gff)
-    post_processing.convert_singles_gff_to_gbk(length_df, out_dir)
+    if args.split == True and args.meta == True:
+        post_processing.create_gff_singles(length_df, input_fasta, out_dir, total_gff)
+        post_processing.convert_singles_gff_to_gbk(length_df, out_dir)
+        post_processing.split_fasta_singles(input_fasta, out_dir)
 
     # write vfdb and card tophits
     # needs to be before .create_txt or else won't count properly
