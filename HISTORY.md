@@ -1,6 +1,12 @@
 History
 =======
 
+1.3.1 (2023-04-20)
+------------------
+
+* Adds the ability to specify -e of extra features (tRNAs, CRISPRs, tmRNAs) with pharokka_plotter.py.
+* Adds the -s split mode option with metagenome mode, this will output separate single fastas, gff and genbank files along with -m. It is ideally used for situations where you have bulk phage isolates you want to annotate in one go. 
+
 1.3.0 (2023-04-11)
 ------------------
 

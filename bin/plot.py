@@ -8,22 +8,12 @@ import numpy as np
 import sys
 
 
-
-
 # Load GFF file
 
-def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title, truncate, outfile, dpi, label_size, label_hypotheticals):
-    # read in gff file
-    gff_file =  os.path.join(out_dir, prefix + ".gff")
-
-    # validate gff exists 
-    if os.path.isfile(gff_file) == False:
-        sys.exit( str(prefix) + ".gff was not found. Please check the prefix value `-p` matches the pharokka output and try again.")
+def create_plot( gff_file,gbk_file,  interval, annotations, title_size, plot_title, truncate, outfile, dpi, label_size, label_hypotheticals):
 
     gff = Gff(gff_file)
 
-    # Load Genbank file
-    gbk_file = os.path.join(out_dir, prefix + ".gbk")
     # get only to range of gff - as by default gbk takes all contigs, gff only the first
     gbk = Genbank(gbk_file, max_range = gff.range_size)
 
@@ -31,17 +21,13 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
     circos = Circos(sectors={gbk.name: gbk.range_size})
 
     # title if not blank
-
     circos.text(plot_title, size=int(title_size), r=190)
 
     sector = circos.get_sector(gbk.name)
     cds_track = sector.add_track((70, 80))
     cds_track.axis(fc="#EEEEEE", ec="none")
 
-
-
 #### plot each PHROG fwd and reverse
-
 ## colours 
 
 #4deeea              
@@ -251,12 +237,9 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
         fc=moron_col,
     )
 
-
-
-
 # integration and excision
 
-    int_col = '#1c1c1c'
+    int_col = '#E0B0FF'
 
     fwd_list = []
     for f in gff.extract_features("CDS", target_strand=1):
@@ -339,12 +322,43 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
         fc=con_col,
     )
 
+# extras
 
+    extras_col = 'black'
+
+    fwd_list = []
+    for f in gff.extract_features("tRNA", target_strand=1):
+        fwd_list.append(f)
+    for f in gff.extract_features("tmRNA", target_strand=1):
+        fwd_list.append(f)
+    for f in gff.extract_features("repeat_region", target_strand=1):
+        fwd_list.append(f)
+
+    cds_track.genomic_features(
+        fwd_list,
+        plotstyle="arrow",
+        r_lim=(75, 80),
+        fc=extras_col,
+    )
+
+    rev_list = []
+    for f in gff.extract_features("tRNA", target_strand=-1):
+        rev_list.append(f)
+    for f in gff.extract_features("tmRNA", target_strand=-1):
+        rev_list.append(f)
+    for f in gff.extract_features("repeat_region", target_strand=-1):
+        rev_list.append(f)
+
+    cds_track.genomic_features(
+        rev_list,
+        plotstyle="arrow",
+        r_lim=(70, 75),
+        fc=extras_col,
+    )
 
 
     # trunction 
     truncate = int(truncate)
-
 
     # Extract CDS product labels
     pos_list, labels, length_list = [], [], []
@@ -363,6 +377,88 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
         labels.append(label)
         length_list.append(length)
 
+    # trna
+    pos_list_trna, labels_trna, length_list_trna = [], [], []
+    for f in gff.extract_features("tRNA"):
+        start, end = int(str(f.location.end)), int(str(f.location.start))
+        pos = (start + end) / 2.
+        length = end - start
+        label = 'tRNA'
+        pos_list_trna.append(pos)
+        labels_trna.append(label)
+        length_list_trna.append(length)
+
+        # thin out the trnas to avoid overlaps
+        # Create an empty list to store the filtered indices
+        filtered_indices_trna = []
+        # add the first tRNA
+        filtered_indices_trna.append(0)
+        
+        for i in range(1,len(length_list_trna)):
+            # If the position of the trna is at least 500bp away from the previous, add it
+            if pos_list_trna[i] > (pos_list_trna[i-1] + 500):
+                filtered_indices_trna.append(i)
+
+        # Use the filtered indices to create new lists for pos_list, labels, and length_list
+        pos_list_trna = [pos_list_trna[i] for i in filtered_indices_trna]
+        labels_trna = [labels_trna[i] for i in filtered_indices_trna]
+        length_list_trna = [length_list_trna[i] for i in filtered_indices_trna]
+
+
+    # tmrna
+    pos_list_tmrna, labels_tmrna, length_list_tmrna = [], [], []
+    for f in gff.extract_features("tmRNA"):
+        start, end = int(str(f.location.end)), int(str(f.location.start))
+        pos = (start + end) / 2.
+        length = end - start
+        label = 'tRNA'
+        pos_list_tmrna.append(pos)
+        labels_tmrna.append(label)
+        length_list_tmrna.append(length)
+
+        # thin out the trnas to avoid overlaps
+        # Create an empty list to store the filtered indices
+        filtered_indices_tmrna = []
+        # add the first tRNA
+        filtered_indices_tmrna.append(0)
+        
+        for i in range(1,len(length_list_tmrna)):
+            # If the position of the trna is at least 500bp away from the previous, add it
+            if pos_list_tmrna[i] > (pos_list_tmrna[i-1] + 500):
+                filtered_indices_tmrna.append(i)
+
+        # Use the filtered indices to create new lists for pos_list, labels, and length_list
+        pos_list_trmna = [pos_list_trmna[i] for i in filtered_indices_tmrna]
+        labels_tmrna = [labels_tmrna[i] for i in filtered_indices_tmrna]
+        length_list_tmrna = [length_list_tmrna[i] for i in filtered_indices_tmrna]
+
+    
+    # crispr
+    pos_list_crispr, labels_crispr, length_list_crispr = [], [], []
+    for f in gff.extract_features("repeat_region"):
+        start, end = int(str(f.location.end)), int(str(f.location.start))
+        pos = (start + end) / 2.
+        length = end - start
+        label = 'tRNA'
+        pos_list_crispr.append(pos)
+        labels_crispr.append(label)
+        length_list_crispr.append(length)
+
+        # thin out the trnas to avoid overlaps
+        # Create an empty list to store the filtered indices
+        filtered_indices_crispr = []
+        # add the first tRNA
+        filtered_indices_crispr.append(0)
+
+        for i in range(1,len(length_list_tmrna)):
+            # If the position of the trna is at least 500bp away from the previous, add it
+            if pos_list_crispr[i] > (pos_list_crispr[i-1] + 500):
+                filtered_indices_crispr.append(i)
+
+        # Use the filtered indices to create new lists for pos_list, labels, and length_list
+        pos_list_crispr = [pos_list_crispr[i] for i in filtered_indices_crispr]
+        labels_crispr = [labels_crispr[i] for i in filtered_indices_crispr]
+        length_list_crispr = [length_list_crispr[i] for i in filtered_indices_crispr]
 
 
 
@@ -388,11 +484,6 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
     #### thin out annotations
     annotations = float(annotations)
 
-
-    # if sparse > 1:
-    #     pos_list = pos_list[::sparse]
-    #     labels = labels[::sparse]
-
     if annotations == 0:
         print("by inputting --annotations 0 you have chosen to plot no annotations. Continuing.")
     elif annotations == 0:
@@ -400,7 +491,7 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
     elif annotations > 1:
         print("You have input a --annotations value greater than 1. Setting to 1 (will plot all annotations). Continuing.")
         annotations = 1
-    elif annotations < 0: # sparse < 0
+    elif annotations < 0: 
         print("You have input a --annotations value less than 1. Setting to 0 (will plot no annotations). Continuing.")
         annotations = 0
 
@@ -421,8 +512,6 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
     labels = [labels[i] for i in filtered_indices]
     length_list = [length_list[i] for i in filtered_indices]
 
-
-
     # Plot CDS product labels on outer position
     cds_track.xticks(
         pos_list,
@@ -433,8 +522,43 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
         line_kws=dict(ec="grey"),
     )
 
-        # Plot GC content
-    gc_content_track = sector.add_track((42.5, 60))
+    cds_track.xticks(
+        pos_list_trna,
+        labels_trna,
+        label_orientation="vertical",
+        show_bottom_line=True,
+        label_size=label_size,
+        line_kws=dict(ec="grey"),
+    )
+
+    cds_track.xticks(
+        pos_list_tmrna,
+        labels_tmrna,
+        label_orientation="vertical",
+        show_bottom_line=True,
+        label_size=label_size,
+        line_kws=dict(ec="grey"),
+    )
+
+    cds_track.xticks(
+        pos_list_crispr,
+        labels_crispr,
+        label_orientation="vertical",
+        show_bottom_line=True,
+        label_size=label_size,
+        line_kws=dict(ec="grey"),
+    )
+
+
+    # set gc content and skew coordinated
+
+    gc_content_start = 42.5
+    gc_content_end = 60
+    gc_skew_start = 25 
+    gc_skew_end = 42.5
+
+    # Plot GC content
+    gc_content_track = sector.add_track((gc_content_start, gc_content_end))
 
     pos_list, gc_contents = gbk.calc_gc_content()
     gc_contents = gc_contents - gbk.calc_genome_gc_content()
@@ -450,7 +574,7 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
     )
 
     # Plot GC skew
-    gc_skew_track = sector.add_track((25, 42.5))
+    gc_skew_track = sector.add_track((gc_skew_start, gc_skew_end))
 
     pos_list, gc_skews = gbk.calc_gc_skew()
     positive_gc_skews = np.where(gc_skews > 0, gc_skews, 0)
@@ -477,6 +601,15 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
         label_size=8
     )
 
+    # other features 
+
+    other_track = sector.add_track((50, 55), r_pad_ratio=0.05)
+    other_track.genomic_features(gff.extract_features("tRNA"), fc=extras_col)
+    # comment out other features
+    #other_track.genomic_features(gff.extract_features("tmRNA"), fc="purple")
+    #other_track.genomic_features(gff.extract_features("repeat_region"), fc="green")
+    other_track.axis(fc="#EEEEEE", ec="none")
+
     # # Add legend
     handle_phrogs = [
         Patch(color=unk_col, label="Unknown/Other Function"),
@@ -487,18 +620,17 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
         Patch(color=moron_col, label="Moron, auxiliary metabolic \n gene & host takeover"),
         Patch(color=int_col, label="Integration & excision"),
         Patch(color=head_col, label="Head & packaging"),
-        Patch(color=con_col, label="Connector")
+        Patch(color=con_col, label="Connector"),
+        Patch(color=extras_col, label="tRNA")
     ]
-
-
-
 
     fig = circos.plotfig()
 
+    phrog_legend_coords = (0.10, 1.175)
       
     line_legend = circos.ax.legend(
     handles=handle_phrogs,
-    bbox_to_anchor=(0.92, 1.2),
+    bbox_to_anchor=phrog_legend_coords,
     fontsize=9.5,
     loc="center",
     title="PHROG CDS",
@@ -520,12 +652,16 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
     box = circos.ax.get_position()
     circos.ax.set_position([box.x0, box.y0, box.width * 0.65, box.height*0.9])
 
+    # gc content and skew coordinates
+    gc_content_anchor = (0.92, 1.225)
+    gc_skew_anchor = (0.92, 1.125)
+
     gc_legend_cont = circos.ax.legend(
     handles=handle_gc_content,
-    bbox_to_anchor=(0.08, 1.25),
+    bbox_to_anchor=gc_content_anchor,
     loc="center",
     fontsize=9.5,
-    title="GC Content (Outer Ring)",
+    title="GC Content",
     handlelength=2,
     )
 
@@ -533,13 +669,13 @@ def create_plot(out_dir, prefix,  interval, annotations, title_size, plot_title,
 
     gc_legend_skew = circos.ax.legend(
     handles=handle_gc_skew,
-    bbox_to_anchor=(0.08, 1.15),
+    bbox_to_anchor=gc_skew_anchor,
     loc="center",
     fontsize=9.5,
-    title="GC Skew (Inner Ring)",
+    title="GC Skew",
     handlelength=2,
     )
-    
+
     circos.ax.add_artist(gc_legend_skew)
 
     dpi = int(dpi)

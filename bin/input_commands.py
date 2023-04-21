@@ -25,6 +25,7 @@ def get_input():
 	parser.add_argument('-l', '--locustag', action="store", help='User specified locus tag for the gff/gbk files. This is not required. A random locus tag will be generated instead.',  default='Default')
 	parser.add_argument('-g', '--gene_predictor', action="store", help='User specified gene predictor. Use "-g phanotate" or "-g prodigal". Defaults to phanotate (not required unless prodigal is desired).',  default='phanotate' )
 	parser.add_argument('-m', '--meta', help='meta mode for metavirome input samples', action="store_true")
+	parser.add_argument('-s', '--split', help="split mode for metavirome samples. -m must also be specified. \nWill output separate split FASTA, gff and genbank files for each input contig.", action="store_true" )
 	parser.add_argument('-c', '--coding_table', help='translation table for prodigal. Defaults to 11. Experimental only.', action="store", default = "11")
 	parser.add_argument('-e', '--evalue', help='E-value threshold for mmseqs2 PHROGs database search. Defaults to 1E-05.', action="store", default = "1E-05")
 	parser.add_argument('--terminase', help='Runs terminase large subunit re-orientation mode. Single genome input only and requires --terminase_strand and --terminase_start to be specified.', action="store_true")
@@ -36,7 +37,7 @@ def get_input():
 
 	return args
 
-def instantiate_dirs(output_dir, meta, gene_predictor, force):
+def instantiate_dirs(output_dir, meta, force):
 	# remove outdir on force
 	if force == True:
 		if os.path.isdir(output_dir) == True:
@@ -79,13 +80,13 @@ def validate_fasta(filename):
 
 def validate_gene_predictor(gene_predictor):
 	if gene_predictor == "phanotate":
-		print("Phanotate will be used for gene prediction")
+		print("Phanotate will be used for gene prediction.")
 	elif gene_predictor == "prodigal":
-		print("Prodigal will be used for gene prediction")
+		print("Prodigal will be used for gene prediction.")
 	else:
-		sys.exit("Error: gene predictor was incorrectly specified. Please use 'phanotate' or 'prodigal' .\n")  
+		sys.exit("Error: gene predictor was incorrectly specified. Please use 'phanotate' or 'prodigal'.\n")  
 
-def validate_meta(filepath_in, meta, logger):
+def validate_meta(filepath_in, meta, split, logger):
 	num_fastas = len([1 for line in open(filepath_in) if line.startswith(">")])
 	if meta == True:
 		if num_fastas < 2:
@@ -94,9 +95,19 @@ def validate_meta(filepath_in, meta, logger):
 			message = str(num_fastas) + " input contigs detected."
 			print(message)
 			logger.info(message)
+			if split == True:
+				message = "Split mode activtated. \nSeparate output FASTA, gff and genbank files will be output for each contig."
+				print(message)
+				logger.info(message)
 	else:
 		if num_fastas > 1:
-			print("More than one contig detected in the input file. Re-running pharokka with -m meta mode is recommended unless this is a fragmented isolate genome. \nContinuing.")
+			message = "More than one contig detected in the input file. Re-running pharokka with -m meta mode is recommended unless this is a fragmented isolate genome. \nContinuing."
+			print(message)
+			logger.info(message)
+		if split == True:
+			message = "-s or --split was specified without -m or --meta and will be ignored. \nPlease specify -s with -m if you want to run split mode. \nContinuing."
+			print(message)
+			logger.info(message)
 
 def validate_strand(strand):
 	if strand != "pos" and strand != "neg":
@@ -335,4 +346,18 @@ def check_dependencies(logger):
 
 	print("mash version is ok.")
 	logger.info("mash version is ok.")
+
+
+def instantiate_split_output(out_dir, meta):
+
+	if meta == True:
+
+		single_gff_dir = os.path.join(out_dir, 'single_gffs') 
+		single_gbk_dir = os.path.join(out_dir, 'single_gbks') 
+
+		if os.path.isdir(single_gff_dir) == False:
+			os.mkdir(single_gff_dir)
+		if os.path.isdir(single_gbk_dir) == False:
+			os.mkdir(single_gbk_dir)
+
 

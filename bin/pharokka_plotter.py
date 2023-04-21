@@ -15,7 +15,9 @@ def get_input():
     parser = argparse.ArgumentParser(description='pharokka_plotter.py: pharokka plotting function', formatter_class=RawTextHelpFormatter)
     parser.add_argument('-i', '--infile', action="store", required = True, help='Input genome file in FASTA format.')
     parser.add_argument('-n', '--plot_name', action="store", default='pharokka_plot', help='Output plot file name. ".png" suffix will be added to this automatically.' )
-    parser.add_argument('-o', '--outdir', action="store", required = True, help='Pharokka output directory.')
+    parser.add_argument('-o', '--outdir', action="store", default='',  help='Pharokka output directory.')
+    parser.add_argument('--gff', action="store", default='',  help='Pharokka gff.')
+    parser.add_argument('--genbank',  action="store", default='', help='Pharokka genbank.')
     parser.add_argument('-p', '--prefix', action="store", help='Prefix used to create pharokka output. Will default to pharokka.',  default='pharokka')
     parser.add_argument('-t', '--plot_title', action="store",  default='Phage', help='Plot name.')
     parser.add_argument('-f', '--force', help="Overwrites the output file.", action="store_true")
@@ -62,7 +64,6 @@ if __name__ == "__main__":
         sys.exit("Error: --annotations specified is not an float. Please check your input and try again. \n") 
 
     # check if plot already exists 
-
     plot_file = str(args.plot_name) + ".png"
 
     if args.force == True:
@@ -74,13 +75,27 @@ if __name__ == "__main__":
         if os.path.isfile(plot_file) == True:
             sys.exit("\nOutput plot file already exists and force was not specified. Please specify -f or --force to overwrite the output plot file. \n")  
 
-    # check the outdir exists
+    # flag to see if user provided gff and genbank or output directory
+    gff_genbank_flag = True
 
-    if os.path.isdir(args.outdir) == False:
-        sys.exit("\nProvided Pharokka output directory does not exist. Please check your -o or --outdir input. \n")  
+    if args.gff == "" or args.genbank == "":
+        if args.outdir == "":
+            sys.exit("\nYou have not specified both a Pharokka gff and a gbk file, or a Pharokka output directory. \nPlease check your input and try again.")  
+        else:
+            print("You have specified a Pharokka output directory. \nContinuing.")
+            gff_genbank_flag = False
 
+            # check the outdir exists
+            if os.path.isdir(args.outdir) == False:
+                sys.exit("\nProvided Pharokka output directory does not exist. Please check your -o or --outdir input. \n")  
+
+    else:
+        if args.outdir != "":
+            print("You have specified Pharokka genbank and gff files and also an output directory.\nThe directory will be ignored. \nContinuing with the gff and genbank file.")
+        else:
+            print("You have specified both Pharokka genbank and gff files. \nContinuing.")
+    
     # check the input fasta exists
-
     input_commands.validate_fasta(args.infile)
 
     # get num input contigs
@@ -88,9 +103,33 @@ if __name__ == "__main__":
     if num_contigs > 1:
         print("More than one contig detected in the input file. Only the first phage contig will be plotted. \nContinuing.")
 
+
+    # gff file 
+
+    if gff_genbank_flag == True:
+        gff_file =  args.gff 
+    else:
+        gff_file = os.path.join(args.outdir, args.prefix + ".gff")
+    
+    if os.path.isfile(gff_file) == False:
+        sys.exit( str(gff_file) + "was not found. Please check the prefix value `-p` matches the pharokka output directory, \n or use --gff and --genbank to specify the gff and genbank files and try again.")
+
+
+    # Load Genbank file
+    gbk_file = os.path.join(args.outdir, args.prefix + ".gbk")
+
+    if gff_genbank_flag == True:
+        gbk_file = args.genbank  
+    else:
+        gbk_file = os.path.join(args.outdir, args.prefix + ".gbk")
+
+    # validate gbk exists 
+
+    if os.path.isfile(gbk_file) == False:
+        sys.exit( str(gbk_file) + "was not found. Please check the prefix value `-p` matches the pharokka output directory, \n or use --gff and --genbank to specify the gff and genbank files and try again.")
+
     print("All other checked.")
     print("Plotting the phage.")
 
-
-    plot.create_plot(args.outdir, args.prefix, args.interval, args.annotations, args.title_size, args.plot_title, args.truncate, plot_file, args.dpi, args.label_size, args.label_hypotheticals)
+    plot.create_plot( gff_file, gbk_file, args.interval, args.annotations, args.title_size, args.plot_title, args.truncate, plot_file, args.dpi, args.label_size, args.label_hypotheticals)
 

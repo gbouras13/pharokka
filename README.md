@@ -211,9 +211,9 @@ For a full explanation of all arguments, please see [usage](docs/run.md).
 pharokka defaults to 1 thread.
 
 ```
-usage: pharokka.py [-h] [-i INFILE] [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG] [-g GENE_PREDICTOR] [-m]
-                   [-c CODING_TABLE] [-e EVALUE] [--terminase] [--terminase_strand TERMINASE_STRAND] [--terminase_start TERMINASE_START]
-                   [-V] [--citation]
+usage: pharokka.py [-h] [-i INFILE] [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG]
+                   [-g GENE_PREDICTOR] [-m] [-s] [-c CODING_TABLE] [-e EVALUE] [--terminase]
+                   [--terminase_strand TERMINASE_STRAND] [--terminase_start TERMINASE_START] [-V] [--citation]
 
 pharokka: fast phage annotation program
 
@@ -226,7 +226,7 @@ options:
   -d DATABASE, --database DATABASE
                         Database directory. If the databases have been installed in the default directory, this is not required. Otherwise specify the path.
   -t THREADS, --threads THREADS
-                        Number of threads for mmseqs and hhsuite. Defaults to 1.
+                        Number of threads. Defaults to 1.
   -f, --force           Overwrites the output directory.
   -p PREFIX, --prefix PREFIX
                         Prefix for output files. This is not required.
@@ -235,11 +235,13 @@ options:
   -g GENE_PREDICTOR, --gene_predictor GENE_PREDICTOR
                         User specified gene predictor. Use "-g phanotate" or "-g prodigal". Defaults to phanotate (not required unless prodigal is desired).
   -m, --meta            meta mode for metavirome input samples
+  -s, --split           split mode for metavirome samples. -m must also be specified. 
+                        Will output separate split FASTA, gff and genbank files for each input contig.
   -c CODING_TABLE, --coding_table CODING_TABLE
                         translation table for prodigal. Defaults to 11. Experimental only.
   -e EVALUE, --evalue EVALUE
                         E-value threshold for mmseqs2 PHROGs database search. Defaults to 1E-05.
-  --terminase           Runs "terminase large subunit" re-orientation mode. Single genome input only and requires --terminase_strand and --terminase_start to be specified.
+  --terminase           Runs terminase large subunit re-orientation mode. Single genome input only and requires --terminase_strand and --terminase_start to be specified.
   --terminase_strand TERMINASE_STRAND
                         Strand of terminase large subunit. Must be "pos" or "neg".
   --terminase_start TERMINASE_START

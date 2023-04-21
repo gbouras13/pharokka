@@ -46,4 +46,6 @@ Other Files
 
 * Optionally, if you reorient the input contig, a `_genome_terminase_reoriented.fasta` with the reoriented genome FASTA.
 
+* Optionally, if you specify `-s` or split mode, folders called `single_gbks`, `single_gffs` and `single_fastas` will be created and contain genbank, gff and FASTA files for each respective input contig, named by the contig header. 
+
 * For more information about PHROGs please consult the website [https://phrogs.lmge.uca.fr](https://phrogs.lmge.uca.fr) and paper [https://doi.org/10.1093/nargab/lqab067](https://doi.org/10.1093/nargab/lqab067).
