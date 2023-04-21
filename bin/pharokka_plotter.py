@@ -20,7 +20,6 @@ def get_input():
     parser.add_argument('--genbank',  action="store", default='', help='Pharokka genbank.')
     parser.add_argument('-p', '--prefix', action="store", help='Prefix used to create pharokka output. Will default to pharokka.',  default='pharokka')
     parser.add_argument('-t', '--plot_title', action="store",  default='Phage', help='Plot name.')
-    parser.add_argument('-e', '--extra_features',  action="store_true" , help='Plots extra features (tRNA, CRISPRs, tmRNA).')
     parser.add_argument('-f', '--force', help="Overwrites the output file.", action="store_true")
     parser.add_argument('--label_hypotheticals', help="Flag to label  hypothetical or unknown proteins. By default these are not labelled.", action="store_true" )
     parser.add_argument('--title_size', action="store",  default='20', help='Controls title size. Must be an integer. Defaults to 20.')
@@ -85,7 +84,7 @@ if __name__ == "__main__":
         else:
             print("You have specified a Pharokka output directory. \nContinuing.")
             gff_genbank_flag = False
-            
+
             # check the outdir exists
             if os.path.isdir(args.outdir) == False:
                 sys.exit("\nProvided Pharokka output directory does not exist. Please check your -o or --outdir input. \n")  
@@ -129,11 +128,8 @@ if __name__ == "__main__":
     if os.path.isfile(gbk_file) == False:
         sys.exit( str(gbk_file) + "was not found. Please check the prefix value `-p` matches the pharokka output directory, \n or use --gff and --genbank to specify the gff and genbank files and try again.")
 
-
     print("All other checked.")
     print("Plotting the phage.")
 
-
-
-    plot.create_plot( gff_file, gbk_file, args.interval, args.annotations, args.title_size, args.plot_title, args.truncate, plot_file, args.dpi, args.label_size, args.label_hypotheticals, args.extra_features)
+    plot.create_plot( gff_file, gbk_file, args.interval, args.annotations, args.title_size, args.plot_title, args.truncate, plot_file, args.dpi, args.label_size, args.label_hypotheticals)
 
