@@ -30,8 +30,11 @@ If you are annotating more than 1 contig, it is recommended that you run pharokk
 
 `pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -m`
 
-There is also experimental support for alternative genetic codes if pharokka is run with prodigal as a gene predictor using the `-c` flag. See Prodigal's [documentation](https://github.com/hyattpd/prodigal/wiki/Advice-by-Input-Type#alternate-genetic-codes), along with [Yutin et al. 2021](https://doi.org/10.1038/s41467-022-32979-6) and [Peters et al. 2022](https://doi.org/10.1038/s41467-022-32979-6) for more information and background on phage stop codon reassignment.
+If you are running meta mode, you can optionally specify split mode using the `-s` flag. This will add output directories with separated FASTA, genbank and gff files for each input contig called `single_fastas`, `single_gbks` and `single_gffs`.
 
+`pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -m -s`
+
+There is also experimental support for alternative genetic codes if pharokka is run with prodigal as a gene predictor using the `-c` flag. See Prodigal's [documentation](https://github.com/hyattpd/prodigal/wiki/Advice-by-Input-Type#alternate-genetic-codes), along with [Yutin et al. 2021](https://doi.org/10.1038/s41467-022-32979-6) and [Peters et al. 2022](https://doi.org/10.1038/s41467-022-32979-6) for more information and background on phage stop codon reassignment.
 
 `pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -g prodigal`
 

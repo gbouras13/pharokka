@@ -235,7 +235,8 @@ options:
   -g GENE_PREDICTOR, --gene_predictor GENE_PREDICTOR
                         User specified gene predictor. Use "-g phanotate" or "-g prodigal". Defaults to phanotate (not required unless prodigal is desired).
   -m, --meta            meta mode for metavirome input samples
-  -s, --split           split mode for metavirome samples. -m must also be specified. Will output separate split FASTA, gff and genbank files for each input contig.
+  -s, --split           split mode for metavirome samples. -m must also be specified. 
+                        Will output separate split FASTA, gff and genbank files for each input contig.
   -c CODING_TABLE, --coding_table CODING_TABLE
                         translation table for prodigal. Defaults to 11. Experimental only.
   -e EVALUE, --evalue EVALUE

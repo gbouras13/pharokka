@@ -8,5 +8,8 @@ As of v1.2.0, Pharokka  implements a major new feature. It quickly matches each 
 
 v 1.2.0 also adds the ability to re-orient your phage specifying a coordinate and strandedness using the terminase large subunit reorientation mode, then annotate the re-oriented phage. 
 
+v1.3.0, adds `pharokka_plotter.py`, which enables you to make plots with pharokka outputs.
+
+
 
 
