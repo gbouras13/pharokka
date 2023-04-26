@@ -10,7 +10,7 @@ import sys
 
 # Load GFF file
 
-def create_plot( gff_file,gbk_file,  interval, annotations, title_size, plot_title, truncate, outfile, dpi, label_size, label_hypotheticals):
+def create_plot( gff_file,gbk_file,  interval, annotations, title_size, plot_title, truncate, outfile, dpi, label_size, label_hypotheticals, remove_other_features_labels):
 
     gff = Gff(gff_file)
 
@@ -322,7 +322,12 @@ def create_plot( gff_file,gbk_file,  interval, annotations, title_size, plot_tit
         fc=con_col,
     )
 
-# extras
+###################################################
+#### Extra Features
+###################################################
+
+# only if flag isn't set
+
 
     extras_col = 'black'
 
@@ -357,7 +362,106 @@ def create_plot( gff_file,gbk_file,  interval, annotations, title_size, plot_tit
     )
 
 
-    # trunction 
+##################################
+####### thin out extra features #########
+##################################
+
+    if remove_other_features_labels == False:
+
+        # trna
+        pos_list_trna, labels_trna, length_list_trna = [], [], []
+        for f in gff.extract_features("tRNA"):
+            start, end = int(str(f.location.end)), int(str(f.location.start))
+            pos = (start + end) / 2.
+            length = end - start
+            label = 'tRNA'
+            pos_list_trna.append(pos)
+            labels_trna.append(label)
+            length_list_trna.append(length)
+
+    # if trnas exist
+        if len(length_list_trna) > 0:
+            # thin out the trnas to avoid overlaps
+            # Create an empty list to store the filtered indices
+            filtered_indices_trna = []
+            # add the first tRNA
+            filtered_indices_trna.append(0)
+            
+            for i in range(1,len(length_list_trna)):
+                # If the position of the trna is at least 500bp away from the previous, add it
+                if pos_list_trna[i] > (pos_list_trna[i-1] + 500):
+                    filtered_indices_trna.append(i)
+
+            # Use the filtered indices to create new lists for pos_list, labels, and length_list
+            pos_list_trna = [pos_list_trna[i] for i in filtered_indices_trna]
+            labels_trna = [labels_trna[i] for i in filtered_indices_trna]
+            length_list_trna = [length_list_trna[i] for i in filtered_indices_trna]
+
+
+        # tmrna
+        pos_list_tmrna, labels_tmrna, length_list_tmrna = [], [], []
+        for f in gff.extract_features("tmRNA"):
+            start, end = int(str(f.location.end)), int(str(f.location.start))
+            pos = (start + end) / 2.
+            length = end - start
+            label = 'tmRNA'
+            pos_list_tmrna.append(pos)
+            labels_tmrna.append(label)
+            length_list_tmrna.append(length)
+
+        if len(length_list_tmrna) > 0:
+            # thin out the trnas to avoid overlaps
+            # Create an empty list to store the filtered indices
+            filtered_indices_tmrna = []
+            # add the first tmRNA
+            filtered_indices_tmrna.append(0)
+
+            for i in range(1,len(length_list_tmrna)):
+                # If the position of the tmRNA is at least 500bp away from the previous, add it
+                if pos_list_tmrna[i] > (pos_list_tmrna[i-1] + 500):
+                    filtered_indices_tmrna.append(i)
+
+            # Use the filtered indices to create new lists for pos_list, labels, and length_list
+            pos_list_tmrna = [pos_list_tmrna[i] for i in filtered_indices_tmrna]
+            labels_tmrna = [labels_tmrna[i] for i in filtered_indices_tmrna]
+            length_list_tmrna = [length_list_tmrna[i] for i in filtered_indices_tmrna]
+
+        
+        # crispr
+        pos_list_crispr, labels_crispr, length_list_crispr = [], [], []
+        for f in gff.extract_features("repeat_region"):
+            start, end = int(str(f.location.end)), int(str(f.location.start))
+            pos = (start + end) / 2.
+            length = end - start
+            label = 'CRISPR'
+            pos_list_crispr.append(pos)
+            labels_crispr.append(label)
+            length_list_crispr.append(length)
+
+        if len(length_list_crispr) > 0:
+
+            # thin out the crisprs to avoid overlaps
+            # Create an empty list to store the filtered indices
+            filtered_indices_crispr = []
+            # add the first crispr
+            filtered_indices_crispr.append(0)
+
+            for i in range(1,len(length_list_tmrna)):
+                # If the position of the crispr is at least 500bp away from the previous, add it
+                if pos_list_crispr[i] > (pos_list_crispr[i-1] + 500):
+                    filtered_indices_crispr.append(i)
+
+            # Use the filtered indices to create new lists for pos_list, labels, and length_list
+            pos_list_crispr = [pos_list_crispr[i] for i in filtered_indices_crispr]
+            labels_crispr = [labels_crispr[i] for i in filtered_indices_crispr]
+            length_list_crispr = [length_list_crispr[i] for i in filtered_indices_crispr]
+
+
+##################################
+####### truncate CDS labels
+##################################
+
+    # truncation 
     truncate = int(truncate)
 
     # Extract CDS product labels
@@ -377,111 +481,9 @@ def create_plot( gff_file,gbk_file,  interval, annotations, title_size, plot_tit
         labels.append(label)
         length_list.append(length)
 
-    # trna
-    pos_list_trna, labels_trna, length_list_trna = [], [], []
-    for f in gff.extract_features("tRNA"):
-        start, end = int(str(f.location.end)), int(str(f.location.start))
-        pos = (start + end) / 2.
-        length = end - start
-        label = 'tRNA'
-        pos_list_trna.append(pos)
-        labels_trna.append(label)
-        length_list_trna.append(length)
-
-        # thin out the trnas to avoid overlaps
-        # Create an empty list to store the filtered indices
-        filtered_indices_trna = []
-        # add the first tRNA
-        filtered_indices_trna.append(0)
-        
-        for i in range(1,len(length_list_trna)):
-            # If the position of the trna is at least 500bp away from the previous, add it
-            if pos_list_trna[i] > (pos_list_trna[i-1] + 500):
-                filtered_indices_trna.append(i)
-
-        # Use the filtered indices to create new lists for pos_list, labels, and length_list
-        pos_list_trna = [pos_list_trna[i] for i in filtered_indices_trna]
-        labels_trna = [labels_trna[i] for i in filtered_indices_trna]
-        length_list_trna = [length_list_trna[i] for i in filtered_indices_trna]
-
-
-    # tmrna
-    pos_list_tmrna, labels_tmrna, length_list_tmrna = [], [], []
-    for f in gff.extract_features("tmRNA"):
-        start, end = int(str(f.location.end)), int(str(f.location.start))
-        pos = (start + end) / 2.
-        length = end - start
-        label = 'tRNA'
-        pos_list_tmrna.append(pos)
-        labels_tmrna.append(label)
-        length_list_tmrna.append(length)
-
-        # thin out the trnas to avoid overlaps
-        # Create an empty list to store the filtered indices
-        filtered_indices_tmrna = []
-        # add the first tRNA
-        filtered_indices_tmrna.append(0)
-        
-        for i in range(1,len(length_list_tmrna)):
-            # If the position of the trna is at least 500bp away from the previous, add it
-            if pos_list_tmrna[i] > (pos_list_tmrna[i-1] + 500):
-                filtered_indices_tmrna.append(i)
-
-        # Use the filtered indices to create new lists for pos_list, labels, and length_list
-        pos_list_trmna = [pos_list_trmna[i] for i in filtered_indices_tmrna]
-        labels_tmrna = [labels_tmrna[i] for i in filtered_indices_tmrna]
-        length_list_tmrna = [length_list_tmrna[i] for i in filtered_indices_tmrna]
-
-    
-    # crispr
-    pos_list_crispr, labels_crispr, length_list_crispr = [], [], []
-    for f in gff.extract_features("repeat_region"):
-        start, end = int(str(f.location.end)), int(str(f.location.start))
-        pos = (start + end) / 2.
-        length = end - start
-        label = 'tRNA'
-        pos_list_crispr.append(pos)
-        labels_crispr.append(label)
-        length_list_crispr.append(length)
-
-        # thin out the trnas to avoid overlaps
-        # Create an empty list to store the filtered indices
-        filtered_indices_crispr = []
-        # add the first tRNA
-        filtered_indices_crispr.append(0)
-
-        for i in range(1,len(length_list_tmrna)):
-            # If the position of the trna is at least 500bp away from the previous, add it
-            if pos_list_crispr[i] > (pos_list_crispr[i-1] + 500):
-                filtered_indices_crispr.append(i)
-
-        # Use the filtered indices to create new lists for pos_list, labels, and length_list
-        pos_list_crispr = [pos_list_crispr[i] for i in filtered_indices_crispr]
-        labels_crispr = [labels_crispr[i] for i in filtered_indices_crispr]
-        length_list_crispr = [length_list_crispr[i] for i in filtered_indices_crispr]
-
-
-
-    # Plot forward CDS
-
-    # Plot reverse CDS
-    # cds_track.genomic_features(
-    #     gff.extract_features("CDS", target_strand=-1),
-    #     plotstyle="arrow",
-    #     r_lim=(70, 75),
-    #     fc="skyblue",
-    # )
-
-
-    # cds_track.genomic_features(
-    #     gff.extract_features("CDS", target_strand=1),
-    #     plotstyle="arrow",
-    #     r_lim=(75, 80),
-    #     fc="salmon",
-    # )
-
-
-    #### thin out annotations
+###################################################
+#### thin out CDS annotations
+###################################################
     annotations = float(annotations)
 
     if annotations == 0:
@@ -522,36 +524,41 @@ def create_plot( gff_file,gbk_file,  interval, annotations, title_size, plot_tit
         line_kws=dict(ec="grey"),
     )
 
-    cds_track.xticks(
-        pos_list_trna,
-        labels_trna,
-        label_orientation="vertical",
-        show_bottom_line=True,
-        label_size=label_size,
-        line_kws=dict(ec="grey"),
-    )
+###################################################
+# set other features 
+###################################################
+    if remove_other_features_labels == False:
+        # add trnas
+        cds_track.xticks(
+            pos_list_trna,
+            labels_trna,
+            label_orientation="vertical",
+            show_bottom_line=True,
+            label_size=label_size,
+            line_kws=dict(ec="grey"),
+        )
+        # add tmrnas
+        cds_track.xticks(
+            pos_list_tmrna,
+            labels_tmrna,
+            label_orientation="vertical",
+            show_bottom_line=True,
+            label_size=label_size,
+            line_kws=dict(ec="grey"),
+        )
+        # add crisprs
+        cds_track.xticks(
+            pos_list_crispr,
+            labels_crispr,
+            label_orientation="vertical",
+            show_bottom_line=True,
+            label_size=label_size,
+            line_kws=dict(ec="grey"),
+        )
 
-    cds_track.xticks(
-        pos_list_tmrna,
-        labels_tmrna,
-        label_orientation="vertical",
-        show_bottom_line=True,
-        label_size=label_size,
-        line_kws=dict(ec="grey"),
-    )
-
-    cds_track.xticks(
-        pos_list_crispr,
-        labels_crispr,
-        label_orientation="vertical",
-        show_bottom_line=True,
-        label_size=label_size,
-        line_kws=dict(ec="grey"),
-    )
-
-
-    # set gc content and skew coordinated
-
+###################################################
+# set gc content and skew coordinates
+###################################################
     gc_content_start = 42.5
     gc_content_end = 60
     gc_skew_start = 25 
@@ -601,19 +608,13 @@ def create_plot( gff_file,gbk_file,  interval, annotations, title_size, plot_tit
         label_size=8
     )
 
-    # other features 
-
-    other_track = sector.add_track((50, 55), r_pad_ratio=0.05)
-    other_track.genomic_features(gff.extract_features("tRNA"), fc=extras_col)
-    # comment out other features
-    #other_track.genomic_features(gff.extract_features("tmRNA"), fc="purple")
-    #other_track.genomic_features(gff.extract_features("repeat_region"), fc="green")
-    other_track.axis(fc="#EEEEEE", ec="none")
+    ################################
+    # phrog legend
+    ###############################
 
     # # Add legend
     handle_phrogs = [
         Patch(color=unk_col, label="Unknown/Other Function"),
-        Patch(color=tail_col, label="Tail"),
         Patch(color=transcription_col, label="Transcription Regulation"),
         Patch(color=dna_col, label="DNA/RNA & nucleotide \n metabolism"),
         Patch(color=lysis_col, label="Lysis"),
@@ -621,22 +622,26 @@ def create_plot( gff_file,gbk_file,  interval, annotations, title_size, plot_tit
         Patch(color=int_col, label="Integration & excision"),
         Patch(color=head_col, label="Head & packaging"),
         Patch(color=con_col, label="Connector"),
-        Patch(color=extras_col, label="tRNA")
+        Patch(color=tail_col, label="Tail"),
     ]
 
     fig = circos.plotfig()
 
     phrog_legend_coords = (0.10, 1.175)
-      
-    line_legend = circos.ax.legend(
+    phrog_legend = circos.ax.legend(
     handles=handle_phrogs,
     bbox_to_anchor=phrog_legend_coords,
     fontsize=9.5,
     loc="center",
     title="PHROG CDS",
-    handlelength=2,
-)
-    circos.ax.add_artist(line_legend)
+    handlelength=2
+    )
+    
+    circos.ax.add_artist(phrog_legend)
+
+    ################################
+    # gc and other features legend
+    ###############################
 
     handle_gc_content = [
         Line2D([], [], color="black", label="Positive GC Content", marker="^", ms=6, ls="None"),
@@ -648,13 +653,17 @@ def create_plot( gff_file,gbk_file,  interval, annotations, title_size, plot_tit
         Line2D([], [], color="purple", label="Negative GC Skew", marker="v", ms=6, ls="None")
     ]
 
+    handle_other_features = [
+        Patch(color=extras_col, label="tRNA/tmRNA/CRISPR")
+    ]
+
     # shrink plot a bit (0.8)
     box = circos.ax.get_position()
     circos.ax.set_position([box.x0, box.y0, box.width * 0.65, box.height*0.9])
 
     # gc content and skew coordinates
-    gc_content_anchor = (0.92, 1.225)
-    gc_skew_anchor = (0.92, 1.125)
+    gc_content_anchor = (0.92, 1.30)
+    gc_skew_anchor = (0.92, 1.20)
 
     gc_legend_cont = circos.ax.legend(
     handles=handle_gc_content,
@@ -677,6 +686,20 @@ def create_plot( gff_file,gbk_file,  interval, annotations, title_size, plot_tit
     )
 
     circos.ax.add_artist(gc_legend_skew)
+
+    # other features 
+    other_features_anchor = (0.92, 1.10)
+
+    other_features_legend = circos.ax.legend(
+    handles=handle_other_features,
+    bbox_to_anchor=other_features_anchor,
+    loc="center",
+    fontsize=9.5,
+    title="Other Features",
+    handlelength=2,
+    )
+
+    circos.ax.add_artist(other_features_legend)
 
     dpi = int(dpi)
     
