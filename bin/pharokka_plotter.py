@@ -14,13 +14,13 @@ def get_input():
     """
     parser = argparse.ArgumentParser(description='pharokka_plotter.py: pharokka plotting function', formatter_class=RawTextHelpFormatter)
     parser.add_argument('-i', '--infile', action="store", required = True, help='Input genome file in FASTA format.')
-    parser.add_argument('-n', '--plot_name', action="store", default='pharokka_plot', help='Output plot file name. ".png" suffix will be added to this automatically.' )
+    parser.add_argument('-n', '--plot_name', action="store", default='pharokka_plot', help='Output plot file name. ".png" suffix will be added to this automatically. \nWill be output in the pharokka output directory if -o is specified, or in the working directory if --gff andf --genbank are specified/' )
     parser.add_argument('-o', '--outdir', action="store", default='',  help='Pharokka output directory.')
     parser.add_argument('--gff', action="store", default='',  help='Pharokka gff.')
     parser.add_argument('--genbank',  action="store", default='', help='Pharokka genbank.')
     parser.add_argument('-p', '--prefix', action="store", help='Prefix used to create pharokka output. Will default to pharokka.',  default='pharokka')
     parser.add_argument('-t', '--plot_title', action="store",  default='Phage', help='Plot name.')
-    parser.add_argument('-f', '--force', help="Overwrites the output file.", action="store_true")
+    parser.add_argument('-f', '--force', help="Overwrites the output plot file.", action="store_true")
     parser.add_argument('--label_hypotheticals', help="Flag to label  hypothetical or unknown proteins. By default these are not labelled.", action="store_true" )
     parser.add_argument('--remove_other_features_labels', help="Flag to remove labels for tRNA/tmRNA/CRISPRs. By default these are labelled. \nThey will still be plotted in black.", action="store_true" )
     parser.add_argument('--title_size', action="store",  default='20', help='Controls title size. Must be an integer. Defaults to 20.')
@@ -65,7 +65,10 @@ if __name__ == "__main__":
         sys.exit("Error: --annotations specified is not an float. Please check your input and try again. \n") 
 
     # check if plot already exists 
-    plot_file = str(args.plot_name) + ".png"
+    if args.outdir == "":
+        plot_file = str(args.plot_name) + ".png"
+    else:
+        plot_file = os.path.join(args.outdir, str(args.plot_name) + ".png")
 
     if args.force == True:
             if os.path.isfile(plot_file) == True:
