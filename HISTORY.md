@@ -1,6 +1,12 @@
 History
 =======
 
+1.3.2 (2023-04-26)
+------------------
+
+* Fixes bug with pharokka_plotter.py, which would crash if the phage had tmRMAs or CRISPRs.
+* Adds tmRNAs and CRISPRs to pharokka_plotter.py.
+
 1.3.1 (2023-04-20)
 ------------------
 
@@ -13,7 +19,6 @@ History
 * Adds pharokka_plotter.py to create plots with pyCirclize.
 * Fixes issue with VFDB and CARD counts in _cds_functions.tsv being 0 even is a virulence factor or AMR gene is detected.
 * Adds better error checking for --threads.
-
 
 1.2.1 (2023-02-20)
 ------------------
