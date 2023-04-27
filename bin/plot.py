@@ -250,7 +250,7 @@ def create_plot( gff_file,gbk_file,  interval, annotations, title_size, plot_tit
         fwd_list,
         plotstyle="arrow",
         r_lim=(75, 80),
-        fc=other_col,
+        fc=int_col,
     )
 
     rev_list = []
