@@ -38,10 +38,26 @@ There is also experimental support for alternative genetic codes if pharokka is 
 
 `pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -g prodigal`
 
-If you need to reorient your phage to begin at a certain point (for example, to reorient the phage to begin with the large terminase subunit), you can now acheive this using the --terminase command along with specifying the   --terminase_strand denoting the strandedness of the large terminase subunit (must be 'pos' or 'neg') and --terminase_start denoting the start co-ordinate. This requires the input to be a single contig, or else pharokka will fail and warn you. For example, if you annotate your phage using pharokka, and then see that your terminase large subunit begins at coordinate 9503 on the positive strand, you could run the following to reorient it to begin at the large terminase subunit:
+If you need to reorient your phage to begin at a certain point (for example, to reorient the phage to begin with the large terminase subunit), you can now acheive this using the `--terminase` command along with specifying the   `--terminase_strand` denoting the strandedness of the large terminase subunit (must be 'pos' or 'neg') and `--terminase_start` denoting the start co-ordinate. This requires the input to be a single contig, or else pharokka will fail and warn you. For example, if you annotate your phage using pharokka, and then see that your terminase large subunit begins at coordinate 9503 on the positive strand, you could run the following to reorient it to begin at the large terminase subunit:
 
 `pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  --terminase --terminase_start 9503 --terminase_strand pos `
 
+Additionally, it should be noted that if you want to reorient to begin with the large terminase subunit that is on the negative strand (`--terminase_strand neg`), you will  need to specify a `--terminase_start` coordinate that is actually the end (right) coordinate from the gff when --terminase_strand neg is specified. For example (thanks to Albert Vill) if your large terminase subunit is:
+
+`ON631220.1    PHANOTATE    CDS    80073    82226    -1.721062366005452e+16    -    ...`
+
+Then you need to specify the following to reorient the phage to begin with the large terminase subunit as follows:
+
+```
+pharokka.py \
+  -i <fasta file> \
+  -o <output folder> \
+  -d <path/to/database_dir> \
+  -t <threads> \
+  --terminase \
+  --terminase_start 82226 \
+  --terminase_strand neg
+```
 Of course, you can also use this functionality to reorient your phage however you wish!
 
 pharokka defaults to 1 thread.

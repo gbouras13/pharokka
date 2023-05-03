@@ -1,3 +1,4 @@
+[![BioConda Install](https://img.shields.io/conda/dn/bioconda/pharokka.svg?style=flag&label=BioConda%20install)](https://anaconda.org/bioconda/pharokka)
 
 pharokka
 ===============

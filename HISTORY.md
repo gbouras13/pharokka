@@ -8,8 +8,6 @@ History
 * Fixes bug where integration & excision fwd strand CDS would not be plotted in the correct colour
 * Adds tmRNAs and CRISPRs to pharokka_plotter.py.
 
-
-
 1.3.1 (2023-04-20)
 ------------------
 
