@@ -46,7 +46,7 @@ Additionally, it should be noted that if you want to reorient to begin with the 
 
 `ON631220.1    PHANOTATE    CDS    80073    82226    -1.721062366005452e+16    -    ...`
 
-Then you need to specify the following to reorient the phage to begin with the large terminase subunit
+Then you need to specify the following to reorient the phage to begin with the large terminase subunit as follows:
 
 ```
 pharokka.py \
