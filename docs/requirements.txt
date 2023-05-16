@@ -1,4 +1,5 @@
 Pygments==2.10.0
-pymdown-extensions==9.0
+pymdown-extensions==10.0
 jinja2==3.0.3
 Markdown==3.3.7
+
