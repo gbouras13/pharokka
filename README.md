@@ -24,6 +24,13 @@ George Bouras, Roshan Nepal, Ghais Houtak, Alkis James Psaltis, Peter-John Worma
 
 If you use pharokka, please see the full [Citation](#citation) section for a list of all programs pharokka uses, in order to fully recognise the creators of these tools for their work.
 
+Pharokka with Galaxy Europe Webserver
+-----------
+
+Thanks to some amazing assistance from [Paul Zierep](https://github.com/paulzierep), you can use run Pharokka using [Galaxy Europe webserver](https://usegalaxy.eu/?tool_id=toolshed.g2.bx.psu.edu%2Frepos%2Fiuc%2Fpharokka%2Fpharokka%2F1.2.1%2Bgalaxy1&version=1.2.1%20galaxy1). It runs v1.2.1, so there is no plotting functionality at the moment.
+
+So if you can't get Pharokka to install on your machine for whatever reason or want a GUI to annotate your phage(s), please give it a go there!
+
 Brief Overview
 -----------
 
@@ -68,6 +75,7 @@ Table of Contents
   - [Fast Phage Annotation Tool](#fast-phage-annotation-tool)
   - [Documentation](#documentation)
   - [Paper](#paper)
+  - [Pharokka with Galaxy Europe Webserver](#pharokka-with-galaxy-europe-webserver)
   - [Brief Overview](#brief-overview)
   - [Pharokka v 1.3.0 Update](#pharokka-v-130-update)
   - [Table of Contents](#table-of-contents)
