@@ -27,7 +27,7 @@ If you use pharokka, please see the full [Citation](#citation) section for a lis
 Pharokka with Galaxy Europe Webserver
 -----------
 
-Thanks to some amazing assistance from [Paul Zierep](https://github.com/paulzierep), you can use run Pharokka using [Galaxy Europe webserver](https://usegalaxy.eu/?tool_id=toolshed.g2.bx.psu.edu%2Frepos%2Fiuc%2Fpharokka%2Fpharokka%2F1.2.1%2Bgalaxy1&version=1.2.1%20galaxy1). It runs v1.2.1, so there is no plotting functionality at the moment.
+Thanks to some amazing assistance from [Paul Zierep](https://github.com/paulzierep), you can run Pharokka using the [Galaxy Europe webserver](https://usegalaxy.eu/?tool_id=toolshed.g2.bx.psu.edu%2Frepos%2Fiuc%2Fpharokka%2Fpharokka%2F1.2.1%2Bgalaxy1&version=1.2.1%20galaxy1). It runs v1.2.1, so there is no plotting functionality at the moment.
 
 So if you can't get Pharokka to install on your machine for whatever reason or want a GUI to annotate your phage(s), please give it a go there!
 
