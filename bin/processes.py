@@ -411,7 +411,7 @@ def run_mmseqs(db_dir, out_dir, threads, logger, gene_predictor, evalue):
     sp.run(["rm", "-r", target_db_dir], check=True)
 
 
-def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix):
+def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, coding_table):
     """
     Converts the gff to genbank
     :param filepath_in: input fasta file
@@ -435,9 +435,9 @@ def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix):
                 # add translation only if CDS
                 if feature.type == "CDS":
                     if feature.strand == 1:
-                        feature.qualifiers.update({'translation': Seq.translate(record.seq[feature.location.start.position:feature.location.end.position], to_stop=True)})
+                        feature.qualifiers.update({'translation': Seq.translate(record.seq[feature.location.start.position:feature.location.end.position], to_stop=True, table=coding_table)})
                     else: # reverse strand -1 needs reverse compliment
-                        feature.qualifiers.update({'translation': Seq.translate(record.seq[feature.location.start.position:feature.location.end.position].reverse_complement(), to_stop=True)})
+                        feature.qualifiers.update({'translation': Seq.translate(record.seq[feature.location.start.position:feature.location.end.position].reverse_complement(), to_stop=True, table=coding_table)})
             SeqIO.write(record, gbk_handler, "genbank")
 
 
