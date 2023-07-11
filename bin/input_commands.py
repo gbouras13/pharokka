@@ -17,8 +17,6 @@ v = __version__
 def get_input():
 	parser = argparse.ArgumentParser(description='pharokka: fast phage annotation program', formatter_class=RawTextHelpFormatter)
 	parser.add_argument('-i', '--infile', action="store", help='Input genome file in fasta format.')
-    parser.add_argument('--infilefaa', action="store", help='Input faa file instead of a fasta file')
-    parser.add_argument('--infilefna', action="store", help='Input fna file instead of a fasta file')
 	parser.add_argument('-o', '--outdir', action="store", help='Directory to write the output to.', default=os.path.join(os.getcwd(), "output/") )
 	parser.add_argument('-d', '--database', action="store", help='Database directory. If the databases have been installed in the default directory, this is not required. Otherwise specify the path.',  default='Default')
 	parser.add_argument('-t', '--threads', help="Number of threads. Defaults to 1.", action="store", default = str(1))
