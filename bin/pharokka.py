@@ -150,7 +150,7 @@ if __name__ == "__main__":
     
     # translate fastas
     logger.info("Translating gene predicted fastas.")
-    processes.translate_fastas(out_dir,gene_predictor)
+    processes.translate_fastas(out_dir,gene_predictor,args.coding_table)
 
 
     # run trna-scan meta mode if required
