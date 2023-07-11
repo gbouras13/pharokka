@@ -200,7 +200,7 @@ if __name__ == "__main__":
     # convert to genbank
     logger.info("Converting gff to genbank.")
     print("Converting gff to genbank.")
-    processes.convert_gff_to_gbk(input_fasta, out_dir, out_dir, prefix)
+    processes.convert_gff_to_gbk(input_fasta, out_dir, out_dir, prefix, args.coding_table)
     
 
     # update fasta headers and final output tsv
