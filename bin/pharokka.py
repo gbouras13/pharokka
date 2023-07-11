@@ -181,7 +181,7 @@ if __name__ == "__main__":
 
     # create gff and return locustag for table
     (locustag, locus_df, gff_df, total_gff) = post_processing.create_gff(cds_mmseqs_merge_df, length_df, input_fasta, out_dir, prefix, locustag, tmrna_flag, args.meta)
-    post_processing.create_tbl(cds_mmseqs_merge_df, length_df, out_dir, prefix, gene_predictor, tmrna_flag, gff_df)
+    post_processing.create_tbl(cds_mmseqs_merge_df, length_df, out_dir, prefix, gene_predictor, tmrna_flag, gff_df, args.coding_table)
 
 
     # output single gffs in meta mode
