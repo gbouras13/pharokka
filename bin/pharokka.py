@@ -93,8 +93,13 @@ if __name__ == "__main__":
 
 
     # define input - overwrite if terminase reorienter is true
-    input_fasta = args.infile
-
+    
+    if args.infilefaa == True and args.infilefna == True:
+        input_faa = args.infilefaa
+        input_fna = args.infilefna
+    else
+        input_fasta = args.infile    
+        
     # terminase reorienting 
     if args.terminase == True:
         print("You have chosen to reorient your genome by specifying --terminase. Checking the input.")
@@ -120,25 +125,29 @@ if __name__ == "__main__":
         num_fastas = processes.split_input_fasta(input_fasta, out_dir)
         # will generate split output gffs if meta flag is true
         input_commands.instantiate_split_output(out_dir, args.meta)
-
     # CDS predicton
+    
+    if args.infilefaa == True and args.infilefna == True:
+        logger.info("skipping annotation and using provided files")
+    else    
     # phanotate 
-    if gene_predictor == "phanotate":
-        print("Running Phanotate.")
-        logger.info("Running Phanotate.")
-        if args.meta == True:
-            print("Applying meta mode.")
-            logger.info("Applying meta mode.")
-            processes.run_phanotate_fasta_meta(input_fasta, out_dir, args.threads, num_fastas)
-            processes.run_phanotate_txt_meta(input_fasta, out_dir, args.threads, num_fastas)
-            processes.concat_phanotate_meta(out_dir, num_fastas)
-        else:
-            processes.run_phanotate(input_fasta, out_dir, logger)
-    if gene_predictor == "prodigal":
-        print("Implementing Prodigal using Pyrodigal.")
-        logger.info("Implementing Prodigal using Pyrodigal.")
-        processes.run_pyrodigal(input_fasta, out_dir,logger, args.meta, args.coding_table)
-
+        if gene_predictor == "phanotate":
+            print("Running Phanotate.")
+            logger.info("Running Phanotate.")
+            if args.meta == True:
+                print("Applying meta mode.")
+                logger.info("Applying meta mode.")
+                processes.run_phanotate_fasta_meta(input_fasta, out_dir, args.threads, num_fastas)
+                processes.run_phanotate_txt_meta(input_fasta, out_dir, args.threads, num_fastas)
+                processes.concat_phanotate_meta(out_dir, num_fastas)
+            else:
+                processes.run_phanotate(input_fasta, out_dir, logger)
+        
+        if gene_predictor == "prodigal":
+            print("Implementing Prodigal using Pyrodigal.")
+            logger.info("Implementing Prodigal using Pyrodigal.")
+            processes.run_pyrodigal(input_fasta, out_dir,logger, args.meta, args.coding_table)
+    
     # translate fastas
     logger.info("Translating gene predicted fastas.")
     processes.translate_fastas(out_dir,gene_predictor)
