@@ -679,7 +679,7 @@ def write_tophits_vfdb_card(cds_mmseqs_merge_df, vfdb_results, card_results, loc
 
 
 
-def create_tbl(cds_mmseqs_df, length_df, out_dir, prefix, gene_predictor, tmrna_flag, gff_df):
+def create_tbl(cds_mmseqs_df, length_df, out_dir, prefix, gene_predictor, tmrna_flag, gff_df, coding_table):
     """
     Creates the pharokka.tbl file 
     :param cds_mmseqs_df: a pandas df as output from process_results()
@@ -756,7 +756,7 @@ def create_tbl(cds_mmseqs_df, length_df, out_dir, prefix, gene_predictor, tmrna_
                 f.write(start + "\t" + stop + "\t" + row['Region'] + "\n")
                 f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ str(row['annot']) + "\n")
                 f.write(""+"\t"+""+"\t"+""+"\t"+"locus_tag" + "\t"+ row['locus_tag'] + "\n")
-                f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
+                f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ str(coding_table) + "\n")
             if trna_empty == False:
                 subset_trna_df = trna_df[trna_df['contig'] == contig]
                 for index, row in subset_trna_df.iterrows():
@@ -768,7 +768,7 @@ def create_tbl(cds_mmseqs_df, length_df, out_dir, prefix, gene_predictor, tmrna_
                     f.write(start + "\t" + stop + "\t" + row['Region'] + "\n")
                     f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ str(row['trna_product']) + "\n")
                     f.write(""+"\t"+""+"\t"+""+"\t"+"locus_tag" + "\t"+ row['locus_tag'] + "\n")
-                    f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
+                    f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ str(coding_table) + "\n")
             if crispr_count > 0:
                 subset_crispr_df = crispr_df[crispr_df['contig'] == contig]
                 for index, row in subset_crispr_df.iterrows():
@@ -780,7 +780,7 @@ def create_tbl(cds_mmseqs_df, length_df, out_dir, prefix, gene_predictor, tmrna_
                     f.write(start + "\t" + stop + "\t" + row['Region'] + "\n")
                     f.write(""+"\t"+""+"\t"+""+"\t"+"locus_tag" + "\t"+ row['locus_tag'] + "\n")
                     f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ str(row['rpt_unit_seq']) + "\n")
-                    f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
+                    f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ str(coding_table) + "\n")
             if tmrna_flag == True:
                 subset_tmrna_df = tmrna_df[tmrna_df['contig'] == contig]
                 for index, row in subset_tmrna_df.iterrows():
@@ -792,7 +792,7 @@ def create_tbl(cds_mmseqs_df, length_df, out_dir, prefix, gene_predictor, tmrna_
                     f.write(start + "\t" + stop + "\t" + 'tmRNA' + "\n")
                     f.write(""+"\t"+""+"\t"+""+"\t"+"locus_tag" + "\t"+ row['locus_tag'] + "\n")
                     f.write(""+"\t"+""+"\t"+""+"\t"+"product" + "\t"+ 'transfer-messenger RNA, SsrA' + "\n")
-                    f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ "11" + "\n")
+                    f.write(""+"\t"+""+"\t"+""+"\t"+"transl_table" + "\t"+ str(coding_table) + "\n")
 
 
 def remove_post_processing_files(out_dir, gene_predictor, meta):
