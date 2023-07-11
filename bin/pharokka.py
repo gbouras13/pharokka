@@ -97,7 +97,7 @@ if __name__ == "__main__":
     if args.infilefaa == True and args.infilefna == True:
         input_faa = args.infilefaa
         input_fna = args.infilefna
-    else
+    else:
         input_fasta = args.infile    
         
     # terminase reorienting 
@@ -129,7 +129,7 @@ if __name__ == "__main__":
     
     if args.infilefaa == True and args.infilefna == True:
         logger.info("skipping annotation and using provided files")
-    else    
+    else: 
     # phanotate 
         if gene_predictor == "phanotate":
             print("Running Phanotate.")
