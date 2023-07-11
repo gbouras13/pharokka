@@ -1224,7 +1224,7 @@ def create_gff_singles(length_df, fasta_input, out_dir,  total_gff):
 
 
 
-def convert_singles_gff_to_gbk(length_df, out_dir ):
+def convert_singles_gff_to_gbk(length_df, out_dir, coding_table):
     """
     Converts all single gffs to gbks
     :param length_df: a pandas df as output from get_contig_name_lengths()
@@ -1244,7 +1244,7 @@ def convert_singles_gff_to_gbk(length_df, out_dir ):
         # get the input fasta for each contig
         fasta_file = os.path.join(split_fasta_dir, "input_subprocess" + str(index+1) +".fasta" )
         contig = row['contig']
-        processes.convert_gff_to_gbk(fasta_file, single_gff_dir, single_gbk_dir, contig)
+        processes.convert_gff_to_gbk(fasta_file, single_gff_dir, single_gbk_dir, contig, coding_table)
 
 
 def split_fasta_singles(input_fasta, out_dir ):
