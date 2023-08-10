@@ -328,7 +328,7 @@ def tidy_prodigal_output(out_dir):
     return prod_filt_df
 
 
-def translate_fastas(out_dir, gene_predictor):
+def translate_fastas(out_dir, gene_predictor, coding_table):
     """
     Translates input CDSs to amino acids. For now will use 11 translation table. Will get around to alternative coding later
     :param out_dir: output directory
@@ -349,7 +349,7 @@ def translate_fastas(out_dir, gene_predictor):
         for dna_record in SeqIO.parse(os.path.join(out_dir, fasta_input_tmp), 'fasta'): 
             dna_header = str(clean_df['contig'].iloc[i]) + str(i) 
             dna_description = str(clean_df['start'].iloc[i]) + "_" + str(clean_df['stop'].iloc[i])
-            aa_record = SeqRecord(dna_record.seq.translate(to_stop=True), id=dna_header, description = dna_description )
+            aa_record = SeqRecord(dna_record.seq.translate(to_stop=True, table=coding_table),id=dna_header, description = dna_description )
             SeqIO.write(aa_record, aa_fa, 'fasta')
             i += 1
 
@@ -411,7 +411,7 @@ def run_mmseqs(db_dir, out_dir, threads, logger, gene_predictor, evalue):
     sp.run(["rm", "-r", target_db_dir], check=True)
 
 
-def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix):
+def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, coding_table):
     """
     Converts the gff to genbank
     :param filepath_in: input fasta file
@@ -435,9 +435,9 @@ def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix):
                 # add translation only if CDS
                 if feature.type == "CDS":
                     if feature.strand == 1:
-                        feature.qualifiers.update({'translation': Seq.translate(record.seq[feature.location.start.position:feature.location.end.position], to_stop=True)})
+                        feature.qualifiers.update({'translation': Seq.translate(record.seq[feature.location.start.position:feature.location.end.position], to_stop=True, table=coding_table)})
                     else: # reverse strand -1 needs reverse compliment
-                        feature.qualifiers.update({'translation': Seq.translate(record.seq[feature.location.start.position:feature.location.end.position].reverse_complement(), to_stop=True)})
+                        feature.qualifiers.update({'translation': Seq.translate(record.seq[feature.location.start.position:feature.location.end.position].reverse_complement(), to_stop=True, table=coding_table)})
             SeqIO.write(record, gbk_handler, "genbank")
 
 

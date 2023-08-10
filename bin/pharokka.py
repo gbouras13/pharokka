@@ -93,8 +93,9 @@ if __name__ == "__main__":
 
 
     # define input - overwrite if terminase reorienter is true
-    input_fasta = args.infile
-
+    
+    input_fasta = args.infile    
+        
     # terminase reorienting 
     if args.terminase == True:
         print("You have chosen to reorient your genome by specifying --terminase. Checking the input.")
@@ -120,8 +121,8 @@ if __name__ == "__main__":
         num_fastas = processes.split_input_fasta(input_fasta, out_dir)
         # will generate split output gffs if meta flag is true
         input_commands.instantiate_split_output(out_dir, args.meta)
-
     # CDS predicton
+    
     # phanotate 
     if gene_predictor == "phanotate":
         print("Running Phanotate.")
@@ -134,14 +135,15 @@ if __name__ == "__main__":
             processes.concat_phanotate_meta(out_dir, num_fastas)
         else:
             processes.run_phanotate(input_fasta, out_dir, logger)
+    
     if gene_predictor == "prodigal":
         print("Implementing Prodigal using Pyrodigal.")
         logger.info("Implementing Prodigal using Pyrodigal.")
         processes.run_pyrodigal(input_fasta, out_dir,logger, args.meta, args.coding_table)
-
+    
     # translate fastas
     logger.info("Translating gene predicted fastas.")
-    processes.translate_fastas(out_dir,gene_predictor)
+    processes.translate_fastas(out_dir,gene_predictor,args.coding_table)
 
 
     # run trna-scan meta mode if required
@@ -179,13 +181,13 @@ if __name__ == "__main__":
 
     # create gff and return locustag for table
     (locustag, locus_df, gff_df, total_gff) = post_processing.create_gff(cds_mmseqs_merge_df, length_df, input_fasta, out_dir, prefix, locustag, tmrna_flag, args.meta)
-    post_processing.create_tbl(cds_mmseqs_merge_df, length_df, out_dir, prefix, gene_predictor, tmrna_flag, gff_df)
+    post_processing.create_tbl(cds_mmseqs_merge_df, length_df, out_dir, prefix, gene_predictor, tmrna_flag, gff_df, args.coding_table)
 
 
     # output single gffs in meta mode
     if args.split == True and args.meta == True:
         post_processing.create_gff_singles(length_df, input_fasta, out_dir, total_gff)
-        post_processing.convert_singles_gff_to_gbk(length_df, out_dir)
+        post_processing.convert_singles_gff_to_gbk(length_df, out_dir, args.coding_table)
         post_processing.split_fasta_singles(input_fasta, out_dir)
 
     # write vfdb and card tophits
@@ -198,7 +200,7 @@ if __name__ == "__main__":
     # convert to genbank
     logger.info("Converting gff to genbank.")
     print("Converting gff to genbank.")
-    processes.convert_gff_to_gbk(input_fasta, out_dir, out_dir, prefix)
+    processes.convert_gff_to_gbk(input_fasta, out_dir, out_dir, prefix, args.coding_table)
     
 
     # update fasta headers and final output tsv
