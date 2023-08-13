@@ -8,9 +8,10 @@ python3 create_hmms.py
 
 """
 
-import pyhmmer
-import os 
+import os
 from pathlib import Path
+
+import pyhmmer
 
 alphabet = pyhmmer.easel.Alphabet.amino()
 background = pyhmmer.plan7.Background(alphabet)
@@ -29,16 +30,17 @@ if not os.path.exists(HMM_dir):
 number_of_phrogs = 38880
 
 # loop over each PHROG
-for i in range(1, number_of_phrogs+1):
-
+for i in range(1, number_of_phrogs + 1):
     # read in each msa
-    with pyhmmer.easel.MSAFile(f"{MSA_dir}/phrog_{i}.fma", digital=True, alphabet=alphabet) as msa_file:
+    with pyhmmer.easel.MSAFile(
+        f"{MSA_dir}/phrog_{i}.fma", digital=True, alphabet=alphabet
+    ) as msa_file:
         msa = msa_file.read()
 
-    name = f'phrog_{i}'
+    name = f"phrog_{i}"
     print(name)
     # convert to bytes
-    msa.name = name.encode('utf-8')
+    msa.name = name.encode("utf-8")
 
     # build the MSA
     builder = pyhmmer.plan7.Builder(alphabet)
@@ -50,7 +52,7 @@ for i in range(1, number_of_phrogs+1):
         hmm.write(output_file)
 
 
-# to concatenate all hmms 
+# to concatenate all hmms
 
 hmms = []
 
