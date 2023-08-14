@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+from pathlib import Path
 import sys
 import time
 
@@ -95,6 +96,9 @@ def main():
     # instantiate outdir
     out_dir = instantiate_dirs(args.outdir, args.meta, args.force)
 
+    # set log dir
+    logdir = Path(f"{out_dir}/logs")
+
     # set the db dir
     if args.database == "Default":
         db_dir = os.path.join(os.path.realpath(__file__), "../", "databases/")
@@ -182,14 +186,14 @@ def main():
         if args.meta == True:
             logger.info("Applying meta mode.")
             run_phanotate_fasta_meta(
-                input_fasta, out_dir, args.threads, num_fastas
+                input_fasta, out_dir, args.threads, num_fastas, logdir
             )
             run_phanotate_txt_meta(
-                input_fasta, out_dir, args.threads, num_fastas
+                input_fasta, out_dir, args.threads, num_fastas, logdir
             )
             concat_phanotate_meta(out_dir, num_fastas)
         else:
-            run_phanotate(input_fasta, out_dir, logger)
+            run_phanotate(input_fasta, out_dir, logdir)
 
     if gene_predictor == "prodigal":
         logger.info("Implementing Prodigal using Pyrodigal.")

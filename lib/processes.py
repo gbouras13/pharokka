@@ -11,6 +11,7 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
+from lib.external_tools import (ExternalTool)
 
 def write_to_log(s, logger):
     while True:
@@ -225,41 +226,41 @@ def concat_trnascan_meta(out_dir, num_fastas):
 ##### single contig mode ######
 
 
-def run_phanotate(filepath_in, out_dir, logger):
+def run_phanotate(filepath_in, out_dir, logdir):
     """
     Runs phanotate
     :param filepath_in: input filepath
     :param out_dir: output directory
-    :param logger logger
+    :param logdir logdir
     :return:
     """
+
+    out_fasta = os.path.join(out_dir, "phanotate_out_tmp.fasta")
+    out_tab = os.path.join(out_dir, "phanotate_out.txt")
+
+    phan_fast = ExternalTool(
+        tool="phanotate.py",
+        input=f"{filepath_in}",
+        output=f"-o {out_fasta}",
+        params=f'-f fasta',
+        logdir=logdir,
+    )
+
+    phan_txt = ExternalTool(
+        tool="phanotate.py",
+        input=f"{filepath_in}",
+        output=f"-o {out_tab}",
+        params=f'-f tabular',
+        logdir=logdir,
+    )
+
+    ExternalTool.run_tool(phan_fast)
+
     try:
-        phan_fast = sp.Popen(
-            [
-                "phanotate.py",
-                filepath_in,
-                "-o",
-                os.path.join(out_dir, "phanotate_out_tmp.fasta"),
-                "-f",
-                "fasta",
-            ],
-            stderr=sp.PIPE,
-            stdout=sp.DEVNULL,
-        )
-        phan_txt = sp.Popen(
-            [
-                "phanotate.py",
-                filepath_in,
-                "-o",
-                os.path.join(out_dir, "phanotate_out.txt"),
-                "-f",
-                "tabular",
-            ],
-            stderr=sp.PIPE,
-            stdout=sp.DEVNULL,
-        )
-        write_to_log(phan_fast.stderr, logger)
-        write_to_log(phan_txt.stderr, logger)
+
+        ExternalTool.run_tool(phan_fast)
+        ExternalTool.run_tool(phan_txt)
+
     except:
         sys.exit("Error with Phanotate\n")
 
