@@ -6,13 +6,9 @@ import sys
 from argparse import RawTextHelpFormatter
 
 from Bio import SeqIO
-
+from loguru import logger
 from lib.util import get_version 
 
-
-
-
-### GLOBAL VARIABLES
 
 
 def get_input():
@@ -162,18 +158,18 @@ def instantiate_dirs(output_dir, meta, force):
 def validate_fasta(filename):
     with open(filename, "r") as handle:
         fasta = SeqIO.parse(handle, "fasta")
-        print("Checking Input FASTA.")
+        logger.info("Checking Input FASTA.")
         if any(fasta):
-            print("FASTA checked.")
+            logger.info("FASTA checked.")
         else:
             sys.exit("Error: Input file is not in the FASTA format.\n")
 
 
 def validate_gene_predictor(gene_predictor):
     if gene_predictor == "phanotate":
-        print("Phanotate will be used for gene prediction.")
+        logger.info("Phanotate will be used for gene prediction.")
     elif gene_predictor == "prodigal":
-        print("Prodigal will be used for gene prediction.")
+        logger.info("Prodigal will be used for gene prediction.")
     else:
         sys.exit(
             "Error: gene predictor was incorrectly specified. Please use 'phanotate' or 'prodigal'.\n"
@@ -184,25 +180,21 @@ def validate_meta(filepath_in, meta, split, logger):
     num_fastas = len([1 for line in open(filepath_in) if line.startswith(">")])
     if meta == True:
         if num_fastas < 2:
-            sys.exit(
+            logger.error(
                 "ERROR: -m meta mode specified when the input file only contains 1 contig. Please re-run without specifying -m. \n"
             )
         else:
             message = str(num_fastas) + " input contigs detected."
-            print(message)
             logger.info(message)
             if split == True:
                 message = "Split mode activtated. \nSeparate output FASTA, gff and genbank files will be output for each contig."
-                print(message)
                 logger.info(message)
     else:
         if num_fastas > 1:
             message = "More than one contig detected in the input file. Re-running pharokka with -m meta mode is recommended unless this is a fragmented isolate genome. \nContinuing."
-            print(message)
             logger.info(message)
         if split == True:
             message = "-s or --split was specified without -m or --meta and will be ignored. \nPlease specify -s with -m if you want to run split mode. \nContinuing."
-            print(message)
             logger.info(message)
 
 
@@ -217,25 +209,25 @@ def validate_terminase_start(terminase_start):
     try:
         int(terminase_start)
     except:
-        sys.exit(
+        logger.error(
             "Error: terminase start coordinate specified is not an integer. Please check your input and try again. \n"
         )
 
 
 def validate_terminase(filepath_in, terminase_strand, terminase_start):
     if terminase_strand == "nothing":
-        sys.exit(
+        logger.error(
             "Error: you specified --terminase to reorient your phage to begin with the terminase large subunit, but didn't specify its strand with --terminase_strand. Please check your input and try again. \n"
         )
     if terminase_start == "nothing":
-        sys.exit(
+        logger.error(
             "Error: you specified --terminase to reorient your phage to begin with the terminase large subunit, but didn't specify its start coordinate with --terminase_start. Please check your input and try again. \n"
         )
     validate_strand(terminase_strand)
     validate_terminase_start(terminase_start)
     num_fastas = len([1 for line in open(filepath_in) if line.startswith(">")])
     if num_fastas > 1:
-        sys.exit(
+        logger.error(
             "Error: To reorient your phage genome to begin with the terminase large subunit, you can only input 1 phage genome contig. Multiple contigs were detected. Please try again. \n"
         )
 
@@ -250,7 +242,7 @@ def validate_threads(threads):
             + threads
             + ". Please check your input and try Pharokka again."
         )
-        sys.exit(message)
+        logger.error(message)
 
 
 #######
@@ -270,22 +262,13 @@ def check_dependencies(logger):
             ["phanotate.py", "--version"], stdout=sp.PIPE, stderr=sp.STDOUT
         )
     except:
-        sys.exit("Phanotate not found. Please reinstall pharokka.")
+        logger.error("Phanotate not found. Please reinstall pharokka.")
     phan_out, _ = process.communicate()
     phanotate_out = phan_out.decode().strip()
     phanotate_major_version = int(phanotate_out.split(".")[0])
     phanotate_minor_version = int(phanotate_out.split(".")[1])
     phanotate_minorest_version = phanotate_out.split(".")[2]
 
-    print(
-        "Phanotate version found is v"
-        + str(phanotate_major_version)
-        + "."
-        + str(phanotate_minor_version)
-        + "."
-        + phanotate_minorest_version
-        + "."
-    )
     logger.info(
         "phan_out version found is v"
         + str(phanotate_major_version)
@@ -297,11 +280,10 @@ def check_dependencies(logger):
     )
 
     if phanotate_major_version < 1:
-        sys.exit("Phanotate is too old - please reinstall pharokka.")
+        logger.error("Phanotate is too old - please reinstall pharokka.")
     if phanotate_minor_version < 5:
-        sys.exit("Phanotate is too old - please reinstall pharokka.")
+        logger.error("Phanotate is too old - please reinstall pharokka.")
 
-    print("Phanotate version is ok.")
     logger.info("Phanotate version is ok.")
 
     #############
@@ -310,7 +292,7 @@ def check_dependencies(logger):
     try:
         process = sp.Popen(["mmseqs"], stdout=sp.PIPE, stderr=sp.STDOUT)
     except:
-        sys.exit("MMseqs2 not found. Please reinstall pharokka.")
+        logger.error("MMseqs2 not found. Please reinstall pharokka.")
     mmseqs_out, _ = process.communicate()
     mmseqs_out = mmseqs_out.decode()
 
@@ -324,13 +306,6 @@ def check_dependencies(logger):
     mmseqs_major_version = int(mmseqs_version.split(".")[0])
     mmseqs_minor_version = int(mmseqs_version.split(".")[1])
 
-    print(
-        "MMseqs2 version found is v"
-        + str(mmseqs_major_version)
-        + "."
-        + str(mmseqs_minor_version)
-        + "."
-    )
     logger.info(
         "MMseqs2 version found is v"
         + str(mmseqs_major_version)
@@ -340,11 +315,10 @@ def check_dependencies(logger):
     )
 
     if mmseqs_major_version != 13:
-        sys.exit("MMseqs2 is the wrong version. Please install v13.45111")
+        logger.error("MMseqs2 is the wrong version. Please install v13.45111")
     if mmseqs_minor_version != 45111:
-        sys.exit("MMseqs2 is the wrong version. Please install v13.45111")
+        logger.error("MMseqs2 is the wrong version. Please install v13.45111")
 
-    print("MMseqs2 version is ok.")
     logger.info("MMseqs2 version is ok.")
 
     #############
@@ -353,7 +327,7 @@ def check_dependencies(logger):
     try:
         process = sp.Popen(["tRNAscan-SE", "-h"], stdout=sp.PIPE, stderr=sp.STDOUT)
     except:
-        sys.exit("tRNAscan-SE not found. Please reinstall pharokka.")
+        logger.error("tRNAscan-SE not found. Please reinstall pharokka.")
 
     trna_out, _ = process.communicate()
     trna_out = trna_out.decode()
@@ -369,15 +343,6 @@ def check_dependencies(logger):
     trna_minor_version = int(trna_version.split(".")[1])
     trna_minorest_version = int(trna_version.split(".")[2])
 
-    print(
-        "tRNAscan-SE version found is v"
-        + str(trna_major_version)
-        + "."
-        + str(trna_minor_version)
-        + "."
-        + str(trna_minorest_version)
-        + "."
-    )
     logger.info(
         "tRNAscan-SE version found is v"
         + str(trna_major_version)
@@ -389,11 +354,11 @@ def check_dependencies(logger):
     )
 
     if trna_major_version != 2:
-        sys.exit("tRNAscan-SE is the wrong version. Please re-install pharokka.")
+        logger.error("tRNAscan-SE is the wrong version. Please re-install pharokka.")
     if trna_minor_version != 0:
-        sys.exit("tRNAscan-SE is the wrong version. Please re-install pharokka.")
+        logger.error("tRNAscan-SE is the wrong version. Please re-install pharokka.")
     if trna_minorest_version < 9:
-        sys.exit("tRNAscan-SE is the wrong version. Please re-install pharokka.")
+        logger.error("tRNAscan-SE is the wrong version. Please re-install pharokka.")
 
     print("tRNAscan-SE version is ok.")
     logger.info("tRNAscan-SE version is ok.")
@@ -404,7 +369,7 @@ def check_dependencies(logger):
     try:
         process = sp.Popen(["minced", "--version"], stdout=sp.PIPE, stderr=sp.STDOUT)
     except:
-        sys.exit("MinCED not found. Please reinstall pharokka.")
+        logger.error("MinCED not found. Please reinstall pharokka.")
 
     minced_out, _ = process.communicate()
     minced_out = minced_out.decode()
@@ -420,15 +385,6 @@ def check_dependencies(logger):
     minced_minor_version = int(minced_version.split(".")[1])
     minced_minorest_version = int(minced_version.split(".")[2])
 
-    print(
-        "MinCED version found is v"
-        + str(minced_major_version)
-        + "."
-        + str(minced_minor_version)
-        + "."
-        + str(minced_minorest_version)
-        + "."
-    )
     logger.info(
         "MinCED version found is v"
         + str(minced_major_version)
@@ -440,13 +396,12 @@ def check_dependencies(logger):
     )
 
     if minced_major_version != 0:
-        sys.exit("MinCED is the wrong version. Please re-install pharokka.")
+        logger.error("MinCED is the wrong version. Please re-install pharokka.")
     if minced_minor_version != 4:
-        sys.exit("MinCED is the wrong version. Please re-install pharokka.")
+        logger.error("MinCED is the wrong version. Please re-install pharokka.")
     if minced_minorest_version < 2:
-        sys.exit("MinCED is the wrong version. Please re-install pharokka.")
+        logger.error("MinCED is the wrong version. Please re-install pharokka.")
 
-    print("MinCED version is ok.")
     logger.info("MinCED version is ok.")
 
     #############
@@ -455,7 +410,7 @@ def check_dependencies(logger):
     try:
         process = sp.Popen(["aragorn", "-h"], stdout=sp.PIPE, stderr=sp.STDOUT)
     except:
-        sys.exit("ARAGORN not found. Please reinstall pharokka.")
+        logger.error("ARAGORN not found. Please reinstall pharokka.")
 
     aragorn_out, _ = process.communicate()
     aragorn_out = aragorn_out.decode()
@@ -473,15 +428,6 @@ def check_dependencies(logger):
     aragorn_minor_version = int(aragorn_version.split(".")[1])
     aragorn_minorest_version = int(aragorn_version.split(".")[2])
 
-    print(
-        "ARAGORN version found is v"
-        + str(aragorn_major_version)
-        + "."
-        + str(aragorn_minor_version)
-        + "."
-        + str(aragorn_minorest_version)
-        + "."
-    )
     logger.info(
         "ARAGORN version found is v"
         + str(aragorn_major_version)
@@ -493,13 +439,12 @@ def check_dependencies(logger):
     )
 
     if aragorn_major_version != 1:
-        sys.exit("ARAGORN is the wrong version. Please re-install pharokka.")
+        logger.error("ARAGORN is the wrong version. Please re-install pharokka.")
     if aragorn_minor_version != 2:
-        sys.exit("ARAGORN is the wrong version. Please re-install pharokka.")
+        logger.error("ARAGORN is the wrong version. Please re-install pharokka.")
     if aragorn_minorest_version < 41:
-        sys.exit("ARAGORN is the wrong version. Please re-install pharokka.")
+        logger.error("ARAGORN is the wrong version. Please re-install pharokka.")
 
-    print("ARAGORN version is ok.")
     logger.info("ARAGORN version is ok.")
 
     #############
@@ -508,7 +453,7 @@ def check_dependencies(logger):
     try:
         process = sp.Popen(["mash", "help"], stdout=sp.PIPE, stderr=sp.STDOUT)
     except:
-        sys.exit("mash not found. Please reinstall pharokka.")
+        logger.error("mash not found. Please reinstall pharokka.")
 
     mash_out, _ = process.communicate()
     mash_out = mash_out.decode()
@@ -524,13 +469,6 @@ def check_dependencies(logger):
     mash_major_version = int(mash_version.split(".")[0])
     mash_minor_version = int(mash_version.split(".")[1])
 
-    print(
-        "mash version found is v"
-        + str(mash_major_version)
-        + "."
-        + str(mash_minor_version)
-        + "."
-    )
     logger.info(
         "mash version found is v"
         + str(mash_major_version)
@@ -540,11 +478,10 @@ def check_dependencies(logger):
     )
 
     if mash_major_version != 2:
-        sys.exit("mash is the wrong version. Please re-install pharokka.")
+        logger.error("mash is the wrong version. Please re-install pharokka.")
     if mash_minor_version < 2:
-        sys.exit("mash is the wrong version. Please re-install pharokka.")
+        logger.error("mash is the wrong version. Please re-install pharokka.")
 
-    print("mash version is ok.")
     logger.info("mash version is ok.")
 
 

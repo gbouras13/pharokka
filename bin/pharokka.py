@@ -211,9 +211,8 @@ def main():
         run_trnascan_meta(input_fasta, out_dir, args.threads, num_fastas)
         concat_trnascan_meta(out_dir, num_fastas)
     else:
-        print("Running tRNAscan-SE.")
         logger.info("Starting tRNA-scanSE")
-        run_trna_scan(input_fasta, args.threads, out_dir, logger)
+        run_trna_scan(input_fasta, args.threads, out_dir, logdir)
     # run minced and aragorn
     run_minced(input_fasta, out_dir, prefix, logger)
     run_aragorn(input_fasta, out_dir, prefix, logger)

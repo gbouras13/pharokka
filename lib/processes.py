@@ -13,6 +13,8 @@ from Bio.SeqRecord import SeqRecord
 
 from lib.external_tools import (ExternalTool)
 
+from loguru import logger
+
 def write_to_log(s, logger):
     while True:
         output = s.readline().decode()
@@ -254,15 +256,13 @@ def run_phanotate(filepath_in, out_dir, logdir):
         logdir=logdir,
     )
 
-    ExternalTool.run_tool(phan_fast)
-
     try:
 
         ExternalTool.run_tool(phan_fast)
         ExternalTool.run_tool(phan_txt)
 
     except:
-        sys.exit("Error with Phanotate\n")
+        logger.error("Error with Phanotate\n")
 
 
 def run_prodigal(filepath_in, out_dir, logger, meta, coding_table):
@@ -473,7 +473,7 @@ def translate_fastas(out_dir, gene_predictor, coding_table):
             i += 1
 
 
-def run_trna_scan(filepath_in, threads, out_dir, logger):
+def run_trna_scan(filepath_in, threads, out_dir, logdir):
     """
     Runs trna scan
     :param filepath_in: input filepath
@@ -481,25 +481,38 @@ def run_trna_scan(filepath_in, threads, out_dir, logger):
     :param logger logger
     :return:
     """
+
+    out_gff = os.path.join(out_dir, "trnascan_out.gff")
+
+    trna = ExternalTool(
+        tool="tRNAscan-SE",
+        input=f"{filepath_in}",
+        output=f"{out_gff}",
+        params=f'--thread {threads} -G -Q -j',
+        logdir=logdir,
+    )
+
     try:
-        # needs stderr for trna scan
-        trna = sp.Popen(
-            [
-                "tRNAscan-SE",
-                filepath_in,
-                "--thread",
-                threads,
-                "-G",
-                "-Q",
-                "-j",
-                os.path.join(out_dir, "trnascan_out.gff"),
-            ],
-            stderr=sp.PIPE,
-            stdout=sp.DEVNULL,
-        )
-        write_to_log(trna.stderr, logger)
+
+        ExternalTool.run_tool(trna)
+        
+        # # needs stderr for trna scan
+        # trna = sp.Popen(
+        #     [
+        #         "tRNAscan-SE",
+        #         filepath_in,
+        #         "--thread",
+        #         threads,
+        #         "-G",
+        #         "-Q",
+        #         "-j",
+        #         os.path.join(out_dir, "trnascan_out.gff"),
+        #     ],
+        #     stderr=sp.PIPE,
+        #     stdout=sp.DEVNULL,
+        # )
     except:
-        sys.stderr.write("Error: tRNAscan-SE not found\n")
+        logger.error("Error: tRNAscan-SE not found\n")
         return 0
 
 
