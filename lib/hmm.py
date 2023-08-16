@@ -1,11 +1,5 @@
 import collections
-import contextlib
-import itertools
 import os
-import time
-import typing
-from pathlib import Path
-
 import pyhmmer
 from pyhmmer.easel import SequenceFile
 from pyhmmer.plan7 import HMM, HMMFile
@@ -21,7 +15,6 @@ def run_pyhmmer(db_dir, out_dir, threads, gene_predictor, evalue):
     :params threads: threads
     :param gene_predictor: phanotate or prodigal
     :param evalue: evalue threshold for pyhmmer
-
     :return: best_results - dictionary of top HMM hits for each protein
     """
 
@@ -30,7 +23,7 @@ def run_pyhmmer(db_dir, out_dir, threads, gene_predictor, evalue):
     amino_acid_fasta_file = os.path.join(out_dir, amino_acid_fasta_name)
 
     # define result
-    Result = collections.namedtuple("Result", ["query", "cog", "bitscore", "evalue"])
+    Result = collections.namedtuple("Result", ["protein", "phrog", "bitscore", "evalue"])
 
     # run hmmscan and get all results
     results = []
@@ -39,20 +32,21 @@ def run_pyhmmer(db_dir, out_dir, threads, gene_predictor, evalue):
             amino_acid_fasta_file, digital=True
         ) as seqs:  # amino acid sequences
             for hits in pyhmmer.hmmer.hmmscan(
-                seqs, hmms, cpus=threads, E=evalue
+                seqs, hmms, cpus=int(threads), E=float(evalue)
             ):  # run hmmscan
-                phrog = hits.query_name.decode()  # get PHROG from the hit
+                protein = hits.query_name.decode()  # get protein from the hit
                 for hit in hits:
                     if hit.included:
-                        # include the hit to the result list
+                        # include the hit to the result collection
                         results.append(
-                            Result(phrog, hit.name.decode(), hit.score, hit.evalue)
+                            Result(protein, hit.name.decode(), hit.score, hit.evalue)
                         )
 
     # get  best results for each protein
     best_results = {}
     keep_protein = set()
     for result in results:
+        print(result)
         if result.protein in best_results:
             previous_bitscore = best_results[result.protein].bitscore
             if result.bitscore > previous_bitscore:

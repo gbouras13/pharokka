@@ -21,11 +21,11 @@ from lib.input_commands import (
     validate_threads,
 )
 from lib.post_processing import (
-    create_gff,
+    #create_gff,
     create_tbl,
     get_contig_name_lengths,
-    parse_aragorn,
-    process_results,
+    #parse_aragorn,
+    #process_results,
     create_gff_singles,
     convert_singles_gff_to_gbk,
     split_fasta_singles,
@@ -44,8 +44,6 @@ from lib.processes import (
     run_aragorn,
     run_minced,
     run_mmseqs,
-    run_mmseqs_card,
-    run_mmseqs_vfdb,
     run_phanotate,
     run_phanotate_fasta_meta,
     run_phanotate_txt_meta,
@@ -60,6 +58,7 @@ from lib.processes import (
 )
 from lib.util import get_version
 
+from lib.post_processing import Pharok
 
 def main():
     # get the args
@@ -193,7 +192,8 @@ def main():
             )
             concat_phanotate_meta(out_dir, num_fastas)
         else:
-            run_phanotate(input_fasta, out_dir, logdir)
+            #run_phanotate(input_fasta, out_dir, logdir)
+            print('blah')
 
     if gene_predictor == "prodigal":
         logger.info("Implementing Prodigal using Pyrodigal.")
@@ -214,46 +214,69 @@ def main():
         logger.info("Starting tRNA-scanSE")
         run_trna_scan(input_fasta, args.threads, out_dir, logdir)
     # run minced and aragorn
-    run_minced(input_fasta, out_dir, prefix, logger)
-    run_aragorn(input_fasta, out_dir, prefix, logger)
+    run_minced(input_fasta, out_dir, prefix, logdir)
+    run_aragorn(input_fasta, out_dir, prefix, logdir)
 
-    # running mmseqs2
+    # running mmseqs2 on the 3 databases
     logger.info("Starting MMseqs2.")
-    run_mmseqs(
-        db_dir, out_dir, args.threads, logger, gene_predictor, args.evalue
-    )
-    run_mmseqs_card(db_dir, out_dir, args.threads, logger, gene_predictor)
-    run_mmseqs_vfdb(db_dir, out_dir, args.threads, logger, gene_predictor)
+    #run_mmseqs(db_dir, out_dir, args.threads, logdir, gene_predictor, args.evalue, db_name = 'PHROG')
+    #run_mmseqs(db_dir, out_dir, args.threads, logdir, gene_predictor, args.evalue, db_name = 'CARD')
+    #run_mmseqs(db_dir, out_dir, args.threads, logdir, gene_predictor, args.evalue, db_name = 'VFDB')
 
-    # running mmseqs2
+    # runs pyhmmer on PHROGs
     logger.info("Running pyhmmer.")
-    run_pyhmmer(db_dir, out_dir, args.threads, logger, gene_predictor, args.evalue)
+    best_results_pyhmmer = run_pyhmmer(db_dir, out_dir, args.threads, gene_predictor, args.evalue)
 
+    print(best_results_pyhmmer)
+
+    #################################################
     # post processing
+    #################################################
+
     logger.info("Post Processing Output.")
+
+    # instanatiate the class with some of the params
+    pharok = Pharok()
+    pharok.out_dir = out_dir
+    pharok.db_dir = db_dir
+    pharok.gene_predictor = gene_predictor
+    pharok.prefix = prefix
+    pharok.locustag = locustag
+    pharok.input_fasta = input_fasta
+    pharok.meta_mode = args.meta
+    pharok.pyhmmer_results_dict = best_results_pyhmmer
+
 
     # post process results
     # includes vfdb and card
-    # return the merged df, vfdb and card top hits
-    (cds_mmseqs_merge_df, vfdb_results, card_results) = process_results(
-        db_dir, out_dir, prefix, gene_predictor
-    )
+    # adds the merged df, vfdb and card top hits dfs to the class objec
+    # no need to specify params as they are in the class :)
+    pharok.process_results()
 
     # gets df of length and gc for each contig
-    length_df = get_contig_name_lengths(input_fasta)
-    tmrna_flag = parse_aragorn(out_dir, length_df, prefix)
+    pharok.get_contig_name_lengths()
 
-    # create gff and return locustag for table
-    (locustag, locus_df, gff_df, total_gff) = create_gff(
-        cds_mmseqs_merge_df,
-        length_df,
-        input_fasta,
-        out_dir,
-        prefix,
-        locustag,
-        tmrna_flag,
-        args.meta,
-    )
+    # parse the aragorn output
+    # get flag whether there is a tmrna from aragor
+    pharok.parse_aragorn()
+
+    # create gff and save locustag to class for table
+    pharok.create_gff()
+
+
+
+    # (locustag, locus_df, gff_df, total_gff) = create_gff(
+    #     cds_mmseqs_merge_df,
+    #     length_df,
+    #     input_fasta,
+    #     out_dir,
+    #     prefix,
+    #     locustag,
+    #     tmrna_flag,
+    #     args.meta,
+    # )
+
+
     create_tbl(
         cds_mmseqs_merge_df,
         length_df,

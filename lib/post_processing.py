@@ -4,28 +4,866 @@ import string
 import subprocess as sp
 from cmath import nan
 from re import T
+from pathlib  import Path
 
 import numpy as np
 import pandas as pd
-import lib.processes
 from Bio import SeqIO
 from Bio.SeqUtils import GC
+from loguru import logger
+import collections
 
 pd.options.mode.chained_assignment = None
 
+Result = collections.namedtuple("Result", ["protein", "phrog", "bitscore", "evalue"])
+
+class Pharok:
+    """Pharokka Output Class"""
+
+    def __init__(
+        self,
+        out_dir: Path = "output/",
+        db_dir: Path = "db_dir/",
+        prefix: str = 'pharokka',
+        gene_predictor: str = 'phanotate',
+        input_fasta: Path = 'input.fasta',
+        meta_mode: bool = False,
+        locustag: str = 'Random',
+        pyhmmer_results_dict: dict = {'p1': Result(protein='p1', phrog='phrog_1', bitscore=1, evalue=2.01e-01)} ,
+        # chromosome_flag: bool = True,
+        # threads: int = 1,
+        # depth_df: pd.DataFrame() = pd.DataFrame({"col1": [1, 2, 3], "col2": [4, 5, 6]}),
+        # mash_df: pd.DataFrame() = pd.DataFrame({"col1": [1, 2, 3], "col2": [4, 5, 6]}),
+        # combined_depth_mash_df: pd.DataFrame() = pd.DataFrame(
+        #     {"col1": [1, 2, 3], "col2": [4, 5, 6]}
+        # ),
+        # long_only: bool = False,
+        # unicycler_success: bool = True,
+        merged_df:  pd.DataFrame() = pd.DataFrame({"col1": [1, 2, 3], "col2": [4, 5, 6]}),
+        vfdb_results: pd.DataFrame() = pd.DataFrame({"col1": [1, 2, 3], "col2": [4, 5, 6]}),
+        card_results: pd.DataFrame() = pd.DataFrame({"col1": [1, 2, 3], "col2": [4, 5, 6]}),
+        length_df: pd.DataFrame() = pd.DataFrame({"col1": [1, 2, 3], "col2": [4, 5, 6]}),
+        tmrna_flag: bool = False,
+    ) -> None:
+        """
+        Parameters
+        --------
+        out_dir: str, 
+            output directory
+        db_dir: str, 
+            database directory
+        prefix: str, prefix for output
+            prefix
+        gene_predictor: str, gene predictor used
+            phanotate or prodigal
+        input_fasta: Path
+            input FASTA file with phage contigs
+        meta_mode: bool
+            boolean whether pharokka is being run in meta mode
+        locustag: str 
+            locustag. Will be 'Random' if the user has not specified a locus tag
+        pyhmmer_results_dict: dict
+            dictionary of Result tuples from pyhmmer.
+        merged_df: pd.DataFrame, required
+            merged dataframe output
+        vfdb_results: pd.DataFrame, 
+            vfdb dataframe output
+        card_results: pd.DataFrame, 
+            CARD dataframe output
+        length_df: pd.DataFrame, 
+            dataframe with lengths for each input contig
+        tmrna_flag: boolean,
+            flag denoting whether there is a tmRNA in the output (per aragorn)
+        """
+        self.out_dir = out_dir
+        self.db_dir = db_dir
+        self.prefix = prefix
+        self.gene_predictor = gene_predictor
+        self.input_fasta = input_fasta
+        self.meta_mode = meta_mode
+        self.locustag = locustag
+        self.pyhmmer_results_dict = pyhmmer_results_dict
+        self.merged_df = merged_df
+        self.vfdb_results = vfdb_results
+        self.card_results = card_results
+        self.length_df = length_df
+        self.tmrna_flag = tmrna_flag
+
+ 
+
+
+
+    def process_results(self):
+        """
+        Processes and combines PHROGS, CARD and VFDB mmseqs output
+        :param self: Pharok class object
+        :param db_dir: database directory path
+        :param out_dir: output directory path
+        :param gene_predictor: CDS predictor (phanotate or prodigal)
+        :return:
+        """
+
+        tophits_df = create_mmseqs_tophits(self.out_dir)
+
+        # left join mmseqs top hits to cds df
+        # read in the cds cdf
+        cds_file = os.path.join(self.out_dir, "cleaned_" + self.gene_predictor + ".tsv")
+        cds_df = pd.read_csv(cds_file, sep="\t", index_col=False)
+
+        # convert the gene to string for the merge
+        cds_df["gene"] = cds_df["gene"].astype(str)
+        tophits_df["gene"] = tophits_df["gene"].astype(str)
+        cds_df = cds_df[cds_df["start"].notna()]
+        cds_df = cds_df.dropna()
+
+        # merge top hits into the cds df
+        merged_df = cds_df.merge(tophits_df, on="gene", how="left")
+
+
+        # Adds pyhmmer results
+        merged_df = process_pyhmmer_results( merged_df, self.pyhmmer_results_dict)
+
+        # combine phrogs
+
+        with open(os.path.join(self.out_dir, "testa.tsv"), "a") as f:
+            merged_df.to_csv(f, sep="\t", index=False, header=True)
+
+        ############
+        # code to create 1 overall phrog column
+        # pick the mmseqs PHROG column by default
+        merged_df['phrog'] = merged_df['mmseqs_phrog']
+
+        for index, row in merged_df.iterrows():
+            print(row['phrog'])
+            if row['phrog'] == nan:
+                if row['pyhmmer_phrog']
+
+                merged_df.at[index, 'phrog'] = pyhmmer_results_dict[row['temp_prot']].phrog
+                merged_df.at[index, 'pyhmmer_bitscore'] = round(pyhmmer_results_dict[row['temp_prot']].bitscore, 6)
+                merged_df.at[index, 'pyhmmer_evalue'] = pyhmmer_results_dict[row['temp_prot']].evalue
+
+                print(pyhmmer_results_dict[row['temp_prot']].phrog)
+                print(row['pyhmmer_phrog'])
+
+
+
+
+
+        # get phrog from top hit
+        # add test if empty - crashes if no gene call hits
+        if len(tophits_df["mmseqs_phrog"]) == 0:
+            merged_df["top_hit"] = "No_PHROG"
+        else:
+            merged_df[["mmseqs_phrog", "top_hit"]] = merged_df["mmseqs_phrog"].str.split(
+                " ## ", expand=True
+            )
+        # strip off phrog_
+        merged_df["mmseqs_phrog"] = merged_df["mmseqs_phrog"].str.replace("phrog_", "")
+
+        # read in phrog annotaion file
+        phrog_annot_df = pd.read_csv(
+            os.path.join(self.db_dir, "phrog_annot_v4.tsv"), sep="\t", index_col=False
+        )
+        phrog_annot_df["phrog"] = phrog_annot_df["phrog"].astype(str)
+
+        # merge phrog
+        merged_df = merged_df.merge(phrog_annot_df, on="phrog", how="left")
+        merged_df = merged_df.replace(np.nan, "No_PHROG", regex=True)
+        # convert no phrog to hyp protein
+        merged_df["annot"] = merged_df["annot"].str.replace(
+            "No_PHROG", "hypothetical protein"
+        )
+        merged_df["category"] = merged_df["category"].str.replace(
+            "No_PHROG", "unknown function"
+        )
+
+        # add columns
+        if self.gene_predictor == "phanotate":
+            merged_df["Method"] = "PHANOTATE"
+        if self.gene_predictor == "prodigal":
+            merged_df["Method"] = "PRODIGAL"
+        merged_df["Region"] = "CDS"
+
+        # # replace with NA if nothing found for mmseqs
+        merged_df.loc[merged_df["mmseqs_phrog"] == "No_PHROG", "mmseqs_phrog"] = "No_PHROG"
+        merged_df.loc[merged_df["mmseqs_alnScore"] == "No_PHROG", "mmseqs_alnScore"] = "No_PHROG"
+        merged_df.loc[merged_df["mmseqs_seqIdentity"] == "No_PHROG", "smmseqs_eqIdentity"] = "No_PHROG"
+        merged_df.loc[merged_df["mmseqs_eVal"] == "No_PHROG", "mmseqs_eVal"] = "No_PHROG"
+        merged_df.loc[merged_df["top_hit"] == "No_PHROG", "top_hit"] = "No_PHROG"
+        merged_df.loc[merged_df["color"] == "No_PHROG", "color"] = "No_PHROG"
+
+        # get phrog
+        merged_df["mmseqs_phrog"] = merged_df["mmseqs_phrog"].str.replace("phrog_", "")
+        merged_df["mmseqs_phrog"] = merged_df["mmseqs_phrog"].astype(str)
+
+        # drop existing color annot category cols
+        merged_df = merged_df.drop(columns=["color", "annot", "category"])
+        merged_df = merged_df.merge(phrog_annot_df, on="phrog", how="left")
+        merged_df["annot"] = merged_df["annot"].replace(
+            nan, "hypothetical protein", regex=True
+        )
+        merged_df["category"] = merged_df["category"].replace(
+            nan, "unknown function", regex=True
+        )
+        merged_df["color"] = merged_df["color"].replace(nan, "None", regex=True)
+
+ 
+
+
+ 
+
+
+
+        # process vfdb results
+        (merged_df, vfdb_results) = process_vfdb_results(self.out_dir, merged_df)
+        # process CARD results
+        (merged_df, card_results) = process_card_results(self.out_dir, merged_df, self.db_dir)
+
+
+        self.merged_df = merged_df
+        self.vfdb_results = vfdb_results
+        self.card_results = card_results
+
+
+    def get_contig_name_lengths(self):
+        """
+        Gets contig name and length in the input fasta file and calculates gc
+        :param fasta_input: input fasta file
+        :return: length_df a pandas dataframe (to class)
+        """
+        fasta_sequences = SeqIO.parse(open(self.input_fasta), "fasta")
+        contig_names = []
+        lengths = []
+        gc = []
+        for fasta in fasta_sequences:
+            contig_names.append(fasta.id)
+            lengths.append(len(fasta.seq))
+            gc.append(round(GC(fasta.seq), 2))
+        length_df = pd.DataFrame(
+            {
+                "contig": contig_names,
+                "length": lengths,
+                "gc_perc": gc,
+            }
+        )
+        self.length_df = length_df
+
+
+    def parse_aragorn(self):
+        """
+        Parses aragorn output file
+        :param out_dir: output directory path
+        :param prefix: prefix
+        :param length_df: a pandas df as output from get_contig_name_lengths()
+        :return:- to class - tmrna_flag Boolean whethere there is tmrna or not
+        """
+        aragorn_file = os.path.join(self.out_dir, self.prefix + "_aragorn.txt")
+        f = open(aragorn_file)
+        lines = f.readlines()
+        contig_count = len(self.length_df["contig"])
+        tmrna_flag = False
+        contig_names = []
+        methods = []
+        regions = []
+        starts = []
+        stops = []
+        scores = []
+        frames = []
+        phases = []
+        attributes = []
+        # if there is only one contig
+        if contig_count == 1:
+            # if no trnas
+            if int(lines[1][0]) == 0:
+                tmrna_df = pd.DataFrame(
+                    {
+                        "contig": "",
+                        "Method": "",
+                        "Region": "",
+                        "start": "",
+                        "stop": "",
+                        "score": "",
+                        "frame": "",
+                        "phase": "",
+                        "attributes": "",
+                    },
+                    index=[0],
+                )
+            else:
+                tmrna_flag = True
+                # get all lines with tmrnas
+                tmrna_lines = lines[2:]
+                for line in tmrna_lines:
+                    split = line.split()
+                    start_stops = split[2].replace("[", "").replace("]", "").split(",")
+                    contig = self.length_df["contig"][0]
+                    method = "Aragorn"
+                    region = "tmRNA"
+                    start = start_stops[0].replace(
+                        "c", ""
+                    )  # tmrna output is [start,stop] or c[start, stop] so need to remove c also for some phages
+                    stop = start_stops[1]
+                    score = "."
+                    frame = "."
+                    phase = "."
+                    tag_peptide = split[3]
+                    tag_peptide_seq = split[4]
+                    attribute = (
+                        "product=transfer-messenger RNA SsrA;tag_peptide="
+                        + tag_peptide
+                        + ";tag_peptide_sequence="
+                        + tag_peptide_seq
+                    )
+                    contig_names.append(contig)
+                    methods.append(method)
+                    regions.append(region)
+                    starts.append(start)
+                    stops.append(stop)
+                    scores.append(score)
+                    frames.append(frame)
+                    phases.append(phase)
+                    attributes.append(attribute)
+                tmrna_df = pd.DataFrame(
+                    {
+                        "contig": contig_names,
+                        "Method": methods,
+                        "Region": regions,
+                        "start": starts,
+                        "stop": stops,
+                        "score": scores,
+                        "frame": frames,
+                        "phase": phases,
+                        "attributes": attributes,
+                    }
+                )
+        # two or more contigs
+        else:
+            i = 0  # line counter
+            j = 0  # contig counter
+            for line in lines:
+                # contig meets these reqs
+                if (
+                    line[0] == ">" and "sensitivity" not in line
+                ):  # sensititvity in the line at the end of the file
+                    if "0 genes found" not in lines[i + 1]:
+                        tmrna_flag = True
+                        # number of trnas for this contig
+                        tmrna_count = int(lines[i + 1][0])
+                        # iterate over them
+                        for k in range(tmrna_count):
+                            tmrna_line = lines[i + 2 + k]
+                            split = tmrna_line.split()
+                            start_stops = (
+                                split[2].replace("[", "").replace("]", "").split(",")
+                            )
+                            contig = self.length_df["contig"][j]
+                            method = "Aragorn"
+                            region = "tmRNA"
+                            start = start_stops[0].replace(
+                                "c", ""
+                            )  # tmrna output is [start,stop] or c[start, stop] so need to remove c also for some phages
+                            stop = start_stops[1]
+                            score = "."
+                            frame = "."
+                            phase = "."
+                            tag_peptide = split[3]
+                            tag_peptide_seq = split[4]
+                            attribute = (
+                                "product=transfer-messenger RNA SsrA;tag_peptide="
+                                + tag_peptide
+                                + ";tag_peptide_sequence="
+                                + tag_peptide_seq
+                            )
+                            contig_names.append(contig)
+                            methods.append(method)
+                            regions.append(region)
+                            starts.append(start)
+                            stops.append(stop)
+                            scores.append(score)
+                            frames.append(frame)
+                            phases.append(phase)
+                            attributes.append(attribute)
+                    j += 1  # iterate contig
+                # iterate line
+                i += 1
+            # write out the df
+            tmrna_df = pd.DataFrame(
+                {
+                    "contig": contig_names,
+                    "Method": methods,
+                    "Region": regions,
+                    "start": starts,
+                    "stop": stops,
+                    "score": scores,
+                    "frame": frames,
+                    "phase": phases,
+                    "attributes": attributes,
+                }
+            )
+        tmrna_df.to_csv(
+            os.path.join(self.out_dir, self.prefix + "_aragorn.gff"),
+            sep="\t",
+            index=False,
+            header=False,
+        )
+        self.tmrna_flag = tmrna_flag
+
+
+
+    def create_gff(self
+    ):
+        """
+        Creates the pharokka.gff file
+        :param merged_df: a pandas df as output from process_results() with results for cds
+        :param length_df: a pandas df as output from get_contig_name_lengths()
+        :param fasta_input: input fasta file
+        :param out_dir: output directory path
+        :param prefix: output prefix
+        :param locustag: str whether or not to create a random locustag - will be 'Random' is so. Otherwise it is parsed
+        :tmrna_flag boolean whether there are tmRNAs or not
+        :return: locustag for the creation of the .tbl file, locus_df as df with consistent locus_tags
+
+
+        merged_df,
+        length_df,
+        fasta_input,
+        out_dir,
+        prefix,
+        locustag,
+        tmrna_flag,
+        meta_mode,
+
+        """
+
+        # create locus tag 
+        # locustag creation
+        if self.locustag == "Random":
+            # locus tag header 8 random letters
+            self.locustag = "".join(random.choice(string.ascii_uppercase) for _ in range(8))
+
+        # get all contigs
+        contigs = self.length_df["contig"].astype("string")
+
+        ############ locus tag #########
+        # write df for locus tag parsing
+        # zfill - makes the CDS 4 digits trailing zeroes for vcontact
+        # in meta mode,
+        locus_df = self.merged_df
+        subset_dfs = []
+
+        # if meta mode is true
+        if self.meta_mode == True:
+            for contig in contigs:
+                subset_df = locus_df[locus_df["contig"] == contig].reset_index()
+                subset_df["count"] = subset_df.index
+                # so not 0 indexed
+                subset_df["count"] = subset_df["count"] + 1
+                # z fill to make the locus tag 4
+                subset_df["count"] = subset_df["count"].astype(str).str.zfill(4)
+                subset_dfs.append(subset_df)
+            locus_df = pd.concat(subset_dfs, axis=0, ignore_index=True)
+        else:
+            locus_df["count"] = locus_df.index
+            # so not 0 indexed
+            locus_df["count"] = locus_df["count"] + 1
+            # z fill to make the locus tag 4
+            locus_df["count"] = locus_df["count"].astype(str).str.zfill(4)
+
+        # get the locus tag
+        if self.meta_mode == False:
+            locus_df["locus_tag"] = self.locustag + "_CDS_" + locus_df["count"]
+        else: # for meta use contig names
+            locus_df["locus_tag"] = locus_df.contig + "_CDS_" + locus_df["count"]
+
+        #################################
+
+        #########
+        # rearrange start and stop so that start is always less than stop for gff
+        #########
+
+        cols = ["start", "stop"]
+        # indices where start is greater than stop
+        ixs = self.merged_df["frame"] == "-"
+        # Where ixs is True, values are swapped
+        self.merged_df.loc[ixs, cols] = (
+            self.merged_df.loc[ixs, cols].reindex(columns=cols[::-1]).values
+        )
+
+        # set phase to be 0
+        self.merged_df["phase"] = 0
+        # create attributes
+        self.merged_df["attributes"] = (
+            "ID="
+            + locus_df["locus_tag"].astype(str)
+            + ";"
+            + "phrog="
+            + self.merged_df["phrog"].astype(str)
+            + ";"
+            + "top_hit="
+            + self.merged_df["top_hit"].astype(str)
+            + ";"
+            + "locus_tag="
+            + locus_df["locus_tag"].astype(str)
+            + ";"
+            + "function="
+            + self.merged_df["category"].astype(str)
+            + ";"
+            + "product="
+            + self.merged_df["annot"].astype(str)
+        )
+        # adds VFDB
+        self.merged_df.loc[self.merged_df["vfdb_short_name"] != "None", "attributes"] = (
+            self.merged_df["attributes"].astype(str)
+            + ";"
+            + "vfdb_short_name="
+            + self.merged_df["vfdb_short_name"].astype(str)
+            + ";"
+            + "vfdb_description="
+            + self.merged_df["vfdb_description"].astype(str)
+            + ";"
+            + "vfdb_species="
+            + self.merged_df["vfdb_species"].astype(str)
+        )
+        # adds CARD
+        self.merged_df.loc[self.merged_df["CARD_short_name"] != "None", "attributes"] = (
+            self.merged_df["attributes"].astype(str)
+            + ";"
+            + "CARD_short_name="
+            + self.merged_df["CARD_short_name"].astype(str)
+            + ";"
+            + "AMR_Gene_Family="
+            + self.merged_df["AMR_Gene_Family"].astype(str)
+            + ";"
+            + "CARD_species="
+            + self.merged_df["CARD_species"].astype(str)
+        )
+
+        # save back
+
+        # get gff dataframe in correct order
+        gff_df = self.merged_df[
+            [
+                "contig",
+                "Method",
+                "Region",
+                "start",
+                "stop",
+                "score",
+                "frame",
+                "phase",
+                "attributes",
+            ]
+        ]
+
+        # change start and stop to int
+        gff_df["start"] = gff_df["start"].astype("int")
+        gff_df["stop"] = gff_df["stop"].astype("int")
+
+        # with open(os.path.join(self.out_dir, "pharokka_tmp.gff"), "a") as f:
+        #     gff_df.to_csv(f, sep="\t", index=False, header=False)
+
+        ### trnas
+        # check if no trnas
+        col_list = [
+            "contig",
+            "Method",
+            "Region",
+            "start",
+            "stop",
+            "score",
+            "frame",
+            "phase",
+            "attributes",
+        ]
+        trna_empty = is_trna_empty(self.out_dir)
+        if trna_empty == False:
+            trna_df = pd.read_csv(
+                os.path.join(out_dir, "trnascan_out.gff"),
+                delimiter="\t",
+                index_col=False,
+                names=col_list,
+            )
+            # index hack if meta mode
+            if self.meta_mode == True:
+                subset_dfs = []
+                for contig in contigs:
+                    subset_df = trna_df[trna_df["contig"] == contig].reset_index()
+                    # keep only trnas before indexing
+                    subset_df = subset_df[
+                        (subset_df["Region"] == "tRNA")
+                        | (subset_df["Region"] == "pseudogene")
+                    ]
+                    subset_df = subset_df.reset_index(drop=True)
+                    subset_df["count"] = subset_df.index
+                    # so not 0 indexed
+                    subset_df["count"] = subset_df["count"] + 1
+                    # z fill to make the locus tag 4
+                    subset_df["locus_tag"] = (
+                        contig + "_tRNA_" + subset_df["count"].astype(str).str.zfill(4)
+                    )
+                    subset_df = subset_df.drop(columns=["count"])
+                    subset_dfs.append(subset_df)
+                trna_df = pd.concat(subset_dfs, axis=0, ignore_index=True)
+                trna_df = trna_df.drop(columns=["index"])
+            else:
+                # keep only trnas
+                trna_df = trna_df[
+                    (trna_df["Region"] == "tRNA") | (trna_df["Region"] == "pseudogene")
+                ]
+                trna_df = trna_df.reset_index(drop=True)
+                trna_df["count"] = trna_df.index
+                trna_df["count"] = trna_df["count"] + 1
+                trna_df["locus_tag"] = (
+                    self.locustag + "_tRNA_" + trna_df["count"].astype(str).str.zfill(4)
+                )
+                trna_df = trna_df.drop(columns=["count"])
+
+            trna_df.start = trna_df.start.astype(int)
+            trna_df.stop = trna_df.stop.astype(int)
+            trna_df[["attributes", "isotypes"]] = trna_df["attributes"].str.split(
+                ";isotype=", expand=True
+            )
+            trna_df[["isotypes", "anticodon"]] = trna_df["isotypes"].str.split(
+                ";anticodon=", expand=True
+            )
+            trna_df[["anticodon", "rest"]] = trna_df["anticodon"].str.split(
+                ";gene_biotype", expand=True
+            )
+            trna_df["trna_product"] = (
+                "tRNA-" + trna_df["isotypes"] + "(" + trna_df["anticodon"] + ")"
+            )
+            trna_df = trna_df.drop(columns=["attributes"])
+            trna_df["attributes"] = (
+                "ID="
+                + trna_df["locus_tag"]
+                + ";"
+                + "trna="
+                + trna_df["trna_product"].astype(str)
+                + ";"
+                + "isotype="
+                + trna_df["isotypes"].astype(str)
+                + ";"
+                + "anticodon="
+                + trna_df["anticodon"].astype(str)
+                + ";"
+                + "locus_tag="
+                + trna_df["locus_tag"]
+            )
+            trna_df = trna_df.drop(
+                columns=["isotypes", "anticodon", "rest", "trna_product", "locus_tag"]
+            )
+
+
+            # # append to the end of the gff
+            # with open(os.path.join(out_dir, "pharokka_tmp.gff"), "a") as f:
+            #     trna_df.to_csv(f, sep="\t", index=False, header=False)
+
+
+
+        ### crisprs
+        crispr_count = get_crispr_count(self.out_dir, self.prefix)
+        # add to gff if > 0
+        if crispr_count > 0:
+            minced_df = pd.read_csv(
+                os.path.join(self.out_dir, self.prefix + "_minced.gff"),
+                delimiter="\t",
+                index_col=False,
+                names=col_list,
+                comment="#",
+            )
+            minced_df.start = minced_df.start.astype(int)
+            minced_df.stop = minced_df.stop.astype(int)
+            minced_df[["attributes", "rpt_unit_seq"]] = minced_df["attributes"].str.split(
+                ";rpt_unit_seq=", expand=True
+            )
+            minced_df[["attributes", "rpt_family"]] = minced_df["attributes"].str.split(
+                ";rpt_family=", expand=True
+            )
+            minced_df[["attributes", "rpt_type"]] = minced_df["attributes"].str.split(
+                ";rpt_type=", expand=True
+            )
+            minced_df = minced_df.drop(columns=["attributes"])
+            # index hack if meta mode
+            subset_dfs = []
+            if self.meta_mode == True:
+                for contig in contigs:
+                    subset_df = minced_df[minced_df["contig"] == contig].reset_index()
+                    subset_df["count"] = subset_df.index
+                    # so not 0 indexed
+                    subset_df["count"] = subset_df["count"] + 1
+                    # z fill to make the locus tag 4
+                    subset_df["count"] = subset_df["count"].astype(str).str.zfill(4)
+                    subset_df["locus_tag"] = (
+                        contig + "_CRISPR_" + subset_df["count"].astype(str).str.zfill(4)
+                    )
+                    subset_df = subset_df.drop(columns=["count"])
+                    subset_dfs.append(subset_df)
+                minced_df = pd.concat(subset_dfs, axis=0, ignore_index=True)
+                minced_df = minced_df.drop(columns=["index"])
+            else:
+                minced_df["count"] = minced_df.index
+                minced_df["count"] = minced_df["count"] + 1
+                minced_df["locus_tag"] = (
+                    locustag + "_CRISPR_" + minced_df["count"].astype(str).str.zfill(4)
+                )
+                minced_df = minced_df.drop(columns=["count"])
+
+            minced_df["attributes"] = (
+                "ID="
+                + minced_df["locus_tag"]
+                + ";"
+                + "rpt_type="
+                + minced_df["rpt_type"].astype(str)
+                + ";"
+                + "rpt_family="
+                + minced_df["rpt_family"].astype(str)
+                + ";"
+                + "rpt_unit_seq="
+                + minced_df["rpt_unit_seq"].astype(str)
+                + ";"
+                + "locus_tag="
+                + minced_df["locus_tag"]
+            )
+            minced_df = minced_df.drop(
+                columns=["rpt_unit_seq", "rpt_family", "rpt_type", "locus_tag"]
+            )
+            # append to the end of the gff
+            # with open(os.path.join(out_dir, "pharokka_tmp.gff"), "a") as f:
+            #     minced_df.to_csv(f, sep="\t", index=False, header=False)
+
+        ### tmrna
+        # add to gff there is a tmrna
+        if self.tmrna_flag == True:
+            tmrna_df = pd.read_csv(
+                os.path.join(self.out_dir, self.prefix + "_aragorn.gff"),
+                delimiter="\t",
+                index_col=False,
+                names=col_list,
+            )
+            tmrna_df.start = tmrna_df.start.astype(int)
+            tmrna_df.stop = tmrna_df.stop.astype(int)
+
+            # index hack if meta mode
+            subset_dfs = []
+            if self.meta_mode == True:
+                for contig in contigs:
+                    subset_df = tmrna_df[tmrna_df["contig"] == contig].reset_index()
+                    subset_df["count"] = subset_df.index
+                    # so not 0 indexed
+                    subset_df["count"] = subset_df["count"] + 1
+                    # z fill to make the locus tag 4
+                    subset_df["count"] = subset_df["count"].astype(str).str.zfill(4)
+                    subset_df["locus_tag"] = (
+                        contig + "_tmRNA_" + subset_df["count"].astype(str).str.zfill(4)
+                    )
+                    subset_df = subset_df.drop(columns=["count"])
+                    subset_dfs.append(subset_df)
+                tmrna_df = pd.concat(subset_dfs, axis=0, ignore_index=True)
+                tmrna_df = tmrna_df.drop(columns=["index"])
+            else:
+                tmrna_df["count"] = tmrna_df.index
+                tmrna_df["count"] = tmrna_df["count"] + 1
+                tmrna_df["locus_tag"] = (
+                    self.locustag + "_tmRNA_" + tmrna_df["count"].astype(str).str.zfill(4)
+                )
+                tmrna_df = tmrna_df.drop(columns=["count"])
+
+            tmrna_df["attributes"] = (
+                "ID="
+                + tmrna_df["locus_tag"]
+                + ";"
+                + tmrna_df["attributes"].astype(str)
+                + ";locus_tag="
+                + tmrna_df["locus_tag"]
+            )
+            tmrna_df = tmrna_df.drop(columns=["locus_tag"])
+            # append to the end of the gff
+            # with open(os.path.join(out_dir, "pharokka_tmp.gff"), "a") as f:
+            #     tmrna_df.to_csv(f, sep="\t", index=False, header=False)
+
+        # write header of final gff files
+        with open(os.path.join(self.out_dir, self.prefix + ".gff"), "w") as f:
+            f.write("##gff-version 3\n")
+            for index, row in self.length_df.iterrows():
+                f.write(
+                    "##sequence-region " + row["contig"] + " 1 " + str(row["length"]) + "\n"
+                )
+
+        # sort gff by start
+        # total_gff = pd.read_csv(
+        #     os.path.join(out_dir, "pharokka_tmp.gff"),
+        #     delimiter="\t",
+        #     index_col=False,
+        #     names=col_list,
+        #     low_memory=False,
+        # )
+
+        # combine dfs depending on whether the elements were detected
+
+        if trna_empty == True and self.tmrna_flag == False  and crispr_count == 0: # all
+            df_list = [gff_df]
+        elif trna_empty == False and self.tmrna_flag == False  and crispr_count == 0:
+            df_list = [gff_df, trna_df]
+        elif trna_empty == True and self.tmrna_flag == True  and crispr_count == 0:
+            df_list = [gff_df, tmrna_df]
+        elif trna_empty == True and self.tmrna_flag == False  and crispr_count > 0: # all
+            df_list = [gff_df, minced_df]
+        elif trna_empty == False and self.tmrna_flag == True  and crispr_count == 0:
+            df_list = [gff_df, trna_df, tmrna_df]
+        elif trna_empty == False and self.tmrna_flag == False  and crispr_count > 0:
+            df_list = [gff_df, trna_df, minced_df]
+        elif trna_empty == True and self.tmrna_flag == True  and crispr_count > 0:
+            df_list = [gff_df, tmrna_df, minced_df]
+        else: # all detected
+            df_list = [gff_df, trna_df, tmrna_df, minced_df]
+
+        
+        total_gff = pd.concat(df_list, ignore_index=True)
+
+        # ensure that the start and stops are integer
+        total_gff.start = total_gff.start.astype(int)
+        total_gff.stop = total_gff.stop.astype(int)
+
+        # sorts all features by start
+        total_gff = total_gff.groupby(["contig"], sort=False, as_index=False).apply(
+            pd.DataFrame.sort_values, "start", ascending=True
+        )
+
+        # write final gff to file
+        with open(os.path.join(self.out_dir, self.prefix + ".gff"), "a") as f:
+            total_gff.to_csv(f, sep="\t", index=False, header=False)
+
+        # write fasta on the end
+        with open(os.path.join(self.out_dir, self.prefix + ".gff"), "a") as f:
+            f.write("##FASTA\n")
+            fasta_sequences = SeqIO.parse(open(self.input_fasta), "fasta")
+            SeqIO.write(fasta_sequences, f, "fasta")
+
+
+        self.locus_df = locus_df
+        self.gff_df = gff_df
+        self.total_gff = total_gff
+
+
+
+
+
+
 
 def create_mmseqs_tophits(out_dir):
-    """ """
+    """ 
+    creates tophits_df dataframe from mmseqs2 phrog results
+    """
 
     ##mmseqs
     mmseqs_file = os.path.join(out_dir, "mmseqs_results.tsv")
-    print("Processing mmseqs2 output.")
+    logger.info("Processing mmseqs2 output.")
     col_list = [
-        "phrog",
+        "mmseqs_phrog",
         "gene",
-        "alnScore",
-        "seqIdentity",
-        "eVal",
+        "mmseqs_alnScore",
+        "mmseqs_seqIdentity",
+        "mmseqs_eVal",
         "qStart",
         "qEnd",
         "qLen",
@@ -45,23 +883,23 @@ def create_mmseqs_tophits(out_dir):
     for gene in genes:
         tmp_df = (
             mmseqs_df.loc[mmseqs_df["gene"] == gene]
-            .sort_values("eVal")
+            .sort_values("mmseqs_eVal")
             .reset_index(drop=True)
             .loc[0]
         )
         tophits.append(
             [
-                tmp_df.phrog,
+                tmp_df.mmseqs_phrog,
                 tmp_df.gene,
-                tmp_df.alnScore,
-                tmp_df.seqIdentity,
-                tmp_df.eVal,
+                tmp_df.mmseqs_alnScore,
+                tmp_df.mmseqs_seqIdentity,
+                tmp_df.mmseqs_eVal,
             ]
         )
 
     # create tophits df
     tophits_df = pd.DataFrame(
-        tophits, columns=["phrog", "gene", "alnScore", "seqIdentity", "eVal"]
+        tophits, columns=["mmseqs_phrog", "gene", "mmseqs_alnScore", "mmseqs_seqIdentity", "mmseqs_eVal"]
     )
     tophits_df.to_csv(
         os.path.join(out_dir, "top_hits_mmseqs.tsv"), sep="\t", index=False
@@ -69,94 +907,7 @@ def create_mmseqs_tophits(out_dir):
     return tophits_df
 
 
-def process_results(db_dir, out_dir, prefix, gene_predictor):
-    """
-    Processes and combines PHROGS, CARD and VFDB mmseqs output
-    :param db_dir: database directory path
-    :param out_dir: output directory path
-    :param prefix: output prefix
-    :param gene_predictor: CDS predictor (phanotate or prodigal)
-    :return: merged_df a pandas dataframe of the final merged output
-    """
 
-    tophits_df = create_mmseqs_tophits(out_dir)
-
-    # left join mmseqs top hits to cds df
-    cds_file = os.path.join(out_dir, "cleaned_" + gene_predictor + ".tsv")
-    cds_df = pd.read_csv(cds_file, sep="\t", index_col=False)
-    # convert the gene to string for the merge
-    cds_df["gene"] = cds_df["gene"].astype(str)
-    tophits_df["gene"] = tophits_df["gene"].astype(str)
-    cds_df = cds_df[cds_df["start"].notna()]
-    cds_df = cds_df.dropna()
-
-    # merge top hits into the cds df
-    merged_df = cds_df.merge(tophits_df, on="gene", how="left")
-
-    # get phrog from top hit
-    # add test if empty - crashes if no gene call hits
-    if len(tophits_df["phrog"]) == 0:
-        merged_df["top_hit"] = "No_PHROG"
-    else:
-        merged_df[["phrog", "top_hit"]] = merged_df["phrog"].str.split(
-            " ## ", expand=True
-        )
-    # strip off phrog_
-    merged_df["phrog"] = merged_df["phrog"].str.replace("phrog_", "")
-
-    # read in phrog annotaion file
-    phrog_annot_df = pd.read_csv(
-        os.path.join(db_dir, "phrog_annot_v4.tsv"), sep="\t", index_col=False
-    )
-    phrog_annot_df["phrog"] = phrog_annot_df["phrog"].astype(str)
-
-    # merge phrog
-    merged_df = merged_df.merge(phrog_annot_df, on="phrog", how="left")
-    merged_df = merged_df.replace(np.nan, "No_PHROG", regex=True)
-    # convert no phrog to hyp protein
-    merged_df["annot"] = merged_df["annot"].str.replace(
-        "No_PHROG", "hypothetical protein"
-    )
-    merged_df["category"] = merged_df["category"].str.replace(
-        "No_PHROG", "unknown function"
-    )
-
-    # add columns
-    if gene_predictor == "phanotate":
-        merged_df["Method"] = "PHANOTATE"
-    if gene_predictor == "prodigal":
-        merged_df["Method"] = "PRODIGAL"
-    merged_df["Region"] = "CDS"
-
-    # # replace with NA if nothing found for mmseqs
-    merged_df.loc[merged_df["phrog"] == "No_PHROG", "phrog"] = "No_PHROG"
-    merged_df.loc[merged_df["alnScore"] == "No_PHROG", "alnScore"] = "No_PHROG"
-    merged_df.loc[merged_df["seqIdentity"] == "No_PHROG", "seqIdentity"] = "No_PHROG"
-    merged_df.loc[merged_df["eVal"] == "No_PHROG", "eVal"] = "No_PHROG"
-    merged_df.loc[merged_df["top_hit"] == "No_PHROG", "top_hit"] = "No_PHROG"
-    merged_df.loc[merged_df["color"] == "No_PHROG", "color"] = "No_PHROG"
-
-    # get phrog
-    merged_df["phrog"] = merged_df["phrog"].str.replace("phrog_", "")
-    merged_df["phrog"] = merged_df["phrog"].astype(str)
-
-    # drop existing color annot category cols
-    merged_df = merged_df.drop(columns=["color", "annot", "category"])
-    merged_df = merged_df.merge(phrog_annot_df, on="phrog", how="left")
-    merged_df["annot"] = merged_df["annot"].replace(
-        nan, "hypothetical protein", regex=True
-    )
-    merged_df["category"] = merged_df["category"].replace(
-        nan, "unknown function", regex=True
-    )
-    merged_df["color"] = merged_df["color"].replace(nan, "None", regex=True)
-
-    # process vfdb results
-    (merged_df, vfdb_results) = process_vfdb_results(out_dir, merged_df)
-    # process CARD results
-    (merged_df, card_results) = process_card_results(out_dir, merged_df, db_dir)
-
-    return (merged_df, vfdb_results, card_results)
 
 
 def get_contig_name_lengths(fasta_input):
@@ -505,407 +1256,6 @@ def create_txt(cds_mmseqs_merge_df, length_df, out_dir, prefix):
     )
 
 
-def create_gff(
-    cds_mmseqs_df,
-    length_df,
-    fasta_input,
-    out_dir,
-    prefix,
-    locustag,
-    tmrna_flag,
-    meta_mode,
-):
-    """
-    Creates the pharokka.gff file
-    :param cds_mmseqs_merge_df: a pandas df as output from process_results()
-    :param length_df: a pandas df as output from get_contig_name_lengths()
-    :param fasta_input: input fasta file
-    :param out_dir: output directory path
-    :param prefix: output prefix
-    :param locustag: whether or not to create a random locustag - will be Random is so. Otherwise it is parsed
-    :tmrna_flag boolean whether there are tmRNAs or not
-    :return: locustag for the creation of the .tbl file, locus_df as df with consistent locus_tags
-    """
-
-    # create locus tag and get temp df
-
-    # locustag creation
-    if locustag == "Random":
-        # locus tag header 8 random letters
-        locustag = "".join(random.choice(string.ascii_uppercase) for _ in range(8))
-
-    contigs = length_df["contig"].astype("string")
-
-    ############ locus tag #########
-    # write df for locus tag parsing
-
-    # zfill - makes the CDS 4 digits trailing zeroes for vcontact
-    # in meta mode,
-
-    locus_df = cds_mmseqs_df
-    subset_dfs = []
-
-    # if meta mode is true
-    if meta_mode == True:
-        for contig in contigs:
-            subset_df = locus_df[locus_df["contig"] == contig].reset_index()
-            subset_df["count"] = subset_df.index
-            # so not 0 indexed
-            subset_df["count"] = subset_df["count"] + 1
-            # z fill to make the locus tag 4
-            subset_df["count"] = subset_df["count"].astype(str).str.zfill(4)
-            subset_dfs.append(subset_df)
-        locus_df = pd.concat(subset_dfs, axis=0, ignore_index=True)
-    else:
-        locus_df["count"] = locus_df.index
-        # so not 0 indexed
-        locus_df["count"] = locus_df["count"] + 1
-        # z fill to make the locus tag 4
-        locus_df["count"] = locus_df["count"].astype(str).str.zfill(4)
-
-    # get the
-
-    if meta_mode == False:
-        locus_df["locus_tag"] = locustag + "_CDS_" + locus_df["count"]
-    else:
-        locus_df["locus_tag"] = locus_df.contig + "_CDS_" + locus_df["count"]
-
-    #################################
-
-    #########
-    # rearrange start and stop so that start is always less than stop for gff
-    #########
-
-    cols = ["start", "stop"]
-    # indices where start is greater than stop
-    ixs = cds_mmseqs_df["frame"] == "-"
-    # Where ixs is True, values are swapped
-    cds_mmseqs_df.loc[ixs, cols] = (
-        cds_mmseqs_df.loc[ixs, cols].reindex(columns=cols[::-1]).values
-    )
-
-    # set phase to be 0
-    cds_mmseqs_df["phase"] = 0
-    # create attributes
-    cds_mmseqs_df["attributes"] = (
-        "ID="
-        + locus_df["locus_tag"].astype(str)
-        + ";"
-        + "phrog="
-        + cds_mmseqs_df["phrog"].astype(str)
-        + ";"
-        + "top_hit="
-        + cds_mmseqs_df["top_hit"].astype(str)
-        + ";"
-        + "locus_tag="
-        + locus_df["locus_tag"].astype(str)
-        + ";"
-        + "function="
-        + cds_mmseqs_df["category"].astype(str)
-        + ";"
-        + "product="
-        + cds_mmseqs_df["annot"].astype(str)
-    )
-    # adds VFDB
-    cds_mmseqs_df.loc[cds_mmseqs_df["vfdb_short_name"] != "None", "attributes"] = (
-        cds_mmseqs_df["attributes"].astype(str)
-        + ";"
-        + "vfdb_short_name="
-        + cds_mmseqs_df["vfdb_short_name"].astype(str)
-        + ";"
-        + "vfdb_description="
-        + cds_mmseqs_df["vfdb_description"].astype(str)
-        + ";"
-        + "vfdb_species="
-        + cds_mmseqs_df["vfdb_species"].astype(str)
-    )
-    # adds CARD
-    cds_mmseqs_df.loc[cds_mmseqs_df["CARD_short_name"] != "None", "attributes"] = (
-        cds_mmseqs_df["attributes"].astype(str)
-        + ";"
-        + "CARD_short_name="
-        + cds_mmseqs_df["CARD_short_name"].astype(str)
-        + ";"
-        + "AMR_Gene_Family="
-        + cds_mmseqs_df["AMR_Gene_Family"].astype(str)
-        + ";"
-        + "CARD_species="
-        + cds_mmseqs_df["CARD_species"].astype(str)
-    )
-
-    # save back
-
-    # get gff dataframe in correct order
-    gff_df = cds_mmseqs_df[
-        [
-            "contig",
-            "Method",
-            "Region",
-            "start",
-            "stop",
-            "score",
-            "frame",
-            "phase",
-            "attributes",
-        ]
-    ]
-
-    # change start and stop to int
-    gff_df["start"] = gff_df["start"].astype("int")
-    gff_df["stop"] = gff_df["stop"].astype("int")
-
-    with open(os.path.join(out_dir, "pharokka_tmp.gff"), "a") as f:
-        gff_df.to_csv(f, sep="\t", index=False, header=False)
-
-    ### trnas
-    # check if no trnas
-    col_list = [
-        "contig",
-        "Method",
-        "Region",
-        "start",
-        "stop",
-        "score",
-        "frame",
-        "phase",
-        "attributes",
-    ]
-    trna_empty = is_trna_empty(out_dir)
-    if trna_empty == False:
-        trna_df = pd.read_csv(
-            os.path.join(out_dir, "trnascan_out.gff"),
-            delimiter="\t",
-            index_col=False,
-            names=col_list,
-        )
-        # index hack if meta mode
-        if meta_mode == True:
-            subset_dfs = []
-            for contig in contigs:
-                subset_df = trna_df[trna_df["contig"] == contig].reset_index()
-                # keep only trnas before indexing
-                subset_df = subset_df[
-                    (subset_df["Region"] == "tRNA")
-                    | (subset_df["Region"] == "pseudogene")
-                ]
-                subset_df = subset_df.reset_index(drop=True)
-                subset_df["count"] = subset_df.index
-                # so not 0 indexed
-                subset_df["count"] = subset_df["count"] + 1
-                # z fill to make the locus tag 4
-                subset_df["locus_tag"] = (
-                    contig + "_tRNA_" + subset_df["count"].astype(str).str.zfill(4)
-                )
-                subset_df = subset_df.drop(columns=["count"])
-                subset_dfs.append(subset_df)
-            trna_df = pd.concat(subset_dfs, axis=0, ignore_index=True)
-            trna_df = trna_df.drop(columns=["index"])
-        else:
-            # keep only trnas
-            trna_df = trna_df[
-                (trna_df["Region"] == "tRNA") | (trna_df["Region"] == "pseudogene")
-            ]
-            trna_df = trna_df.reset_index(drop=True)
-            trna_df["count"] = trna_df.index
-            trna_df["count"] = trna_df["count"] + 1
-            trna_df["locus_tag"] = (
-                locustag + "_tRNA_" + trna_df["count"].astype(str).str.zfill(4)
-            )
-            trna_df = trna_df.drop(columns=["count"])
-
-        trna_df.start = trna_df.start.astype(int)
-        trna_df.stop = trna_df.stop.astype(int)
-        trna_df[["attributes", "isotypes"]] = trna_df["attributes"].str.split(
-            ";isotype=", expand=True
-        )
-        trna_df[["isotypes", "anticodon"]] = trna_df["isotypes"].str.split(
-            ";anticodon=", expand=True
-        )
-        trna_df[["anticodon", "rest"]] = trna_df["anticodon"].str.split(
-            ";gene_biotype", expand=True
-        )
-        trna_df["trna_product"] = (
-            "tRNA-" + trna_df["isotypes"] + "(" + trna_df["anticodon"] + ")"
-        )
-        trna_df = trna_df.drop(columns=["attributes"])
-        trna_df["attributes"] = (
-            "ID="
-            + trna_df["locus_tag"]
-            + ";"
-            + "trna="
-            + trna_df["trna_product"].astype(str)
-            + ";"
-            + "isotype="
-            + trna_df["isotypes"].astype(str)
-            + ";"
-            + "anticodon="
-            + trna_df["anticodon"].astype(str)
-            + ";"
-            + "locus_tag="
-            + trna_df["locus_tag"]
-        )
-        trna_df = trna_df.drop(
-            columns=["isotypes", "anticodon", "rest", "trna_product", "locus_tag"]
-        )
-        # append to the end of the gff
-        with open(os.path.join(out_dir, "pharokka_tmp.gff"), "a") as f:
-            trna_df.to_csv(f, sep="\t", index=False, header=False)
-
-    ### crisprs
-    crispr_count = get_crispr_count(out_dir, prefix)
-    # add to gff if > 0
-    if crispr_count > 0:
-        minced_df = pd.read_csv(
-            os.path.join(out_dir, prefix + "_minced.gff"),
-            delimiter="\t",
-            index_col=False,
-            names=col_list,
-            comment="#",
-        )
-        minced_df.start = minced_df.start.astype(int)
-        minced_df.stop = minced_df.stop.astype(int)
-        minced_df[["attributes", "rpt_unit_seq"]] = minced_df["attributes"].str.split(
-            ";rpt_unit_seq=", expand=True
-        )
-        minced_df[["attributes", "rpt_family"]] = minced_df["attributes"].str.split(
-            ";rpt_family=", expand=True
-        )
-        minced_df[["attributes", "rpt_type"]] = minced_df["attributes"].str.split(
-            ";rpt_type=", expand=True
-        )
-        minced_df = minced_df.drop(columns=["attributes"])
-        # index hack if meta mode
-        subset_dfs = []
-        if meta_mode == True:
-            for contig in contigs:
-                subset_df = minced_df[minced_df["contig"] == contig].reset_index()
-                subset_df["count"] = subset_df.index
-                # so not 0 indexed
-                subset_df["count"] = subset_df["count"] + 1
-                # z fill to make the locus tag 4
-                subset_df["count"] = subset_df["count"].astype(str).str.zfill(4)
-                subset_df["locus_tag"] = (
-                    contig + "_CRISPR_" + subset_df["count"].astype(str).str.zfill(4)
-                )
-                subset_df = subset_df.drop(columns=["count"])
-                subset_dfs.append(subset_df)
-            minced_df = pd.concat(subset_dfs, axis=0, ignore_index=True)
-            minced_df = minced_df.drop(columns=["index"])
-        else:
-            minced_df["count"] = minced_df.index
-            minced_df["count"] = minced_df["count"] + 1
-            minced_df["locus_tag"] = (
-                locustag + "_CRISPR_" + minced_df["count"].astype(str).str.zfill(4)
-            )
-            minced_df = minced_df.drop(columns=["count"])
-
-        minced_df["attributes"] = (
-            "ID="
-            + minced_df["locus_tag"]
-            + ";"
-            + "rpt_type="
-            + minced_df["rpt_type"].astype(str)
-            + ";"
-            + "rpt_family="
-            + minced_df["rpt_family"].astype(str)
-            + ";"
-            + "rpt_unit_seq="
-            + minced_df["rpt_unit_seq"].astype(str)
-            + ";"
-            + "locus_tag="
-            + minced_df["locus_tag"]
-        )
-        minced_df = minced_df.drop(
-            columns=["rpt_unit_seq", "rpt_family", "rpt_type", "locus_tag"]
-        )
-        # append to the end of the gff
-        with open(os.path.join(out_dir, "pharokka_tmp.gff"), "a") as f:
-            minced_df.to_csv(f, sep="\t", index=False, header=False)
-
-    ### tmrna
-    # add to gff there is a tmrna
-    if tmrna_flag == True:
-        tmrna_df = pd.read_csv(
-            os.path.join(out_dir, prefix + "_aragorn.gff"),
-            delimiter="\t",
-            index_col=False,
-            names=col_list,
-        )
-        tmrna_df.start = tmrna_df.start.astype(int)
-        tmrna_df.stop = tmrna_df.stop.astype(int)
-
-        # index hack if meta mode
-        subset_dfs = []
-        if meta_mode == True:
-            for contig in contigs:
-                subset_df = tmrna_df[tmrna_df["contig"] == contig].reset_index()
-                subset_df["count"] = subset_df.index
-                # so not 0 indexed
-                subset_df["count"] = subset_df["count"] + 1
-                # z fill to make the locus tag 4
-                subset_df["count"] = subset_df["count"].astype(str).str.zfill(4)
-                subset_df["locus_tag"] = (
-                    contig + "_tmRNA_" + subset_df["count"].astype(str).str.zfill(4)
-                )
-                subset_df = subset_df.drop(columns=["count"])
-                subset_dfs.append(subset_df)
-            tmrna_df = pd.concat(subset_dfs, axis=0, ignore_index=True)
-            tmrna_df = tmrna_df.drop(columns=["index"])
-        else:
-            tmrna_df["count"] = tmrna_df.index
-            tmrna_df["count"] = tmrna_df["count"] + 1
-            tmrna_df["locus_tag"] = (
-                locustag + "_tmRNA_" + tmrna_df["count"].astype(str).str.zfill(4)
-            )
-            tmrna_df = tmrna_df.drop(columns=["count"])
-
-        tmrna_df["attributes"] = (
-            "ID="
-            + tmrna_df["locus_tag"]
-            + ";"
-            + tmrna_df["attributes"].astype(str)
-            + ";locus_tag="
-            + tmrna_df["locus_tag"]
-        )
-        tmrna_df = tmrna_df.drop(columns=["locus_tag"])
-        # append to the end of the gff
-        with open(os.path.join(out_dir, "pharokka_tmp.gff"), "a") as f:
-            tmrna_df.to_csv(f, sep="\t", index=False, header=False)
-
-    # write header of final gff files
-    with open(os.path.join(out_dir, prefix + ".gff"), "w") as f:
-        f.write("##gff-version 3\n")
-        for index, row in length_df.iterrows():
-            f.write(
-                "##sequence-region " + row["contig"] + " 1 " + str(row["length"]) + "\n"
-            )
-
-    # sort gff by start
-    total_gff = pd.read_csv(
-        os.path.join(out_dir, "pharokka_tmp.gff"),
-        delimiter="\t",
-        index_col=False,
-        names=col_list,
-        low_memory=False,
-    )
-    total_gff.start = total_gff.start.astype(int)
-    total_gff.stop = total_gff.stop.astype(int)
-    # sorts all features
-    total_gff = total_gff.groupby(["contig"], sort=False, as_index=False).apply(
-        pd.DataFrame.sort_values, "start", ascending=True
-    )
-
-    # write final gff to file
-    with open(os.path.join(out_dir, prefix + ".gff"), "a") as f:
-        total_gff.to_csv(f, sep="\t", index=False, header=False)
-
-    # write fasta on the end
-    with open(os.path.join(out_dir, prefix + ".gff"), "a") as f:
-        f.write("##FASTA\n")
-        fasta_sequences = SeqIO.parse(open(fasta_input), "fasta")
-        SeqIO.write(fasta_sequences, f, "fasta")
-
-    return (locustag, locus_df, gff_df, total_gff)
 
 
 def update_fasta_headers(locus_df, out_dir, gene_predictor):
@@ -1486,164 +1836,44 @@ def is_trna_empty(out_dir):
     return trna_empty
 
 
-def parse_aragorn(out_dir, length_df, prefix):
+
+#### process pyhmmer hits
+def process_pyhmmer_results( merged_df, pyhmmer_results_dict):
     """
-    Parses aragorn output file
-    :param out_dir: output directory path
-    :param prefix: prefix
-    :param length_df: a pandas df as output from get_contig_name_lengths()
-    :return: tmrna_flag Boolean whethere there is tmrna or not
+    Processes VFDB results
+    :param merged_df: merged_df in process_results
+    :param pyhmmer_results_dict: dictionary with pyhmmer results
+    :return: merged_df merged_df updated with pyhmmer results
     """
-    aragorn_file = os.path.join(out_dir, prefix + "_aragorn.txt")
-    f = open(aragorn_file)
-    lines = f.readlines()
-    contig_count = len(length_df["contig"])
-    tmrna_flag = False
-    contig_names = []
-    methods = []
-    regions = []
-    starts = []
-    stops = []
-    scores = []
-    frames = []
-    phases = []
-    attributes = []
-    # if there is only one contig
-    if contig_count == 1:
-        # if no trnas
-        if int(lines[1][0]) == 0:
-            tmrna_df = pd.DataFrame(
-                {
-                    "contig": "",
-                    "Method": "",
-                    "Region": "",
-                    "start": "",
-                    "stop": "",
-                    "score": "",
-                    "frame": "",
-                    "phase": "",
-                    "attributes": "",
-                },
-                index=[0],
-            )
-        else:
-            tmrna_flag = True
-            # get all lines with tmrnas
-            tmrna_lines = lines[2:]
-            for line in tmrna_lines:
-                split = line.split()
-                start_stops = split[2].replace("[", "").replace("]", "").split(",")
-                contig = length_df["contig"][0]
-                method = "Aragorn"
-                region = "tmRNA"
-                start = start_stops[0].replace(
-                    "c", ""
-                )  # tmrna output is [start,stop] or c[start, stop] so need to remove c also for some phages
-                stop = start_stops[1]
-                score = "."
-                frame = "."
-                phase = "."
-                tag_peptide = split[3]
-                tag_peptide_seq = split[4]
-                attribute = (
-                    "product=transfer-messenger RNA SsrA;tag_peptide="
-                    + tag_peptide
-                    + ";tag_peptide_sequence="
-                    + tag_peptide_seq
-                )
-                contig_names.append(contig)
-                methods.append(method)
-                regions.append(region)
-                starts.append(start)
-                stops.append(stop)
-                scores.append(score)
-                frames.append(frame)
-                phases.append(phase)
-                attributes.append(attribute)
-            tmrna_df = pd.DataFrame(
-                {
-                    "contig": contig_names,
-                    "Method": methods,
-                    "Region": regions,
-                    "start": starts,
-                    "stop": stops,
-                    "score": scores,
-                    "frame": frames,
-                    "phase": phases,
-                    "attributes": attributes,
-                }
-            )
-    # two or more contigs
-    else:
-        i = 0  # line counter
-        j = 0  # contig counter
-        for line in lines:
-            # contig meets these reqs
-            if (
-                line[0] == ">" and "sensitivity" not in line
-            ):  # sensititvity in the line at the end of the file
-                if "0 genes found" not in lines[i + 1]:
-                    tmrna_flag = True
-                    # number of trnas for this contig
-                    tmrna_count = int(lines[i + 1][0])
-                    # iterate over them
-                    for k in range(tmrna_count):
-                        tmrna_line = lines[i + 2 + k]
-                        split = tmrna_line.split()
-                        start_stops = (
-                            split[2].replace("[", "").replace("]", "").split(",")
-                        )
-                        contig = length_df["contig"][j]
-                        method = "Aragorn"
-                        region = "tmRNA"
-                        start = start_stops[0].replace(
-                            "c", ""
-                        )  # tmrna output is [start,stop] or c[start, stop] so need to remove c also for some phages
-                        stop = start_stops[1]
-                        score = "."
-                        frame = "."
-                        phase = "."
-                        tag_peptide = split[3]
-                        tag_peptide_seq = split[4]
-                        attribute = (
-                            "product=transfer-messenger RNA SsrA;tag_peptide="
-                            + tag_peptide
-                            + ";tag_peptide_sequence="
-                            + tag_peptide_seq
-                        )
-                        contig_names.append(contig)
-                        methods.append(method)
-                        regions.append(region)
-                        starts.append(start)
-                        stops.append(stop)
-                        scores.append(score)
-                        frames.append(frame)
-                        phases.append(phase)
-                        attributes.append(attribute)
-                j += 1  # iterate contig
-            # iterate line
-            i += 1
-        # write out the df
-        tmrna_df = pd.DataFrame(
-            {
-                "contig": contig_names,
-                "Method": methods,
-                "Region": regions,
-                "start": starts,
-                "stop": stops,
-                "score": scores,
-                "frame": frames,
-                "phase": phases,
-                "attributes": attributes,
-            }
-        )
-    tmrna_df.to_csv(
-        os.path.join(out_dir, prefix + "_aragorn.gff"),
-        sep="\t",
-        index=False,
-        header=False,
-    )
-    return tmrna_flag
+
+    # split to get protein name to match with pyhmmer
+    merged_df["temp_prot"] = merged_df["gene"].str.split(" ", n=1).str[0]
+
+    print(pyhmmer_results_dict['NC_007458.111'])
+    print(pyhmmer_results_dict['NC_007458.111'].phrog)
+
+    merged_df['pyhmmer_phrog'] = 'No_PHROG'
+    merged_df['pyhmmer_bitscore'] = 'No_PHROG'
+    merged_df['pyhmmer_evalue'] = 'No_PHROG'
+
+    # iterate over the df
+    for index, row in merged_df.iterrows():
+        if row['temp_prot'] in pyhmmer_results_dict: # check if the protein is in the dictionary
+            print(row['temp_prot'])
+            print(pyhmmer_results_dict[row['temp_prot']])
+
+            merged_df.at[index, 'pyhmmer_phrog'] = pyhmmer_results_dict[row['temp_prot']].phrog
+            merged_df.at[index, 'pyhmmer_bitscore'] = round(pyhmmer_results_dict[row['temp_prot']].bitscore, 6)
+            merged_df.at[index, 'pyhmmer_evalue'] = pyhmmer_results_dict[row['temp_prot']].evalue
+
+            print(pyhmmer_results_dict[row['temp_prot']].phrog)
+            print(row['pyhmmer_phrog'])
+            
+
+    print(merged_df['temp_prot'])
+    print(merged_df['pyhmmer_phrog'])
+
+    return (merged_df)
 
 
 #### process vfdb files
@@ -1714,7 +1944,7 @@ def process_vfdb_results(out_dir, merged_df):
     # if there is a hit extract information about it
     if len(tophits_df["vfdb_hit"]) > 0:
         number_vfs = len(tophits_df["vfdb_hit"])
-        print(str(number_vfs) + " VFDB virulence factors identified.")
+        logger.info(str(number_vfs) + " VFDB virulence factors identified.")
         merged_df[["genbank", "desc_tmp", "vfdb_species"]] = merged_df[
             "vfdb_hit"
         ].str.split("[", expand=True)
@@ -1758,7 +1988,7 @@ def process_card_results(out_dir, merged_df, db_dir):
     """
     ##card
     card_file = os.path.join(out_dir, "CARD_results.tsv")
-    print("Processing CARD output.")
+    logger.info("Processing CARD output.")
     col_list = [
         "CARD_hit",
         "gene",
@@ -1816,7 +2046,7 @@ def process_card_results(out_dir, merged_df, db_dir):
     # if there is a hit extract info
     if len(tophits_df["CARD_hit"]) > 0:
         number_cards = len(tophits_df["CARD_hit"])
-        print(str(number_cards) + " CARD AMR genes identified.")
+        logger.info(str(number_cards) + " CARD AMR genes identified.")
         merged_df[["genbank", "CARD_species"]] = merged_df["CARD_hit"].str.split(
             "[", expand=True
         )
@@ -1883,7 +2113,7 @@ def process_card_results(out_dir, merged_df, db_dir):
         )
     # if no hits just Nones
     else:
-        print("0 CARD AMR genes identified.")
+        logger.info("0 CARD AMR genes identified.")
         merged_df["CARD_species"] = "None"
         merged_df["ARO_Accession"] = "None"
         merged_df["CARD_short_name"] = "None"

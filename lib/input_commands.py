@@ -122,7 +122,8 @@ def instantiate_dirs(output_dir, meta, force):
     # remove outdir on force
     if force == True:
         if os.path.isdir(output_dir) == True:
-            shutil.rmtree(output_dir)
+            # shutil.rmtree(output_dir)
+            logger.info('skip')
         else:
             print(
                 "\n--force was specified even though the outdir does not already exist. Continuing \n"
@@ -270,7 +271,7 @@ def check_dependencies(logger):
     phanotate_minorest_version = phanotate_out.split(".")[2]
 
     logger.info(
-        "phan_out version found is v"
+        "Phanotate version found is v"
         + str(phanotate_major_version)
         + "."
         + str(phanotate_minor_version)
@@ -360,7 +361,6 @@ def check_dependencies(logger):
     if trna_minorest_version < 9:
         logger.error("tRNAscan-SE is the wrong version. Please re-install pharokka.")
 
-    print("tRNAscan-SE version is ok.")
     logger.info("tRNAscan-SE version is ok.")
 
     #############

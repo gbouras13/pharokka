@@ -1,5 +1,5 @@
 import os
-
+import shutil
 import click
 from loguru import logger
 
@@ -27,3 +27,8 @@ log_fmt = (
     "[<green>{time:YYYY-MM-DD HH:mm:ss}</green>] <level>{level: <8}</level> | "
     "<level>{message}</level>"
 )
+
+
+def remove_directory(dir_path):
+    if os.path.exists(dir_path):
+        shutil.rmtree(dir_path)
