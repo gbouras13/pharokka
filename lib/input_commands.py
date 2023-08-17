@@ -506,7 +506,7 @@ def check_dependencies(logger):
     try:
         process = sp.Popen(["dnaapler", "--version"], stdout=sp.PIPE, stderr=sp.STDOUT)
     except:
-        logger.error("dnaapler not found. Please reinstall pharokka.")
+        logger.error("Dnaapler not found. Please reinstall pharokka.")
 
     dnaapler_out, _ = process.communicate()
     dnaapler_out = dnaapler_out.decode()
@@ -518,7 +518,7 @@ def check_dependencies(logger):
     dnaapler_minorest_version = int(dnaapler_out.split(".")[2])
 
     logger.info(
-        "dnaapler version found is v"
+        "Dnaapler version found is v"
         + str(dnaapler_major_version)
         + "."
         + str(dnaapler_minor_version)
@@ -528,9 +528,9 @@ def check_dependencies(logger):
     )
 
     if dnaapler_minor_version < 2:
-        logger.error("dnaapler is the wrong version. Please re-install pharokka.")
+        logger.error("Dnaapler is the wrong version. Please re-install pharokka.")
 
-    logger.info("mash version is ok.")
+    logger.info("Dnaapler version is ok.")
 
 
 def instantiate_split_output(out_dir, meta):

@@ -182,7 +182,7 @@ class Pharok:
             merged_df["mmseqs_top_hit"] = "No_PHROG"
         else:
             if self.mmseqs_flag is True: # trim the rubbish if mmseqs2 is on
-                merged_df[["mmseqs_phrog", "merged_df"]] = merged_df[
+                merged_df[["mmseqs_phrog", "mmseqs_top_hit"]] = merged_df[
                     "mmseqs_phrog"
                 ].str.split(" ## ", expand=True)
             else: # no mmseqs2 hits
@@ -271,7 +271,7 @@ class Pharok:
         ] = "No_PHROG"
         merged_df.loc[
             merged_df["mmseqs_top_hit"] == "No_PHROG", "mmseqs_top_hit"
-        ] = "No_MMseqs_PHROG_hit"
+        ] = "No_PHROG"
         merged_df.loc[merged_df["color"] == "No_PHROG", "color"] = "No_PHROG"
 
         # get phrog
@@ -873,14 +873,6 @@ class Pharok:
                     + "\n"
                 )
 
-        # sort gff by start
-        # total_gff = pd.read_csv(
-        #     os.path.join(out_dir, "pharokka_tmp.gff"),
-        #     delimiter="\t",
-        #     index_col=False,
-        #     names=col_list,
-        #     low_memory=False,
-        # )
 
         # combine dfs depending on whether the elements were detected
 
@@ -922,7 +914,14 @@ class Pharok:
         with open(os.path.join(self.out_dir, self.prefix + ".gff"), "a") as f:
             f.write("##FASTA\n")
             fasta_sequences = SeqIO.parse(open(self.input_fasta), "fasta")
-            SeqIO.write(fasta_sequences, f, "fasta")
+            # SeqIO.write(fasta_sequences, f, "fasta")
+            for record in fasta_sequences:
+                # to write the contig id not the contig description - https://github.com/gbouras13/pharokka/issues/267
+                f.write(f">{record.id}\n")
+                sequence = record.seq
+                chunk_size = 60
+                for i in range(0, len(sequence), chunk_size):
+                    f.write(str(sequence[i:i+chunk_size]) + "\n")
 
         self.locus_df = locus_df
         self.gff_df = gff_df
@@ -1766,7 +1765,6 @@ class Pharok:
         cols.insert(0, cols.pop(cols.index("gene")))
         self.merged_df = self.merged_df.loc[:, cols]
         # drop cols
-        print(self.merged_df)
         self.merged_df = self.merged_df.drop(columns=["phase", "attributes", "count", "locus_tag"])
 
         # write output

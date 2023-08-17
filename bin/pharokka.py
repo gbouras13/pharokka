@@ -25,7 +25,6 @@ from lib.processes import (concat_phanotate_meta, concat_trnascan_meta,
                            translate_fastas, run_dnaapler)
 from lib.util import get_version
 
-
 def main():
     # get the args
     args = get_input()
@@ -197,7 +196,6 @@ def main():
             logger.warning("You have specified --meta_hmm to run pyhmmer HMM search in meta mode, but you have not specified -m to activate meta mode.")
             logger.warning("Ignoring --meta_hmm")
 
-
     # overrides if fast/hmm_only is chosen
     if args.fast == True:
         mmseqs_flag = False
@@ -206,8 +204,6 @@ def main():
     if args.mmseqs2_only == True:
         mmseqs_flag = True
         hmm_flag = False
-
-
 
     # validates meta mode
     validate_meta(input_fasta, args.meta, args.split)
@@ -255,35 +251,35 @@ def main():
     run_aragorn(input_fasta, out_dir, prefix, logdir)
 
     # running mmseqs2 on the 3 databases
-    # if mmseqs_flag is True:
-    #     logger.info("Starting MMseqs2.")
-    #     run_mmseqs(
-    #         db_dir,
-    #         out_dir,
-    #         args.threads,
-    #         logdir,
-    #         gene_predictor,
-    #         args.evalue,
-    #         db_name="PHROG",
-    #     )
-    #     run_mmseqs(
-    #         db_dir,
-    #         out_dir,
-    #         args.threads,
-    #         logdir,
-    #         gene_predictor,
-    #         args.evalue,
-    #         db_name="CARD",
-    #     )
-    #     run_mmseqs(
-    #         db_dir,
-    #         out_dir,
-    #         args.threads,
-    #         logdir,
-    #         gene_predictor,
-    #         args.evalue,
-    #         db_name="VFDB",
-    #     )
+    if mmseqs_flag is True:
+        logger.info("Starting MMseqs2.")
+        run_mmseqs(
+            db_dir,
+            out_dir,
+            args.threads,
+            logdir,
+            gene_predictor,
+            args.evalue,
+            db_name="PHROG",
+        )
+        run_mmseqs(
+            db_dir,
+            out_dir,
+            args.threads,
+            logdir,
+            gene_predictor,
+            args.evalue,
+            db_name="CARD",
+        )
+        run_mmseqs(
+            db_dir,
+            out_dir,
+            args.threads,
+            logdir,
+            gene_predictor,
+            args.evalue,
+            db_name="VFDB",
+        )
 
     if hmm_flag is True:
         # runs pyhmmer on PHROGs
@@ -307,10 +303,11 @@ def main():
     pharok.locustag = locustag
     pharok.input_fasta = input_fasta
     pharok.meta_mode = args.meta
-    pharok.pyhmmer_results_dict = best_results_pyhmmer
     pharok.coding_table = args.coding_table
     pharok.mmseqs_flag = mmseqs_flag
     pharok.hmm_flag = hmm_flag
+    if pharok.hmm_flag is True:
+        pharok.pyhmmer_results_dict = best_results_pyhmmer
 
     # post process results
     # includes vfdb and card
@@ -371,7 +368,7 @@ def main():
     pharok.inphared_top_hits()
 
     # delete tmp files
-    # remove_post_processing_files(out_dir, gene_predictor, args.meta)
+    remove_post_processing_files(out_dir, gene_predictor, args.meta)
 
     # Determine elapsed time
     elapsed_time = time.time() - start_time
@@ -391,7 +388,6 @@ def main():
     logger.info(
         "You should also cite the full list of tools pharokka uses, which can be found at https://github.com/gbouras13/pharokka#citation."
     )
-
 
 if __name__ == "__main__":
     main()

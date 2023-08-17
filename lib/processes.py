@@ -431,22 +431,6 @@ def run_trna_scan(filepath_in, threads, out_dir, logdir):
 
     try:
         ExternalTool.run_tool(trna)
-
-        # # needs stderr for trna scan
-        # trna = sp.Popen(
-        #     [
-        #         "tRNAscan-SE",
-        #         filepath_in,
-        #         "--thread",
-        #         threads,
-        #         "-G",
-        #         "-Q",
-        #         "-j",
-        #         os.path.join(out_dir, "trnascan_out.gff"),
-        #     ],
-        #     stderr=sp.PIPE,
-        #     stdout=sp.DEVNULL,
-        # )
     except:
         logger.error("Error: tRNAscan-SE not found\n")
         return 0
