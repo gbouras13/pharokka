@@ -14,7 +14,7 @@ from Bio.SeqUtils import GC
 from loguru import logger
 
 from lib.processes import convert_gff_to_gbk
-from lib.util import remove_directory, remove_file
+from lib.util import remove_directory, remove_file, touch_file
 
 pd.options.mode.chained_assignment = None
 
@@ -63,6 +63,8 @@ class Pharok:
         trna_empty: bool = False,
         crispr_count: int = 0,
         coding_table: int = 11,
+        mmseqs_flag: bool = True,
+        hmm_flag: bool = True
     ) -> None:
         """
         Parameters
@@ -103,6 +105,10 @@ class Pharok:
             number of CRISPRs
         coding_table: int.
             number denoting the prodigal coding table (default 11)
+        run_mmseqs: bool
+            whether MMseqs2 was run
+        run_hmm: bool
+            whether HMM was run
         """
         self.out_dir = out_dir
         self.db_dir = db_dir
@@ -122,6 +128,9 @@ class Pharok:
         self.trna_empty = trna_empty
         self.crispr_count = crispr_count
         self.coding_table = coding_table
+        self.mmseqs_flag = mmseqs_flag
+        self.hmm_flag = hmm_flag
+
 
     def process_results(self):
         """
@@ -133,12 +142,29 @@ class Pharok:
         :return:
         """
 
-        tophits_df = create_mmseqs_tophits(self.out_dir)
 
         # left join mmseqs top hits to cds df
         # read in the cds cdf
         cds_file = os.path.join(self.out_dir, "cleaned_" + self.gene_predictor + ".tsv")
         cds_df = pd.read_csv(cds_file, sep="\t", index_col=False)
+
+        # create the tophits_df and write it to file
+        if self.mmseqs_flag is True:
+            tophits_df = create_mmseqs_tophits(self.out_dir)
+            
+        else:
+            # create tophits df
+            # Create a dictionary with the column names and their corresponding values
+            data = {
+                "mmseqs_phrog": ["No_MMseqs"] * len(cds_df),
+                "gene": cds_df["gene"],
+                "mmseqs_alnScore": ["No_MMseqs"] * len(cds_df),
+                "mmseqs_seqIdentity": ["No_MMseqs"] * len(cds_df),
+                "mmseqs_eVal": ["No_MMseqs"] * len(cds_df),
+            }
+
+            # Create a DataFrame from the dictionary
+            tophits_df = pd.DataFrame(data)
 
         # convert the gene to string for the merge
         cds_df["gene"] = cds_df["gene"].astype(str)
@@ -151,19 +177,29 @@ class Pharok:
 
         # get best protein from top mmseqs2 hit
         # add test if empty - crashes if no gene call hits
+
         if len(tophits_df["mmseqs_phrog"]) == 0:
             merged_df["mmseqs_top_hit"] = "No_PHROG"
         else:
-            merged_df[["mmseqs_phrog", "mmseqs_top_hit"]] = merged_df[
-                "mmseqs_phrog"
-            ].str.split(" ## ", expand=True)
+            if self.mmseqs_flag is True: # trim the rubbish if mmseqs2 is on
+                merged_df[["mmseqs_phrog", "merged_df"]] = merged_df[
+                    "mmseqs_phrog"
+                ].str.split(" ## ", expand=True)
+            else: # no mmseqs2 hits
+                merged_df["mmseqs_top_hit"] = "No_MMseqs_PHROG_hit"
+
 
         ####################
         # combine phrogs
         ####################
 
-        # Adds pyhmmer results
-        merged_df = process_pyhmmer_results(merged_df, self.pyhmmer_results_dict)
+        # Adds pyhmmer results if tru
+        if self.hmm_flag is True:
+            merged_df = process_pyhmmer_results(merged_df, self.pyhmmer_results_dict)
+        else:
+            merged_df["pyhmmer_phrog"] = "No_HMM"
+            merged_df["pyhmmer_bitscore"] = "No_HMM"
+            merged_df["pyhmmer_evalue"] = "No_HMM"
 
         # strip off phrog_ for both
         merged_df["mmseqs_phrog"] = merged_df["mmseqs_phrog"].str.replace("phrog_", "")
@@ -173,17 +209,21 @@ class Pharok:
 
         ############
         # code to create 1 overall phrog column
-        # pick the mmseqs PHROG column first
-        merged_df["phrog"] = merged_df["mmseqs_phrog"]
+        # pick the mmseqs PHROG column first if it was run
 
-        # add pyhmmer phrog for any entry without mmseqs
-        for index, row in merged_df.iterrows():
-            if isinstance(
-                row["phrog"], float
-            ):  # for all the rows without an mmseqs2 PHROG will be nan - floats
-                # to write all hits where there was no mmseqs but there was a hmm
-                if row["pyhmmer_phrog"] != "No_PHROG":
-                    merged_df.at[index, "phrog"] = row["pyhmmer_phrog"]
+        if self.mmseqs_flag is True:
+            merged_df["phrog"] = merged_df["mmseqs_phrog"]
+            # add pyhmmer phrog for any entry without mmseqs
+            for index, row in merged_df.iterrows():
+                if isinstance(
+                    row["phrog"], float
+                ):  # for all the rows without an mmseqs2 PHROG will be nan - floats
+                    # to write all hits where there was no mmseqs but there was a hmm
+                    if row["pyhmmer_phrog"] != "No_PHROG":
+                        merged_df.at[index, "phrog"] = row["pyhmmer_phrog"]
+
+        else: # only need to worry about pyhmmer
+            merged_df["phrog"] = merged_df["pyhmmer_phrog"]
 
         # read in phrog annotaion file
         phrog_annot_df = pd.read_csv(
@@ -209,6 +249,13 @@ class Pharok:
             merged_df["Method"] = "PRODIGAL"
         merged_df["Region"] = "CDS"
 
+        merged_df.to_csv(
+            os.path.join(self.out_dir, "testc.tsv"),
+            sep="\t",
+            index=False,
+            header=True,
+        )
+
         # # replace with No_PHROG if nothing found
         merged_df.loc[
             merged_df["mmseqs_phrog"] == "No_PHROG", "mmseqs_phrog"
@@ -231,7 +278,7 @@ class Pharok:
         merged_df["phrog"] = merged_df["phrog"].astype(str)
 
         # drop existing color annot category cols and
-        merged_df = merged_df.drop(columns=["color", "annot", "category", "temp_prot"])
+        merged_df = merged_df.drop(columns=["color", "annot", "category"])
         merged_df = merged_df.merge(phrog_annot_df, on="phrog", how="left")
         merged_df["annot"] = merged_df["annot"].replace(
             nan, "hypothetical protein", regex=True
@@ -242,6 +289,7 @@ class Pharok:
         merged_df["color"] = merged_df["color"].replace(nan, "None", regex=True)
 
         # process vfdb results
+        # handles empty files without a problem
         (merged_df, vfdb_results) = process_vfdb_results(self.out_dir, merged_df)
         # process CARD results
         (merged_df, card_results) = process_card_results(
@@ -1718,7 +1766,8 @@ class Pharok:
         cols.insert(0, cols.pop(cols.index("gene")))
         self.merged_df = self.merged_df.loc[:, cols]
         # drop cols
-        self.merged_df = self.merged_df.drop(columns=["phase", "attributes", "count", "locus"])
+        print(self.merged_df)
+        self.merged_df = self.merged_df.drop(columns=["phase", "attributes", "count", "locus_tag"])
 
         # write output
         final_output_path = os.path.join(
@@ -1853,7 +1902,7 @@ class Pharok:
         )
 
         # read in the plasdb tsv
-        inphared_tsv_file = os.path.join(self.db_dir, "5Jan2023_data.tsv")
+        inphared_tsv_file = os.path.join(self.db_dir, "1Aug2023_data.tsv")
         # with open(plsdb_tsv_file, 'rb') as f:
         #     result = chardet.detect(f.readline())
         #     print(result)
@@ -2046,7 +2095,7 @@ def is_trna_empty(out_dir):
 #### process pyhmmer hits
 def process_pyhmmer_results(merged_df, pyhmmer_results_dict):
     """
-    Processes VFDB results
+    Processes pyhmmer
     :param merged_df: merged_df in process_results
     :param pyhmmer_results_dict: dictionary with pyhmmer results
     :return: merged_df merged_df updated with pyhmmer results
@@ -2055,8 +2104,6 @@ def process_pyhmmer_results(merged_df, pyhmmer_results_dict):
     # split to get protein name to match with pyhmmer
     merged_df["temp_prot"] = merged_df["gene"].str.split(" ", n=1).str[0]
 
-    print(pyhmmer_results_dict["NC_007458.111"])
-    print(pyhmmer_results_dict["NC_007458.111"].phrog)
 
     merged_df["pyhmmer_phrog"] = "No_PHROG"
     merged_df["pyhmmer_bitscore"] = "No_PHROG"
@@ -2067,8 +2114,6 @@ def process_pyhmmer_results(merged_df, pyhmmer_results_dict):
         if (
             row["temp_prot"] in pyhmmer_results_dict
         ):  # check if the protein is in the dictionary
-            print(row["temp_prot"])
-            print(pyhmmer_results_dict[row["temp_prot"]])
 
             merged_df.at[index, "pyhmmer_phrog"] = pyhmmer_results_dict[
                 row["temp_prot"]
@@ -2080,11 +2125,10 @@ def process_pyhmmer_results(merged_df, pyhmmer_results_dict):
                 row["temp_prot"]
             ].evalue
 
-            print(pyhmmer_results_dict[row["temp_prot"]].phrog)
-            print(row["pyhmmer_phrog"])
 
-    print(merged_df["temp_prot"])
-    print(merged_df["pyhmmer_phrog"])
+    # drop temp prot
+
+    merged_df = merged_df.drop(columns=["temp_prot"])
 
     return merged_df
 
@@ -2112,6 +2156,10 @@ def process_vfdb_results(out_dir, merged_df):
         "tEnd",
         "tLen",
     ]
+
+    # touch the file in case it doesn't exist (for --fast mode)
+    touch_file(vfdb_file)
+
     vfdb_df = pd.read_csv(vfdb_file, delimiter="\t", index_col=False, names=col_list)
     genes = vfdb_df.gene.unique()
 
@@ -2184,7 +2232,7 @@ def process_vfdb_results(out_dir, merged_df):
             nan, "None", regex=True
         )
     else:
-        print("0 VFDB virulence factors identified.")
+        logger.info("0 VFDB virulence factors identified.")
         merged_df["vfdb_short_name"] = "None"
         merged_df["vfdb_description"] = "None"
         merged_df["vfdb_species"] = "None"
@@ -2215,6 +2263,7 @@ def process_card_results(out_dir, merged_df, db_dir):
         "tEnd",
         "tLen",
     ]
+    touch_file(card_file)
     card_df = pd.read_csv(card_file, delimiter="\t", index_col=False, names=col_list)
     genes = card_df.gene.unique()
 

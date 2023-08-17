@@ -1,5 +1,6 @@
 import os
 import shutil
+from Bio import SeqIO
 
 import click
 from loguru import logger
@@ -38,3 +39,22 @@ def remove_directory(dir_path):
 def remove_file(file_path):
     if os.path.exists(file_path):
         os.remove(file_path)
+
+def count_contigs(input_fasta):
+    """
+    counts the number of contigs in the FASTA input file
+    return: contig_count, int the number of contigs
+    """
+
+    with open(input_fasta, "r") as handle:
+        # Check the number of records
+        contig_count = len(list(SeqIO.parse(handle, "fasta"))) 
+
+    return contig_count
+
+
+# function to touch create a file
+# https://stackoverflow.com/questions/12654772/create-empty-file-using-python
+def touch_file(path):
+    with open(path, "a"):
+        os.utime(path, None)

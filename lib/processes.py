@@ -14,16 +14,7 @@ from Bio.SeqRecord import SeqRecord
 from loguru import logger
 
 from lib.external_tools import ExternalTool
-from lib.util import remove_directory
-
-
-def write_to_log(s, logger):
-    while True:
-        output = s.readline().decode()
-        if output:
-            logger.log(logging.INFO, output)
-        else:
-            break
+from lib.util import remove_directory, count_contigs
 
 
 ##### phanotate meta mode ########
@@ -268,64 +259,7 @@ def run_phanotate(filepath_in, out_dir, logdir):
         logger.error("Error with Phanotate\n")
 
 
-def run_prodigal(filepath_in, out_dir, logger, meta, coding_table):
-    """
-    Gets CDS using prodigal
-    :param filepath_in: input filepath
-    :param out_dir: output directory
-    :param logger logger
-    :param meta Boolean - metagenomic mode flag
-    :param coding_table coding table for prodigal (default 11)
-    :return:
-    """
-    print("Running Prodigal")
-    try:
-        if meta == True:
-            print("Prodigal Meta Mode Enabled")
-            logger.info("Prodigal Meta Mode Enabled")
-            prodigal = sp.Popen(
-                [
-                    "prodigal",
-                    "-i",
-                    filepath_in,
-                    "-d",
-                    os.path.join(out_dir, "prodigal_out_tmp.fasta"),
-                    "-f",
-                    "gff",
-                    "-o",
-                    os.path.join(out_dir, "prodigal_out.gff"),
-                    "-p",
-                    "meta",
-                    "-g",
-                    str(coding_table),
-                ],
-                stdout=sp.PIPE,
-                stderr=sp.DEVNULL,
-            )
-        else:
-            prodigal = sp.Popen(
-                [
-                    "prodigal",
-                    "-i",
-                    filepath_in,
-                    "-d",
-                    os.path.join(out_dir, "prodigal_out_tmp.fasta"),
-                    "-f",
-                    "gff",
-                    "-o",
-                    os.path.join(out_dir, "prodigal_out.gff"),
-                    "-g",
-                    str(coding_table),
-                ],
-                stdout=sp.PIPE,
-                stderr=sp.DEVNULL,
-            )
-        write_to_log(prodigal.stdout, logger)
-    except:
-        sys.exit("Error with Prodigal\n")
-
-
-def run_pyrodigal(filepath_in, out_dir, logger, meta, coding_table):
+def run_pyrodigal(filepath_in, out_dir, meta, coding_table):
     """
     Gets CDS using pyrodigal
     :param filepath_in: input filepath
@@ -339,7 +273,6 @@ def run_pyrodigal(filepath_in, out_dir, logger, meta, coding_table):
     prodigal_metamode = False
     if meta == True:
         prodigal_metamode = True
-        print("Prodigal Meta Mode Enabled")
         logger.info("Prodigal Meta Mode Enabled")
 
     # for training if you want different coding table
@@ -613,9 +546,7 @@ def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, db_name
 
     ExternalTool.run_tool(mmseqs_createtsv)
 
-    # write_to_log(mmseqs_createtsv.stdout, logger)
     # remove the target dir when finished
-
     remove_directory(target_db_dir)
 
 
@@ -727,7 +658,7 @@ def run_aragorn(filepath_in, out_dir, prefix, logdir):
 
 
 def reorient_terminase(
-    filepath_in, out_dir, prefix, terminase_strand, terminase_start, logger
+    filepath_in, out_dir, prefix, terminase_strand, terminase_start
 ):
     """
     re-orients phage to begin with large terminase subunit
@@ -799,18 +730,7 @@ def run_mash_sketch(filepath_in, out_dir, logdir):
     )
 
     try:
-        # mash_sketch = sp.Popen(
-        #     [
-        #         "mash",
-        #         "sketch",
-        #         filepath_in,
-        #         "-o",
-        #         os.path.join(out_dir, "input_mash_sketch.msh"),
-        #         "-i",
-        #     ],
-        #     stderr=sp.PIPE,
-        #     stdout=sp.DEVNULL,
-        # )
+
         ExternalTool.run_tool(mash_sketch)
 
     except:
@@ -827,7 +747,7 @@ def run_mash_dist(out_dir, db_dir, logdir):
     """
 
     mash_sketch = os.path.join(out_dir, "input_mash_sketch.msh")
-    phrog_sketch = os.path.join(db_dir, "5Jan2023_genomes.fa.msh")
+    phrog_sketch = os.path.join(db_dir, "1Aug2023_genomes.fa.msh")
     mash_tsv = os.path.join(out_dir, "mash_out.tsv")
 
     mash_dist = ExternalTool(
@@ -842,21 +762,47 @@ def run_mash_dist(out_dir, db_dir, logdir):
     # need to write to stdout
 
     try:
-        # need to write to stdout
+
         ExternalTool.run_tool(mash_dist, to_stdout=True)
-        # mash_dist = sp.Popen(
-        #     [
-        #         "mash",
-        #         "dist",
-        #         os.path.join(out_dir, "input_mash_sketch.msh"),
-        #         os.path.join(db_dir, "5Jan2023_genomes.fa.msh"),
-        #         "-d",
-        #         "0.2",
-        #         "-i",
-        #     ],
-        #     stdout=outFile,
-        #     stderr=sp.PIPE,
-        # )
-        # write_to_log(mash_dist.stderr, logger)
+
     except:
         logger.error("Error with mash dist\n")
+
+def run_dnaapler(filepath_in, out_dir, threads, logdir):
+    """
+    Runs dnaapler
+    :param filepath_in: input fasta file
+    :param out_dir: output directory
+    :param threads: number of threads
+    :params prefix: prefix
+    :return: dnaapler_success - whether dnaapler worked
+    """
+
+    logger.info("Running Dnaapler to rerorient all contigs to begin with the terminase large subunit.")
+
+    dnaapler_output_dir = os.path.join(out_dir, "dnaapler")
+
+    contig_count = count_contigs(filepath_in)
+
+    if contig_count == 1:
+        dnaapler = ExternalTool(
+            tool="dnaapler phage",
+            input=f"-i {filepath_in}",
+            output=f"-o {dnaapler_output_dir} -t {threads}",
+            params=f"",  # need strange order for minced params go first
+            logdir=logdir,
+            outfile="",
+        )
+    else:
+        logger.info("Dnaapler v0.3.0 all not yet ready to use dnaapler all.\n")
+
+    dnaapler_success = True
+    try:
+        ExternalTool.run_tool(dnaapler)
+    except:
+        logger.warning("Dnaapler failed to find the large terminase subunit.")
+        logger.warning("For reorientation, please run pharokka again without --dnaapler and use --terminase instead.")
+        logger.warning("Pharokka will now continue without reorientation.")
+        dnaapler_success = False
+    
+    return dnaapler_success

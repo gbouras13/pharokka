@@ -4,6 +4,7 @@ import os
 import sys
 import time
 from pathlib import Path
+import shutil
 
 from loguru import logger
 
@@ -21,7 +22,7 @@ from lib.processes import (concat_phanotate_meta, concat_trnascan_meta,
                            run_mmseqs, run_phanotate, run_phanotate_fasta_meta,
                            run_phanotate_txt_meta, run_pyrodigal,
                            run_trna_scan, run_trnascan_meta, split_input_fasta,
-                           translate_fastas)
+                           translate_fastas, run_dnaapler)
 from lib.util import get_version
 
 
@@ -106,6 +107,35 @@ def main():
     # define input - overwrite if terminase reorienter is true
     input_fasta = args.infile
 
+    # reorient with dnaapler
+    if args.dnaapler == True:
+
+        logger.info(
+            "You have chosen to reorient your contigs by specifying --dnaapler. Checking the input."
+        )
+
+        # in case both --dnaapler and --terminase is selected
+        if args.terminase == True:
+            logger.info(
+            "Ignoring --terminase and dnaapler will be run instead."
+        )
+            args.terminase = False
+            args.terminase_strand = "nothing"
+            args.terminase_start = "nothing"
+
+        # runs dnaapler
+        dnaapler_success = run_dnaapler(input_fasta, out_dir, args.threads, logdir)
+
+        if dnaapler_success == True:
+            input_fasta = os.path.join(
+                out_dir,"dnaapler/dnaapler_reoriented.fasta"
+            )
+            destination_file = os.path.join(
+                out_dir,"dnaapler_reoriented.fasta"
+            )
+            # copy FASTA to output
+            shutil.copy(input_fasta, destination_file)
+
     # terminase reorienting
     if args.terminase == True:
         logger.info(
@@ -118,7 +148,6 @@ def main():
             prefix,
             args.terminase_strand,
             args.terminase_start,
-            logger,
         )
         input_fasta = os.path.join(
             out_dir, prefix + "_genome_terminase_reoriented.fasta"
@@ -134,8 +163,54 @@ def main():
             "You have specified a terminase start coordinate using --terminase_start to reorient your genome, but you have not specified --terminase to activate terminase mode. \nContinuing without reorientation."
         )
 
+
+
+    ########
+    # mmseqs2 and hmm decisions
+    ########
+
+    # can't have fast and mmseqs2 only
+    if args.fast is True and args.mmseqs2_only is True:
+        logger.error("You have specified --fast or --hmm_only and --mmseqs2_only. This is impossible. Please choose one or the other.")
+
+    # can't have fast and meta_hmm 
+    if args.fast is True and args.meta_hmm is True:
+        logger.error("You have specified --fast or --hmm_only and --meta_hmm. This is impossible. Please choose one or the other.")
+
+   # can't have mmseqs2 only and meta_hmm 
+    if args.mmseqs2_only is True and args.meta_hmm is True:
+        logger.error("You have specified --mmseqs2_only and --meta_hmm. This is impossible. Please choose one or the other.")
+
+    # by default run both not in meta mode
+    mmseqs_flag = True
+    hmm_flag = True
+
+    if args.meta is True: # meta mode default only mmseqs
+        if args.meta_hmm is True: # with --meta_hmm
+            mmseqs_flag = True
+            hmm_flag = True
+        else: # just mmseqs2 by default
+            mmseqs_flag = True
+            hmm_flag = False
+    else: # not in meta mode
+        if args.meta_hmm is True:
+            logger.warning("You have specified --meta_hmm to run pyhmmer HMM search in meta mode, but you have not specified -m to activate meta mode.")
+            logger.warning("Ignoring --meta_hmm")
+
+
+    # overrides if fast/hmm_only is chosen
+    if args.fast == True:
+        mmseqs_flag = False
+        hmm_flag = True
+
+    if args.mmseqs2_only == True:
+        mmseqs_flag = True
+        hmm_flag = False
+
+
+
     # validates meta mode
-    validate_meta(input_fasta, args.meta, args.split, logger)
+    validate_meta(input_fasta, args.meta, args.split)
 
     # meta mode split input for trnascan and maybe phanotate
     if args.meta == True:
@@ -161,7 +236,7 @@ def main():
 
     if gene_predictor == "prodigal":
         logger.info("Implementing Prodigal using Pyrodigal.")
-        run_pyrodigal(input_fasta, out_dir, logger, args.meta, args.coding_table)
+        run_pyrodigal(input_fasta, out_dir, args.meta, args.coding_table)
 
     # translate fastas
     logger.info("Translating gene predicted fastas.")
@@ -180,42 +255,42 @@ def main():
     run_aragorn(input_fasta, out_dir, prefix, logdir)
 
     # running mmseqs2 on the 3 databases
-    logger.info("Starting MMseqs2.")
-    run_mmseqs(
-        db_dir,
-        out_dir,
-        args.threads,
-        logdir,
-        gene_predictor,
-        args.evalue,
-        db_name="PHROG",
-    )
-    run_mmseqs(
-        db_dir,
-        out_dir,
-        args.threads,
-        logdir,
-        gene_predictor,
-        args.evalue,
-        db_name="CARD",
-    )
-    run_mmseqs(
-        db_dir,
-        out_dir,
-        args.threads,
-        logdir,
-        gene_predictor,
-        args.evalue,
-        db_name="VFDB",
-    )
+    # if mmseqs_flag is True:
+    #     logger.info("Starting MMseqs2.")
+    #     run_mmseqs(
+    #         db_dir,
+    #         out_dir,
+    #         args.threads,
+    #         logdir,
+    #         gene_predictor,
+    #         args.evalue,
+    #         db_name="PHROG",
+    #     )
+    #     run_mmseqs(
+    #         db_dir,
+    #         out_dir,
+    #         args.threads,
+    #         logdir,
+    #         gene_predictor,
+    #         args.evalue,
+    #         db_name="CARD",
+    #     )
+    #     run_mmseqs(
+    #         db_dir,
+    #         out_dir,
+    #         args.threads,
+    #         logdir,
+    #         gene_predictor,
+    #         args.evalue,
+    #         db_name="VFDB",
+    #     )
 
-    # runs pyhmmer on PHROGs
-    logger.info("Running pyhmmer.")
-    best_results_pyhmmer = run_pyhmmer(
-        db_dir, out_dir, args.threads, gene_predictor, args.evalue
-    )
-
-    print(best_results_pyhmmer)
+    if hmm_flag is True:
+        # runs pyhmmer on PHROGs
+        logger.info("Running pyhmmer.")
+        best_results_pyhmmer = run_pyhmmer(
+            db_dir, out_dir, args.threads, gene_predictor, args.evalue
+        )
 
     #################################################
     # post processing
@@ -234,6 +309,8 @@ def main():
     pharok.meta_mode = args.meta
     pharok.pyhmmer_results_dict = best_results_pyhmmer
     pharok.coding_table = args.coding_table
+    pharok.mmseqs_flag = mmseqs_flag
+    pharok.hmm_flag = hmm_flag
 
     # post process results
     # includes vfdb and card
@@ -265,7 +342,9 @@ def main():
 
     # write vfdb and card tophits
     # needs to be before .create_txt or else won't count properly
-    pharok.write_tophits_vfdb_card()
+    # only if mmseqs2 has been run
+    if pharok.mmseqs_flag is True:
+        pharok.write_tophits_vfdb_card()
 
     # write the summary tsv outputs
     pharok.create_txt()

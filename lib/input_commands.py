@@ -86,9 +86,30 @@ def get_input():
     parser.add_argument(
         "-e",
         "--evalue",
-        help="E-value threshold for mmseqs2 PHROGs database search. Defaults to 1E-05.",
+        help="E-value threshold for mmseqs2 PHROGs database search and pyhmmer PHROGs database search. Defaults to 1E-05.",
         action="store",
         default="1E-05",
+    )
+    parser.add_argument(
+        "--fast",
+        "--hmm_only",
+        help="Runs pyhmmer (HMMs) with PHROGs only, not MMseqs2 with PHROGs, CARD or VFDB. Designed for phage isolates, will not likely be faster for large metagenomes.",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--mmseqs2_only",
+        help="Runs MMseqs2 with PHROGs, CARD and VFDB only (same as Pharokka v1.3.2 and prior). Default in meta mode.",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--meta_hmm",
+        help="Overrides --mmseqs2_only in meta mode. Will run both MMseqs2 and HMM approaches.",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--dnaapler",
+        help="Runs dnaapler to automatically re-orient all contigs to begin with terminase large subunit if found. Recommended over using '--terminase'.",
+        action="store_true",
     )
     parser.add_argument(
         "--terminase",
@@ -124,14 +145,16 @@ def instantiate_dirs(output_dir, meta, force):
         if os.path.isdir(output_dir) == True:
             # shutil.rmtree(output_dir)
             logger.info('skip')
+        elif os.path.isfile(output_dir) == True:
+            os.remove(output_dir)
         else:
-            print(
-                "\n--force was specified even though the outdir does not already exist. Continuing \n"
+            logger.info(
+                f"--force was specified even though the output directory {output_dir} does not already exist. Continuing."
             )
     else:
-        if os.path.isdir(output_dir) == True:
-            sys.exit(
-                "\nOutput directory already exists and force was not specified. Please specify -f or --force to overwrite the output directory. \n"
+        if os.path.isdir(output_dir) == True or os.path.isfile(output_dir) == True:
+            logger.error(
+                f"The output directory {output_dir} already exists and force was not specified. Please specify -f or --force to overwrite it."
             )
 
     # instantiate outdir
@@ -163,7 +186,7 @@ def validate_fasta(filename):
         if any(fasta):
             logger.info("FASTA checked.")
         else:
-            sys.exit("Error: Input file is not in the FASTA format.\n")
+            logger.error("Error: Input file is not in the FASTA format.\n")
 
 
 def validate_gene_predictor(gene_predictor):
@@ -172,12 +195,12 @@ def validate_gene_predictor(gene_predictor):
     elif gene_predictor == "prodigal":
         logger.info("Prodigal will be used for gene prediction.")
     else:
-        sys.exit(
+        logger.error(
             "Error: gene predictor was incorrectly specified. Please use 'phanotate' or 'prodigal'.\n"
         )
 
 
-def validate_meta(filepath_in, meta, split, logger):
+def validate_meta(filepath_in, meta, split):
     num_fastas = len([1 for line in open(filepath_in) if line.startswith(">")])
     if meta == True:
         if num_fastas < 2:
@@ -199,9 +222,10 @@ def validate_meta(filepath_in, meta, split, logger):
             logger.info(message)
 
 
+
 def validate_strand(strand):
     if strand != "pos" and strand != "neg":
-        sys.exit(
+        logger.error(
             "Error: terminase strand was incorrectly specified. It should be either 'pos' or 'neg'. Please check your input and try again. \n"
         )
 
@@ -451,23 +475,15 @@ def check_dependencies(logger):
     # mash
     #############
     try:
-        process = sp.Popen(["mash", "help"], stdout=sp.PIPE, stderr=sp.STDOUT)
+        process = sp.Popen(["mash", "--version"], stdout=sp.PIPE, stderr=sp.STDOUT)
     except:
         logger.error("mash not found. Please reinstall pharokka.")
 
     mash_out, _ = process.communicate()
-    mash_out = mash_out.decode()
+    mash_out = mash_out.decode().strip()
 
-    version_line = []
-
-    for line in mash_out.split("\n"):
-        if "version" in line:
-            version_line.append(line)
-
-    mash_version = version_line[0].split(" ")[2]
-
-    mash_major_version = int(mash_version.split(".")[0])
-    mash_minor_version = int(mash_version.split(".")[1])
+    mash_major_version = int(mash_out.split(".")[0])
+    mash_minor_version = int(mash_out.split(".")[1])
 
     logger.info(
         "mash version found is v"
@@ -481,6 +497,38 @@ def check_dependencies(logger):
         logger.error("mash is the wrong version. Please re-install pharokka.")
     if mash_minor_version < 2:
         logger.error("mash is the wrong version. Please re-install pharokka.")
+
+    logger.info("mash version is ok.")
+
+    #############
+    # dnaapler
+    #############
+    try:
+        process = sp.Popen(["dnaapler", "--version"], stdout=sp.PIPE, stderr=sp.STDOUT)
+    except:
+        logger.error("dnaapler not found. Please reinstall pharokka.")
+
+    dnaapler_out, _ = process.communicate()
+    dnaapler_out = dnaapler_out.decode()
+
+    dnaapler_out = dnaapler_out.split("n ")[1]
+
+    dnaapler_major_version = int(dnaapler_out.split(".")[0])
+    dnaapler_minor_version = int(dnaapler_out.split(".")[1])
+    dnaapler_minorest_version = int(dnaapler_out.split(".")[2])
+
+    logger.info(
+        "dnaapler version found is v"
+        + str(dnaapler_major_version)
+        + "."
+        + str(dnaapler_minor_version)
+        + "."
+        + str(dnaapler_minorest_version)
+        + "."
+    )
+
+    if dnaapler_minor_version < 2:
+        logger.error("dnaapler is the wrong version. Please re-install pharokka.")
 
     logger.info("mash version is ok.")
 

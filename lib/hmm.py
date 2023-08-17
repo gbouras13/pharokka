@@ -49,7 +49,6 @@ def run_pyhmmer(db_dir, out_dir, threads, gene_predictor, evalue):
     best_results = {}
     keep_protein = set()
     for result in results:
-        print(result)
         if result.protein in best_results:
             previous_bitscore = best_results[result.protein].bitscore
             if result.bitscore > previous_bitscore:

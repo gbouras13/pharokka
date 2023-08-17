@@ -27,12 +27,14 @@ requirements:
   - mash >=2.2
   - pyrodigal >=2.0.1
   - pycirclize >=0.3.1
+  - dnaapler >= 0.3.0
 
 test:
   commands:
     - install_databases.py -h
     - pharokka.py -h
     - pharokka_plotter.py -h
+    - pharokka_proteins.py -h
 
 about:
   home: https://github.com/gbouras13/pharokka
