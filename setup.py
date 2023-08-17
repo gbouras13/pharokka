@@ -73,5 +73,7 @@ setup(
         "isort>=5.10.1",
         "pytest>=6.2.5",
         "pytest-cov>=3.0.0",
+        "alive-progress>=3.0.1",
+        "requests>=2.25.1"
     ],
 )

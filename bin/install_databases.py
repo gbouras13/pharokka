@@ -2,8 +2,10 @@
 import argparse
 import os
 from argparse import RawTextHelpFormatter
+from loguru import logger
+import sys
 
-import databases
+from lib.databases import instantiate_install
 
 
 def get_db_input():
@@ -26,17 +28,18 @@ def get_db_input():
     args = parser.parse_args()
     return args
 
-
+logger.add(lambda _: sys.exit(1), level="ERROR")
 args = get_db_input()
 
 if args.default == True:
     db_dir = os.path.join(os.path.dirname(__file__), "../", "databases/")
-    databases.instantiate_install(db_dir)
+    instantiate_install(db_dir)
 else:
     if args.outdir == None:
-        print("--outdir was not specified.")
-        print("Downloading databases to the default directory anyway.")
+        logger.info("--outdir was not specified.")
+        logger.info("Downloading databases to the default directory anyway.")
         db_dir = os.path.join(os.path.dirname(__file__), "../", "databases/")
     else:
         db_dir = args.outdir
-    databases.instantiate_install(db_dir)
+    
+    instantiate_install(db_dir)
