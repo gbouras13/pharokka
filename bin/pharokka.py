@@ -1,64 +1,29 @@
 #!/usr/bin/env python3
 
 import os
-from pathlib import Path
 import sys
 import time
+from pathlib import Path
 
 from loguru import logger
 
-from lib.databases  import check_db_installation
+from lib.databases import check_db_installation
 from lib.hmm import run_pyhmmer
-from lib.input_commands import (
-    get_input,
-    check_dependencies,
-    instantiate_dirs,
-    instantiate_split_output,
-    validate_fasta,
-    validate_gene_predictor,
-    validate_meta,
-    validate_terminase,
-    validate_threads,
-)
-from lib.post_processing import (
-    #create_gff,
-    create_tbl,
-    get_contig_name_lengths,
-    #parse_aragorn,
-    #process_results,
-    create_gff_singles,
-    convert_singles_gff_to_gbk,
-    split_fasta_singles,
-    write_tophits_vfdb_card,
-    create_txt,
-    update_fasta_headers,
-    update_final_output,
-    extract_terl,
-    inphared_top_hits,
-    remove_post_processing_files
-)
-from lib.processes import (
-    concat_phanotate_meta,
-    concat_trnascan_meta,
-    reorient_terminase,
-    run_aragorn,
-    run_minced,
-    run_mmseqs,
-    run_phanotate,
-    run_phanotate_fasta_meta,
-    run_phanotate_txt_meta,
-    run_pyrodigal,
-    run_trna_scan,
-    run_trnascan_meta,
-    split_input_fasta,
-    translate_fastas,
-    convert_gff_to_gbk,
-    run_mash_sketch,
-    run_mash_dist
-)
+from lib.input_commands import (check_dependencies, get_input,
+                                instantiate_dirs, instantiate_split_output,
+                                validate_fasta, validate_gene_predictor,
+                                validate_meta, validate_terminase,
+                                validate_threads)
+from lib.post_processing import Pharok, remove_post_processing_files
+from lib.processes import (concat_phanotate_meta, concat_trnascan_meta,
+                           convert_gff_to_gbk, reorient_terminase, run_aragorn,
+                           run_mash_dist, run_mash_sketch, run_minced,
+                           run_mmseqs, run_phanotate, run_phanotate_fasta_meta,
+                           run_phanotate_txt_meta, run_pyrodigal,
+                           run_trna_scan, run_trnascan_meta, split_input_fasta,
+                           translate_fastas)
 from lib.util import get_version
 
-from lib.post_processing import Pharok
 
 def main():
     # get the args
@@ -192,14 +157,11 @@ def main():
             )
             concat_phanotate_meta(out_dir, num_fastas)
         else:
-            #run_phanotate(input_fasta, out_dir, logdir)
-            print('blah')
+            run_phanotate(input_fasta, out_dir, logdir)
 
     if gene_predictor == "prodigal":
         logger.info("Implementing Prodigal using Pyrodigal.")
-        run_pyrodigal(
-            input_fasta, out_dir, logger, args.meta, args.coding_table
-        )
+        run_pyrodigal(input_fasta, out_dir, logger, args.meta, args.coding_table)
 
     # translate fastas
     logger.info("Translating gene predicted fastas.")
@@ -219,13 +181,39 @@ def main():
 
     # running mmseqs2 on the 3 databases
     logger.info("Starting MMseqs2.")
-    #run_mmseqs(db_dir, out_dir, args.threads, logdir, gene_predictor, args.evalue, db_name = 'PHROG')
-    #run_mmseqs(db_dir, out_dir, args.threads, logdir, gene_predictor, args.evalue, db_name = 'CARD')
-    #run_mmseqs(db_dir, out_dir, args.threads, logdir, gene_predictor, args.evalue, db_name = 'VFDB')
+    run_mmseqs(
+        db_dir,
+        out_dir,
+        args.threads,
+        logdir,
+        gene_predictor,
+        args.evalue,
+        db_name="PHROG",
+    )
+    run_mmseqs(
+        db_dir,
+        out_dir,
+        args.threads,
+        logdir,
+        gene_predictor,
+        args.evalue,
+        db_name="CARD",
+    )
+    run_mmseqs(
+        db_dir,
+        out_dir,
+        args.threads,
+        logdir,
+        gene_predictor,
+        args.evalue,
+        db_name="VFDB",
+    )
 
     # runs pyhmmer on PHROGs
     logger.info("Running pyhmmer.")
-    best_results_pyhmmer = run_pyhmmer(db_dir, out_dir, args.threads, gene_predictor, args.evalue)
+    best_results_pyhmmer = run_pyhmmer(
+        db_dir, out_dir, args.threads, gene_predictor, args.evalue
+    )
 
     print(best_results_pyhmmer)
 
@@ -245,7 +233,7 @@ def main():
     pharok.input_fasta = input_fasta
     pharok.meta_mode = args.meta
     pharok.pyhmmer_results_dict = best_results_pyhmmer
-
+    pharok.coding_table = args.coding_table
 
     # post process results
     # includes vfdb and card
@@ -263,69 +251,48 @@ def main():
     # create gff and save locustag to class for table
     pharok.create_gff()
 
-
-
-    # (locustag, locus_df, gff_df, total_gff) = create_gff(
-    #     cds_mmseqs_merge_df,
-    #     length_df,
-    #     input_fasta,
-    #     out_dir,
-    #     prefix,
-    #     locustag,
-    #     tmrna_flag,
-    #     args.meta,
-    # )
-
-
-    create_tbl(
-        cds_mmseqs_merge_df,
-        length_df,
-        out_dir,
-        prefix,
-        gene_predictor,
-        tmrna_flag,
-        gff_df,
-        args.coding_table,
-    )
+    # create table
+    pharok.create_tbl()
 
     # output single gffs in meta mode
     if args.split == True and args.meta == True:
-        create_gff_singles(length_df, input_fasta, out_dir, total_gff)
-        convert_singles_gff_to_gbk(
-            length_df, out_dir, args.coding_table
-        )
-        split_fasta_singles(input_fasta, out_dir)
+        # create gffs for each contig
+        pharok.create_gff_singles()
+        # converts each gff to gbk
+        pharok.convert_singles_gff_to_gbk()
+        # splits the input fasta into single fastas
+        pharok.split_fasta_singles()
 
     # write vfdb and card tophits
     # needs to be before .create_txt or else won't count properly
-    write_tophits_vfdb_card(
-        cds_mmseqs_merge_df, vfdb_results, card_results, locus_df, out_dir
-    )
+    pharok.write_tophits_vfdb_card()
 
     # write the summary tsv outputs
-    create_txt(cds_mmseqs_merge_df, length_df, out_dir, prefix)
+    pharok.create_txt()
 
     # convert to genbank
     logger.info("Converting gff to genbank.")
-    convert_gff_to_gbk(
-        input_fasta, out_dir, out_dir, prefix, args.coding_table
-    )
+    # not part of the class so from processes.py
+    convert_gff_to_gbk(input_fasta, out_dir, out_dir, prefix, args.coding_table)
 
     # update fasta headers and final output tsv
-    update_fasta_headers(locus_df, out_dir, gene_predictor)
-    update_final_output(cds_mmseqs_merge_df, locus_df, prefix, out_dir)
+    pharok.update_fasta_headers()
+    pharok.update_final_output()
+
 
     # extract terL
-    extract_terl(locus_df, out_dir, gene_predictor, logger)
+    pharok.extract_terl()
 
     # run mash
     logger.info("Finding the closest match for each contig in INPHARED using mash.")
-    run_mash_sketch(input_fasta, out_dir, logger)
-    run_mash_dist(out_dir, db_dir, logger)
-    inphared_top_hits(out_dir, db_dir, length_df, prefix)
+    # in process.py
+    run_mash_sketch(input_fasta, out_dir, logdir)
+    run_mash_dist(out_dir, db_dir, logdir)
+    # part of the class
+    pharok.inphared_top_hits()
 
     # delete tmp files
-    remove_post_processing_files(out_dir, gene_predictor, args.meta)
+    # remove_post_processing_files(out_dir, gene_predictor, args.meta)
 
     # Determine elapsed time
     elapsed_time = time.time() - start_time
@@ -346,5 +313,6 @@ def main():
         "You should also cite the full list of tools pharokka uses, which can be found at https://github.com/gbouras13/pharokka#citation."
     )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

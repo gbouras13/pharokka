@@ -1,10 +1,11 @@
 import os
 import shutil
+
 import click
 from loguru import logger
 
-from lib.version import  __version__
-from lib.citation import  __citation__
+from lib.citation import __citation__
+from lib.version import __version__
 
 
 def get_version():
@@ -32,3 +33,8 @@ log_fmt = (
 def remove_directory(dir_path):
     if os.path.exists(dir_path):
         shutil.rmtree(dir_path)
+
+
+def remove_file(file_path):
+    if os.path.exists(file_path):
+        os.remove(file_path)

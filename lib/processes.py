@@ -1,5 +1,6 @@
 import logging
 import os
+import shutil
 import subprocess as sp
 import sys
 from datetime import datetime
@@ -10,12 +11,11 @@ from BCBio import GFF
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-
-from lib.external_tools import (ExternalTool)
-from lib.util import (remove_directory)
 from loguru import logger
 
-import shutil
+from lib.external_tools import ExternalTool
+from lib.util import remove_directory
+
 
 def write_to_log(s, logger):
     while True:
@@ -246,20 +246,21 @@ def run_phanotate(filepath_in, out_dir, logdir):
         tool="phanotate.py",
         input=f"{filepath_in}",
         output=f"-o {out_fasta}",
-        params=f'-f fasta',
+        params=f"-f fasta",
         logdir=logdir,
+        outfile="",
     )
 
     phan_txt = ExternalTool(
         tool="phanotate.py",
         input=f"{filepath_in}",
         output=f"-o {out_tab}",
-        params=f'-f tabular',
+        params=f"-f tabular",
         logdir=logdir,
+        outfile="",
     )
 
     try:
-
         ExternalTool.run_tool(phan_fast)
         ExternalTool.run_tool(phan_txt)
 
@@ -490,14 +491,14 @@ def run_trna_scan(filepath_in, threads, out_dir, logdir):
         tool="tRNAscan-SE",
         input=f"{filepath_in}",
         output=f"{out_gff}",
-        params=f'--thread {threads} -G -Q -j',
+        params=f"--thread {threads} -G -Q -j",
         logdir=logdir,
+        outfile="",
     )
 
     try:
-
         ExternalTool.run_tool(trna)
-        
+
         # # needs stderr for trna scan
         # trna = sp.Popen(
         #     [
@@ -542,19 +543,19 @@ def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, db_name
         target_db_dir = os.path.join(out_dir, "target_dir/")
         tmp_dir = os.path.join(out_dir, "tmp_dir/")
         profile_db = os.path.join(db_dir, "phrogs_profile_db")
-        mmseqs_result_tsv =  os.path.join(out_dir, "mmseqs_results.tsv")
+        mmseqs_result_tsv = os.path.join(out_dir, "mmseqs_results.tsv")
     elif db_name == "VFDB":
         mmseqs_dir = os.path.join(out_dir, "VFDB/")
         target_db_dir = os.path.join(out_dir, "VFDB_target_dir/")
         tmp_dir = os.path.join(out_dir, "VFDB_dir/")
         profile_db = os.path.join(db_dir, "vfdb")
-        mmseqs_result_tsv =  os.path.join(out_dir, "vfdb_results.tsv")
+        mmseqs_result_tsv = os.path.join(out_dir, "vfdb_results.tsv")
     elif db_name == "CARD":
         mmseqs_dir = os.path.join(out_dir, "CARD/")
         target_db_dir = os.path.join(out_dir, "CARD_target_dir/")
         tmp_dir = os.path.join(out_dir, "VFDB_dir/")
         profile_db = os.path.join(db_dir, "CARD")
-        mmseqs_result_tsv =  os.path.join(out_dir, "CARD_results.tsv")
+        mmseqs_result_tsv = os.path.join(out_dir, "CARD_results.tsv")
 
     input_aa_fasta = os.path.join(out_dir, amino_acid_fasta)
     target_seqs = os.path.join(target_db_dir, "target_seqs")
@@ -568,8 +569,9 @@ def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, db_name
         tool="mmseqs createdb",
         input=f"",
         output=f"{target_seqs}",
-        params=f'{input_aa_fasta}', # param goes before output and mmseqs2 required order
+        params=f"{input_aa_fasta}",  # param goes before output and mmseqs2 required order
         logdir=logdir,
+        outfile="",
     )
 
     ExternalTool.run_tool(mmseqs_createdb)
@@ -577,22 +579,24 @@ def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, db_name
     # runs the mmseqs seacrh
 
     result_mmseqs = os.path.join(mmseqs_dir, "results_mmseqs")
-    
+
     if db_name == "PHROG":
         mmseqs_search = ExternalTool(
             tool="mmseqs search",
             input=f"",
             output=f"{tmp_dir} -s 8.5 --threads {threads}",
-            params=f'-e {evalue} {profile_db} {target_seqs} {result_mmseqs}', # param goes before output and mmseqs2 required order
+            params=f"-e {evalue} {profile_db} {target_seqs} {result_mmseqs}",  # param goes before output and mmseqs2 required order
             logdir=logdir,
+            outfile="",
         )
-    else: # if it is vfdb or card search with cutoffs instead of evalue
+    else:  # if it is vfdb or card search with cutoffs instead of evalue
         mmseqs_search = ExternalTool(
             tool="mmseqs search",
             input=f"",
             output=f"{tmp_dir} -s 8.5 --threads {threads}",
-            params=f'--min-seq-id 0.8 -c 0.4 {profile_db} {target_seqs} {result_mmseqs}', # param goes before output and mmseqs2 required order
+            params=f"--min-seq-id 0.8 -c 0.4 {profile_db} {target_seqs} {result_mmseqs}",  # param goes before output and mmseqs2 required order
             logdir=logdir,
+            outfile="",
         )
 
     ExternalTool.run_tool(mmseqs_search)
@@ -602,8 +606,9 @@ def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, db_name
         tool="mmseqs createtsv",
         input=f"",
         output=f"{mmseqs_result_tsv} --full-header --threads {threads}",
-        params=f'{profile_db} {target_seqs} {result_mmseqs} ', # param goes before output and mmseqs2 required order
+        params=f"{profile_db} {target_seqs} {result_mmseqs} ",  # param goes before output and mmseqs2 required order
         logdir=logdir,
+        outfile="",
     )
 
     ExternalTool.run_tool(mmseqs_createtsv)
@@ -612,7 +617,6 @@ def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, db_name
     # remove the target dir when finished
 
     remove_directory(target_db_dir)
-
 
 
 def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, coding_table):
@@ -683,24 +687,14 @@ def run_minced(filepath_in, out_dir, prefix, logdir):
     minced_fast = ExternalTool(
         tool="minced",
         input=f"",
-        output=f"{output_spacers} {output_gff}", 
-        params=f' {filepath_in}', # need strange order for minced params go first
+        output=f"{output_spacers} {output_gff}",
+        params=f" {filepath_in}",  # need strange order for minced params go first
         logdir=logdir,
+        outfile="",
     )
 
     try:
         ExternalTool.run_tool(minced_fast)
-        # minced_fast = sp.Popen(
-        #     [
-        #         "minced",
-        #         filepath_in,
-        #         os.path.join(out_dir, prefix + "_minced_spacers.txt"),
-        #         os.path.join(out_dir, prefix + "_minced.gff"),
-        #     ],
-        #     stderr=sp.PIPE,
-        #     stdout=sp.PIPE,
-        # )
-        # write_to_log(minced_fast.stderr, logger)
     except:
         logger.error("Error with MinCED\n")
 
@@ -721,181 +715,15 @@ def run_aragorn(filepath_in, out_dir, prefix, logdir):
         tool="aragorn",
         input=f"{filepath_in}",
         output=f"-o {aragorn_out_file}",
-        params=f'-l -gcbact -w -m',
+        params=f"-l -gcbact -w -m",
         logdir=logdir,
+        outfile="",
     )
-
-    ExternalTool.run_tool(aragorn)
 
     try:
         ExternalTool.run_tool(aragorn)
-        # aragorn = sp.Popen(
-        #     [
-        #         "aragorn",
-        #         "-l",
-        #         "-gcbact",
-        #         "-w",
-        #         "-o",
-        #         os.path.join(out_dir, prefix + "_aragorn.txt"),
-        #         "-m",
-        #         filepath_in,
-        #     ],
-        #     stderr=sp.PIPE,
-        #     stdout=sp.PIPE,
-        # )
-        # write_to_log(aragorn.stderr, logger)
     except:
         logger.error("Error with Aragorn\n")
-
-
-def run_mmseqs_vfdb(db_dir, out_dir, threads, logger, gene_predictor):
-    """
-    Runs mmseqs2 on VFDB
-    :param db_dir: database path
-    :param out_dir: output directory
-    :param logger: logger
-    :params threads: threads
-    :param gene_predictor: phanotate or prodigal
-    No evalue - settings as Enault et al. recommend 80% identify 40% coverage https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5315482/
-    :return:
-    """
-    print("Running mmseqs2 on vfdb.")
-    logger.info("Running mmseqs2 on vfdb.")
-    vfdb_db_dir = db_dir
-    vfdb_dir = os.path.join(out_dir, "vfdb/")
-    amino_acid_fasta = gene_predictor + "_aas_tmp.fasta"
-    target_db_dir = os.path.join(out_dir, "vfdb_target_dir/")
-    tmp_dir = os.path.join(out_dir, "vfdb_tmp_dir/")
-
-    # make dir for target db
-    if os.path.isdir(target_db_dir) == False:
-        os.mkdir(target_db_dir)
-
-    # creates db for input fasta
-    vfdb_createdb = sp.Popen(
-        [
-            "mmseqs",
-            "createdb",
-            os.path.join(out_dir, amino_acid_fasta),
-            os.path.join(target_db_dir, "target_seqs"),
-        ],
-        stdout=sp.PIPE,
-    )
-    write_to_log(vfdb_createdb.stdout, logger)
-    # runs the search
-    vfdb_search = sp.Popen(
-        [
-            "mmseqs",
-            "search",
-            "--min-seq-id",
-            "0.8",
-            "-c",
-            "0.4",
-            os.path.join(vfdb_db_dir, "vfdb"),
-            os.path.join(target_db_dir, "target_seqs"),
-            os.path.join(vfdb_dir, "results_vfdb"),
-            tmp_dir,
-            "-s",
-            "8.5",
-            "--threads",
-            threads,
-        ],
-        stdout=sp.PIPE,
-    )
-    write_to_log(vfdb_search.stdout, logger)
-    # creates the tsv output
-    vfdb_createtsv = sp.Popen(
-        [
-            "mmseqs",
-            "createtsv",
-            os.path.join(vfdb_db_dir, "vfdb"),
-            os.path.join(target_db_dir, "target_seqs"),
-            os.path.join(vfdb_dir, "results_vfdb"),
-            os.path.join(out_dir, "vfdb_results.tsv"),
-            "--full-header",
-            "--threads",
-            threads,
-        ],
-        stdout=sp.PIPE,
-    )
-    write_to_log(vfdb_createtsv.stdout, logger)
-    # remove the target dir when finished
-    sp.run(["rm", "-r", target_db_dir], check=True)
-
-
-def run_mmseqs_card(db_dir, out_dir, threads, logger, gene_predictor):
-    """
-    Runs mmseqs2 on card
-    :param db_dir: database path
-    :param out_dir: output directory
-    :param logger: logger
-    :params threads: threads
-    :param gene_predictor: phanotate or prodigal
-    No evalue - settings as Enault et al. recommend 80% identify 40% coverage https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5315482/
-    :return:
-    """
-    print("Running mmseqs2 on CARD.")
-    logger.info("Running mmseqs2 on CARD.")
-    CARD_db_dir = db_dir
-    CARD_dir = os.path.join(out_dir, "CARD/")
-    amino_acid_fasta = gene_predictor + "_aas_tmp.fasta"
-    target_db_dir = os.path.join(out_dir, "CARD_target_dir/")
-    tmp_dir = os.path.join(out_dir, "CARD_tmp_dir/")
-
-    # make dir for target db
-    if os.path.isdir(target_db_dir) == False:
-        os.mkdir(target_db_dir)
-
-    # creates db for input
-    CARD_createdb = sp.Popen(
-        [
-            "mmseqs",
-            "createdb",
-            os.path.join(out_dir, amino_acid_fasta),
-            os.path.join(target_db_dir, "target_seqs"),
-        ],
-        stdout=sp.PIPE,
-    )
-    write_to_log(CARD_createdb.stdout, logger)
-    # runs the seacrh
-    CARD_search = sp.Popen(
-        [
-            "mmseqs",
-            "search",
-            "--min-seq-id",
-            "0.8",
-            "-c",
-            "0.4",
-            os.path.join(CARD_db_dir, "CARD"),
-            os.path.join(target_db_dir, "target_seqs"),
-            os.path.join(CARD_dir, "results_CARD"),
-            tmp_dir,
-            "-s",
-            "8.5",
-            "--threads",
-            threads,
-        ],
-        stdout=sp.PIPE,
-    )
-    write_to_log(CARD_search.stdout, logger)
-    # creates the tsv
-    CARD_createtsv = sp.Popen(
-        [
-            "mmseqs",
-            "createtsv",
-            os.path.join(CARD_db_dir, "CARD"),
-            os.path.join(target_db_dir, "target_seqs"),
-            os.path.join(CARD_dir, "results_CARD"),
-            os.path.join(out_dir, "CARD_results.tsv"),
-            "--full-header",
-            "--threads",
-            threads,
-        ],
-        stdout=sp.PIPE,
-    )
-    write_to_log(CARD_createtsv.stdout, logger)
-    # remove the target dir when finished
-    sp.run(["rm", "-r", target_db_dir], check=True)
 
 
 def reorient_terminase(
@@ -910,9 +738,7 @@ def reorient_terminase(
     :param terminase_start: start coordinate of terminase large subunit.
     :logger: logger
     """
-    print(
-        "Input checked. \nReorienting input genome to begin with terminase large subunit."
-    )
+
     logger.info(
         "Input checked. \nReorienting input genome to begin with terminase large subunit."
     )
@@ -924,7 +750,7 @@ def reorient_terminase(
     length = len(record.seq)
 
     if int(terminase_start) > length or int(terminase_start) < 1:
-        sys.exit(
+        logger.error(
             "Error: terminase large subunit start coordinate specified is not within the provided genome length. Please check your input. \n"
         )
 
@@ -952,7 +778,7 @@ def reorient_terminase(
     SeqIO.write(record, out_fasta, "fasta")
 
 
-def run_mash_sketch(filepath_in, out_dir, logger):
+def run_mash_sketch(filepath_in, out_dir, logdir):
     """
     Runs mash sketch
     :param filepath_in: input filepath
@@ -960,25 +786,38 @@ def run_mash_sketch(filepath_in, out_dir, logger):
     :param logger logger
     :return:
     """
+
+    mash_sketch_out_file = os.path.join(out_dir, "input_mash_sketch.msh")
+
+    mash_sketch = ExternalTool(
+        tool="mash sketch",
+        input=f"",
+        output=f"-o {mash_sketch_out_file} -i",
+        params=f"{filepath_in}",
+        logdir=logdir,
+        outfile="",
+    )
+
     try:
-        mash_sketch = sp.Popen(
-            [
-                "mash",
-                "sketch",
-                filepath_in,
-                "-o",
-                os.path.join(out_dir, "input_mash_sketch.msh"),
-                "-i",
-            ],
-            stderr=sp.PIPE,
-            stdout=sp.DEVNULL,
-        )
-        write_to_log(mash_sketch.stderr, logger)
+        # mash_sketch = sp.Popen(
+        #     [
+        #         "mash",
+        #         "sketch",
+        #         filepath_in,
+        #         "-o",
+        #         os.path.join(out_dir, "input_mash_sketch.msh"),
+        #         "-i",
+        #     ],
+        #     stderr=sp.PIPE,
+        #     stdout=sp.DEVNULL,
+        # )
+        ExternalTool.run_tool(mash_sketch)
+
     except:
-        sys.exit("Error with mash sketch\n")
+        logger.error("Error with mash sketch\n")
 
 
-def run_mash_dist(out_dir, db_dir, logger):
+def run_mash_dist(out_dir, db_dir, logdir):
     """
     Runs mash
     :param filepath_in: input filepath
@@ -986,24 +825,38 @@ def run_mash_dist(out_dir, db_dir, logger):
     :param logger logger
     :return:
     """
+
+    mash_sketch = os.path.join(out_dir, "input_mash_sketch.msh")
+    phrog_sketch = os.path.join(db_dir, "5Jan2023_genomes.fa.msh")
     mash_tsv = os.path.join(out_dir, "mash_out.tsv")
-    outFile = open(mash_tsv, "w")
+
+    mash_dist = ExternalTool(
+        tool="mash",
+        input="",
+        output="",
+        params=f" dist  {mash_sketch} {phrog_sketch} -d 0.2 -i ",
+        logdir=logdir,
+        outfile=mash_tsv,
+    )
+
+    # need to write to stdout
+
     try:
-        mash_dist = sp.Popen(
-            [
-                "mash",
-                "dist",
-                os.path.join(out_dir, "input_mash_sketch.msh"),
-                os.path.join(db_dir, "5Jan2023_genomes.fa.msh"),
-                "-d",
-                "0.2",
-                "-i",
-            ],
-            stdout=outFile,
-            stderr=sp.PIPE,
-        )
-        write_to_log(mash_dist.stderr, logger)
+        # need to write to stdout
+        ExternalTool.run_tool(mash_dist, to_stdout=True)
+        # mash_dist = sp.Popen(
+        #     [
+        #         "mash",
+        #         "dist",
+        #         os.path.join(out_dir, "input_mash_sketch.msh"),
+        #         os.path.join(db_dir, "5Jan2023_genomes.fa.msh"),
+        #         "-d",
+        #         "0.2",
+        #         "-i",
+        #     ],
+        #     stdout=outFile,
+        #     stderr=sp.PIPE,
+        # )
+        # write_to_log(mash_dist.stderr, logger)
     except:
-        sys.exit("Error with mash dist\n")
-
-
+        logger.error("Error with mash dist\n")

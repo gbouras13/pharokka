@@ -1,5 +1,6 @@
 import os
-from setuptools import  setup
+
+from setuptools import setup
 
 
 def get_version():
@@ -13,15 +14,15 @@ def get_version():
         return f.readline().strip()
 
 
-
 # recursively load package files
 def package_files(directory):
     paths = []
-    for (path, _, filenames) in os.walk(directory):
+    for path, _, filenames in os.walk(directory):
         for filename in filenames:
-            if not filename.endswith('.py'):
-                paths.append(os.path.join('..', path, filename))
+            if not filename.endswith(".py"):
+                paths.append(os.path.join("..", path, filename))
     return paths
+
 
 # read long description
 with open("README.md", "r") as fh:
@@ -36,16 +37,16 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/gbouras13/pharokka",
-    scripts=['bin/pharokka.py',                                
-             'bin/pharokka_plotter.py',
-             'bin/install_databases.py'],   
-    packages=['pharokka_runner'],                                         
-    package_dir=dict(pharokka_runner='lib'),                              # dict with 'package'='relative dir'
-    package_data=dict(pharokka_runner=package_files('lib/')),             # add non-python data to package, relative paths
-    license="MIT License",  
-    platforms=['Unix'], 
-    classifiers=[         
-        "Development Status :: 5 - Production/Stable",  
+    scripts=["bin/pharokka.py", "bin/pharokka_plotter.py", "bin/install_databases.py"],
+    packages=["pharokka_runner"],
+    package_dir=dict(pharokka_runner="lib"),  # dict with 'package'='relative dir'
+    package_data=dict(
+        pharokka_runner=package_files("lib/")
+    ),  # add non-python data to package, relative paths
+    license="MIT License",
+    platforms=["Unix"],
+    classifiers=[
+        "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
@@ -59,20 +60,18 @@ setup(
         "Topic :: Scientific/Engineering :: Bio-Informatics",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.5',
+    python_requires=">=3.5",
     install_requires=[
-            'setuptools>=67.7.2',
-            'loguru>=0.5.4',
-            'pyyaml>=6.0',
-            'pandas>=1.4.2',
-            'biopython>=1.76',
-            'pyrodigal>=2.0.0',
-            'pyhmmer>=0.9.0',
-            'black>=22.3.0',
-            'isort>=5.10.1',
-            'pytest>=6.2.5',
-            'pytest-cov>=3.0.0',
-            ],
+        "setuptools>=67.7.2",
+        "loguru>=0.5.4",
+        "pyyaml>=6.0",
+        "pandas>=1.4.2",
+        "biopython>=1.76",
+        "pyrodigal>=2.0.0",
+        "pyhmmer>=0.9.0",
+        "black>=22.3.0",
+        "isort>=5.10.1",
+        "pytest>=6.2.5",
+        "pytest-cov>=3.0.0",
+    ],
 )
-
-

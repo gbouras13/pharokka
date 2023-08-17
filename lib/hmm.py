@@ -1,5 +1,6 @@
 import collections
 import os
+
 import pyhmmer
 from pyhmmer.easel import SequenceFile
 from pyhmmer.plan7 import HMM, HMMFile
@@ -23,7 +24,9 @@ def run_pyhmmer(db_dir, out_dir, threads, gene_predictor, evalue):
     amino_acid_fasta_file = os.path.join(out_dir, amino_acid_fasta_name)
 
     # define result
-    Result = collections.namedtuple("Result", ["protein", "phrog", "bitscore", "evalue"])
+    Result = collections.namedtuple(
+        "Result", ["protein", "phrog", "bitscore", "evalue"]
+    )
 
     # run hmmscan and get all results
     results = []
