@@ -36,15 +36,6 @@ class Pharok:
         pyhmmer_results_dict: dict = {
             "p1": Result(protein="p1", phrog="phrog_1", bitscore=1, evalue=2.01e-01)
         },
-        # chromosome_flag: bool = True,
-        # threads: int = 1,
-        # depth_df: pd.DataFrame() = pd.DataFrame({"col1": [1, 2, 3], "col2": [4, 5, 6]}),
-        # mash_df: pd.DataFrame() = pd.DataFrame({"col1": [1, 2, 3], "col2": [4, 5, 6]}),
-        # combined_depth_mash_df: pd.DataFrame() = pd.DataFrame(
-        #     {"col1": [1, 2, 3], "col2": [4, 5, 6]}
-        # ),
-        # long_only: bool = False,
-        # unicycler_success: bool = True,
         merged_df: pd.DataFrame() = pd.DataFrame(
             {"col1": [1, 2, 3], "col2": [4, 5, 6]}
         ),
@@ -249,12 +240,6 @@ class Pharok:
             merged_df["Method"] = "PRODIGAL"
         merged_df["Region"] = "CDS"
 
-        merged_df.to_csv(
-            os.path.join(self.out_dir, "testc.tsv"),
-            sep="\t",
-            index=False,
-            header=True,
-        )
 
         # # replace with No_PHROG if nothing found
         merged_df.loc[

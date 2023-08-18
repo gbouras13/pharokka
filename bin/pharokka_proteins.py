@@ -19,15 +19,20 @@ from lib.post_processing import Pharok, remove_post_processing_files
 from lib.processes import (concat_phanotate_meta, concat_trnascan_meta,
                            convert_gff_to_gbk, reorient_terminase, run_aragorn,
                            run_mash_dist, run_mash_sketch, run_minced,
-                           run_mmseqs, run_phanotate, run_phanotate_fasta_meta,
+                            run_phanotate, run_phanotate_fasta_meta,
                            run_phanotate_txt_meta, run_pyrodigal,
                            run_trna_scan, run_trnascan_meta, split_input_fasta,
                            translate_fastas, run_dnaapler)
 from lib.util import get_version
 
+from lib.proteins import get_input_proteins, run_mmseqs_proteins, run_pyhmmer_proteins, Pharok_Prot
+
+
 def main():
     # get the args
-    args = get_input()
+    args = get_input_proteins()
+
+    logger.add(lambda _: sys.exit(1), level="ERROR")
 
     if args.citation == True:
         logger.info("If you use pharokka in your research, please cite:")
@@ -44,21 +49,13 @@ def main():
 
     # set the prefix
     if args.prefix == "Default":
-        prefix = "pharokka"
+        prefix = "pharokka_proteins"
     else:
         prefix = args.prefix
 
-    # set the locustag flag for locustag generation
-    if args.locustag == "Default":
-        locustag = "Random"
-    else:
-        locustag = args.locustag
-
-    # set the gene_predictor
-    gene_predictor = args.gene_predictor
 
     # instantiate outdir
-    out_dir = instantiate_dirs(args.outdir, args.meta, args.force)
+    out_dir = instantiate_dirs(args.outdir,  False, args.force) # args.meta always false
 
     # set log dir
     logdir = Path(f"{out_dir}/logs")
@@ -72,13 +69,14 @@ def main():
     # get start time
     start_time = time.time()
     # initial logging stuff
-    log_file = os.path.join(args.outdir, f"{prefix}_pharokka_{start_time}.log")
+    log_file = os.path.join(args.outdir, f"{prefix}_pharokka_proteins_{start_time}.log")
     # adds log file
     logger.add(log_file)
 
     # preamble
     logger.add(lambda _: sys.exit(1), level="ERROR")
     logger.info(f"Starting pharokka v{get_version()}")
+    logger.info("Running pharokka_proteins.py to annotate proteins.")
     logger.info("Command executed: {}", args)
     logger.info("Repository homepage is https://github.com/gbouras13/pharokka")
     logger.info("Written by George Bouras: george.bouras@adelaide.edu.au")
@@ -100,195 +98,48 @@ def main():
 
     # instantiation/checking fasta and gene_predictor
     validate_fasta(args.infile)
-    validate_gene_predictor(gene_predictor)
     validate_threads(args.threads)
 
     # define input - overwrite if terminase reorienter is true
     input_fasta = args.infile
-
-    # reorient with dnaapler
-    if args.dnaapler == True:
-
-        logger.info(
-            "You have chosen to reorient your contigs by specifying --dnaapler. Checking the input."
-        )
-
-        # in case both --dnaapler and --terminase is selected
-        if args.terminase == True:
-            logger.info(
-            "Ignoring --terminase and dnaapler will be run instead."
-        )
-            args.terminase = False
-            args.terminase_strand = "nothing"
-            args.terminase_start = "nothing"
-
-        # runs dnaapler
-        dnaapler_success = run_dnaapler(input_fasta, out_dir, args.threads, logdir)
-
-        if dnaapler_success == True:
-            input_fasta = os.path.join(
-                out_dir,"dnaapler/dnaapler_reoriented.fasta"
-            )
-            destination_file = os.path.join(
-                out_dir,f"{prefix}_dnaapler_reoriented.fasta"
-            )
-            # copy FASTA to output
-            shutil.copy(input_fasta, destination_file)
-
-    # terminase reorienting
-    if args.terminase == True:
-        logger.info(
-            "You have chosen to reorient your genome by specifying --terminase. Checking the input."
-        )
-        validate_terminase(args.infile, args.terminase_strand, args.terminase_start)
-        reorient_terminase(
-            args.infile,
-            out_dir,
-            prefix,
-            args.terminase_strand,
-            args.terminase_start,
-        )
-        input_fasta = os.path.join(
-            out_dir, prefix + "_genome_terminase_reoriented.fasta"
-        )
-
-    if args.terminase_strand != "nothing" and args.terminase == False:
-        logger.info(
-            "You have specified a terminase strand using --strand to reorient your genome, but you have not specified --terminase to activate terminase mode. \nContinuing without reorientation."
-        )
-
-    if args.terminase_strand != "nothing" and args.terminase_start == False:
-        logger.info(
-            "You have specified a terminase start coordinate using --terminase_start to reorient your genome, but you have not specified --terminase to activate terminase mode. \nContinuing without reorientation."
-        )
-
-
 
     ########
     # mmseqs2 and hmm decisions
     ########
 
     # can't have fast and mmseqs2 only
-    if args.fast is True and args.mmseqs2_only is True:
+    if args.hmm_only is True and args.mmseqs2_only is True:
         logger.error("You have specified --fast or --hmm_only and --mmseqs2_only. This is impossible. Please choose one or the other.")
 
-    # can't have fast and meta_hmm 
-    if args.fast is True and args.meta_hmm is True:
-        logger.error("You have specified --fast or --hmm_only and --meta_hmm. This is impossible. Please choose one or the other.")
-
-   # can't have mmseqs2 only and meta_hmm 
-    if args.mmseqs2_only is True and args.meta_hmm is True:
-        logger.error("You have specified --mmseqs2_only and --meta_hmm. This is impossible. Please choose one or the other.")
-
-    # by default run both not in meta mode
+    # by default 
     mmseqs_flag = True
     hmm_flag = True
 
-    if args.meta is True: # meta mode default only mmseqs
-        if args.meta_hmm is True: # with --meta_hmm
-            logger.info("You have specified --meta_hmm and -m/--meta. This may be take a while, please be patient.")
-            mmseqs_flag = True
-            hmm_flag = True
-        else: # just mmseqs2 by default
-            mmseqs_flag = True
-            hmm_flag = False
-    else: # not in meta mode
-        if args.meta_hmm is True:
-            logger.warning("You have specified --meta_hmm to run pyhmmer HMM search in meta mode, but you have not specified -m to activate meta mode.")
-            logger.warning("Ignoring --meta_hmm")
-
-    # overrides if fast/hmm_only is chosen
-    if args.fast == True:
-        logger.info("You have specified --fast or --hmm_only. MMseqs2 will not be run.")
+    if args.hmm_only is True:
+        logger.info("You have specified --hmm_only. MMseqs2 will not be run.")
         mmseqs_flag = False
-        hmm_flag = True
-
-    if args.mmseqs2_only == True:
+    if args.mmseqs2_only is True:
         logger.info("You have specified --mmseqs2_only. Pyhmmer will not be run.")
-        mmseqs_flag = True
         hmm_flag = False
 
-    # validates meta mode
-    validate_meta(input_fasta, args.meta, args.split)
 
-    # meta mode split input for trnascan and maybe phanotate
-    if args.meta == True:
-        num_fastas = split_input_fasta(input_fasta, out_dir)
-        # will generate split output gffs if meta flag is true
-        instantiate_split_output(out_dir, args.meta)
 
-    # CDS predicton
-    # phanotate
-    if gene_predictor == "phanotate":
-        logger.info("Running Phanotate.")
-        if args.meta == True:
-            logger.info("Applying meta mode.")
-            run_phanotate_fasta_meta(
-                input_fasta, out_dir, args.threads, num_fastas, logdir
-            )
-            run_phanotate_txt_meta(
-                input_fasta, out_dir, args.threads, num_fastas, logdir
-            )
-            concat_phanotate_meta(out_dir, num_fastas)
-        else:
-            run_phanotate(input_fasta, out_dir, logdir)
 
-    if gene_predictor == "prodigal":
-        logger.info("Implementing Prodigal using Pyrodigal.")
-        run_pyrodigal(input_fasta, out_dir, args.meta, args.coding_table)
 
-    # translate fastas
-    logger.info("Translating gene predicted fastas.")
-    translate_fastas(out_dir, gene_predictor, args.coding_table)
-
-    # run trna-scan meta mode if required
-    if args.meta == True:
-        logger.info("Starting tRNA-scanSE. Applying meta mode.")
-        run_trnascan_meta(input_fasta, out_dir, args.threads, num_fastas)
-        concat_trnascan_meta(out_dir, num_fastas)
-    else:
-        logger.info("Starting tRNA-scanSE")
-        run_trna_scan(input_fasta, args.threads, out_dir, logdir)
-    # run minced and aragorn
-    run_minced(input_fasta, out_dir, prefix, logdir)
-    run_aragorn(input_fasta, out_dir, prefix, logdir)
 
     # running mmseqs2 on the 3 databases
     if mmseqs_flag is True:
         logger.info("Starting MMseqs2.")
-        run_mmseqs(
-            db_dir,
-            out_dir,
-            args.threads,
-            logdir,
-            gene_predictor,
-            args.evalue,
-            db_name="PHROG",
-        )
-        run_mmseqs(
-            db_dir,
-            out_dir,
-            args.threads,
-            logdir,
-            gene_predictor,
-            args.evalue,
-            db_name="CARD",
-        )
-        run_mmseqs(
-            db_dir,
-            out_dir,
-            args.threads,
-            logdir,
-            gene_predictor,
-            args.evalue,
-            db_name="VFDB",
-        )
+        #run_mmseqs_proteins(input_fasta, db_dir, out_dir, args.threads, logdir, args.evalue, db_name="PHROG")
+        #run_mmseqs_proteins(input_fasta, db_dir, out_dir, args.threads, logdir, args.evalue, db_name="CARD")
+        #run_mmseqs_proteins(input_fasta, db_dir, out_dir, args.threads, logdir, args.evalue, db_name="VFDB")
+ 
 
     if hmm_flag is True:
         # runs pyhmmer on PHROGs
         logger.info("Running pyhmmer.")
-        best_results_pyhmmer = run_pyhmmer(
-            db_dir, out_dir, args.threads, gene_predictor, args.evalue
+        best_results_pyhmmer = run_pyhmmer_proteins(
+            input_fasta, db_dir, args.threads, args.evalue
         )
 
     #################################################
@@ -298,15 +149,11 @@ def main():
     logger.info("Post Processing Output.")
 
     # instanatiate the class with some of the params
-    pharok = Pharok()
+    pharok = Pharok_Prot()
     pharok.out_dir = out_dir
     pharok.db_dir = db_dir
-    pharok.gene_predictor = gene_predictor
     pharok.prefix = prefix
-    pharok.locustag = locustag
     pharok.input_fasta = input_fasta
-    pharok.meta_mode = args.meta
-    pharok.coding_table = args.coding_table
     pharok.mmseqs_flag = mmseqs_flag
     pharok.hmm_flag = hmm_flag
     if pharok.hmm_flag is True:
@@ -316,7 +163,7 @@ def main():
     # includes vfdb and card
     # adds the merged df, vfdb and card top hits dfs to the class objec
     # no need to specify params as they are in the class :)
-    pharok.process_results()
+    pharok.process_dataframes()
 
     # gets df of length and gc for each contig
     pharok.get_contig_name_lengths()

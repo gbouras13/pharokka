@@ -778,7 +778,14 @@ def run_dnaapler(filepath_in, out_dir, threads, logdir):
             outfile="",
         )
     else:
-        logger.info("Dnaapler v0.3.0 all not yet ready to use dnaapler all.\n")
+        dnaapler = ExternalTool(
+            tool="dnaapler all",
+            input=f"-i {filepath_in}",
+            output=f"-o {dnaapler_output_dir} -t {threads}",
+            params=f"",  # need strange order for minced params go first
+            logdir=logdir,
+            outfile="",
+        )
 
     dnaapler_success = True
     try:

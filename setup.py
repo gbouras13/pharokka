@@ -37,7 +37,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/gbouras13/pharokka",
-    scripts=["bin/pharokka.py", "bin/pharokka_plotter.py", "bin/install_databases.py"],
+    scripts=["bin/pharokka.py", "bin/pharokka_plotter.py", "bin/install_databases.py", "bin/pharokka_proteins.py"],
     packages=["pharokka_runner"],
     package_dir=dict(pharokka_runner="lib"),  # dict with 'package'='relative dir'
     package_data=dict(

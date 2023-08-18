@@ -86,7 +86,7 @@ def get_input():
     parser.add_argument(
         "-e",
         "--evalue",
-        help="E-value threshold for mmseqs2 PHROGs database search and pyhmmer PHROGs database search. Defaults to 1E-05.",
+        help="E-value threshold for MMseqs2 database PHROGs, VFDB and CARD and pyhmmer PHROGs database search. Defaults to 1E-05.",
         action="store",
         default="1E-05",
     )
@@ -143,8 +143,9 @@ def instantiate_dirs(output_dir, meta, force):
     # remove outdir on force
     if force == True:
         if os.path.isdir(output_dir) == True:
-            # shutil.rmtree(output_dir)
-            logger.info('skip')
+            #shutil.rmtree(output_dir)
+            print('test')
+
         elif os.path.isfile(output_dir) == True:
             os.remove(output_dir)
         else:
@@ -275,7 +276,7 @@ def validate_threads(threads):
 #######
 
 
-def check_dependencies(logger):
+def check_dependencies():
     """Checks the dependencies and versions
     :return:
     """

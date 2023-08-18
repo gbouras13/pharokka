@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 import os
-import subprocess as sp
-import sys
 import requests
 from alive_progress import alive_bar
 from pathlib import Path
@@ -12,6 +10,7 @@ import tarfile
 
 from lib.post_processing import remove_directory
 
+# to hold information about the different DBs
 VERSION_DICTIONARY = {
     '1.2.0': {
         'md5': '0014b7a982dbf071f8856a5a29a95e30',
@@ -202,34 +201,3 @@ def check_db_installation(db_dir):
         downloaded_flag = False
 
     return downloaded_flag
-
-
-# def get_database_zenodo(db_dir):
-#     print("Downloading Pharokka Database")
-#     tarball = "pharokka_v1.2.0_database.tar.gz"
-#     url = "https://zenodo.org/record/7563578/files/pharokka_v1.2.0_database.tar.gz"
-#     try:
-#         # remvoe the directory
-#         sp.call(["rm", "-rf", os.path.join(db_dir)])
-#         # make db dir
-#         sp.call(["mkdir", "-p", os.path.join(db_dir)])
-#         # download the tarball
-#         sp.call(["curl", url, "-o", os.path.join(db_dir, tarball)])
-#         # untar tarball into database directory
-#         sp.call(
-#             [
-#                 "tar",
-#                 "-xzf",
-#                 os.path.join(db_dir, tarball),
-#                 "-C",
-#                 db_dir,
-#                 "--strip-components=1",
-#             ]
-#         )
-#         # remove tarball
-#         sp.call(["rm", "-f", os.path.join(db_dir, tarball)])
-#     except:
-#         sys.stderr.write(
-#             "Error: Pharokka Database Install Failed. \n Please try again or use the manual option detailed at https://github.com/gbouras13/pharokka.git \n downloading from https://zenodo.org/record/7563578/files/pharokka_v1.2.0_database.tar.gz"
-#         )
-#         return 0
