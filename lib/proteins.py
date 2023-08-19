@@ -37,6 +37,7 @@ from lib.util import get_version
 from lib.external_tools import ExternalTool
 from lib.processes import convert_gff_to_gbk
 from lib.util import remove_directory, remove_file, touch_file, get_contig_headers, count_contigs
+from lib.post_processing import process_vfdb_results, process_card_results
 
 Result = collections.namedtuple("Result", ["protein", "phrog", "bitscore", "evalue"])
 
@@ -275,7 +276,7 @@ class Pharok_Prot:
         pyhmmer_results_dict: dict = {
             "p1": Result(protein="p1", phrog="phrog_1", bitscore=1, evalue=2.01e-01)
         },
-        merged_df: pd.DataFrame() = pd.DataFrame(
+        tophits_df: pd.DataFrame() = pd.DataFrame(
             {"col1": [1, 2, 3], "col2": [4, 5, 6]}
         ),
         vfdb_results: pd.DataFrame() = pd.DataFrame(
@@ -303,7 +304,7 @@ class Pharok_Prot:
             input FASTA file with phage contigs
         pyhmmer_results_dict: dict
             dictionary of Result tuples from pyhmmer.
-        merged_df: pd.DataFrame, required
+        tophits_df: pd.DataFrame, required
             merged dataframe output
         vfdb_results: pd.DataFrame,
             vfdb dataframe output
@@ -321,7 +322,7 @@ class Pharok_Prot:
         self.prefix = prefix
         self.input_fasta = input_fasta
         self.pyhmmer_results_dict = pyhmmer_results_dict
-        self.merged_df = merged_df
+        self.tophits_df = tophits_df
         self.vfdb_results = vfdb_results
         self.card_results = card_results
         self.length_df = length_df
@@ -445,9 +446,6 @@ class Pharok_Prot:
             "phrog_", ""
         )
 
-        # Rename the "gene" column to "id"
-        tophits_df.rename(columns={'gene': 'ID'}, inplace=True)
-
         ############
         # code to create 1 overall phrog column
         # pick the mmseqs PHROG column first if it was run
@@ -515,19 +513,26 @@ class Pharok_Prot:
         )
         tophits_df["color"] = tophits_df["color"].replace(nan, "None", regex=True)
 
-        print(tophits_df)
 
-        tophits_df.to_csv(
-            os.path.join(self.out_dir, "tophits_df_tmp.tsv"),
-            sep="\t",
-            index=False,
+        ##### length df
+
+        fasta_sequences = SeqIO.parse(open(self.input_fasta), "fasta")
+        contig_names = []
+        lengths = []
+        gc = []
+        for fasta in fasta_sequences:
+            contig_names.append(fasta.id)
+            lengths.append(len(fasta.seq))
+        length_df = pd.DataFrame(
+            {
+                "gene": contig_names,
+                "length": lengths,
+            }
         )
+        self.length_df = length_df
 
-        """
-        .faa file with updated function headers
-        .tsv file with summary data ID, Length, phrog, description, category
-        .tsv file with all data
-        """
+        # merge the length df into the tophits
+        tophits_df = length_df.merge(tophits_df, on="gene", how="left")
 
         # process vfdb results
         # handles empty files without a problem
@@ -536,4 +541,59 @@ class Pharok_Prot:
         (tophits_df, card_results) = process_card_results(
             self.out_dir, tophits_df, self.db_dir
         )
+
+         # Rename the "gene" column to "id"
+        tophits_df.rename(columns={'gene': 'ID'}, inplace=True)
+
+        desired_order = [col for col in tophits_df.columns if col  not in  ['phrog', 'annot', 'category']]
+        desired_order.insert(2, 'phrog')
+        desired_order.insert(3, 'annot')
+        desired_order.insert(4, 'category')
+
+        # Creating a new DataFrame with columns rearranged
+        tophits_df = tophits_df[desired_order]
+
+        # save
+
+        tophits_df.to_csv(
+            os.path.join(self.out_dir, f"{self.prefix}_full_merged_output.tsv"),
+            sep="\t",
+            index=False,
+        )
+
+        # save results
+        self.tophits_df = tophits_df
+        self.vfdb_results = vfdb_results
+        self.card_results = card_results
+    
+        summary_df = self.tophits_df [['ID', 'length', 'phrog', 'annot', 'category']]
+
+        # .tsv file with all data full_merged_output
+        summary_df.to_csv(
+            os.path.join(self.out_dir, f"{self.prefix}_summary_output.tsv"),
+            sep="\t",
+            index=False,
+        )
+
+    def update_fasta_headers(self):
+        """
+        updates FASTA header with description
+        """
+        self.input_fasta
+
+        # define outputs
+        fasta_output_aas = os.path.join(self.out_dir, f"{self.prefix}.faa")
+
+        # amino acids
+
+        with open(fasta_output_aas, "w") as aa_fa:
+            i = 0
+            for aa_record in SeqIO.parse(
+                self.input_fasta, "fasta"
+            ):
+                aa_record.description = str(aa_record.description) + " " +  str(self.tophits_df["annot"].iloc[i])
+                SeqIO.write(aa_record, aa_fa, "fasta")
+                i += 1
+
+
 

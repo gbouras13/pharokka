@@ -124,15 +124,12 @@ def main():
 
 
 
-
-
-
     # running mmseqs2 on the 3 databases
     if mmseqs_flag is True:
         logger.info("Starting MMseqs2.")
-        #run_mmseqs_proteins(input_fasta, db_dir, out_dir, args.threads, logdir, args.evalue, db_name="PHROG")
-        #run_mmseqs_proteins(input_fasta, db_dir, out_dir, args.threads, logdir, args.evalue, db_name="CARD")
-        #run_mmseqs_proteins(input_fasta, db_dir, out_dir, args.threads, logdir, args.evalue, db_name="VFDB")
+        run_mmseqs_proteins(input_fasta, db_dir, out_dir, args.threads, logdir, args.evalue, db_name="PHROG")
+        run_mmseqs_proteins(input_fasta, db_dir, out_dir, args.threads, logdir, args.evalue, db_name="CARD")
+        run_mmseqs_proteins(input_fasta, db_dir, out_dir, args.threads, logdir, args.evalue, db_name="VFDB")
  
 
     if hmm_flag is True:
@@ -165,61 +162,10 @@ def main():
     # no need to specify params as they are in the class :)
     pharok.process_dataframes()
 
-    # gets df of length and gc for each contig
-    pharok.get_contig_name_lengths()
-
-    # parse the aragorn output
-    # get flag whether there is a tmrna from aragor
-    pharok.parse_aragorn()
-
-    # create gff and save locustag to class for table
-    pharok.create_gff()
-
-    # create table
-    pharok.create_tbl()
-
-    # output single gffs in meta mode
-    if args.split == True and args.meta == True:
-        # create gffs for each contig
-        pharok.create_gff_singles()
-        # converts each gff to gbk
-        pharok.convert_singles_gff_to_gbk()
-        # splits the input fasta into single fastas
-        pharok.split_fasta_singles()
-
-    # write vfdb and card tophits
-    # needs to be before .create_txt or else won't count properly
-    # only if mmseqs2 has been run
-    if pharok.mmseqs_flag is True:
-        pharok.write_tophits_vfdb_card()
-
-    # write the summary tsv outputs
-    pharok.create_txt()
-
-    # convert to genbank
-    logger.info("Converting gff to genbank.")
-    # not part of the class so from processes.py
-    convert_gff_to_gbk(input_fasta, out_dir, out_dir, prefix, args.coding_table)
-
-    # update fasta headers and final output tsv
+    # updates fasta headers
     pharok.update_fasta_headers()
-    pharok.update_final_output()
 
-
-    # extract terL
-    pharok.extract_terl()
-
-    # run mash
-    logger.info("Finding the closest match for each contig in INPHARED using mash.")
-    # in process.py
-    run_mash_sketch(input_fasta, out_dir, logdir)
-    run_mash_dist(out_dir, db_dir, logdir)
-    # part of the class
-    pharok.inphared_top_hits()
-
-    # delete tmp files
-    remove_post_processing_files(out_dir, gene_predictor, args.meta)
-
+    
     # Determine elapsed time
     elapsed_time = time.time() - start_time
     elapsed_time = round(elapsed_time, 2)
