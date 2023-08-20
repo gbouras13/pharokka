@@ -14,8 +14,7 @@ from Bio.SeqRecord import SeqRecord
 from loguru import logger
 
 from lib.external_tools import ExternalTool
-from lib.util import remove_directory, count_contigs
-
+from lib.util import count_contigs, remove_directory
 
 ##### phanotate meta mode ########
 
@@ -641,9 +640,7 @@ def run_aragorn(filepath_in, out_dir, prefix, logdir):
         logger.error("Error with Aragorn\n")
 
 
-def reorient_terminase(
-    filepath_in, out_dir, prefix, terminase_strand, terminase_start
-):
+def reorient_terminase(filepath_in, out_dir, prefix, terminase_strand, terminase_start):
     """
     re-orients phage to begin with large terminase subunit
     :param filepath_in input genome fasta
@@ -714,7 +711,6 @@ def run_mash_sketch(filepath_in, out_dir, logdir):
     )
 
     try:
-
         ExternalTool.run_tool(mash_sketch)
 
     except:
@@ -746,11 +742,11 @@ def run_mash_dist(out_dir, db_dir, logdir):
     # need to write to stdout
 
     try:
-
         ExternalTool.run_tool(mash_dist, to_stdout=True)
 
     except:
         logger.error("Error with mash dist\n")
+
 
 def run_dnaapler(filepath_in, out_dir, threads, logdir):
     """
@@ -762,7 +758,9 @@ def run_dnaapler(filepath_in, out_dir, threads, logdir):
     :return: dnaapler_success - whether dnaapler worked
     """
 
-    logger.info("Running Dnaapler to rerorient all contigs to begin with the terminase large subunit.")
+    logger.info(
+        "Running Dnaapler to rerorient all contigs to begin with the terminase large subunit."
+    )
 
     dnaapler_output_dir = os.path.join(out_dir, "dnaapler")
 
@@ -792,8 +790,10 @@ def run_dnaapler(filepath_in, out_dir, threads, logdir):
         ExternalTool.run_tool(dnaapler)
     except:
         logger.warning("Dnaapler failed to find the large terminase subunit.")
-        logger.warning("For reorientation, please run pharokka again without --dnaapler and use --terminase instead.")
+        logger.warning(
+            "For reorientation, please run pharokka again without --dnaapler and use --terminase instead."
+        )
         logger.warning("Pharokka will now continue without reorientation.")
         dnaapler_success = False
-    
+
     return dnaapler_success

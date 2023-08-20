@@ -1,0 +1,997 @@
+>Feature MW460250_1
+159	22	CDS
+			product	UvsX-like recombinase
+			locus_tag	KFKTCCUD_CDS_0001
+			transl_table	11
+392	183	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0002
+			transl_table	11
+737	405	CDS
+			product	hemolysin
+			locus_tag	KFKTCCUD_CDS_0003
+			transl_table	11
+1076	750	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0004
+			transl_table	11
+1375	1109	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0005
+			transl_table	11
+1562	1470	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0006
+			transl_table	11
+1636	1902	CDS
+			product	membrane protein
+			locus_tag	KFKTCCUD_CDS_0007
+			transl_table	11
+1880	2158	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0008
+			transl_table	11
+2239	2565	CDS
+			product	terminase small subunit
+			locus_tag	KFKTCCUD_CDS_0009
+			transl_table	11
+2580	2777	CDS
+			product	terminase large subunit
+			locus_tag	KFKTCCUD_CDS_0010
+			transl_table	11
+3071	4042	CDS
+			product	HNH endonuclease
+			locus_tag	KFKTCCUD_CDS_0011
+			transl_table	11
+4183	5730	CDS
+			product	terminase large subunit
+			locus_tag	KFKTCCUD_CDS_0012
+			transl_table	11
+5723	6544	CDS
+			product	virion structural protein
+			locus_tag	KFKTCCUD_CDS_0013
+			transl_table	11
+6615	6704	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0014
+			transl_table	11
+6701	7180	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0015
+			transl_table	11
+7273	8415	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0016
+			transl_table	11
+8558	8842	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0017
+			transl_table	11
+8920	9231	CDS
+			product	portal protein
+			locus_tag	KFKTCCUD_CDS_0018
+			transl_table	11
+9235	10926	CDS
+			product	portal protein
+			locus_tag	KFKTCCUD_CDS_0019
+			transl_table	11
+11153	11893	CDS
+			product	head maturation protease
+			locus_tag	KFKTCCUD_CDS_0020
+			transl_table	11
+11912	12868	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0021
+			transl_table	11
+12984	14375	CDS
+			product	major head protein
+			locus_tag	KFKTCCUD_CDS_0022
+			transl_table	11
+14467	14763	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0023
+			transl_table	11
+14776	15684	CDS
+			product	tail fiber protein
+			locus_tag	KFKTCCUD_CDS_0024
+			transl_table	11
+15698	16576	CDS
+			product	virion structural protein
+			locus_tag	KFKTCCUD_CDS_0025
+			transl_table	11
+16576	17196	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0026
+			transl_table	11
+17215	18051	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0027
+			transl_table	11
+18053	18268	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0028
+			transl_table	11
+18295	20058	CDS
+			product	tail sheath
+			locus_tag	KFKTCCUD_CDS_0029
+			transl_table	11
+20131	20559	CDS
+			product	virion structural protein
+			locus_tag	KFKTCCUD_CDS_0030
+			transl_table	11
+20656	20796	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0031
+			transl_table	11
+20839	21297	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0032
+			transl_table	11
+21310	21504	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0033
+			transl_table	11
+21586	21897	CDS
+			product	virion structural protein
+			locus_tag	KFKTCCUD_CDS_0034
+			transl_table	11
+22029	22487	CDS
+			product	tail assembly chaperone
+			locus_tag	KFKTCCUD_CDS_0035
+			transl_table	11
+22531	23067	CDS
+			product	RNA polymerase beta subunit
+			locus_tag	KFKTCCUD_CDS_0036
+			transl_table	11
+23120	27178	CDS
+			product	tail associated lysin
+			locus_tag	KFKTCCUD_CDS_0037
+			transl_table	11
+27257	29683	CDS
+			product	tail protein with lysin activity
+			locus_tag	KFKTCCUD_CDS_0038
+			transl_table	11
+29697	30584	CDS
+			product	tail protein with lysin activity
+			locus_tag	KFKTCCUD_CDS_0039
+			transl_table	11
+30584	33130	CDS
+			product	glycerophosphoryl diester phosphodiesterase
+			locus_tag	KFKTCCUD_CDS_0040
+			transl_table	11
+33237	34028	CDS
+			product	virion structural protein
+			locus_tag	KFKTCCUD_CDS_0041
+			transl_table	11
+34028	34552	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0042
+			transl_table	11
+34552	35256	CDS
+			product	baseplate protein
+			locus_tag	KFKTCCUD_CDS_0043
+			transl_table	11
+35271	36317	CDS
+			product	baseplate wedge subunit
+			locus_tag	KFKTCCUD_CDS_0044
+			transl_table	11
+36338	39397	CDS
+			product	virion structural protein
+			locus_tag	KFKTCCUD_CDS_0045
+			transl_table	11
+39508	40029	CDS
+			product	virion structural protein
+			locus_tag	KFKTCCUD_CDS_0046
+			transl_table	11
+40050	43508	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0047
+			transl_table	11
+43557	43715	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0048
+			transl_table	11
+43716	45638	CDS
+			product	virion structural protein
+			locus_tag	KFKTCCUD_CDS_0049
+			transl_table	11
+45586	46035	CDS
+			product	tail fiber protein
+			locus_tag	KFKTCCUD_CDS_0050
+			transl_table	11
+46042	47418	CDS
+			product	tail fiber protein
+			locus_tag	KFKTCCUD_CDS_0051
+			transl_table	11
+47510	49258	CDS
+			product	DNA helicase
+			locus_tag	KFKTCCUD_CDS_0052
+			transl_table	11
+49270	50883	CDS
+			product	HTH DNA binding protein
+			locus_tag	KFKTCCUD_CDS_0053
+			transl_table	11
+50876	52318	CDS
+			product	DnaB-like replicative helicase
+			locus_tag	KFKTCCUD_CDS_0054
+			transl_table	11
+52397	53434	CDS
+			product	SbcD-like subunit of palindrome specific endonuclease
+			locus_tag	KFKTCCUD_CDS_0055
+			transl_table	11
+53434	53811	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0056
+			transl_table	11
+53811	55730	CDS
+			product	exonuclease
+			locus_tag	KFKTCCUD_CDS_0057
+			transl_table	11
+55730	56326	CDS
+			product	anti-sigma factor
+			locus_tag	KFKTCCUD_CDS_0058
+			transl_table	11
+56341	57408	CDS
+			product	DNA primase/helicase
+			locus_tag	KFKTCCUD_CDS_0059
+			transl_table	11
+57475	57813	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0060
+			transl_table	11
+57813	58265	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0061
+			transl_table	11
+58252	58860	CDS
+			product	RusA-like Holliday junction resolvase
+			locus_tag	KFKTCCUD_CDS_0062
+			transl_table	11
+58877	59269	CDS
+			product	flavodoxin
+			locus_tag	KFKTCCUD_CDS_0063
+			transl_table	11
+59284	61398	CDS
+			product	NrdA-like aerobic NDP reductase large subunit
+			locus_tag	KFKTCCUD_CDS_0064
+			transl_table	11
+61412	62461	CDS
+			product	ribonucleoside diphosphate reductase small subunit
+			locus_tag	KFKTCCUD_CDS_0065
+			transl_table	11
+62479	62808	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0066
+			transl_table	11
+62792	63112	CDS
+			product	thioredoxin domain
+			locus_tag	KFKTCCUD_CDS_0067
+			transl_table	11
+63248	63141	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0068
+			transl_table	11
+63319	63915	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0069
+			transl_table	11
+63925	64230	CDS
+			product	DNA binding protein
+			locus_tag	KFKTCCUD_CDS_0070
+			transl_table	11
+64306	65178	CDS
+			product	DNA polymerase
+			locus_tag	KFKTCCUD_CDS_0071
+			transl_table	11
+65344	65856	CDS
+			product	endonuclease
+			locus_tag	KFKTCCUD_CDS_0072
+			transl_table	11
+65992	67335	CDS
+			product	DNA polymerase
+			locus_tag	KFKTCCUD_CDS_0073
+			transl_table	11
+67401	67496	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0074
+			transl_table	11
+67603	68310	CDS
+			product	HNH endonuclease
+			locus_tag	KFKTCCUD_CDS_0075
+			transl_table	11
+68475	68371	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0076
+			transl_table	11
+68544	69404	CDS
+			product	DNA polymerase
+			locus_tag	KFKTCCUD_CDS_0077
+			transl_table	11
+69473	69715	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0078
+			transl_table	11
+69732	70214	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0079
+			transl_table	11
+70301	71572	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0080
+			transl_table	11
+71632	71856	CDS
+			product	RecA or Sak4, length ?
+			locus_tag	KFKTCCUD_CDS_0081
+			transl_table	11
+72236	72069	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0082
+			transl_table	11
+72201	73169	CDS
+			product	endonuclease
+			locus_tag	KFKTCCUD_CDS_0083
+			transl_table	11
+73317	74264	CDS
+			product	UvsX-like recombinase
+			locus_tag	KFKTCCUD_CDS_0084
+			transl_table	11
+74268	74621	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0085
+			transl_table	11
+74608	75270	CDS
+			product	RNA polymerase sigma factor
+			locus_tag	KFKTCCUD_CDS_0086
+			transl_table	11
+75276	75374	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0087
+			transl_table	11
+75398	76021	CDS
+			product	Ig domain containing protein
+			locus_tag	KFKTCCUD_CDS_0088
+			transl_table	11
+76035	76556	CDS
+			product	major tail protein
+			locus_tag	KFKTCCUD_CDS_0089
+			transl_table	11
+76571	76798	CDS
+			product	major tail protein
+			locus_tag	KFKTCCUD_CDS_0090
+			transl_table	11
+76894	77154	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0091
+			transl_table	11
+77158	77913	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0092
+			transl_table	11
+77906	79156	CDS
+			product	exonuclease
+			locus_tag	KFKTCCUD_CDS_0093
+			transl_table	11
+79170	79538	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0094
+			transl_table	11
+79525	79836	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0095
+			transl_table	11
+79900	80436	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0096
+			transl_table	11
+80429	81196	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0097
+			transl_table	11
+81174	81620	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0098
+			transl_table	11
+81620	82483	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0099
+			transl_table	11
+82855	83586	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0100
+			transl_table	11
+83604	84062	CDS
+			product	virion structural protein
+			locus_tag	KFKTCCUD_CDS_0101
+			transl_table	11
+84127	84570	CDS
+			product	DNA binding protein
+			locus_tag	KFKTCCUD_CDS_0102
+			transl_table	11
+84587	85291	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0103
+			transl_table	11
+85353	85751	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0104
+			transl_table	11
+85898	86140	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0105
+			transl_table	11
+86145	86309	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0106
+			transl_table	11
+86296	86475	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0107
+			transl_table	11
+86511	86687	CDS
+			product	DNA sliding clamp inhibitor; arrest of S.aureus DNA synthesis
+			locus_tag	KFKTCCUD_CDS_0108
+			transl_table	11
+86677	87210	CDS
+			product	ribulose-1;5-bisphosphate carboxylase/oxygenase small subunit
+			locus_tag	KFKTCCUD_CDS_0109
+			transl_table	11
+87225	87473	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0110
+			transl_table	11
+87485	87661	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0111
+			transl_table	11
+87654	87950	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0112
+			transl_table	11
+87989	88180	CDS
+			product	membrane protein
+			locus_tag	KFKTCCUD_CDS_0113
+			transl_table	11
+88193	88561	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0114
+			transl_table	11
+88574	88921	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0115
+			transl_table	11
+88921	89199	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0116
+			transl_table	11
+89269	89574	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0117
+			transl_table	11
+89589	89939	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0118
+			transl_table	11
+89939	90541	CDS
+			product	HNH endonuclease
+			locus_tag	KFKTCCUD_CDS_0119
+			transl_table	11
+90555	90734	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0120
+			transl_table	11
+90863	90961	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0121
+			transl_table	11
+90961	91362	CDS
+			product	membrane protein
+			locus_tag	KFKTCCUD_CDS_0122
+			transl_table	11
+91364	91624	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0123
+			transl_table	11
+91676	91963	CDS
+			product	membrane protein
+			locus_tag	KFKTCCUD_CDS_0124
+			transl_table	11
+91974	92090	CDS
+			product	transcription factor
+			locus_tag	KFKTCCUD_CDS_0125
+			transl_table	11
+92080	92343	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0126
+			transl_table	11
+92420	92599	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0127
+			transl_table	11
+92614	92877	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0128
+			transl_table	11
+92880	93197	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0129
+			transl_table	11
+93198	93878	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0130
+			transl_table	11
+93967	94125	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0131
+			transl_table	11
+94160	94360	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0132
+			transl_table	11
+94361	94651	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0133
+			transl_table	11
+94743	95051	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0134
+			transl_table	11
+95048	95956	CDS
+			product	ribose-phosphate pyrophosphokinase
+			locus_tag	KFKTCCUD_CDS_0135
+			transl_table	11
+95974	97443	CDS
+			product	nicotinamide phosphoribosyl transferase
+			locus_tag	KFKTCCUD_CDS_0136
+			transl_table	11
+97522	97767	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0137
+			transl_table	11
+97787	98179	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0138
+			transl_table	11
+98181	98402	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0139
+			transl_table	11
+98468	98779	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0140
+			transl_table	11
+98782	99291	CDS
+			product	endolysin
+			locus_tag	KFKTCCUD_CDS_0141
+			transl_table	11
+99293	99622	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0142
+			transl_table	11
+99628	99822	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0143
+			transl_table	11
+99846	100160	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0144
+			transl_table	11
+100175	100342	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0145
+			transl_table	11
+100379	100480	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0146
+			transl_table	11
+100579	100749	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0147
+			transl_table	11
+100802	100966	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0148
+			transl_table	11
+101047	100952	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0149
+			transl_table	11
+101141	101248	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0150
+			transl_table	11
+101353	101652	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0151
+			transl_table	11
+101668	101853	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0152
+			transl_table	11
+101960	102250	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0153
+			transl_table	11
+102250	102537	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0154
+			transl_table	11
+102537	102830	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0155
+			transl_table	11
+102834	103091	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0156
+			transl_table	11
+103169	103408	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0157
+			transl_table	11
+103419	103766	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0158
+			transl_table	11
+104313	103975	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0159
+			transl_table	11
+104292	104450	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0160
+			transl_table	11
+104577	104464	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0161
+			transl_table	11
+104624	104932	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0162
+			transl_table	11
+105085	104951	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0163
+			transl_table	11
+105138	105422	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0164
+			transl_table	11
+105497	105688	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0165
+			transl_table	11
+105675	105770	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0166
+			transl_table	11
+105797	105937	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0167
+			transl_table	11
+106493	106005	CDS
+			product	HNH endonuclease
+			locus_tag	KFKTCCUD_CDS_0168
+			transl_table	11
+106758	106615	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0169
+			transl_table	11
+106880	107020	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0170
+			transl_table	11
+107179	107424	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0171
+			transl_table	11
+107504	107974	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0172
+			transl_table	11
+108004	108129	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0173
+			transl_table	11
+108214	108393	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0174
+			transl_table	11
+108477	108578	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0175
+			transl_table	11
+108743	108648	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0176
+			transl_table	11
+108963	108727	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0177
+			transl_table	11
+109450	108965	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0178
+			transl_table	11
+109870	109463	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0179
+			transl_table	11
+110301	109870	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0180
+			transl_table	11
+110495	110304	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0181
+			transl_table	11
+110977	110492	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0182
+			transl_table	11
+111401	110970	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0183
+			transl_table	11
+111957	111415	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0184
+			transl_table	11
+112457	111969	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0185
+			transl_table	11
+112868	112470	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0186
+			transl_table	11
+113572	112865	CDS
+			product	NinI-like serine-threonine phosphatase
+			locus_tag	KFKTCCUD_CDS_0187
+			transl_table	11
+114226	113672	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0188
+			transl_table	11
+114559	114242	CDS
+			product	major tail protein
+			locus_tag	KFKTCCUD_CDS_0189
+			transl_table	11
+114628	114741	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0190
+			transl_table	11
+114750	114926	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0191
+			transl_table	11
+115051	114923	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0192
+			transl_table	11
+115329	115129	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0193
+			transl_table	11
+115430	115329	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0194
+			transl_table	11
+116093	115545	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0195
+			transl_table	11
+116315	116097	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0196
+			transl_table	11
+116510	116316	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0197
+			transl_table	11
+117237	116500	CDS
+			product	nucleotidyltransferase
+			locus_tag	KFKTCCUD_CDS_0198
+			transl_table	11
+117404	117300	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0199
+			transl_table	11
+117655	117416	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0200
+			transl_table	11
+118046	117657	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0201
+			transl_table	11
+118318	118145	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0202
+			transl_table	11
+118841	118359	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0203
+			transl_table	11
+119433	118891	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0204
+			transl_table	11
+119966	119433	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0205
+			transl_table	11
+120133	119969	CDS
+			product	RinB-like transcriptional activator
+			locus_tag	KFKTCCUD_CDS_0206
+			transl_table	11
+120411	120136	CDS
+			product	membrane protein
+			locus_tag	KFKTCCUD_CDS_0207
+			transl_table	11
+121256	120411	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0208
+			transl_table	11
+122386	121268	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0209
+			transl_table	11
+122402	122509	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0210
+			transl_table	11
+122866	122540	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0211
+			transl_table	11
+123275	122859	CDS
+			product	nucleotide kinase
+			locus_tag	KFKTCCUD_CDS_0212
+			transl_table	11
+123711	123409	CDS
+			product	MazG-like pyrophosphatase
+			locus_tag	KFKTCCUD_CDS_0213
+			transl_table	11
+123899	123711	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0214
+			transl_table	11
+124104	123943	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0215
+			transl_table	11
+126152	124104	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0216
+			transl_table	11
+126493	126230	CDS
+			product	virion structural protein
+			locus_tag	KFKTCCUD_CDS_0217
+			transl_table	11
+126683	126510	CDS
+			product	lysM motif protein
+			locus_tag	KFKTCCUD_CDS_0218
+			transl_table	11
+127268	126690	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0219
+			transl_table	11
+127887	127261	CDS
+			product	nucleoside 2-deoxyribosyltransferase
+			locus_tag	KFKTCCUD_CDS_0220
+			transl_table	11
+128776	127880	CDS
+			product	RNA ligase
+			locus_tag	KFKTCCUD_CDS_0221
+			transl_table	11
+129000	128776	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0222
+			transl_table	11
+129809	129069	CDS
+			product	PhoH-like phosphate starvation-inducible
+			locus_tag	KFKTCCUD_CDS_0223
+			transl_table	11
+130475	129861	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0224
+			transl_table	11
+130916	130491	CDS
+			product	Rnase H
+			locus_tag	KFKTCCUD_CDS_0225
+			transl_table	11
+131097	130906	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0226
+			transl_table	11
+131761	131120	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0227
+			transl_table	11
+131981	131751	CDS
+			product	transcriptional repressor
+			locus_tag	KFKTCCUD_CDS_0228
+			transl_table	11
+132211	131984	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0229
+			transl_table	11
+133013	132321	CDS
+			product	transglycosylase
+			locus_tag	KFKTCCUD_CDS_0230
+			transl_table	11
+133835	133200	CDS
+			product	HNH endonuclease
+			locus_tag	KFKTCCUD_CDS_0231
+			transl_table	11
+134693	133902	CDS
+			product	lipoprotein
+			locus_tag	KFKTCCUD_CDS_0232
+			transl_table	11
+135001	134693	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0233
+			transl_table	11
+135743	135114	CDS
+			product	endolysin
+			locus_tag	KFKTCCUD_CDS_0234
+			transl_table	11
+136068	135979	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0235
+			transl_table	11
+136514	136014	CDS
+			product	HNH endonuclease
+			locus_tag	KFKTCCUD_CDS_0236
+			transl_table	11
+136607	136708	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0237
+			transl_table	11
+137477	136674	CDS
+			product	endolysin
+			locus_tag	KFKTCCUD_CDS_0238
+			transl_table	11
+137980	137477	CDS
+			product	holin
+			locus_tag	KFKTCCUD_CDS_0239
+			transl_table	11
+138250	138065	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0240
+			transl_table	11
+138313	138441	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0241
+			transl_table	11
+138652	138756	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0242
+			transl_table	11
+139048	138926	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0243
+			transl_table	11
+139439	139546	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0244
+			transl_table	11
+139547	139717	CDS
+			product	hypothetical protein
+			locus_tag	KFKTCCUD_CDS_0245
+			transl_table	11
+140015	139797	CDS
+			product	ribosome associated inhibitor A; zinc finger domain
+			locus_tag	KFKTCCUD_CDS_0246
+			transl_table	11
+115265	115194	tRNA
+			product	tRNA-Met(CAT)
+			locus_tag	KFKTCCUD_tRNA_0001
+			transl_table	11
+138562	138490	tRNA
+			product	tRNA-Phe(GAA)
+			locus_tag	KFKTCCUD_tRNA_0002
+			transl_table	11
+138642	138569	tRNA
+			product	tRNA-Asp(GTC)
+			locus_tag	KFKTCCUD_tRNA_0003
+			transl_table	11

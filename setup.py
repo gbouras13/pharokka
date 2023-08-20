@@ -37,7 +37,12 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/gbouras13/pharokka",
-    scripts=["bin/pharokka.py", "bin/pharokka_plotter.py", "bin/install_databases.py", "bin/pharokka_proteins.py"],
+    scripts=[
+        "bin/pharokka.py",
+        "bin/pharokka_plotter.py",
+        "bin/install_databases.py",
+        "bin/pharokka_proteins.py",
+    ],
     packages=["pharokka_runner"],
     package_dir=dict(pharokka_runner="lib"),  # dict with 'package'='relative dir'
     package_data=dict(
@@ -74,6 +79,6 @@ setup(
         "pytest>=6.2.5",
         "pytest-cov>=3.0.0",
         "alive-progress>=3.0.1",
-        "requests>=2.25.1"
+        "requests>=2.25.1",
     ],
 )

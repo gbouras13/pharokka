@@ -1,51 +1,76 @@
-# """
-# Unit tests for plassembler.
+"""
+Unit tests for plassembler.
 
-# Usage: pytest
+Usage: pytest
 
-# """
-
-# import os
-# import shutil
-
-# # import
-# import unittest
-# from pathlib import Path
-# from unittest.mock import patch
-
-# import pytest
-
-# # import functions
-# from src.plassembler.utils.assembly import run_flye, run_raven
-# from src.plassembler.utils.bam import bam_to_fastq_short, sam_to_bam, split_bams
-# from src.plassembler.utils.cleanup import remove_directory, remove_file
-# from src.plassembler.utils.external_tools import ExternalTool
-# from src.plassembler.utils.mapping import minimap_long_reads, minimap_short_reads
-# from src.plassembler.utils.qc import chopper, fastp
-# from src.plassembler.utils.run_mash import get_contig_count, mash_sketch, run_mash
-# from src.plassembler.utils.run_unicycler import run_unicycler
-
-# test_data = Path("tests/test_data")
-# val_data = Path(f"{test_data}/validation")
-# fake_out_dir = Path(f"{test_data}/fake_out_dir")
-# bad_dir = Path(f"{test_data}/bad_dir")
-# logdir = Path(f"{test_data}/logs")
-# map_dir = Path(f"{test_data}/map_dir")
-# mash_dir = Path(f"{test_data}/mash_dir")
-# plassembler_db_dir = Path(f"{test_data}/Plassembler_Test_DB")
+"""
 
 
-# # make fake tempdir for testing
-# @pytest.fixture(scope="session")
-# def tmp_dir(tmpdir_factory):
-#     return tmpdir_factory.mktemp("tmp")
+
+# import
+import unittest
+from pathlib import Path
+from unittest.mock import patch
+import pytest
+from loguru import logger
+
+# import functions
+from lib.util import remove_directory
+from lib.processes import run_phanotate, run_pyrodigal
+
+# test data
+test_data = Path("tests/test_data")
+functions_data = Path(f"{test_data}/functions_files")
+overall_data = Path(f"{test_data}/overall")
+meta_data = Path(f"{overall_data}/Meta_example")
+standard_data = Path(f"{overall_data}/Standard_examples")
+standard_data_output = Path(f"{standard_data}/SAOMS1_Output")
+logdir = Path(f"{test_data}/logs")
 
 
-# class test_mash(unittest.TestCase):
-#     """Tests for run_mash.py"""
 
-#     # sam to bam
-#     def test_mash_sketch(self):
+logger.add(lambda _: sys.exit(1), level="ERROR")
+
+
+# make fake tempdir for testing
+@pytest.fixture(scope="session")
+def tmp_dir(tmpdir_factory):
+    return tmpdir_factory.mktemp("tmp")
+
+
+
+class testGenePred(unittest.TestCase):
+    """Tests for gene predictors"""
+
+    def test_run_phanotate(self):
+        fasta: Path = f"{standard_data}/SAOMS1.fasta"
+        run_phanotate(fasta, standard_data_output, logdir)
+
+    def test_run_pyrodigal(self):
+        fasta: Path = f"{standard_data}/SAOMS1.fasta"
+        coding_table = 11
+        meta = False
+        run_pyrodigal(fasta, standard_data_output, meta, coding_table) # meta = False
+
+    def test_run_pyrodigal_meta(self):
+        fasta: Path = f"{standard_data}/SAOMS1.fasta"
+        coding_table = 11
+        meta = True
+        run_pyrodigal(fasta, standard_data_output, meta, coding_table) # meta = False
+
+    def test_run_pyrodigal_c4(self):
+        fasta: Path = f"{standard_data}/SAOMS1.fasta"
+        coding_table = 4
+        meta = False
+        run_pyrodigal(fasta, standard_data_output, meta, coding_table) # meta = False
+
+
+
+
+
+
+
+
 #         expected_return = True
 #         fasta: Path = Path(f"{mash_dir}/unicycler_plasmids.fasta")
 #         mash_sketch(mash_dir, fasta, logdir)
@@ -286,3 +311,6 @@
 #             "tool", '-i "escaped in"', '-o "escaped out"', 'params with "escaped arg"'
 #         )
 #         assert expected_escaped_command == actual_escaped_command
+
+
+remove_directory(logdir)

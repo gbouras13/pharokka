@@ -55,7 +55,7 @@ class Pharok:
         crispr_count: int = 0,
         coding_table: int = 11,
         mmseqs_flag: bool = True,
-        hmm_flag: bool = True
+        hmm_flag: bool = True,
     ) -> None:
         """
         Parameters
@@ -122,7 +122,6 @@ class Pharok:
         self.mmseqs_flag = mmseqs_flag
         self.hmm_flag = hmm_flag
 
-
     def process_results(self):
         """
         Processes and combines PHROGS, CARD and VFDB mmseqs output
@@ -133,7 +132,6 @@ class Pharok:
         :return:
         """
 
-
         # left join mmseqs top hits to cds df
         # read in the cds cdf
         cds_file = os.path.join(self.out_dir, "cleaned_" + self.gene_predictor + ".tsv")
@@ -142,7 +140,7 @@ class Pharok:
         # create the tophits_df and write it to file
         if self.mmseqs_flag is True:
             tophits_df = create_mmseqs_tophits(self.out_dir)
-            
+
         else:
             # create tophits df
             # Create a dictionary with the column names and their corresponding values
@@ -172,13 +170,12 @@ class Pharok:
         if len(tophits_df["mmseqs_phrog"]) == 0:
             merged_df["mmseqs_top_hit"] = "No_PHROG"
         else:
-            if self.mmseqs_flag is True: # trim the rubbish if mmseqs2 is on
+            if self.mmseqs_flag is True:  # trim the rubbish if mmseqs2 is on
                 merged_df[["mmseqs_phrog", "mmseqs_top_hit"]] = merged_df[
                     "mmseqs_phrog"
                 ].str.split(" ## ", expand=True)
-            else: # no mmseqs2 hits
+            else:  # no mmseqs2 hits
                 merged_df["mmseqs_top_hit"] = "No_MMseqs_PHROG_hit"
-
 
         ####################
         # combine phrogs
@@ -213,7 +210,7 @@ class Pharok:
                     if row["pyhmmer_phrog"] != "No_PHROG":
                         merged_df.at[index, "phrog"] = row["pyhmmer_phrog"]
 
-        else: # only need to worry about pyhmmer
+        else:  # only need to worry about pyhmmer
             merged_df["phrog"] = merged_df["pyhmmer_phrog"]
 
         # read in phrog annotaion file
@@ -239,7 +236,6 @@ class Pharok:
         if self.gene_predictor == "prodigal":
             merged_df["Method"] = "PRODIGAL"
         merged_df["Region"] = "CDS"
-
 
         # # replace with No_PHROG if nothing found
         merged_df.loc[
@@ -858,27 +854,26 @@ class Pharok:
                     + "\n"
                 )
 
-
         # combine dfs depending on whether the elements were detected
 
-        if trna_empty == True and self.tmrna_flag == False and crispr_count == 0:  # all
+        if trna_empty is True and self.tmrna_flag is False and crispr_count == 0:  # all
             df_list = [gff_df]
-        elif trna_empty == False and self.tmrna_flag == False and crispr_count == 0:
+        elif trna_empty is False and self.tmrna_flag is False and crispr_count == 0:
             df_list = [gff_df, trna_df]
-        elif trna_empty == True and self.tmrna_flag == True and crispr_count == 0:
+        elif trna_empty is True and self.tmrna_flag is True and crispr_count == 0:
             df_list = [gff_df, tmrna_df]
-        elif (
-            trna_empty == True and self.tmrna_flag == False and crispr_count > 0
-        ):  # all
+        elif trna_empty is True and self.tmrna_flag is False and crispr_count > 0: 
             df_list = [gff_df, minced_df]
-        elif trna_empty == False and self.tmrna_flag == True and crispr_count == 0:
+        elif trna_empty is False and self.tmrna_flag is True and crispr_count == 0:
             df_list = [gff_df, trna_df, tmrna_df]
-        elif trna_empty == False and self.tmrna_flag == False and crispr_count > 0:
+        elif trna_empty is False and self.tmrna_flag is False and crispr_count > 0:
             df_list = [gff_df, trna_df, minced_df]
-        elif trna_empty == True and self.tmrna_flag == True and crispr_count > 0:
+        elif trna_empty is True and self.tmrna_flag is True and crispr_count > 0:
             df_list = [gff_df, tmrna_df, minced_df]
-        else:  # all detected
+        # if trna_empty is False and self.tmrna_flag is True and crispr_count > 0:  # all detected
+        else: # all detected
             df_list = [gff_df, trna_df, tmrna_df, minced_df]
+
 
         total_gff = pd.concat(df_list, ignore_index=True)
 
@@ -906,7 +901,7 @@ class Pharok:
                 sequence = record.seq
                 chunk_size = 60
                 for i in range(0, len(sequence), chunk_size):
-                    f.write(str(sequence[i:i+chunk_size]) + "\n")
+                    f.write(str(sequence[i : i + chunk_size]) + "\n")
 
         self.locus_df = locus_df
         self.gff_df = gff_df
@@ -933,9 +928,9 @@ class Pharok:
         # get the cds
 
         if self.gene_predictor == "phanotate":
-            cds_df = self.gff_df[self.gff_df["Method"] == "PHANOTATE"]
+            cds_df = self.total_gff[self.total_gff["Method"] == "PHANOTATE"]
         else:
-            cds_df = self.gff_df[self.gff_df["Method"] == "PRODIGAL"]
+            cds_df = self.total_gff[self.total_gff["Method"] == "PRODIGAL"]
 
         cds_df[["attributes", "locus_tag"]] = cds_df["attributes"].str.split(
             ";locus_tag=", expand=True
@@ -947,7 +942,8 @@ class Pharok:
         ### trnas
         # check if no trnas
         if self.trna_empty == False:
-            trna_df = self.gff_df[self.gff_df["Method"] == "tRNAscan-SE"]
+            trna_df = self.total_gff[self.total_gff["Method"] == "tRNAscan-SE"]
+            print(trna_df)
             # keep only trnas and pseudogenes
             trna_df.start = trna_df.start.astype(int)
             trna_df.stop = trna_df.stop.astype(int)
@@ -966,7 +962,7 @@ class Pharok:
 
         #### CRISPRs
         if self.crispr_count > 0:
-            crispr_df = self.gff_df[self.gff_df["Region"] == "repeat_region"]
+            crispr_df = self.total_gff[self.total_gff["Region"] == "repeat_region"]
             crispr_df.start = crispr_df.start.astype(int)
             crispr_df.stop = crispr_df.stop.astype(int)
             crispr_df[["attributes", "locus_tag"]] = crispr_df["attributes"].str.split(
@@ -978,18 +974,13 @@ class Pharok:
 
         ### TMRNAs
         if self.tmrna_flag == True:
-            tmrna_df = self.gff_df[self.gff_df["Region"] == "tmRNA"]
+            tmrna_df = self.total_gff[self.total_gff["Region"] == "tmRNA"]
             tmrna_df.start = tmrna_df.start.astype(int)
             tmrna_df.stop = tmrna_df.stop.astype(int)
             tmrna_df[["attributes", "locus_tag"]] = tmrna_df["attributes"].str.split(
                 ";locus_tag=", expand=True
             )
 
-        # set inference
-        if self.gene_predictor == "phanotate":
-            inf = "PHANOTATE"
-        else:
-            inf = "PRODIGAL"
         with open(os.path.join(self.out_dir, self.prefix + ".tbl"), "w") as f:
             for index, row in self.length_df.iterrows():
                 contig = row["contig"]
@@ -1750,7 +1741,9 @@ class Pharok:
         cols.insert(0, cols.pop(cols.index("gene")))
         self.merged_df = self.merged_df.loc[:, cols]
         # drop cols
-        self.merged_df = self.merged_df.drop(columns=["phase", "attributes", "count", "locus_tag"])
+        self.merged_df = self.merged_df.drop(
+            columns=["phase", "attributes", "count", "locus_tag"]
+        )
 
         # write output
         final_output_path = os.path.join(
@@ -2087,7 +2080,6 @@ def process_pyhmmer_results(merged_df, pyhmmer_results_dict):
     # split to get protein name to match with pyhmmer
     merged_df["temp_prot"] = merged_df["gene"].str.split(" ", n=1).str[0]
 
-
     merged_df["pyhmmer_phrog"] = "No_PHROG"
     merged_df["pyhmmer_bitscore"] = "No_PHROG"
     merged_df["pyhmmer_evalue"] = "No_PHROG"
@@ -2097,7 +2089,6 @@ def process_pyhmmer_results(merged_df, pyhmmer_results_dict):
         if (
             row["temp_prot"] in pyhmmer_results_dict
         ):  # check if the protein is in the dictionary
-
             merged_df.at[index, "pyhmmer_phrog"] = pyhmmer_results_dict[
                 row["temp_prot"]
             ].phrog
@@ -2107,7 +2098,6 @@ def process_pyhmmer_results(merged_df, pyhmmer_results_dict):
             merged_df.at[index, "pyhmmer_evalue"] = pyhmmer_results_dict[
                 row["temp_prot"]
             ].evalue
-
 
     # drop temp prot
 

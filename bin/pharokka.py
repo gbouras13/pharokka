@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
 import os
+import shutil
 import sys
 import time
 from pathlib import Path
-import shutil
 
 from loguru import logger
 
@@ -18,12 +18,13 @@ from lib.input_commands import (check_dependencies, get_input,
 from lib.post_processing import Pharok, remove_post_processing_files
 from lib.processes import (concat_phanotate_meta, concat_trnascan_meta,
                            convert_gff_to_gbk, reorient_terminase, run_aragorn,
-                           run_mash_dist, run_mash_sketch, run_minced,
-                           run_mmseqs, run_phanotate, run_phanotate_fasta_meta,
-                           run_phanotate_txt_meta, run_pyrodigal,
-                           run_trna_scan, run_trnascan_meta, split_input_fasta,
-                           translate_fastas, run_dnaapler)
+                           run_dnaapler, run_mash_dist, run_mash_sketch,
+                           run_minced, run_mmseqs, run_phanotate,
+                           run_phanotate_fasta_meta, run_phanotate_txt_meta,
+                           run_pyrodigal, run_trna_scan, run_trnascan_meta,
+                           split_input_fasta, translate_fastas)
 from lib.util import get_version
+
 
 def main():
     # get the args
@@ -108,16 +109,13 @@ def main():
 
     # reorient with dnaapler
     if args.dnaapler == True:
-
         logger.info(
             "You have chosen to reorient your contigs by specifying --dnaapler. Checking the input."
         )
 
         # in case both --dnaapler and --terminase is selected
         if args.terminase == True:
-            logger.info(
-            "Ignoring --terminase and dnaapler will be run instead."
-        )
+            logger.info("Ignoring --terminase and dnaapler will be run instead.")
             args.terminase = False
             args.terminase_strand = "nothing"
             args.terminase_start = "nothing"
@@ -126,11 +124,9 @@ def main():
         dnaapler_success = run_dnaapler(input_fasta, out_dir, args.threads, logdir)
 
         if dnaapler_success == True:
-            input_fasta = os.path.join(
-                out_dir,"dnaapler/dnaapler_reoriented.fasta"
-            )
+            input_fasta = os.path.join(out_dir, "dnaapler/dnaapler_reoriented.fasta")
             destination_file = os.path.join(
-                out_dir,f"{prefix}_dnaapler_reoriented.fasta"
+                out_dir, f"{prefix}_dnaapler_reoriented.fasta"
             )
             # copy FASTA to output
             shutil.copy(input_fasta, destination_file)
@@ -162,39 +158,47 @@ def main():
             "You have specified a terminase start coordinate using --terminase_start to reorient your genome, but you have not specified --terminase to activate terminase mode. \nContinuing without reorientation."
         )
 
-
-
     ########
     # mmseqs2 and hmm decisions
     ########
 
     # can't have fast and mmseqs2 only
     if args.fast is True and args.mmseqs2_only is True:
-        logger.error("You have specified --fast or --hmm_only and --mmseqs2_only. This is impossible. Please choose one or the other.")
+        logger.error(
+            "You have specified --fast or --hmm_only and --mmseqs2_only. This is impossible. Please choose one or the other."
+        )
 
-    # can't have fast and meta_hmm 
+    # can't have fast and meta_hmm
     if args.fast is True and args.meta_hmm is True:
-        logger.error("You have specified --fast or --hmm_only and --meta_hmm. This is impossible. Please choose one or the other.")
+        logger.error(
+            "You have specified --fast or --hmm_only and --meta_hmm. This is impossible. Please choose one or the other."
+        )
 
-   # can't have mmseqs2 only and meta_hmm 
+    # can't have mmseqs2 only and meta_hmm
     if args.mmseqs2_only is True and args.meta_hmm is True:
-        logger.error("You have specified --mmseqs2_only and --meta_hmm. This is impossible. Please choose one or the other.")
+        logger.error(
+            "You have specified --mmseqs2_only and --meta_hmm. This is impossible. Please choose one or the other."
+        )
 
     # by default run both not in meta mode
     mmseqs_flag = True
     hmm_flag = True
 
-    if args.meta is True: # meta mode default only mmseqs
-        if args.meta_hmm is True: # with --meta_hmm
-            logger.info("You have specified --meta_hmm and -m/--meta. This may be take a while, please be patient.")
+    if args.meta is True:  # meta mode default only mmseqs
+        if args.meta_hmm is True:  # with --meta_hmm
+            logger.info(
+                "You have specified --meta_hmm and -m/--meta. This may be take a while, please be patient."
+            )
             mmseqs_flag = True
             hmm_flag = True
-        else: # just mmseqs2 by default
+        else:  # just mmseqs2 by default
             mmseqs_flag = True
             hmm_flag = False
-    else: # not in meta mode
+    else:  # not in meta mode
         if args.meta_hmm is True:
-            logger.warning("You have specified --meta_hmm to run pyhmmer HMM search in meta mode, but you have not specified -m to activate meta mode.")
+            logger.warning(
+                "You have specified --meta_hmm to run pyhmmer HMM search in meta mode, but you have not specified -m to activate meta mode."
+            )
             logger.warning("Ignoring --meta_hmm")
 
     # overrides if fast/hmm_only is chosen
@@ -358,7 +362,6 @@ def main():
     pharok.update_fasta_headers()
     pharok.update_final_output()
 
-
     # extract terL
     pharok.extract_terl()
 
@@ -371,7 +374,7 @@ def main():
     pharok.inphared_top_hits()
 
     # delete tmp files
-    remove_post_processing_files(out_dir, gene_predictor, args.meta)
+    #remove_post_processing_files(out_dir, gene_predictor, args.meta)
 
     # Determine elapsed time
     elapsed_time = time.time() - start_time
@@ -391,6 +394,7 @@ def main():
     logger.info(
         "You should also cite the full list of tools pharokka uses, which can be found at https://github.com/gbouras13/pharokka#citation."
     )
+
 
 if __name__ == "__main__":
     main()

@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 import argparse
 import os
-from argparse import RawTextHelpFormatter
-from loguru import logger
 import sys
+from argparse import RawTextHelpFormatter
+
+from loguru import logger
 
 from lib.databases import instantiate_install
 
@@ -28,6 +29,7 @@ def get_db_input():
     args = parser.parse_args()
     return args
 
+
 logger.add(lambda _: sys.exit(1), level="ERROR")
 args = get_db_input()
 
@@ -41,5 +43,5 @@ else:
         db_dir = os.path.join(os.path.dirname(__file__), "../", "databases/")
     else:
         db_dir = args.outdir
-    
+
     instantiate_install(db_dir)

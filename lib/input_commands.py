@@ -7,8 +7,8 @@ from argparse import RawTextHelpFormatter
 
 from Bio import SeqIO
 from loguru import logger
-from lib.util import get_version 
 
+from lib.util import get_version
 
 
 def get_input():
@@ -129,7 +129,11 @@ def get_input():
         default="nothing",
     )
     parser.add_argument(
-        "-V", "--version", help="Print pharokka Version", action="version", version=get_version()
+        "-V",
+        "--version",
+        help="Print pharokka Version",
+        action="version",
+        version=get_version(),
     )
     parser.add_argument(
         "--citation", help="Print pharokka Citation", action="store_true"
@@ -143,8 +147,8 @@ def instantiate_dirs(output_dir, meta, force):
     # remove outdir on force
     if force == True:
         if os.path.isdir(output_dir) == True:
-            #shutil.rmtree(output_dir)
-            print('test')
+            # shutil.rmtree(output_dir)
+            print("test")
 
         elif os.path.isfile(output_dir) == True:
             os.remove(output_dir)
@@ -221,7 +225,6 @@ def validate_meta(filepath_in, meta, split):
         if split == True:
             message = "-s or --split was specified without -m or --meta and will be ignored. \nPlease specify -s with -m if you want to run split mode. \nContinuing."
             logger.info(message)
-
 
 
 def validate_strand(strand):

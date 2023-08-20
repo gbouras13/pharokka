@@ -1,14 +1,13 @@
 import os
 import shutil
-from Bio import SeqIO
 
 import click
+import pandas as pd
+from Bio import SeqIO
 from loguru import logger
 
 from lib.citation import __citation__
 from lib.version import __version__
-
-import pandas as pd
 
 
 def get_version():
@@ -42,6 +41,7 @@ def remove_file(file_path):
     if os.path.exists(file_path):
         os.remove(file_path)
 
+
 def count_contigs(input_fasta) -> int:
     """
     counts the number of contigs in the FASTA input file
@@ -50,7 +50,7 @@ def count_contigs(input_fasta) -> int:
 
     with open(input_fasta, "r") as handle:
         # Check the number of records
-        contig_count = len(list(SeqIO.parse(handle, "fasta"))) 
+        contig_count = len(list(SeqIO.parse(handle, "fasta")))
 
     return contig_count
 
@@ -61,6 +61,7 @@ def get_contig_headers(fasta_file) -> pd.Series:
         headers.append(record.id)
     headers_series = pd.Series(headers)
     return headers_series
+
 
 # function to touch create a file
 # https://stackoverflow.com/questions/12654772/create-empty-file-using-python

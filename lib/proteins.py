@@ -2,42 +2,34 @@
 Holds functions for pharokka_proteins.py
 """
 
+import argparse
 import collections
 import os
 import random
+import shutil
 import string
 import subprocess as sp
+import sys
+from argparse import RawTextHelpFormatter
 from cmath import nan
 from pathlib import Path
 from re import T
 
 import numpy as np
 import pandas as pd
+import pyhmmer
 from Bio import SeqIO
 from Bio.SeqUtils import GC
 from loguru import logger
-
-import collections
-import os
-
-import pyhmmer
 from pyhmmer.easel import SequenceFile
 from pyhmmer.plan7 import HMM, HMMFile
 
-from lib.post_processing import process_pyhmmer_results
-
-import argparse
-import os
-import shutil
-import subprocess as sp
-import sys
-from argparse import RawTextHelpFormatter
-from lib.util import get_version 
-
 from lib.external_tools import ExternalTool
+from lib.post_processing import (process_card_results, process_pyhmmer_results,
+                                 process_vfdb_results)
 from lib.processes import convert_gff_to_gbk
-from lib.util import remove_directory, remove_file, touch_file, get_contig_headers, count_contigs
-from lib.post_processing import process_vfdb_results, process_card_results
+from lib.util import (count_contigs, get_contig_headers, get_version,
+                      remove_directory, remove_file, touch_file)
 
 Result = collections.namedtuple("Result", ["protein", "phrog", "bitscore", "evalue"])
 
@@ -51,7 +43,10 @@ def get_input_proteins():
         formatter_class=RawTextHelpFormatter,
     )
     parser.add_argument(
-        "-i", "--infile", action="store", help="Input proteins file in amino acid fasta format."
+        "-i",
+        "--infile",
+        action="store",
+        help="Input proteins file in amino acid fasta format.",
     )
     parser.add_argument(
         "-o",
@@ -102,7 +97,11 @@ def get_input_proteins():
         action="store_true",
     )
     parser.add_argument(
-        "-V", "--version", help="Print pharokka Version", action="version", version=get_version()
+        "-V",
+        "--version",
+        help="Print pharokka Version",
+        action="version",
+        version=get_version(),
     )
     parser.add_argument(
         "--citation", help="Print pharokka Citation", action="store_true"
@@ -110,7 +109,6 @@ def get_input_proteins():
     args = parser.parse_args()
 
     return args
-
 
 
 def run_mmseqs_proteins(input_fasta, db_dir, out_dir, threads, logdir, evalue, db_name):
@@ -207,8 +205,6 @@ def run_mmseqs_proteins(input_fasta, db_dir, out_dir, threads, logdir, evalue, d
     remove_directory(target_db_dir)
 
 
-
-
 # from itertools import chain
 
 
@@ -263,7 +259,6 @@ def run_pyhmmer_proteins(input_fasta, db_dir, threads, evalue):
     return best_results
 
 
-
 class Pharok_Prot:
     """pharokka_proteins.py Output Class"""
 
@@ -289,7 +284,7 @@ class Pharok_Prot:
             {"col1": [1, 2, 3], "col2": [4, 5, 6]}
         ),
         mmseqs_flag: bool = True,
-        hmm_flag: bool = True
+        hmm_flag: bool = True,
     ) -> None:
         """
         Parameters
@@ -329,7 +324,6 @@ class Pharok_Prot:
         self.mmseqs_flag = mmseqs_flag
         self.hmm_flag = hmm_flag
 
-
     def process_dataframes(self):
         """
         Processes and combines PHROGS, CARD and VFDB mmseqs output
@@ -339,13 +333,12 @@ class Pharok_Prot:
         :return:
         """
 
-        ####### ####### ####### ####### ####### 
+        ####### ####### ####### ####### #######
         ####### ####### ####### ####### #######
         # get tophits
         ####### ####### ####### ####### #######
         ####### ####### ####### ####### #######
         if self.mmseqs_flag is True:
-
             # MMseqs PHROGs file
             mmseqs_file = os.path.join(self.out_dir, "mmseqs_results.tsv")
             logger.info("Processing mmseqs2 output.")
@@ -417,15 +410,14 @@ class Pharok_Prot:
             # Create a DataFrame from the dictionary
             tophits_df = pd.DataFrame(data)
 
-        
         if len(tophits_df["mmseqs_phrog"]) == 0:
             tophits_df["mmseqs_top_hit"] = "No_PHROG"
         else:
-            if self.mmseqs_flag is True: # trim the rubbish if mmseqs2 is on
+            if self.mmseqs_flag is True:  # trim the rubbish if mmseqs2 is on
                 tophits_df[["mmseqs_phrog", "mmseqs_top_hit"]] = tophits_df[
                     "mmseqs_phrog"
                 ].str.split(" ## ", expand=True)
-            else: # no mmseqs2 hits
+            else:  # no mmseqs2 hits
                 tophits_df["mmseqs_top_hit"] = "No_MMseqs_PHROG_hit"
 
         ####################
@@ -441,7 +433,9 @@ class Pharok_Prot:
             tophits_df["pyhmmer_evalue"] = "No_HMM"
 
         # strip off phrog_ for both
-        tophits_df["mmseqs_phrog"] = tophits_df["mmseqs_phrog"].str.replace("phrog_", "")
+        tophits_df["mmseqs_phrog"] = tophits_df["mmseqs_phrog"].str.replace(
+            "phrog_", ""
+        )
         tophits_df["pyhmmer_phrog"] = tophits_df["pyhmmer_phrog"].str.replace(
             "phrog_", ""
         )
@@ -461,7 +455,7 @@ class Pharok_Prot:
                     if row["pyhmmer_phrog"] != "No_PHROG":
                         tophits_df.at[index, "phrog"] = row["pyhmmer_phrog"]
 
-        else: # only need to worry about pyhmmer
+        else:  # only need to worry about pyhmmer
             tophits_df["phrog"] = tophits_df["pyhmmer_phrog"]
 
         # read in phrog annotaion file
@@ -513,7 +507,6 @@ class Pharok_Prot:
         )
         tophits_df["color"] = tophits_df["color"].replace(nan, "None", regex=True)
 
-
         ##### length df
 
         fasta_sequences = SeqIO.parse(open(self.input_fasta), "fasta")
@@ -542,13 +535,17 @@ class Pharok_Prot:
             self.out_dir, tophits_df, self.db_dir
         )
 
-         # Rename the "gene" column to "id"
-        tophits_df.rename(columns={'gene': 'ID'}, inplace=True)
+        # Rename the "gene" column to "id"
+        tophits_df.rename(columns={"gene": "ID"}, inplace=True)
 
-        desired_order = [col for col in tophits_df.columns if col  not in  ['phrog', 'annot', 'category']]
-        desired_order.insert(2, 'phrog')
-        desired_order.insert(3, 'annot')
-        desired_order.insert(4, 'category')
+        desired_order = [
+            col
+            for col in tophits_df.columns
+            if col not in ["phrog", "annot", "category"]
+        ]
+        desired_order.insert(2, "phrog")
+        desired_order.insert(3, "annot")
+        desired_order.insert(4, "category")
 
         # Creating a new DataFrame with columns rearranged
         tophits_df = tophits_df[desired_order]
@@ -565,8 +562,8 @@ class Pharok_Prot:
         self.tophits_df = tophits_df
         self.vfdb_results = vfdb_results
         self.card_results = card_results
-    
-        summary_df = self.tophits_df [['ID', 'length', 'phrog', 'annot', 'category']]
+
+        summary_df = self.tophits_df[["ID", "length", "phrog", "annot", "category"]]
 
         # .tsv file with all data full_merged_output
         summary_df.to_csv(
@@ -588,12 +585,11 @@ class Pharok_Prot:
 
         with open(fasta_output_aas, "w") as aa_fa:
             i = 0
-            for aa_record in SeqIO.parse(
-                self.input_fasta, "fasta"
-            ):
-                aa_record.description = str(aa_record.description) + " " +  str(self.tophits_df["annot"].iloc[i])
+            for aa_record in SeqIO.parse(self.input_fasta, "fasta"):
+                aa_record.description = (
+                    str(aa_record.description)
+                    + " "
+                    + str(self.tophits_df["annot"].iloc[i])
+                )
                 SeqIO.write(aa_record, aa_fa, "fasta")
                 i += 1
-
-
-

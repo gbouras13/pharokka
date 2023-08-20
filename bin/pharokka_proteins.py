@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
 import os
+import shutil
 import sys
 import time
 from pathlib import Path
-import shutil
 
 from loguru import logger
 
@@ -18,14 +18,14 @@ from lib.input_commands import (check_dependencies, get_input,
 from lib.post_processing import Pharok, remove_post_processing_files
 from lib.processes import (concat_phanotate_meta, concat_trnascan_meta,
                            convert_gff_to_gbk, reorient_terminase, run_aragorn,
-                           run_mash_dist, run_mash_sketch, run_minced,
-                            run_phanotate, run_phanotate_fasta_meta,
+                           run_dnaapler, run_mash_dist, run_mash_sketch,
+                           run_minced, run_phanotate, run_phanotate_fasta_meta,
                            run_phanotate_txt_meta, run_pyrodigal,
                            run_trna_scan, run_trnascan_meta, split_input_fasta,
-                           translate_fastas, run_dnaapler)
+                           translate_fastas)
+from lib.proteins import (Pharok_Prot, get_input_proteins, run_mmseqs_proteins,
+                          run_pyhmmer_proteins)
 from lib.util import get_version
-
-from lib.proteins import get_input_proteins, run_mmseqs_proteins, run_pyhmmer_proteins, Pharok_Prot
 
 
 def main():
@@ -53,9 +53,8 @@ def main():
     else:
         prefix = args.prefix
 
-
     # instantiate outdir
-    out_dir = instantiate_dirs(args.outdir,  False, args.force) # args.meta always false
+    out_dir = instantiate_dirs(args.outdir, False, args.force)  # args.meta always false
 
     # set log dir
     logdir = Path(f"{out_dir}/logs")
@@ -109,9 +108,11 @@ def main():
 
     # can't have fast and mmseqs2 only
     if args.hmm_only is True and args.mmseqs2_only is True:
-        logger.error("You have specified --fast or --hmm_only and --mmseqs2_only. This is impossible. Please choose one or the other.")
+        logger.error(
+            "You have specified --fast or --hmm_only and --mmseqs2_only. This is impossible. Please choose one or the other."
+        )
 
-    # by default 
+    # by default
     mmseqs_flag = True
     hmm_flag = True
 
@@ -122,15 +123,36 @@ def main():
         logger.info("You have specified --mmseqs2_only. Pyhmmer will not be run.")
         hmm_flag = False
 
-
-
     # running mmseqs2 on the 3 databases
     if mmseqs_flag is True:
         logger.info("Starting MMseqs2.")
-        run_mmseqs_proteins(input_fasta, db_dir, out_dir, args.threads, logdir, args.evalue, db_name="PHROG")
-        run_mmseqs_proteins(input_fasta, db_dir, out_dir, args.threads, logdir, args.evalue, db_name="CARD")
-        run_mmseqs_proteins(input_fasta, db_dir, out_dir, args.threads, logdir, args.evalue, db_name="VFDB")
- 
+        run_mmseqs_proteins(
+            input_fasta,
+            db_dir,
+            out_dir,
+            args.threads,
+            logdir,
+            args.evalue,
+            db_name="PHROG",
+        )
+        run_mmseqs_proteins(
+            input_fasta,
+            db_dir,
+            out_dir,
+            args.threads,
+            logdir,
+            args.evalue,
+            db_name="CARD",
+        )
+        run_mmseqs_proteins(
+            input_fasta,
+            db_dir,
+            out_dir,
+            args.threads,
+            logdir,
+            args.evalue,
+            db_name="VFDB",
+        )
 
     if hmm_flag is True:
         # runs pyhmmer on PHROGs
@@ -165,7 +187,6 @@ def main():
     # updates fasta headers
     pharok.update_fasta_headers()
 
-    
     # Determine elapsed time
     elapsed_time = time.time() - start_time
     elapsed_time = round(elapsed_time, 2)
@@ -184,6 +205,7 @@ def main():
     logger.info(
         "You should also cite the full list of tools pharokka uses, which can be found at https://github.com/gbouras13/pharokka#citation."
     )
+
 
 if __name__ == "__main__":
     main()
