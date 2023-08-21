@@ -52,285 +52,184 @@ def create_plot(
     # 1c1c1c
     # ffffff
 
+    # vfdb_card 
+    
+
     # unknown
 
-    unk_col = "#AAAAAA"
 
-    unk_fwd_list = []
+    data_dict = {
+    'vfdb_card': {
+        'col': "#FF0000",
+        'fwd_list': [],
+        'rev_list': []
+    },
+    'unk': {
+        'col': "#AAAAAA",
+        'fwd_list': [],
+        'rev_list': []
+    },
+    'other': {
+        'col': "#4deeea",
+        'fwd_list': [],
+        'rev_list': []
+    },
+    'tail': {
+        'col': "#74ee15",
+        'fwd_list': [],
+        'rev_list': []
+    },
+    'transcription': {
+        'col': "#ffe700",
+        'fwd_list': [],
+        'rev_list': []
+    },
+    'dna': {
+        'col': "#f000ff",
+        'fwd_list': [],
+        'rev_list': []
+    },
+    'lysis': {
+        'col': "#001eff",
+        'fwd_list': [],
+        'rev_list': []
+    },
+    'moron': {
+        'col': "#8900ff",
+        'fwd_list': [],
+        'rev_list': []
+    },
+    'int': {
+        'col': "#E0B0FF",
+        'fwd_list': [],
+        'rev_list': []
+    },
+    'head': {
+        'col': "#ff008d",
+        'fwd_list': [],
+        'rev_list': []
+    },
+    'con': {
+        'col': "#5A5A5A",
+        'fwd_list': [],
+        'rev_list': []
+    }
+}
+
+
+    # vfdb_card_col = "#FF0000"
+    # unk_col = "#AAAAAA"
+    # other_col = "#4deeea"
+    # tail_col = "#74ee15"
+    # transcription_col = "#ffe700"
+    # dna_col = "#f000ff"
+    # lysis_col = "#001eff"
+    # moron_col = "#8900ff"
+    # int_col = "#E0B0FF"
+    # head_col = "#ff008d"
+    # con_col = "#808080"
+
+    # vfdb_card_fwd_list = []
+    # vfdb_card_rev_list = []
+    # unk_fwd_list = []
+    # unk_rev_list = []
+    # other_fwd_list = []
+    # other_rev_list = []
+    # tail_fwd_list = []
+    # tail_rev_list = []
+    # trans_reg_fwd_list = []
+    # trans_reg_rev_list = []
+    # dna_fwd_list = []
+    # dna_rev_list = []
+    # lysis_fwd_list = []
+    # lysis_rev_list = []
+    # moron_fwd_list = []
+    # moron_rev_list = []
+    # int_fwd_list = []
+    # int_rev_list = []
+    # head_fwd_list = []
+    # head_rev_list = []
+    # con_fwd_list = []
+    # con_rev_list = []
+
+# fwd
+
     for f in gff.extract_features("CDS", target_strand=1):
-        if f.qualifiers.get("function")[0] == "unknown function":
-            unk_fwd_list.append(f)
+        if 'vfdb_short_name' in f.qualifiers or 'AMR_Gene_Family' in f.qualifiers: # vfdb or CARD
+            data_dict['vfdb_card']['fwd_list'].append(f)
+        else: # no vfdb or card
+            if f.qualifiers.get("function")[0] == "unknown function": 
+                data_dict['unk']['fwd_list'].append(f)
+            elif f.qualifiers.get("function")[0] == "other":
+                data_dict['other']['fwd_list'].append(f)
+            elif f.qualifiers.get("function")[0] == "tail":
+                data_dict['tail']['fwd_list'].append(f)
+            elif f.qualifiers.get("function")[0] == "transcription regulation":
+                data_dict['transcription']['fwd_list'].append(f)
+            elif f.qualifiers.get("function")[0] == "DNA":
+                data_dict['dna']['fwd_list'].append(f)
+            elif f.qualifiers.get("function")[0] == "lysis":
+                data_dict['lysis']['fwd_list'].append(f)
+            elif f.qualifiers.get("function")[0] == "moron":
+                data_dict['moron']['fwd_list'].append(f)
+            elif f.qualifiers.get("function")[0] == "integration and excision":
+                data_dict['int']['fwd_list'].append(f)
+            elif f.qualifiers.get("function")[0] == "head and packaging":
+                data_dict['head']['fwd_list'].append(f)
+            elif f.qualifiers.get("function")[0] == "connector":
+                data_dict['con']['fwd_list'].append(f)
 
-    cds_track.genomic_features(
-        unk_fwd_list,
-        plotstyle="arrow",
-        r_lim=(75, 80),
-        fc=unk_col,
-    )
 
-    unk_rev_list = []
+# reverse
+
     for f in gff.extract_features("CDS", target_strand=-1):
-        if f.qualifiers.get("function")[0] == "unknown function":
-            unk_rev_list.append(f)
+        if 'vfdb_short_name' in f.qualifiers or 'AMR_Gene_Family' in f.qualifiers: # vfdb or CARD
+            data_dict['vfdb_card']['rev_list'].append(f)
+        else: # no vfdb or card
+            if f.qualifiers.get("function")[0] == "unknown function": 
+                data_dict['unk']['rev_list'].append(f)
+            elif f.qualifiers.get("function")[0] == "other":
+                data_dict['other']['rev_list'].append(f)
+            elif f.qualifiers.get("function")[0] == "tail":
+                data_dict['tail']['rev_list'].append(f)
+            elif f.qualifiers.get("function")[0] == "transcription regulation":
+                data_dict['transcription']['rev_list'].append(f)
+            elif f.qualifiers.get("function")[0] == "DNA":
+                data_dict['dna']['rev_list'].append(f)
+            elif f.qualifiers.get("function")[0] == "lysis":
+                data_dict['lysis']['rev_list'].append(f)
+            elif f.qualifiers.get("function")[0] == "moron":
+                data_dict['moron']['rev_list'].append(f)
+            elif f.qualifiers.get("function")[0] == "integration and excision":
+                data_dict['int']['rev_list'].append(f)
+            elif f.qualifiers.get("function")[0] == "head and packaging":
+                data_dict['head']['rev_list'].append(f)
+            elif f.qualifiers.get("function")[0] == "connector":
+                data_dict['con']['rev_list'].append(f)
 
-    cds_track.genomic_features(
-        unk_rev_list,
-        plotstyle="arrow",
-        r_lim=(70, 75),
-        fc=unk_col,
-    )
 
-    # other
+# add all the tracks
 
-    other_col = "#4deeea"
+    for key in data_dict.keys():
 
-    fwd_list = []
-    for f in gff.extract_features("CDS", target_strand=1):
-        if f.qualifiers.get("function")[0] == "other":
-            fwd_list.append(f)
+        cds_track.genomic_features(
+            data_dict[key]['fwd_list'],
+            plotstyle="arrow",
+            r_lim=(75, 80),
+            fc=data_dict[key]['col'],
+        )
 
-    cds_track.genomic_features(
-        fwd_list,
-        plotstyle="arrow",
-        r_lim=(75, 80),
-        fc=other_col,
-    )
 
-    rev_list = []
-    for f in gff.extract_features("CDS", target_strand=-1):
-        if f.qualifiers.get("function")[0] == "other":
-            rev_list.append(f)
+        cds_track.genomic_features(
+            data_dict[key]['rev_list'],
+            plotstyle="arrow",
+            r_lim=(70, 75),
+            fc=data_dict[key]['col'],
+        )
 
-    cds_track.genomic_features(
-        rev_list,
-        plotstyle="arrow",
-        r_lim=(70, 75),
-        fc=other_col,
-    )
 
-    # tail
-
-    tail_col = "#74ee15"
-
-    fwd_list = []
-    for f in gff.extract_features("CDS", target_strand=1):
-        if f.qualifiers.get("function")[0] == "tail":
-            fwd_list.append(f)
-
-    cds_track.genomic_features(
-        fwd_list,
-        plotstyle="arrow",
-        r_lim=(75, 80),
-        fc=tail_col,
-    )
-
-    rev_list = []
-    for f in gff.extract_features("CDS", target_strand=-1):
-        if f.qualifiers.get("function")[0] == "tail":
-            rev_list.append(f)
-
-    cds_track.genomic_features(
-        rev_list,
-        plotstyle="arrow",
-        r_lim=(70, 75),
-        fc=tail_col,
-    )
-
-    # transcription regulation
-
-    transcription_col = "#ffe700"
-
-    fwd_list = []
-    for f in gff.extract_features("CDS", target_strand=1):
-        if f.qualifiers.get("function")[0] == "transcription regulation":
-            fwd_list.append(f)
-
-    cds_track.genomic_features(
-        fwd_list,
-        plotstyle="arrow",
-        r_lim=(75, 80),
-        fc=transcription_col,
-    )
-
-    rev_list = []
-    for f in gff.extract_features("CDS", target_strand=-1):
-        if f.qualifiers.get("function")[0] == "transcription regulation":
-            rev_list.append(f)
-
-    cds_track.genomic_features(
-        rev_list,
-        plotstyle="arrow",
-        r_lim=(70, 75),
-        fc=transcription_col,
-    )
-
-    # DNA, RNA and nucleotide metabolism
-
-    dna_col = "#f000ff"
-
-    fwd_list = []
-    for f in gff.extract_features("CDS", target_strand=1):
-        if f.qualifiers.get("function")[0] == "DNA":
-            fwd_list.append(f)
-
-    cds_track.genomic_features(
-        fwd_list,
-        plotstyle="arrow",
-        r_lim=(75, 80),
-        fc=dna_col,
-    )
-
-    rev_list = []
-    for f in gff.extract_features("CDS", target_strand=-1):
-        if f.qualifiers.get("function")[0] == "DNA":
-            rev_list.append(f)
-
-    cds_track.genomic_features(
-        rev_list,
-        plotstyle="arrow",
-        r_lim=(70, 75),
-        fc=dna_col,
-    )
-
-    # lysis
-
-    lysis_col = "#001eff"
-
-    fwd_list = []
-    for f in gff.extract_features("CDS", target_strand=1):
-        if f.qualifiers.get("function")[0] == "lysis":
-            fwd_list.append(f)
-
-    cds_track.genomic_features(
-        fwd_list,
-        plotstyle="arrow",
-        r_lim=(75, 80),
-        fc=lysis_col,
-    )
-
-    rev_list = []
-    for f in gff.extract_features("CDS", target_strand=-1):
-        if f.qualifiers.get("function")[0] == "lysis":
-            rev_list.append(f)
-
-    cds_track.genomic_features(
-        rev_list,
-        plotstyle="arrow",
-        r_lim=(70, 75),
-        fc=lysis_col,
-    )
-
-    # moron, auxiliary metabolic gene and host takeover
-
-    moron_col = "#8900ff"
-
-    fwd_list = []
-    for f in gff.extract_features("CDS", target_strand=1):
-        if f.qualifiers.get("function")[0] == "moron":
-            fwd_list.append(f)
-
-    cds_track.genomic_features(
-        fwd_list,
-        plotstyle="arrow",
-        r_lim=(75, 80),
-        fc=moron_col,
-    )
-
-    rev_list = []
-    for f in gff.extract_features("CDS", target_strand=-1):
-        if f.qualifiers.get("function")[0] == "moron":
-            rev_list.append(f)
-
-    cds_track.genomic_features(
-        rev_list,
-        plotstyle="arrow",
-        r_lim=(70, 75),
-        fc=moron_col,
-    )
-
-    # integration and excision
-
-    int_col = "#E0B0FF"
-
-    fwd_list = []
-    for f in gff.extract_features("CDS", target_strand=1):
-        if f.qualifiers.get("function")[0] == "integration and excision":
-            fwd_list.append(f)
-
-    cds_track.genomic_features(
-        fwd_list,
-        plotstyle="arrow",
-        r_lim=(75, 80),
-        fc=int_col,
-    )
-
-    rev_list = []
-    for f in gff.extract_features("CDS", target_strand=-1):
-        if f.qualifiers.get("function")[0] == "integration and excision":
-            rev_list.append(f)
-
-    cds_track.genomic_features(
-        rev_list,
-        plotstyle="arrow",
-        r_lim=(70, 75),
-        fc=int_col,
-    )
-
-    # head and packaging
-
-    head_col = "#ff008d"
-
-    fwd_list = []
-    for f in gff.extract_features("CDS", target_strand=1):
-        if f.qualifiers.get("function")[0] == "head and packaging":
-            fwd_list.append(f)
-
-    cds_track.genomic_features(
-        fwd_list,
-        plotstyle="arrow",
-        r_lim=(75, 80),
-        fc=head_col,
-    )
-
-    rev_list = []
-    for f in gff.extract_features("CDS", target_strand=-1):
-        if f.qualifiers.get("function")[0] == "head and packaging":
-            rev_list.append(f)
-
-    cds_track.genomic_features(
-        rev_list,
-        plotstyle="arrow",
-        r_lim=(70, 75),
-        fc=head_col,
-    )
-
-    # connector
-
-    con_col = "#808080"
-
-    fwd_list = []
-    for f in gff.extract_features("CDS", target_strand=1):
-        if f.qualifiers.get("function")[0] == "connector":
-            fwd_list.append(f)
-
-    cds_track.genomic_features(
-        fwd_list,
-        plotstyle="arrow",
-        r_lim=(75, 80),
-        fc=con_col,
-    )
-
-    rev_list = []
-    for f in gff.extract_features("CDS", target_strand=-1):
-        if f.qualifiers.get("function")[0] == "connector":
-            rev_list.append(f)
-
-    cds_track.genomic_features(
-        rev_list,
-        plotstyle="arrow",
-        r_lim=(70, 75),
-        fc=con_col,
-    )
+  
+    
 
     ###################################################
     #### Extra Features
@@ -631,22 +530,24 @@ def create_plot(
 
     # # Add legend
     handle_phrogs = [
-        Patch(color=unk_col, label="Unknown/Other Function"),
-        Patch(color=transcription_col, label="Transcription Regulation"),
-        Patch(color=dna_col, label="DNA/RNA & nucleotide \n metabolism"),
-        Patch(color=lysis_col, label="Lysis"),
+        Patch(color=data_dict['unk']['col'], label="Unknown Function"),
+        Patch(color=data_dict['other']['col'], label="Other Function"),
+        Patch(color=data_dict['transcription']['col'], label="Transcription Regulation"),
+        Patch(color=data_dict['dna']['col'], label="DNA/RNA & nucleotide \n metabolism"),
+        Patch(color=data_dict['lysis']['col'], label="Lysis"),
         Patch(
-            color=moron_col, label="Moron, auxiliary metabolic \n gene & host takeover"
+            color=data_dict['moron']['col'], label="Moron, auxiliary metabolic \n gene & host takeover"
         ),
-        Patch(color=int_col, label="Integration & excision"),
-        Patch(color=head_col, label="Head & packaging"),
-        Patch(color=con_col, label="Connector"),
-        Patch(color=tail_col, label="Tail"),
+        Patch(color=data_dict['int']['col'], label="Integration & excision"),
+        Patch(color=data_dict['head']['col'], label="Head & packaging"),
+        Patch(color=data_dict['con']['col'], label="Connector"),
+        Patch(color=data_dict['tail']['col'], label="Tail"),
+        Patch(color=data_dict['vfdb_card']['col'], label="Virulence Factor/AMR"),
     ]
 
     fig = circos.plotfig()
 
-    phrog_legend_coords = (0.10, 1.175)
+    phrog_legend_coords = (0.10, 1.185)
     phrog_legend = circos.ax.legend(
         handles=handle_phrogs,
         bbox_to_anchor=phrog_legend_coords,

@@ -158,7 +158,7 @@ if __name__ == "__main__":
             logger.warning("Continuing")
     else:
         if os.path.isfile(plot_file) == True:
-            logger.exit(
+            logger.error(
                 f"Output plot file {plot_file} already exists and force was not specified. Please specify -f or --force to overwrite the output plot file."
             )
 
@@ -171,8 +171,7 @@ if __name__ == "__main__":
                 "You have not specified both a Pharokka gff and a gbk file, or a Pharokka output directory. Please check your input and try again."
             )
         else:
-            logger.info("You have specified a Pharokka output directory. Continuing.")
-            logger.info("Continuing.")
+            logger.info("You have specified a Pharokka output directory.")
             gff_genbank_flag = False
 
             # check the outdir exists
@@ -212,7 +211,7 @@ if __name__ == "__main__":
         gff_file = os.path.join(args.outdir, args.prefix + ".gff")
 
     if os.path.isfile(gff_file) == False:
-        logger.exit(
+        logger.error(
             f" {gff_file} was not found. Please check the prefix value `-p` matches the pharokka output directory, \n or use --gff and --genbank to specify the gff and genbank files and try again."
         )
 
@@ -227,12 +226,12 @@ if __name__ == "__main__":
     # validate gbk exists
 
     if os.path.isfile(gbk_file) == False:
-        logger.exit(
+        logger.error(
 
             f" {gbk_file} was not found. Please check the prefix value `-p` matches the pharokka output directory, \n or use --gff and --genbank to specify the gff and genbank files and try again."
         )
 
-    logger.info("All other checked.")
+    logger.info("All files checked.")
     logger.info("Plotting the phage.")
 
     create_plot(
