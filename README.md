@@ -1,47 +1,78 @@
 [![BioConda Install](https://img.shields.io/conda/dn/bioconda/pharokka.svg?style=flag&label=BioConda%20install)](https://anaconda.org/bioconda/pharokka)
 
 pharokka
-===============
+=================
 
-Fast Phage Annotation Tool
-------------
+<p align="center">
+  <img src="img/pharokka_logo.png" alt="pharokka Logo" height=400>
+</p>
+
+## Fast Phage Annotation Tool
 
 pharokka is a rapid standardised annotation tool for bacteriophage genomes and metagenomes.
 
 If you are looking for rapid standardised annotation of bacterial genomes, please use [prokka](https://github.com/tseemann/prokka), which inspired the creation of pharokka, or [bakta](https://github.com/oschwengers/bakta).
 
-Documentation
------------
+# Quick Start
+
+The easiest way to install pharokka is via conda:
+
+`conda install -c bioconda pharokka`
+
+Followed by database download and installation:
+
+`install_databases.py -o <path/to/databse_dir>`
+
+And finally annotation:
+
+`pharokka.py -i <phage fasta file> -o <output directory> -d <path/to/database_dir> -t <threads>`
+
+as of v1.4.0, if you want rapid (<100 seconds) PHROG annotations, use `--fast`:
+
+`pharokka.py -i <phage fasta file> -o <output directory> -d <path/to/database_dir> -t <threads> --fast`
+
+
+# Documentation
 
 Check out the full documentation at [https://pharokka.readthedocs.io](https://pharokka.readthedocs.io).
 
-Paper
------------
+# Paper
 
-pharokka has been recently published in *Bioinformatics*:
+pharokka has been published in *Bioinformatics*:
 
 George Bouras, Roshan Nepal, Ghais Houtak, Alkis James Psaltis, Peter-John Wormald, Sarah Vreugde, Pharokka: a fast scalable bacteriophage annotation tool, Bioinformatics, Volume 39, Issue 1, January 2023, btac776, https://doi.org/10.1093/bioinformatics/btac776.
 
 If you use pharokka, please see the full [Citation](#citation) section for a list of all programs pharokka uses, in order to fully recognise the creators of these tools for their work.
 
-Pharokka with Galaxy Europe Webserver
------------
+# Pharokka with Galaxy Europe Webserver
 
-Thanks to some amazing assistance from [Paul Zierep](https://github.com/paulzierep), you can run Pharokka using the [Galaxy Europe webserver](https://usegalaxy.eu/?tool_id=toolshed.g2.bx.psu.edu%2Frepos%2Fiuc%2Fpharokka%2Fpharokka%2F1.2.1%2Bgalaxy1&version=1.2.1%20galaxy1). It runs v1.2.1, so there is no plotting functionality at the moment.
+Thanks to some amazing assistance from [Paul Zierep](https://github.com/paulzierep), you can run Pharokka using the [Galaxy Europe webserver](https://usegalaxy.eu/?tool_id=toolshed.g2.bx.psu.edu%2Frepos%2Fiuc%2Fpharokka%2Fpharokka%2F1.2.1%2Bgalaxy1&version=1.2.1%20galaxy1). There is no plotting functionality at the moment.
 
-So if you can't get Pharokka to install on your machine for whatever reason or want a GUI to annotate your phage(s), please give it a go there!
+So if you can't get Pharokka to install on your machine for whatever reason or want a GUI to annotate your phage(s), please give it a go there.
 
-Brief Overview
------------
+# Brief Overview
 
 <p align="center">
   <img src="img/pharokka_workflow.png" alt="pharokka Workflow" height=600>
 </p>
 
-pharokka uses [PHANOTATE](https://github.com/deprekate/PHANOTATE), the only gene prediction program tailored to bacteriophages, as the default program for gene prediction. [Prodigal](https://github.com/hyattpd/Prodigal) is also available as an alternative. Following this, functional annotations are assigned by matching each predicted coding sequence (CDS) to the [PHROGs](https://phrogs.lmge.uca.fr), [CARD](https://card.mcmaster.ca) and [VFDB](http://www.mgc.ac.cn/VFs/main.htm) databases using [MMseqs2](https://github.com/soedinglab/MMseqs2). Pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). pharokka also generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage) and check out the full [documentation](https://pharokka.readthedocs.io) for more details.  
+pharokka uses [PHANOTATE](https://github.com/deprekate/PHANOTATE), the only gene prediction program tailored to bacteriophages, as the default program for gene prediction. [Prodigal](https://github.com/hyattpd/Prodigal) is also available as an alternative. Following this, functional annotations are assigned by matching each predicted coding sequence (CDS) to the [PHROGs](https://phrogs.lmge.uca.fr), [CARD](https://card.mcmaster.ca) and [VFDB](http://www.mgc.ac.cn/VFs/main.htm) databases using [MMseqs2](https://github.com/soedinglab/MMseqs2). As of v1.4.0, Pharokka will also match each CDS to the PHROGs database using more sensitive Hidden Markov Models using [Pyhmmer](https://github.com/althonos/pyhmmer). Pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). pharokka also generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage) and check out the full [documentation](https://pharokka.readthedocs.io) for more details.  
 
-Pharokka v 1.3.0 Update
------------
+## Pharokka v 1.4.0 Update (22 August 2023)
+
+Pharokka v1.4.0 is a large update implementing:
+
+* More sensitive search for PHROGs using Hidden Markov Models (HMMs) using the amazing [Pyhmmer](https://github.com/althonos/pyhmmer).
+* By default, Pharokka will now run both MMseqs2 (PHROGs, CARD and VFDB) and HMMs (PHROGs). MMseqs2 was kept for PHROGs as it provides more information than the HMM results (sequence identities, top hit PHROG protein).
+* `--fast` or `--hmm_only` which only runs HMMs on PHROGs, not MMseqs2. For phage isolates, this will be much faster than MMseqs2, but you will not get CARD or VFDB annotations. For metagenomes, this will be (much) slower though!
+* `--mmseqs_only` which will essentially runs Pharokka v1.3.2. 
+* `pharokka_proteins.py`, which takes an input file of amino acid proteins in FASTA format and runs MMseqs2 (PHROGs, CARD, VFDB) and Pyhmmer (PHROGs).
+* Automatic detection and reorientation to start your phage with the large terminase subunit using `--dnaapler`. For more information, see [dnaapler](https://github.com/gbouras13/dnaapler).
+* Updated databases as of 21 August 2023. You will need to re-download the v1.4.0 databases.
+* Fixes to `-c`, which should now workwith `-g prodigal` (thanks Alistair Legione).
+
+## Pharokka v 1.3.0 Update
+
 
 Pharokka v1.3.0 implements `pharokka_plotter.py`, which creates a simple circular genome plot using the amazing [pyCirclize](https://github.com/moshi4/pyCirclize) package with output in PNG format. All CDS are coloured according to their PHROG functional group. 
 
@@ -67,19 +98,23 @@ pharokka_plotter.py -i test_data/SAOMS1.fasta -n SAOMS1_plot -o SAOMS1_pharokka_
   <img src="img/SAOMS1_plot.png" alt="SAOMS1 example" height=600>
 </p>
 
+
+SAOMS1 phage isolated and sequenced by: Yerushalmy,O., Alkalay-Oren,S., Coppenhagen-Glazer,S. and Hazan,R, Institute of Dental Sciences and School of Dental Medicine, Hebrew University.
+
 Please see [plotting](docs/plotting.md) for details on all plotting parameter options. 
 
-Table of Contents
------------
+## Table of Contents
+
 - [pharokka](#pharokka)
   - [Fast Phage Annotation Tool](#fast-phage-annotation-tool)
-  - [Documentation](#documentation)
-  - [Paper](#paper)
-  - [Pharokka with Galaxy Europe Webserver](#pharokka-with-galaxy-europe-webserver)
-  - [Brief Overview](#brief-overview)
+- [Quick Start](#quick-start)
+- [Documentation](#documentation)
+- [Paper](#paper)
+- [Pharokka with Galaxy Europe Webserver](#pharokka-with-galaxy-europe-webserver)
+- [Brief Overview](#brief-overview)
+  - [Pharokka v 1.4.0 Update (22 August 2023)](#pharokka-v-140-update-22-august-2023)
   - [Pharokka v 1.3.0 Update](#pharokka-v-130-update)
   - [Table of Contents](#table-of-contents)
-- [Quick Start](#quick-start)
 - [Installation](#installation)
 - [Database Installation](#database-installation)
 - [Beginner Conda Installation](#beginner-conda-installation)
@@ -91,21 +126,6 @@ Table of Contents
 - [Bugs and Suggestions](#bugs-and-suggestions)
 - [Citation](#citation)
 
-# Quick Start
-
-The easiest way to install pharokka is via conda:
-
-`conda install -c bioconda pharokka`
-
-Followed by database download and installation:
-
-`install_databases.py -o <path/to/databse_dir>`
-
-And finally annotation:
-
-`pharokka.py -i <phage fasta file> -o <output directory> -d <path/to/database_dir> -t <threads>`
-
-Please read below for more details, especially if you are an inexperienced command line user.
 
 # Installation
 
@@ -154,18 +174,16 @@ If you would like to specify a different database directory (recommended), that 
 
 `install_databases.py -o <path/to/databse_dir>`
 
-If this does not work, you an alternatively download the databases from Zenodo at https://zenodo.org/record/7563578/files/pharokka_v1.2.0_database.tar.gz and untar the directory in a location of your choice.
+If this does not work, you an alternatively download the databases from Zenodo at https://zenodo.org/record/8267900/files/pharokka_v1.4.0_databases.tar.gz and untar the directory in a location of your choice.
 
 If you prefer to use the command line:
 
 ```
-wget "https://zenodo.org/record/7563578/files/pharokka_v1.2.0_database.tar.gz"
-tar -xzf pharokka_v1.2.0_database.tar.gz
+wget "https://zenodo.org/record/8267900/files/pharokka_v1.4.0_databases.tar.gz"
+tar -xzf pharokka_v1.4.0_databases.tar.gz
 ```
 
-which will create a directory called "pharokka_v1.2.0_database" containing the databases.
-
-These databases will work with Pharokka v1.2.0 and all later versions.
+which will create a directory called "pharokka_v1.4.0_databases" containing the databases.
 
 # Beginner Conda Installation
 
@@ -221,8 +239,9 @@ pharokka defaults to 1 thread.
 
 ```
 usage: pharokka.py [-h] [-i INFILE] [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG]
-                   [-g GENE_PREDICTOR] [-m] [-s] [-c CODING_TABLE] [-e EVALUE] [--terminase]
-                   [--terminase_strand TERMINASE_STRAND] [--terminase_start TERMINASE_START] [-V] [--citation]
+                   [-g GENE_PREDICTOR] [-m] [-s] [-c CODING_TABLE] [-e EVALUE] [--fast] [--mmseqs2_only] [--meta_hmm]
+                   [--dnaapler] [--terminase] [--terminase_strand TERMINASE_STRAND] [--terminase_start TERMINASE_START] [-V]
+                   [--citation]
 
 pharokka: fast phage annotation program
 
@@ -249,7 +268,11 @@ options:
   -c CODING_TABLE, --coding_table CODING_TABLE
                         translation table for prodigal. Defaults to 11. Experimental only.
   -e EVALUE, --evalue EVALUE
-                        E-value threshold for mmseqs2 PHROGs database search. Defaults to 1E-05.
+                        E-value threshold for MMseqs2 database PHROGs, VFDB and CARD and pyhmmer PHROGs database search. Defaults to 1E-05.
+  --fast, --hmm_only    Runs pyhmmer (HMMs) with PHROGs only, not MMseqs2 with PHROGs, CARD or VFDB. Designed for phage isolates, will not likely be faster for large metagenomes.
+  --mmseqs2_only        Runs MMseqs2 with PHROGs, CARD and VFDB only (same as Pharokka v1.3.2 and prior). Default in meta mode.
+  --meta_hmm            Overrides --mmseqs2_only in meta mode. Will run both MMseqs2 and HMM approaches.
+  --dnaapler            Runs dnaapler to automatically re-orient all contigs to begin with terminase large subunit if found. Recommended over using '--terminase'.
   --terminase           Runs terminase large subunit re-orientation mode. Single genome input only and requires --terminase_strand and --terminase_start to be specified.
   --terminase_strand TERMINASE_STRAND
                         Strand of terminase large subunit. Must be "pos" or "neg".
@@ -269,7 +292,9 @@ pharokka has been tested on Linux and MacOS (M1 and Intel).
 
 # Time
 
-On a standard 16GB RAM laptop specifying 8 threads, pharokka should take between 3-10 minutes to run for a single phage, depending on the genome size.
+On a standard 16GB RAM laptop specifying 8 threads, pharokka should take between 3-10 minutes to run for a single phage, depending on the genome size. 
+
+In `--fast` mode, it should take 45-75 seconds.
 
 # Benchmarking
 
@@ -307,11 +332,10 @@ For the crAss-like phage genomes, Pharokka meta mode `-m` was enabled.
 | Annotated Function CDS                         | 9341                         | 9228                         | 14461              |
 | Unknown Function CDS                           | 129287                       | 81269                        | 75341              |
 
-pharokka scales well for large metavirome datasets due to the speed of mmseqs2. In fact, as the size of the input file increases, the extra time taken is required for running gene prediction (particularly PHANOTATE) and tRNA-scan SE2 - the time taken to conduct mmseqs2 searches remain small due to its many vs many approach. 
+pharokka scales well for large metavirome datasets due to the speed of mmseqs2. In fact, as the size of the input file increases, the extra time taken is required for running gene prediction (particularly PHANOTATE) and tRNA-scan SE2 - the time taken to conduct MMseqs2 searches remain small due to its many vs many approach. 
 
 If you require  fast annotations of extremely large datasets (i.e. thousands of input contigs), running pharokka with Prodigal is recommended.
  
-
 # Bugs and Suggestions
 
 If you come across bugs with pharokka, or would like to make any suggestions to improve the program, please open an issue or email george.bouras@adelaide.edu.au
@@ -337,4 +361,5 @@ With the following full citations for the constituent tools below:
 * Chen L., Yang J., Yao Z., Sun L., Shen Y., Jin Q., "VFDB: a reference database for bacterial virulence factors", Nucleic Acids Research (2005) https://doi.org/10.1093/nar/gki008.
 * Alcock et al, "CARD 2020: antibiotic resistome surveillance with the comprehensive antibiotic resistance database." Nucleic Acids Research (2020) https://doi.org/10.1093/nar/gkz935.
 * Larralde, M., (2022). Pyrodigal: Python bindings and interface to Prodigal, an efficient method for gene prediction in prokaryotes. Journal of Open Source Software, 7(72), 4296. doi:10.21105/joss.04296.
+* Larralde M., Zeller G., (2023). PyHMMER: a Python library binding to HMMER for efficient sequence analysis, Bioinformatics, Volume 39, Issue 5, May 2023, btad214, https://doi.org/10.1093/bioinformatics/btad214.
 * Shimoyama, Y. (2022). pyCirclize: Circular visualization in Python [Computer software]. https://github.com/moshi4/pyCirclize
