@@ -1,0 +1,7 @@
+##gff-version 3
+MW460250_1	tRNAscan-SE	tRNA	115194	115265	61.2	-	.	ID=MW460250_1.trna3;Name=MW460250_1.tRNA3-MetCAT;isotype=Met;anticodon=CAT;gene_biotype=tRNA;
+MW460250_1	tRNAscan-SE	exon	115194	115265	.	-	.	ID=MW460250_1.trna3.exon1;Parent=MW460250_1.trna3;
+MW460250_1	tRNAscan-SE	tRNA	138490	138562	67.8	-	.	ID=MW460250_1.trna2;Name=MW460250_1.tRNA2-PheGAA;isotype=Phe;anticodon=GAA;gene_biotype=tRNA;
+MW460250_1	tRNAscan-SE	exon	138490	138562	.	-	.	ID=MW460250_1.trna2.exon1;Parent=MW460250_1.trna2;
+MW460250_1	tRNAscan-SE	tRNA	138569	138642	58.8	-	.	ID=MW460250_1.trna1;Name=MW460250_1.tRNA1-AspGTC;isotype=Asp;anticodon=GTC;gene_biotype=tRNA;
+MW460250_1	tRNAscan-SE	exon	138569	138642	.	-	.	ID=MW460250_1.trna1.exon1;Parent=MW460250_1.trna1;

@@ -1,0 +1,17 @@
+createdb SAOMS1_Output/phanotate_aas_tmp.fasta SAOMS1_Output/target_dir/target_seqs 
+
+MMseqs Version:       	13.45111
+Database type         	0
+Shuffle input database	true
+Createdb mode         	0
+Write lookup file     	1
+Offset of numeric ids 	0
+Compressed            	0
+Verbosity             	3
+
+Converting sequences
+[
+Time for merging to target_seqs_h: 0h 0m 0s 17ms
+Time for merging to target_seqs: 0h 0m 0s 10ms
+Database type: Aminoacid
+Time for processing: 0h 0m 0s 51ms

@@ -1,0 +1,20 @@
+
+tRNAscan-SE v.2.0.12 (Nov 2022) - scan sequences for transfer RNAs
+Copyright (C) 2022 Patricia Chan and Todd Lowe
+                   University of California Santa Cruz
+Freely distributed under the GNU General Public License (GPLv3)
+
+------------------------------------------------------------
+Sequence file(s) to search:        tests/test_data/overall/Standard_examples/SAOMS1.fasta
+Search Mode:                       General
+Results written to:                Standard output
+Output format:                     Tabular
+Searching with:                    Infernal single-pass scan
+                                   Fast mode
+Covariance model:                  /Users/a1667917/mambaforge/envs/pharokka_env/lib/tRNAscan-SE/models/TRNAinf.cm
+
+Temporary directory:               /var/folders/t9/ns8v1yq93_j7nhlnbcntkp6c0000gq/T/
+tRNA predictions saved to:         SAOMS1_Output/trnascan_out.gff
+------------------------------------------------------------
+
+Command line: tRNAscan-SE --thread 8 -G -Q -j SAOMS1_Output/trnascan_out.gff tests/test_data/overall/Standard_examples/SAOMS1.fasta

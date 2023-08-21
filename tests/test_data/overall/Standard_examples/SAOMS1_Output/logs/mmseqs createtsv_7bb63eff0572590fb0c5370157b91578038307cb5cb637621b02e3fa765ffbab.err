@@ -1,0 +1,1 @@
+Command line: mmseqs createtsv ../../databases/phrogs_profile_db SAOMS1_Output/target_dir/target_seqs SAOMS1_Output/mmseqs/results_mmseqs SAOMS1_Output/mmseqs_results.tsv --full-header --threads 8

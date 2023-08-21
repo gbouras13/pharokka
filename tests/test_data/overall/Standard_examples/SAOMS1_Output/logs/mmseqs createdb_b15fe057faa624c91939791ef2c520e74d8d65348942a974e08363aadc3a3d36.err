@@ -1,0 +1,1 @@
+Command line: mmseqs createdb SAOMS1_Output/phanotate_aas_tmp.fasta SAOMS1_Output/VFDB_target_dir/target_seqs

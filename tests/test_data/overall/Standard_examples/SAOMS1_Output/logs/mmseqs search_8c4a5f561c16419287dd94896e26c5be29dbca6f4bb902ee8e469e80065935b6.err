@@ -1,0 +1,1 @@
+Command line: mmseqs search -e 1E-05 ../../databases/phrogs_profile_db SAOMS1_Output/target_dir/target_seqs SAOMS1_Output/mmseqs/results_mmseqs SAOMS1_Output/tmp_dir/ -s 8.5 --threads 8

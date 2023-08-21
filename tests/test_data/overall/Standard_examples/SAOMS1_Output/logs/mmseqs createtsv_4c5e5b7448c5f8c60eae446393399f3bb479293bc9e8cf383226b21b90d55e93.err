@@ -1,0 +1,1 @@
+Command line: mmseqs createtsv ../../databases/CARD SAOMS1_Output/CARD_target_dir/target_seqs SAOMS1_Output/CARD/results_mmseqs SAOMS1_Output/CARD_results.tsv --full-header --threads 8

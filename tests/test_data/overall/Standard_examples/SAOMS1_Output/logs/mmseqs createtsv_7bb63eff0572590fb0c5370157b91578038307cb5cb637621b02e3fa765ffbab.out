@@ -1,0 +1,14 @@
+createtsv ../../databases/phrogs_profile_db SAOMS1_Output/target_dir/target_seqs SAOMS1_Output/mmseqs/results_mmseqs SAOMS1_Output/mmseqs_results.tsv --full-header --threads 8 
+
+MMseqs Version:                 	13.45111
+First sequence as representative	false
+Target column                   	1
+Add full header                 	true
+Sequence source                 	0
+Database output                 	false
+Threads                         	8
+Compressed                      	0
+Verbosity                       	3
+
+Time for merging to mmseqs_results.tsv: 0h 0m 0s 23ms
+Time for processing: 0h 0m 0s 44ms

@@ -1,0 +1,152 @@
+Create directory SAOMS1_Output/tmp_dir/
+search -e 1E-05 ../../databases/phrogs_profile_db SAOMS1_Output/target_dir/target_seqs SAOMS1_Output/mmseqs/results_mmseqs SAOMS1_Output/tmp_dir/ -s 8.5 --threads 8 
+
+MMseqs Version:                        	13.45111
+Substitution matrix                    	nucl:nucleotide.out,aa:blosum62.out
+Add backtrace                          	false
+Alignment mode                         	2
+Alignment mode                         	0
+Allow wrapped scoring                  	false
+E-value threshold                      	1e-05
+Seq. id. threshold                     	0
+Min alignment length                   	0
+Seq. id. mode                          	0
+Alternative alignments                 	0
+Coverage threshold                     	0
+Coverage mode                          	0
+Max sequence length                    	65535
+Compositional bias                     	1
+Max reject                             	2147483647
+Max accept                             	2147483647
+Include identical seq. id.             	false
+Preload mode                           	0
+Pseudo count a                         	1
+Pseudo count b                         	1.5
+Score bias                             	0
+Realign hits                           	false
+Realign score bias                     	-0.2
+Realign max seqs                       	2147483647
+Gap open cost                          	nucl:5,aa:11
+Gap extension cost                     	nucl:2,aa:1
+Zdrop                                  	40
+Threads                                	8
+Compressed                             	0
+Verbosity                              	3
+Seed substitution matrix               	nucl:nucleotide.out,aa:VTML80.out
+Sensitivity                            	8.5
+k-mer length                           	0
+k-score                                	2147483647
+Alphabet size                          	nucl:5,aa:21
+Max results per query                  	300
+Split database                         	0
+Split mode                             	2
+Split memory limit                     	0
+Diagonal scoring                       	true
+Exact k-mer matching                   	0
+Mask residues                          	1
+Mask lower case residues               	0
+Minimum diagonal score                 	15
+Spaced k-mers                          	1
+Spaced k-mer pattern                   	
+Local temporary path                   	
+Rescore mode                           	0
+Remove hits by seq. id. and coverage   	false
+Sort results                           	0
+Mask profile                           	1
+Profile E-value threshold              	0.1
+Global sequence weighting              	false
+Allow deletions                        	false
+Filter MSA                             	1
+Maximum seq. id. threshold             	0.9
+Minimum seq. id.                       	0
+Minimum score per column               	-20
+Minimum coverage                       	0
+Select N most diverse seqs             	1000
+Min codons in orf                      	30
+Max codons in length                   	32734
+Max orf gaps                           	2147483647
+Contig start mode                      	2
+Contig end mode                        	2
+Orf start mode                         	1
+Forward frames                         	1,2,3
+Reverse frames                         	1,2,3
+Translation table                      	1
+Translate orf                          	0
+Use all table starts                   	false
+Offset of numeric ids                  	0
+Create lookup                          	0
+Add orf stop                           	false
+Overlap between sequences              	0
+Sequence split mode                    	1
+Header split mode                      	0
+Chain overlapping alignments           	0
+Merge query                            	1
+Search type                            	0
+Search iterations                      	1
+Start sensitivity                      	4
+Search steps                           	1
+Exhaustive search mode                 	false
+Filter results during exhaustive search	0
+Strand selection                       	1
+LCA search mode                        	false
+Disk space limit                       	0
+MPI runner                             	
+Force restart with latest tmp          	false
+Remove temporary files                 	false
+
+prefilter ../../databases/phrogs_profile_db SAOMS1_Output/target_dir/target_seqs SAOMS1_Output/tmp_dir//15716240690178775500/pref_0 --sub-mat nucl:nucleotide.out,aa:blosum62.out --seed-sub-mat nucl:nucleotide.out,aa:VTML80.out -k 0 --k-score 2147483647 --alph-size nucl:5,aa:21 --max-seq-len 65535 --max-seqs 300 --split 0 --split-mode 2 --split-memory-limit 0 -c 0 --cov-mode 0 --comp-bias-corr 1 --diag-score 1 --exact-kmer-matching 0 --mask 1 --mask-lower-case 0 --min-ungapped-score 15 --add-self-matches 0 --spaced-kmer-mode 1 --db-load-mode 0 --pca 1 --pcb 1.5 --threads 8 --compressed 0 -v 3 -s 8.5 
+
+Query database size: 38880 type: Profile
+Estimated memory consumption: 488M
+Target database size: 246 type: Aminoacid
+Index table k-mer threshold: 0 at k-mer size 6 
+Index table: counting k-mers
+[=================================================================] 246 0s 12ms
+Index table: Masked residues: 663
+Index table: fill
+[=================================================================] 246 0s 3ms
+Index statistics
+Entries:          39755
+DB size:          488 MB
+Avg k-mer size:   0.000621
+Top 10 k-mers
+    LSPQEA	2
+    GSSSEA	2
+    SKSPKA	2
+    SRGKAD	2
+    VYKDDD	2
+    SDMGDD	2
+    LSYVED	2
+    DDILID	2
+    KRTNID	2
+    YKYKLD	2
+Time for index table init: 0h 0m 0s 325ms
+Process prefiltering step 1 of 1
+
+k-mer similarity threshold: 81
+Starting prefiltering scores calculation (step 1 of 1)
+Query db start 1 to 38880
+Target db start 1 to 246
+[=================================================================] 38.88K 2m 0s 483ms
+
+5386.328443 k-mers per position
+593 DB matches per sequence
+0 overflows
+0 queries produce too many hits (truncated result)
+13 sequences passed prefiltering per query sequence
+9 median result list length
+448 sequences with 0 size result lists
+Time for merging to pref_0: 0h 0m 0s 18ms
+Time for processing: 0h 2m 0s 898ms
+align ../../databases/phrogs_profile_db SAOMS1_Output/target_dir/target_seqs SAOMS1_Output/tmp_dir//15716240690178775500/pref_0 SAOMS1_Output/mmseqs/results_mmseqs --sub-mat nucl:nucleotide.out,aa:blosum62.out -a 0 --alignment-mode 2 --alignment-output-mode 0 --wrapped-scoring 0 -e 1e-05 --min-seq-id 0 --min-aln-len 0 --seq-id-mode 0 --alt-ali 0 -c 0 --cov-mode 0 --max-seq-len 65535 --comp-bias-corr 1 --max-rejected 2147483647 --max-accept 2147483647 --add-self-matches 0 --db-load-mode 0 --pca 1 --pcb 1.5 --score-bias 0 --realign 0 --realign-score-bias -0.2 --realign-max-seqs 2147483647 --gap-open nucl:5,aa:11 --gap-extend nucl:2,aa:1 --zdrop 40 --threads 8 --compressed 0 -v 3 
+
+Compute score and coverage
+Query database size: 38880 type: Profile
+Target database size: 246 type: Aminoacid
+Calculation of alignments
+[=================================================================] 38.88K 2s 781ms
+Time for merging to results_mmseqs: 0h 0m 0s 23ms
+516940 alignments calculated
+427 sequence pairs passed the thresholds (0.000826 of overall calculated)
+0.010983 hits per query sequence
+Time for processing: 0h 0m 2s 837ms

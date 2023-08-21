@@ -1,0 +1,1 @@
+Command line: mash dist SAOMS1_Output/input_mash_sketch.msh ../../databases/1Aug2023_genomes.fa.msh -d 0.2 -i

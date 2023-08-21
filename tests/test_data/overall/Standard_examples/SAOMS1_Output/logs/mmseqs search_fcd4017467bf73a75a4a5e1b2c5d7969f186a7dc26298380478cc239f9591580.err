@@ -1,0 +1,1 @@
+Command line: mmseqs search --min-seq-id 0.8 -c 0.4 ../../databases/CARD SAOMS1_Output/CARD_target_dir/target_seqs SAOMS1_Output/CARD/results_mmseqs SAOMS1_Output/VFDB_dir/ -s 8.5 --threads 8
