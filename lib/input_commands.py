@@ -147,8 +147,10 @@ def instantiate_dirs(output_dir, meta, force):
     # remove outdir on force
     if force == True:
         if os.path.isdir(output_dir) == True:
+            logger.info(
+                f"Removing output directory {output_dir} as -f or --force was specified."
+            )
             # shutil.rmtree(output_dir)
-            print("test")
 
         elif os.path.isfile(output_dir) == True:
             os.remove(output_dir)

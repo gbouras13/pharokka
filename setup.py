@@ -73,7 +73,7 @@ setup(
         "pandas>=1.4.2",
         "biopython>=1.76",
         "pyrodigal>=2.0.0",
-        "pyhmmer>=0.9.0",
+        "pyhmmer>=0.10.0",
         "black>=22.3.0",
         "isort>=5.10.1",
         "pytest>=6.2.5",

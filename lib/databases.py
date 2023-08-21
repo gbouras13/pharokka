@@ -1,3 +1,21 @@
+"""
+to tar DBs
+export GZIP=-9
+tar cvzf pharokka_v1.4.0_databases.tar.gz pharokka_v1.4.0_databases
+
+to create the mmseqs2 databases (CARD)
+with the latest download v 3.2.7 on August 21
+mmseqs createdb protein_fasta_protein_homolog_model.fasta CARD
+
+# also need aro.tsv for this one
+
+# for VFDB, only need the FASTA
+
+# VFDB update as of August 18 2023 (not versioned)
+mmseqs createdb VFDB_setB_pro.fas vfdb
+
+"""
+
 #!/usr/bin/env python3
 import hashlib
 import os
@@ -25,6 +43,20 @@ VERSION_DICTIONARY = {
     }
 }
 
+VERSION_DICTIONARY = {
+    "1.4.0": {
+        "md5": "cd9cc60dfaa2de63ec23902ab6d5b9d7",
+        "major": 1,
+        "minor": 4,
+        "minorest": 0,
+        "db_url": "https://zenodo.org/record/8267900/files/pharokka_v1.4.0_databases.tar.gz",
+        "dir_name": "pharokka_v1.4.0_databases",
+        "inphared_mash": "1Aug2023_genomes.fa.msh",
+        "inphared_annot": "1Aug2023_data.tsv",
+    }
+}
+
+
 PHROG_DB_NAMES = [
     "phrogs_db",
     "phrogs_db.dbtype",
@@ -47,7 +79,6 @@ PHROG_DB_NAMES = [
 PHROG_HMM_NAMES = ["all_phrogs.h3m"]
 
 VFDB_DB_NAMES = [
-    "VFDB_setB_pro.fas",
     "vfdb",
     "vfdb.dbtype",
     "vfdb.index",
@@ -78,16 +109,14 @@ def instantiate_install(db_dir):
     else:
         logger.info("Some Databases are missing.")
 
-        db_url = (
-            "https://zenodo.org/record/7563578/files/pharokka_v1.2.0_database.tar.gz"
-        )
+        db_url = VERSION_DICTIONARY["1.4.0"]["dir_name"]
 
         logger.info(f"Downloading Pharokka Databases from {db_url}.")
 
-        tarball_path = Path(f"{db_dir}/pharokka_v1.2.0_database.tar.gz")
+        tarball_path = Path(f"{db_dir}/pharokka_v1.4.0_databases.tar.gz")
 
-        db_url = VERSION_DICTIONARY["1.2.0"]["db_url"]
-        requiredmd5 = VERSION_DICTIONARY["1.2.0"]["md5"]
+        db_url = VERSION_DICTIONARY["1.4.0"]["db_url"]
+        requiredmd5 = VERSION_DICTIONARY["1.4.0"]["md5"]
 
         download(db_url, tarball_path)
 
@@ -147,7 +176,7 @@ def untar(tarball_path: Path, output_path: Path):
         ) as tar_file:
             tar_file.extractall(path=str(output_path))
 
-        tarpath = os.path.join(output_path, VERSION_DICTIONARY["1.2.0"]["dir_name"])
+        tarpath = os.path.join(output_path, VERSION_DICTIONARY["1.4.0"]["dir_name"])
 
         # Get a list of all files in the source directory
         files_to_move = [
@@ -201,13 +230,13 @@ def check_db_installation(db_dir):
         downloaded_flag = False
 
     # mash files
-    path = os.path.join(db_dir, VERSION_DICTIONARY["1.2.0"]["inphared_annot"])
+    path = os.path.join(db_dir, VERSION_DICTIONARY["1.4.0"]["inphared_annot"])
     if os.path.isfile(path) == False:
         logger.info("INPHARED Mash Annotation File is missing. ")
         downloaded_flag = False
 
     # mash files
-    path = os.path.join(db_dir, VERSION_DICTIONARY["1.2.0"]["inphared_mash"])
+    path = os.path.join(db_dir, VERSION_DICTIONARY["1.4.0"]["inphared_mash"])
     if os.path.isfile(path) == False:
         logger.info("INPHARED Mash Sketch File is missing. ")
         downloaded_flag = False

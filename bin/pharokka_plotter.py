@@ -3,9 +3,11 @@ import argparse
 import os
 import sys
 from argparse import RawTextHelpFormatter
+from loguru import logger
 
 import input_commands
-import plot
+from lib.plot import create_plot
+from lib.input_commands import validate_fasta
 
 
 def get_input():
@@ -102,42 +104,42 @@ def get_input():
 
 if __name__ == "__main__":
     args = get_input()
-
-    print("Checking your inputs.")
+    logger.add(lambda _: sys.exit(1), level="ERROR")
+    logger.info("Checking your inputs.")
 
     try:
         int(args.interval)
     except:
-        sys.exit(
-            "Error: --interval specified is not an integer. Please check your input and try again. \n"
+        logger.error(
+            f"--interval {args.interval} specified is not an integer. Please check your input and try again."
         )
 
     try:
         int(args.label_size)
     except:
-        sys.exit(
-            "Error: --label_size specified is not an integer. Please check your input and try again. \n"
+        logger.error(
+            f"--label_size {args.label_size} specified is not an integer. Please check your input and try again."
         )
 
     try:
         int(args.title_size)
     except:
-        sys.exit(
-            "Error: --title_size specified is not an integer. Please check your input and try again. \n"
+        logger.error(
+            f"--title_size {args.title_size} specified is not an integer. Please check your input and try again."
         )
 
     try:
         int(args.dpi)
     except:
-        sys.exit(
-            "Error: --dpi specified is not an integer. Please check your input and try again. \n"
+        logger.error(
+            f"--dpi {args.dpi} specified is not an integer. Please check your input and try again."
         )
 
     try:
         float(args.annotations)
     except:
-        sys.exit(
-            "Error: --annotations specified is not an float. Please check your input and try again. \n"
+        logger.error(
+            f"--annotations {args.annotations} specified is not an float. Please check your input and try again."
         )
 
     # check if plot already exists
@@ -150,13 +152,14 @@ if __name__ == "__main__":
         if os.path.isfile(plot_file) == True:
             os.remove(plot_file)
         else:
-            print(
-                "\n--force was specified even though the output plot file does not already exist. Continuing \n"
+            logger.warning(
+                "--force was specified even though the output plot file does not already exist."
             )
+            logger.warning("Continuing")
     else:
         if os.path.isfile(plot_file) == True:
-            sys.exit(
-                "\nOutput plot file already exists and force was not specified. Please specify -f or --force to overwrite the output plot file. \n"
+            logger.exit(
+                f"Output plot file {plot_file} already exists and force was not specified. Please specify -f or --force to overwrite the output plot file."
             )
 
     # flag to see if user provided gff and genbank or output directory
@@ -164,37 +167,41 @@ if __name__ == "__main__":
 
     if args.gff == "" or args.genbank == "":
         if args.outdir == "":
-            sys.exit(
-                "\nYou have not specified both a Pharokka gff and a gbk file, or a Pharokka output directory. \nPlease check your input and try again."
+            logger.error(
+                "You have not specified both a Pharokka gff and a gbk file, or a Pharokka output directory. Please check your input and try again."
             )
         else:
-            print("You have specified a Pharokka output directory. \nContinuing.")
+            logger.info("You have specified a Pharokka output directory. Continuing.")
+            logger.info("Continuing.")
             gff_genbank_flag = False
 
             # check the outdir exists
             if os.path.isdir(args.outdir) == False:
-                sys.exit(
-                    "\nProvided Pharokka output directory does not exist. Please check your -o or --outdir input. \n"
+                logger.error(
+                    f"Provided Pharokka output directory {args.outdir} does not exist. Please check -o/--outdir."
                 )
 
     else:
         if args.outdir != "":
-            print(
-                "You have specified Pharokka genbank and gff files and also an output directory.\nThe directory will be ignored. \nContinuing with the gff and genbank file."
+            logger.info(
+                "You have specified Pharokka genbank and gff files and also an output directory."
+            )
+            logger.info(
+                "The directory will be ignored. Continuing with the gff and genbank file."
             )
         else:
-            print(
-                "You have specified both Pharokka genbank and gff files. \nContinuing."
+            logger.info(
+                "You have specified both Pharokka genbank and gff files."
             )
 
     # check the input fasta exists
-    input_commands.validate_fasta(args.infile)
+    validate_fasta(args.infile)
 
     # get num input contigs
     num_contigs = len([1 for line in open(args.infile) if line.startswith(">")])
     if num_contigs > 1:
-        print(
-            "More than one contig detected in the input file. Only the first phage contig will be plotted. \nContinuing."
+        logger.warning(
+            "More than one contig detected in the input file. Only the first phage contig will be plotted."
         )
 
     # gff file
@@ -205,9 +212,8 @@ if __name__ == "__main__":
         gff_file = os.path.join(args.outdir, args.prefix + ".gff")
 
     if os.path.isfile(gff_file) == False:
-        sys.exit(
-            str(gff_file)
-            + "was not found. Please check the prefix value `-p` matches the pharokka output directory, \n or use --gff and --genbank to specify the gff and genbank files and try again."
+        logger.exit(
+            f" {gff_file} was not found. Please check the prefix value `-p` matches the pharokka output directory, \n or use --gff and --genbank to specify the gff and genbank files and try again."
         )
 
     # Load Genbank file
@@ -221,15 +227,15 @@ if __name__ == "__main__":
     # validate gbk exists
 
     if os.path.isfile(gbk_file) == False:
-        sys.exit(
-            str(gbk_file)
-            + "was not found. Please check the prefix value `-p` matches the pharokka output directory, \n or use --gff and --genbank to specify the gff and genbank files and try again."
+        logger.exit(
+
+            f" {gbk_file} was not found. Please check the prefix value `-p` matches the pharokka output directory, \n or use --gff and --genbank to specify the gff and genbank files and try again."
         )
 
-    print("All other checked.")
-    print("Plotting the phage.")
+    logger.info("All other checked.")
+    logger.info("Plotting the phage.")
 
-    plot.create_plot(
+    create_plot(
         gff_file,
         gbk_file,
         args.interval,

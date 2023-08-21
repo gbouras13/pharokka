@@ -6,7 +6,6 @@ Usage: pytest
 """
 
 
-
 # import
 import unittest
 from pathlib import Path
@@ -28,7 +27,6 @@ standard_data_output = Path(f"{standard_data}/SAOMS1_Output")
 logdir = Path(f"{test_data}/logs")
 
 
-
 logger.add(lambda _: sys.exit(1), level="ERROR")
 
 
@@ -36,7 +34,6 @@ logger.add(lambda _: sys.exit(1), level="ERROR")
 @pytest.fixture(scope="session")
 def tmp_dir(tmpdir_factory):
     return tmpdir_factory.mktemp("tmp")
-
 
 
 class testGenePred(unittest.TestCase):
@@ -50,25 +47,19 @@ class testGenePred(unittest.TestCase):
         fasta: Path = f"{standard_data}/SAOMS1.fasta"
         coding_table = 11
         meta = False
-        run_pyrodigal(fasta, standard_data_output, meta, coding_table) # meta = False
+        run_pyrodigal(fasta, standard_data_output, meta, coding_table)  # meta = False
 
     def test_run_pyrodigal_meta(self):
         fasta: Path = f"{standard_data}/SAOMS1.fasta"
         coding_table = 11
         meta = True
-        run_pyrodigal(fasta, standard_data_output, meta, coding_table) # meta = False
+        run_pyrodigal(fasta, standard_data_output, meta, coding_table)  # meta = False
 
     def test_run_pyrodigal_c4(self):
         fasta: Path = f"{standard_data}/SAOMS1.fasta"
         coding_table = 4
         meta = False
-        run_pyrodigal(fasta, standard_data_output, meta, coding_table) # meta = False
-
-
-
-
-
-
+        run_pyrodigal(fasta, standard_data_output, meta, coding_table)  # meta = False
 
 
 #         expected_return = True

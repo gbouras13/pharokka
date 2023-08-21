@@ -81,8 +81,6 @@
 #     exec_command(cmd)
 
 
-
-
 #     def test_bulk_single_genome(self):
 #         """test bulk with single genome"""
 #         with self.assertRaises(RuntimeError):

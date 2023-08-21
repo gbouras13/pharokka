@@ -862,7 +862,7 @@ class Pharok:
             df_list = [gff_df, trna_df]
         elif trna_empty is True and self.tmrna_flag is True and crispr_count == 0:
             df_list = [gff_df, tmrna_df]
-        elif trna_empty is True and self.tmrna_flag is False and crispr_count > 0: 
+        elif trna_empty is True and self.tmrna_flag is False and crispr_count > 0:
             df_list = [gff_df, minced_df]
         elif trna_empty is False and self.tmrna_flag is True and crispr_count == 0:
             df_list = [gff_df, trna_df, tmrna_df]
@@ -871,9 +871,8 @@ class Pharok:
         elif trna_empty is True and self.tmrna_flag is True and crispr_count > 0:
             df_list = [gff_df, tmrna_df, minced_df]
         # if trna_empty is False and self.tmrna_flag is True and crispr_count > 0:  # all detected
-        else: # all detected
+        else:  # all detected
             df_list = [gff_df, trna_df, tmrna_df, minced_df]
-
 
         total_gff = pd.concat(df_list, ignore_index=True)
 
@@ -1943,7 +1942,8 @@ def create_mmseqs_tophits(out_dir):
 
     ##mmseqs
     mmseqs_file = os.path.join(out_dir, "mmseqs_results.tsv")
-    logger.info("Processing mmseqs2 output.")
+    logger.info("Processing mmseqs2 outputs.")
+    logger.info("Processing PHROGs output.")
     col_list = [
         "mmseqs_phrog",
         "gene",
@@ -2116,6 +2116,7 @@ def process_vfdb_results(out_dir, merged_df):
     """
     ##vfdb
     vfdb_file = os.path.join(out_dir, "vfdb_results.tsv")
+    logger.info("Processing VFDB output.")
     col_list = [
         "vfdb_hit",
         "gene",
