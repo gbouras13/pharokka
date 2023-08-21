@@ -42,7 +42,7 @@ def create_plot(
     #### plot each PHROG fwd and reverse
     ## colours
 
-    # 4deeea
+    # #AAAAAA
     # 74ee15
     # ffe700
     # f000ff
@@ -54,7 +54,7 @@ def create_plot(
 
     # unknown
 
-    unk_col = "#4deeea"
+    unk_col = "#AAAAAA"
 
     unk_fwd_list = []
     for f in gff.extract_features("CDS", target_strand=1):
