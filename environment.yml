@@ -15,6 +15,7 @@ dependencies:
   - dnaapler >=0.3.0
   - pyrodigal >=2.0.1
   - pycirclize >=0.3.1
-  - alive-progress>=3.0.1
-  - requests>=2.25.1
+  - alive-progress >=3.0.1
+  - requests >=2.25.1
+  - pyhmmer >=0.10.0
 
