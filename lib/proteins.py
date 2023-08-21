@@ -20,20 +20,11 @@ from pyhmmer.easel import SequenceFile
 from pyhmmer.plan7 import HMM, HMMFile
 
 from lib.external_tools import ExternalTool
-from lib.post_processing import (
-    process_card_results,
-    process_pyhmmer_results,
-    process_vfdb_results,
-)
+from lib.post_processing import (process_card_results, process_pyhmmer_results,
+                                 process_vfdb_results)
 from lib.processes import convert_gff_to_gbk
-from lib.util import (
-    count_contigs,
-    get_contig_headers,
-    get_version,
-    remove_directory,
-    remove_file,
-    touch_file,
-)
+from lib.util import (count_contigs, get_contig_headers, get_version,
+                      remove_directory, remove_file, touch_file)
 
 Result = collections.namedtuple("Result", ["protein", "phrog", "bitscore", "evalue"])
 

@@ -3,11 +3,12 @@ import argparse
 import os
 import sys
 from argparse import RawTextHelpFormatter
-from loguru import logger
 
 import input_commands
-from lib.plot import create_plot
+from loguru import logger
+
 from lib.input_commands import validate_fasta
+from lib.plot import create_plot
 
 
 def get_input():
@@ -189,9 +190,7 @@ if __name__ == "__main__":
                 "The directory will be ignored. Continuing with the gff and genbank file."
             )
         else:
-            logger.info(
-                "You have specified both Pharokka genbank and gff files."
-            )
+            logger.info("You have specified both Pharokka genbank and gff files.")
 
     # check the input fasta exists
     validate_fasta(args.infile)
@@ -227,7 +226,6 @@ if __name__ == "__main__":
 
     if os.path.isfile(gbk_file) == False:
         logger.error(
-
             f" {gbk_file} was not found. Please check the prefix value `-p` matches the pharokka output directory, \n or use --gff and --genbank to specify the gff and genbank files and try again."
         )
 

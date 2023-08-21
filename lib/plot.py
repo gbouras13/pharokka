@@ -52,70 +52,23 @@ def create_plot(
     # 1c1c1c
     # ffffff
 
-    # vfdb_card 
-    
+    # vfdb_card
 
     # unknown
 
-
     data_dict = {
-    'vfdb_card': {
-        'col': "#FF0000",
-        'fwd_list': [],
-        'rev_list': []
-    },
-    'unk': {
-        'col': "#AAAAAA",
-        'fwd_list': [],
-        'rev_list': []
-    },
-    'other': {
-        'col': "#4deeea",
-        'fwd_list': [],
-        'rev_list': []
-    },
-    'tail': {
-        'col': "#74ee15",
-        'fwd_list': [],
-        'rev_list': []
-    },
-    'transcription': {
-        'col': "#ffe700",
-        'fwd_list': [],
-        'rev_list': []
-    },
-    'dna': {
-        'col': "#f000ff",
-        'fwd_list': [],
-        'rev_list': []
-    },
-    'lysis': {
-        'col': "#001eff",
-        'fwd_list': [],
-        'rev_list': []
-    },
-    'moron': {
-        'col': "#8900ff",
-        'fwd_list': [],
-        'rev_list': []
-    },
-    'int': {
-        'col': "#E0B0FF",
-        'fwd_list': [],
-        'rev_list': []
-    },
-    'head': {
-        'col': "#ff008d",
-        'fwd_list': [],
-        'rev_list': []
-    },
-    'con': {
-        'col': "#5A5A5A",
-        'fwd_list': [],
-        'rev_list': []
+        "vfdb_card": {"col": "#FF0000", "fwd_list": [], "rev_list": []},
+        "unk": {"col": "#AAAAAA", "fwd_list": [], "rev_list": []},
+        "other": {"col": "#4deeea", "fwd_list": [], "rev_list": []},
+        "tail": {"col": "#74ee15", "fwd_list": [], "rev_list": []},
+        "transcription": {"col": "#ffe700", "fwd_list": [], "rev_list": []},
+        "dna": {"col": "#f000ff", "fwd_list": [], "rev_list": []},
+        "lysis": {"col": "#001eff", "fwd_list": [], "rev_list": []},
+        "moron": {"col": "#8900ff", "fwd_list": [], "rev_list": []},
+        "int": {"col": "#E0B0FF", "fwd_list": [], "rev_list": []},
+        "head": {"col": "#ff008d", "fwd_list": [], "rev_list": []},
+        "con": {"col": "#5A5A5A", "fwd_list": [], "rev_list": []},
     }
-}
-
 
     # vfdb_card_col = "#FF0000"
     # unk_col = "#AAAAAA"
@@ -152,84 +105,80 @@ def create_plot(
     # con_fwd_list = []
     # con_rev_list = []
 
-# fwd
+    # fwd
 
     for f in gff.extract_features("CDS", target_strand=1):
-        if 'vfdb_short_name' in f.qualifiers or 'AMR_Gene_Family' in f.qualifiers: # vfdb or CARD
-            data_dict['vfdb_card']['fwd_list'].append(f)
-        else: # no vfdb or card
-            if f.qualifiers.get("function")[0] == "unknown function": 
-                data_dict['unk']['fwd_list'].append(f)
+        if (
+            "vfdb_short_name" in f.qualifiers or "AMR_Gene_Family" in f.qualifiers
+        ):  # vfdb or CARD
+            data_dict["vfdb_card"]["fwd_list"].append(f)
+        else:  # no vfdb or card
+            if f.qualifiers.get("function")[0] == "unknown function":
+                data_dict["unk"]["fwd_list"].append(f)
             elif f.qualifiers.get("function")[0] == "other":
-                data_dict['other']['fwd_list'].append(f)
+                data_dict["other"]["fwd_list"].append(f)
             elif f.qualifiers.get("function")[0] == "tail":
-                data_dict['tail']['fwd_list'].append(f)
+                data_dict["tail"]["fwd_list"].append(f)
             elif f.qualifiers.get("function")[0] == "transcription regulation":
-                data_dict['transcription']['fwd_list'].append(f)
+                data_dict["transcription"]["fwd_list"].append(f)
             elif f.qualifiers.get("function")[0] == "DNA":
-                data_dict['dna']['fwd_list'].append(f)
+                data_dict["dna"]["fwd_list"].append(f)
             elif f.qualifiers.get("function")[0] == "lysis":
-                data_dict['lysis']['fwd_list'].append(f)
+                data_dict["lysis"]["fwd_list"].append(f)
             elif f.qualifiers.get("function")[0] == "moron":
-                data_dict['moron']['fwd_list'].append(f)
+                data_dict["moron"]["fwd_list"].append(f)
             elif f.qualifiers.get("function")[0] == "integration and excision":
-                data_dict['int']['fwd_list'].append(f)
+                data_dict["int"]["fwd_list"].append(f)
             elif f.qualifiers.get("function")[0] == "head and packaging":
-                data_dict['head']['fwd_list'].append(f)
+                data_dict["head"]["fwd_list"].append(f)
             elif f.qualifiers.get("function")[0] == "connector":
-                data_dict['con']['fwd_list'].append(f)
+                data_dict["con"]["fwd_list"].append(f)
 
-
-# reverse
+    # reverse
 
     for f in gff.extract_features("CDS", target_strand=-1):
-        if 'vfdb_short_name' in f.qualifiers or 'AMR_Gene_Family' in f.qualifiers: # vfdb or CARD
-            data_dict['vfdb_card']['rev_list'].append(f)
-        else: # no vfdb or card
-            if f.qualifiers.get("function")[0] == "unknown function": 
-                data_dict['unk']['rev_list'].append(f)
+        if (
+            "vfdb_short_name" in f.qualifiers or "AMR_Gene_Family" in f.qualifiers
+        ):  # vfdb or CARD
+            data_dict["vfdb_card"]["rev_list"].append(f)
+        else:  # no vfdb or card
+            if f.qualifiers.get("function")[0] == "unknown function":
+                data_dict["unk"]["rev_list"].append(f)
             elif f.qualifiers.get("function")[0] == "other":
-                data_dict['other']['rev_list'].append(f)
+                data_dict["other"]["rev_list"].append(f)
             elif f.qualifiers.get("function")[0] == "tail":
-                data_dict['tail']['rev_list'].append(f)
+                data_dict["tail"]["rev_list"].append(f)
             elif f.qualifiers.get("function")[0] == "transcription regulation":
-                data_dict['transcription']['rev_list'].append(f)
+                data_dict["transcription"]["rev_list"].append(f)
             elif f.qualifiers.get("function")[0] == "DNA":
-                data_dict['dna']['rev_list'].append(f)
+                data_dict["dna"]["rev_list"].append(f)
             elif f.qualifiers.get("function")[0] == "lysis":
-                data_dict['lysis']['rev_list'].append(f)
+                data_dict["lysis"]["rev_list"].append(f)
             elif f.qualifiers.get("function")[0] == "moron":
-                data_dict['moron']['rev_list'].append(f)
+                data_dict["moron"]["rev_list"].append(f)
             elif f.qualifiers.get("function")[0] == "integration and excision":
-                data_dict['int']['rev_list'].append(f)
+                data_dict["int"]["rev_list"].append(f)
             elif f.qualifiers.get("function")[0] == "head and packaging":
-                data_dict['head']['rev_list'].append(f)
+                data_dict["head"]["rev_list"].append(f)
             elif f.qualifiers.get("function")[0] == "connector":
-                data_dict['con']['rev_list'].append(f)
+                data_dict["con"]["rev_list"].append(f)
 
-
-# add all the tracks
+    # add all the tracks
 
     for key in data_dict.keys():
-
         cds_track.genomic_features(
-            data_dict[key]['fwd_list'],
+            data_dict[key]["fwd_list"],
             plotstyle="arrow",
             r_lim=(75, 80),
-            fc=data_dict[key]['col'],
+            fc=data_dict[key]["col"],
         )
-
 
         cds_track.genomic_features(
-            data_dict[key]['rev_list'],
+            data_dict[key]["rev_list"],
             plotstyle="arrow",
             r_lim=(70, 75),
-            fc=data_dict[key]['col'],
+            fc=data_dict[key]["col"],
         )
-
-
-  
-    
 
     ###################################################
     #### Extra Features
@@ -530,19 +479,24 @@ def create_plot(
 
     # # Add legend
     handle_phrogs = [
-        Patch(color=data_dict['unk']['col'], label="Unknown Function"),
-        Patch(color=data_dict['other']['col'], label="Other Function"),
-        Patch(color=data_dict['transcription']['col'], label="Transcription Regulation"),
-        Patch(color=data_dict['dna']['col'], label="DNA/RNA & nucleotide \n metabolism"),
-        Patch(color=data_dict['lysis']['col'], label="Lysis"),
+        Patch(color=data_dict["unk"]["col"], label="Unknown Function"),
+        Patch(color=data_dict["other"]["col"], label="Other Function"),
         Patch(
-            color=data_dict['moron']['col'], label="Moron, auxiliary metabolic \n gene & host takeover"
+            color=data_dict["transcription"]["col"], label="Transcription Regulation"
         ),
-        Patch(color=data_dict['int']['col'], label="Integration & excision"),
-        Patch(color=data_dict['head']['col'], label="Head & packaging"),
-        Patch(color=data_dict['con']['col'], label="Connector"),
-        Patch(color=data_dict['tail']['col'], label="Tail"),
-        Patch(color=data_dict['vfdb_card']['col'], label="Virulence Factor/AMR"),
+        Patch(
+            color=data_dict["dna"]["col"], label="DNA/RNA & nucleotide \n metabolism"
+        ),
+        Patch(color=data_dict["lysis"]["col"], label="Lysis"),
+        Patch(
+            color=data_dict["moron"]["col"],
+            label="Moron, auxiliary metabolic \n gene & host takeover",
+        ),
+        Patch(color=data_dict["int"]["col"], label="Integration & excision"),
+        Patch(color=data_dict["head"]["col"], label="Head & packaging"),
+        Patch(color=data_dict["con"]["col"], label="Connector"),
+        Patch(color=data_dict["tail"]["col"], label="Tail"),
+        Patch(color=data_dict["vfdb_card"]["col"], label="Virulence Factor/AMR"),
     ]
 
     fig = circos.plotfig()

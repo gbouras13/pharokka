@@ -10,38 +10,19 @@ from loguru import logger
 
 from lib.databases import check_db_installation
 from lib.hmm import run_pyhmmer
-from lib.input_commands import (
-    check_dependencies,
-    get_input,
-    instantiate_dirs,
-    instantiate_split_output,
-    validate_fasta,
-    validate_gene_predictor,
-    validate_meta,
-    validate_terminase,
-    validate_threads,
-)
+from lib.input_commands import (check_dependencies, get_input,
+                                instantiate_dirs, instantiate_split_output,
+                                validate_fasta, validate_gene_predictor,
+                                validate_meta, validate_terminase,
+                                validate_threads)
 from lib.post_processing import Pharok, remove_post_processing_files
-from lib.processes import (
-    concat_phanotate_meta,
-    concat_trnascan_meta,
-    convert_gff_to_gbk,
-    reorient_terminase,
-    run_aragorn,
-    run_dnaapler,
-    run_mash_dist,
-    run_mash_sketch,
-    run_minced,
-    run_mmseqs,
-    run_phanotate,
-    run_phanotate_fasta_meta,
-    run_phanotate_txt_meta,
-    run_pyrodigal,
-    run_trna_scan,
-    run_trnascan_meta,
-    split_input_fasta,
-    translate_fastas,
-)
+from lib.processes import (concat_phanotate_meta, concat_trnascan_meta,
+                           convert_gff_to_gbk, reorient_terminase, run_aragorn,
+                           run_dnaapler, run_mash_dist, run_mash_sketch,
+                           run_minced, run_mmseqs, run_phanotate,
+                           run_phanotate_fasta_meta, run_phanotate_txt_meta,
+                           run_pyrodigal, run_trna_scan, run_trnascan_meta,
+                           split_input_fasta, translate_fastas)
 from lib.util import get_version
 
 
@@ -247,12 +228,8 @@ def main():
         logger.info("Running Phanotate.")
         if args.meta == True:
             logger.info("Applying meta mode.")
-            run_phanotate_fasta_meta(
-                input_fasta, out_dir, args.threads, num_fastas, logdir
-            )
-            run_phanotate_txt_meta(
-                input_fasta, out_dir, args.threads, num_fastas, logdir
-            )
+            run_phanotate_fasta_meta(input_fasta, out_dir, args.threads, num_fastas)
+            run_phanotate_txt_meta(input_fasta, out_dir, args.threads, num_fastas)
             concat_phanotate_meta(out_dir, num_fastas)
         else:
             run_phanotate(input_fasta, out_dir, logdir)

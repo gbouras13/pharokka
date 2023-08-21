@@ -3,6 +3,7 @@ import argparse
 import os
 import sys
 from argparse import RawTextHelpFormatter
+
 from loguru import logger
 
 from lib.databases import instantiate_install

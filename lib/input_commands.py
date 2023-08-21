@@ -150,7 +150,7 @@ def instantiate_dirs(output_dir, meta, force):
             logger.info(
                 f"Removing output directory {output_dir} as -f or --force was specified."
             )
-            # shutil.rmtree(output_dir)
+            shutil.rmtree(output_dir)
 
         elif os.path.isfile(output_dir) == True:
             os.remove(output_dir)
@@ -215,7 +215,7 @@ def validate_meta(filepath_in, meta, split):
                 "ERROR: -m meta mode specified when the input file only contains 1 contig. Please re-run without specifying -m. \n"
             )
         else:
-            message = str(num_fastas) + " input contigs detected."
+            message = f"{num_fastas} input contigs detected."
             logger.info(message)
             if split == True:
                 message = "Split mode activtated. \nSeparate output FASTA, gff and genbank files will be output for each contig."
