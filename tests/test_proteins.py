@@ -8,19 +8,27 @@ Usage: pytest .
 # import
 import os
 import shutil
+
 # import functions
 import subprocess
 import sys
+import unittest
 from pathlib import Path
 from unittest.mock import patch
-import unittest
+
 import pytest
 from loguru import logger
 
-from lib.input_commands import (instantiate_dirs, validate_fasta,
-                                validate_gene_predictor, validate_meta,
-                                validate_strand, validate_terminase,
-                                validate_terminase_start, validate_threads)
+from lib.input_commands import (
+    instantiate_dirs,
+    validate_fasta,
+    validate_gene_predictor,
+    validate_meta,
+    validate_strand,
+    validate_terminase,
+    validate_terminase_start,
+    validate_threads,
+)
 from lib.util import remove_directory
 
 # import functions
@@ -78,10 +86,13 @@ def test_proteins(tmp_dir):
     )
     exec_command(cmd)
 
+
 temp_dir = Path(f"{test_data}/fake_out")
+
 
 class testFails(unittest.TestCase):
     """Tests for fails"""
+
     def test_proteins_pred(self):
         """tests that pharokka exits if bad gene predictior"""
         with self.assertRaises(SystemExit):

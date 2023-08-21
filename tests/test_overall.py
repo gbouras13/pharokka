@@ -8,6 +8,7 @@ Usage: pytest .
 # import
 import os
 import shutil
+
 # import functions
 import subprocess
 import sys
@@ -18,10 +19,16 @@ from unittest.mock import patch
 import pytest
 from loguru import logger
 
-from lib.input_commands import (instantiate_dirs, validate_fasta,
-                                validate_gene_predictor, validate_meta,
-                                validate_strand, validate_terminase,
-                                validate_terminase_start, validate_threads)
+from lib.input_commands import (
+    instantiate_dirs,
+    validate_fasta,
+    validate_gene_predictor,
+    validate_meta,
+    validate_strand,
+    validate_terminase,
+    validate_terminase_start,
+    validate_threads,
+)
 from lib.util import remove_directory
 
 # import functions
@@ -65,10 +72,10 @@ def exec_command(cmnd, stdout=subprocess.PIPE, stderr=subprocess.PIPE):
     return out.decode("utf8") if out is not None else None
 
 
-# def test_download(tmp_dir):
-#     """test pharokka download"""
-#     cmd = f"install_databases.py -o {database_dir}"
-#     exec_command(cmd)
+def test_download(tmp_dir):
+    """test pharokka download"""
+    cmd = f"install_databases.py -o {database_dir}"
+    exec_command(cmd)
 
 
 def test_overall(tmp_dir):
@@ -134,12 +141,11 @@ def test_terminase(tmp_dir):
     exec_command(cmd)
 
 
-
 temp_dir = Path(f"{test_data}/fake_out")
+
 
 class testFails(unittest.TestCase):
     """Tests for fails"""
-    
 
     def test_meta_with_single_contig(self):
         """tests that pharokka exits if single contig is passed to meta"""
@@ -194,4 +200,4 @@ class testFails(unittest.TestCase):
 
 
 remove_directory(temp_dir)
-# remove_directory(f"{database_dir}")
+remove_directory(f"{database_dir}")

@@ -14,8 +14,14 @@ from unittest.mock import patch
 import pytest
 from loguru import logger
 
-from lib.processes import (run_aragorn, run_mash_sketch, run_minced,
-                           run_phanotate, run_pyrodigal)
+from lib.processes import (
+    run_aragorn,
+    run_mash_sketch,
+    run_minced,
+    run_phanotate,
+    run_pyrodigal,
+)
+
 # import functions
 from lib.util import remove_directory
 

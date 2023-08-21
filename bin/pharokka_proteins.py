@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import os
-import shutil
 import sys
 import time
 from pathlib import Path
@@ -9,22 +8,20 @@ from pathlib import Path
 from loguru import logger
 
 from lib.databases import check_db_installation
-from lib.hmm import run_pyhmmer
-from lib.input_commands import (check_dependencies, get_input,
-                                instantiate_dirs, instantiate_split_output,
-                                validate_fasta, validate_gene_predictor,
-                                validate_meta, validate_terminase,
-                                validate_threads)
-from lib.post_processing import Pharok, remove_post_processing_files
-from lib.processes import (concat_phanotate_meta, concat_trnascan_meta,
-                           convert_gff_to_gbk, reorient_terminase, run_aragorn,
-                           run_dnaapler, run_mash_dist, run_mash_sketch,
-                           run_minced, run_phanotate, run_phanotate_fasta_meta,
-                           run_phanotate_txt_meta, run_pyrodigal,
-                           run_trna_scan, run_trnascan_meta, split_input_fasta,
-                           translate_fastas)
-from lib.proteins import (Pharok_Prot, get_input_proteins, run_mmseqs_proteins,
-                          run_pyhmmer_proteins)
+
+from lib.input_commands import (
+    check_dependencies,
+    instantiate_dirs,
+    validate_fasta,
+    validate_threads,
+)
+from lib.post_processing import remove_directory, remove_file
+from lib.proteins import (
+    Pharok_Prot,
+    get_input_proteins,
+    run_mmseqs_proteins,
+    run_pyhmmer_proteins,
+)
 from lib.util import get_version
 
 
@@ -88,7 +85,7 @@ def main():
         logger.info("All databases have been successfully checked.")
     else:
         logger.error(
-            "\nThe database directory was unsuccessfully checked. Please run install_databases.py \n"
+            "The database directory was unsuccessfully checked. Please run install_databases.py"
         )
 
     # dependencies
@@ -186,6 +183,14 @@ def main():
 
     # updates fasta headers
     pharok.update_fasta_headers()
+
+    # cleanup
+
+    remove_directory(os.path.join(out_dir, "mmseqs"))
+    remove_file(os.path.join(out_dir, "CARD_results.tsv"))
+    remove_file(os.path.join(out_dir, "vfdb_results.tsv"))
+    remove_directory(os.path.join(out_dir, "CARD"))
+    remove_directory(os.path.join(out_dir, "vfdb"))
 
     # Determine elapsed time
     elapsed_time = time.time() - start_time
