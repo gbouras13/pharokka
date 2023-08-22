@@ -11,9 +11,8 @@ from BCBio import GFF
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from loguru import logger
-
 from external_tools import ExternalTool
+from loguru import logger
 from util import count_contigs, remove_directory
 
 ##### phanotate meta mode ########

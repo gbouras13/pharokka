@@ -3,10 +3,10 @@ import argparse
 import os
 import sys
 from argparse import RawTextHelpFormatter
-from loguru import logger
 from pathlib import Path
 
 from input_commands import validate_fasta
+from loguru import logger
 from plot import create_plot
 from util import get_version
 
@@ -247,12 +247,12 @@ if __name__ == "__main__":
     label_force_list = []
 
     if args.label_ids != "":
-        logger.info(f"You have specified a file {args.label_ids} containing a list of CDS IDs to force label.")
+        logger.info(
+            f"You have specified a file {args.label_ids} containing a list of CDS IDs to force label."
+        )
         # check if it is a file
         if os.path.isfile(args.label_ids) == False:
-            logger.error(
-                f"{args.label_ids} was not found."
-            )
+            logger.error(f"{args.label_ids} was not found.")
         # check if it contains text
         try:
             # Open the file in read mode
@@ -267,7 +267,9 @@ if __name__ == "__main__":
                 label_force_list = list(ignore_dict)
 
         except FileNotFoundError:
-            logger.warning(f"{args.label_id} contains no text. No contigs will be ignored")
+            logger.warning(
+                f"{args.label_id} contains no text. No contigs will be ignored"
+            )
 
     logger.info("All files checked.")
     logger.info("Plotting the phage.")
@@ -285,5 +287,5 @@ if __name__ == "__main__":
         args.label_size,
         args.label_hypotheticals,
         args.remove_other_features_labels,
-        label_force_list
+        label_force_list,
     )

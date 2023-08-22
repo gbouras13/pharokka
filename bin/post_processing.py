@@ -11,7 +11,6 @@ import pandas as pd
 from Bio import SeqIO
 from Bio.SeqUtils import GC
 from loguru import logger
-
 from processes import convert_gff_to_gbk
 from util import remove_directory, remove_file, touch_file
 
@@ -529,8 +528,8 @@ class Pharok:
             locus_df["locus_tag"] = locus_df.contig + "_CDS_" + locus_df["count"]
 
         # assign count and locus_tag to merged_df (for meta)
-        self.merged_df["locus_tag"] =  locus_df["locus_tag"]
-        self.merged_df["count"] =  locus_df["count"]
+        self.merged_df["locus_tag"] = locus_df["locus_tag"]
+        self.merged_df["count"] = locus_df["count"]
         #################################
 
         #########

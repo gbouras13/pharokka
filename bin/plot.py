@@ -1,9 +1,9 @@
 import numpy as np
+from loguru import logger
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 from pycirclize import Circos
 from pycirclize.parser import Genbank, Gff
-from loguru import logger
 
 # Load GFF file
 
@@ -21,7 +21,7 @@ def create_plot(
     label_size,
     label_hypotheticals,
     remove_other_features_labels,
-    label_force_list
+    label_force_list,
 ):
     gff = Gff(gff_file)
 
@@ -136,7 +136,7 @@ def create_plot(
             r_lim=(75, 80),
             fc=data_dict[key]["col"],
         )
-    # rev
+        # rev
         cds_track.genomic_features(
             data_dict[key]["rev_list"],
             plotstyle="arrow",
@@ -293,30 +293,29 @@ def create_plot(
         id = f.qualifiers.get("ID", [""])[0]
 
         # skip hypotheticals if the flag is false (default)
-        if id in label_force_list: # if in the list
+        if id in label_force_list:  # if in the list
             if len(label) > truncate:
                 label = label[:truncate] + "..."
             pos_list.append(pos)
             labels.append(label)
             length_list.append(length)
             id_list.append(id)
-            continue # to break if in the list
+            continue  # to break if in the list
         else:
             if label_hypotheticals == False:
                 if (
-                label == ""
-                or label.startswith("hypothetical")
-                or label.startswith("unknown")
-                    ):
-                    continue # if hypothetical not in the list
-                else: # all others
-                    if len(label) > truncate: 
+                    label == ""
+                    or label.startswith("hypothetical")
+                    or label.startswith("unknown")
+                ):
+                    continue  # if hypothetical not in the list
+                else:  # all others
+                    if len(label) > truncate:
                         label = label[:truncate] + "..."
                     pos_list.append(pos)
                     labels.append(label)
                     length_list.append(length)
                     id_list.append(id)
-
 
     ###################################################
     #### thin out CDS annotations
@@ -359,7 +358,6 @@ def create_plot(
     pos_list = [pos_list[i] for i in filtered_indices]
     labels = [labels[i] for i in filtered_indices]
     length_list = [length_list[i] for i in filtered_indices]
-
 
     # Plot CDS product labels on outer position
     cds_track.xticks(

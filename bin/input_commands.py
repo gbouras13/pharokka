@@ -2,12 +2,10 @@ import argparse
 import os
 import shutil
 import subprocess as sp
-import sys
 from argparse import RawTextHelpFormatter
 
 from Bio import SeqIO
 from loguru import logger
-
 from util import get_version
 
 
@@ -17,10 +15,7 @@ def get_input():
         formatter_class=RawTextHelpFormatter,
     )
     parser.add_argument(
-        "-i", 
-        "--infile", 
-        action="store", 
-        help="Input genome file in fasta format."
+        "-i", "--infile", action="store", help="Input genome file in fasta format."
     )
     parser.add_argument(
         "-o",

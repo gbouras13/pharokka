@@ -8,7 +8,6 @@ Usage: pytest .
 # import
 import os
 import shutil
-
 # import functions
 import subprocess
 import sys
@@ -69,7 +68,6 @@ def test_download(tmp_dir):
     exec_command(cmd)
 
 
-
 def test_proteins(tmp_dir):
     """test pharokka proteins"""
     input_fasta: Path = f"{proteins_data}/phanotate.faa"
@@ -82,21 +80,19 @@ def test_proteins(tmp_dir):
 def test_proteins_hmm_only(tmp_dir):
     """test pharokka proteins hmm_only"""
     input_fasta: Path = f"{proteins_data}/phanotate.faa"
-    cmd = (
-        f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t 1 -f --hmm_only"
-    )
+    cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t 1 -f --hmm_only"
     exec_command(cmd)
+
 
 def test_proteins_mmseqs_only(tmp_dir):
     """test pharokka proteins mmseqs_only"""
     input_fasta: Path = f"{proteins_data}/phanotate.faa"
-    cmd = (
-        f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t 1 -f --mmseqs2_only"
-    )
+    cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t 1 -f --mmseqs2_only"
     exec_command(cmd)
 
 
 temp_dir = Path(f"{test_data}/fake_out")
+
 
 class testFails(unittest.TestCase):
     """Tests for fails"""

@@ -4,9 +4,8 @@ import shutil
 import click
 import pandas as pd
 from Bio import SeqIO
-from loguru import logger
-
 from citation import __citation__
+from loguru import logger
 from version import __version__
 
 

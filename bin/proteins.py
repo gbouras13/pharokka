@@ -15,23 +15,14 @@ import pandas as pd
 import pyhmmer
 from Bio import SeqIO
 from Bio.SeqUtils import GC
+from external_tools import ExternalTool
+from lib.util import (count_contigs, get_contig_headers, get_version,
+                      remove_directory)
 from loguru import logger
+from post_processing import (process_card_results, process_pyhmmer_results,
+                             process_vfdb_results)
 from pyhmmer.easel import SequenceFile
 from pyhmmer.plan7 import HMM, HMMFile
-
-from external_tools import ExternalTool
-from post_processing import (
-    process_card_results,
-    process_pyhmmer_results,
-    process_vfdb_results,
-)
-
-from lib.util import (
-    count_contigs,
-    get_contig_headers,
-    get_version,
-    remove_directory
-)
 
 Result = collections.namedtuple("Result", ["protein", "phrog", "bitscore", "evalue"])
 

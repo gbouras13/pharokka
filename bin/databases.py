@@ -26,7 +26,6 @@ from pathlib import Path
 import requests
 from alive_progress import alive_bar
 from loguru import logger
-
 from post_processing import remove_directory
 
 # to hold information about the different DBs

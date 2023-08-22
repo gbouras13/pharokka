@@ -3,9 +3,9 @@ import argparse
 import os
 import sys
 from argparse import RawTextHelpFormatter
-from loguru import logger
 
 from databases import instantiate_install
+from loguru import logger
 
 
 def get_db_input():

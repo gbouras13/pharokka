@@ -1,6 +1,6 @@
 import os
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 
 def get_version():
@@ -45,17 +45,18 @@ setup(
         "bin/citation.py",
         "bin/databases.py",
         "bin/external_tools.py",
+        "bin/input_commands.py",
         "bin/hmm.py",
         "bin/plot.py",
         "bin/post_processing.py",
         "bin/processes.py",
         "bin/proteins.py",
         "bin/util.py",
-        "bin/version.py"
+        "bin/version.py",
     ],
-    packages=['pharokka_runner'],                           
-    package_dir=dict(pharokka_runner='bin'),                        
-    package_data=dict(pharokka_runner=package_files('bin/')),
+    packages=["pharokka_runner"],
+    package_dir=dict(pharokka_runner="bin"),
+    package_data=dict(pharokka_runner=package_files("bin/")),
     include_package_data=True,
     license="MIT License",
     platforms=["Unix"],

@@ -8,7 +8,6 @@ Usage: pytest .
 # import
 import os
 import shutil
-
 # import functions
 import subprocess
 import sys
@@ -19,16 +18,10 @@ from unittest.mock import patch
 import pytest
 from loguru import logger
 
-from bin.input_commands import (
-    instantiate_dirs,
-    validate_fasta,
-    validate_gene_predictor,
-    validate_meta,
-    validate_strand,
-    validate_terminase,
-    validate_terminase_start,
-    validate_threads,
-)
+from bin.input_commands import (instantiate_dirs, validate_fasta,
+                                validate_gene_predictor, validate_meta,
+                                validate_strand, validate_terminase,
+                                validate_terminase_start, validate_threads)
 from bin.util import remove_directory
 
 # import functions
