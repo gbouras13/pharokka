@@ -149,42 +149,42 @@ class testFails(unittest.TestCase):
 
     def test_meta_with_single_contig(self):
         """tests that pharokka exits if single contig is passed to meta"""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(RuntimeError):
             input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
             cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t 1 -f -m"
             exec_command(cmd)
 
     def test_meta_terminas(self):
         """tests that pharokka exits if multiple contigs passed to meta"""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(RuntimeError):
             input_fasta: Path = f"{meta_data}/fake_meta.fa"
             cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t 1 -f -m --terminase"
             exec_command(cmd)
 
     def test_bad_terminase(self):
         """tests that pharokka exits if only terminase specified"""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(RuntimeError):
             input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
             cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t 1 -f --terminase"
             exec_command(cmd)
 
     def test_bad_terminase_start(self):
         """tests that pharokka exits if bad terminase start specified"""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(RuntimeError):
             input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
             cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t 1 -f --terminase --terminase_start sf"
             exec_command(cmd)
 
     def test_bad_terminase_strand(self):
         """tests that pharokka exits if bad strand"""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(RuntimeError):
             input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
             cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t 1 -f --terminase --terminase_start 34 --terminase_strand posit"
             exec_command(cmd)
 
     def test_bad_threads(self):
         """tests that pharokka exits if bad threads"""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(RuntimeError):
             input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
             cmd = (
                 f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t sf -f"
@@ -193,7 +193,7 @@ class testFails(unittest.TestCase):
 
     def test_bad_gene_pred(self):
         """tests that pharokka exits if bad gene predictior"""
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(RuntimeError):
             input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
             cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t 1 -g proddigal -f"
             exec_command(cmd)

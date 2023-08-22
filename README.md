@@ -11,7 +11,7 @@ pharokka
 
 pharokka is a rapid standardised annotation tool for bacteriophage genomes and metagenomes.
 
-If you are looking for rapid standardised annotation of bacterial genomes, please use [prokka](https://github.com/tseemann/prokka), which inspired the creation of pharokka, or [bakta](https://github.com/oschwengers/bakta).
+If you are looking for rapid standardised annotation of bacterial genomes, please use [Bakta](https://github.com/oschwengers/bakta). [Prokka](https://github.com/tseemann/prokka), which inspired the creation and naming of pharokka, is another good option, but Bakta is [Prokka's worthy successor](https://twitter.com/torstenseemann/status/1565471892840259585).
 
 # Quick Start
 
@@ -27,10 +27,9 @@ And finally annotation:
 
 `pharokka.py -i <phage fasta file> -o <output directory> -d <path/to/database_dir> -t <threads>`
 
-as of v1.4.0, if you want rapid (<100 seconds) PHROG annotations, use `--fast`:
+As of pharokka v1.4.0, if you want extremely rapid PHROG annotations, use `--fast`:
 
 `pharokka.py -i <phage fasta file> -o <output directory> -d <path/to/database_dir> -t <threads> --fast`
-
 
 # Documentation
 
@@ -56,23 +55,22 @@ So if you can't get Pharokka to install on your machine for whatever reason or w
   <img src="img/pharokka_workflow.png" alt="pharokka Workflow" height=600>
 </p>
 
-pharokka uses [PHANOTATE](https://github.com/deprekate/PHANOTATE), the only gene prediction program tailored to bacteriophages, as the default program for gene prediction. [Prodigal](https://github.com/hyattpd/Prodigal) is also available as an alternative. Following this, functional annotations are assigned by matching each predicted coding sequence (CDS) to the [PHROGs](https://phrogs.lmge.uca.fr), [CARD](https://card.mcmaster.ca) and [VFDB](http://www.mgc.ac.cn/VFs/main.htm) databases using [MMseqs2](https://github.com/soedinglab/MMseqs2). As of v1.4.0, Pharokka will also match each CDS to the PHROGs database using more sensitive Hidden Markov Models using [Pyhmmer](https://github.com/althonos/pyhmmer). Pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). pharokka also generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage) and check out the full [documentation](https://pharokka.readthedocs.io) for more details.  
+pharokka uses [PHANOTATE](https://github.com/deprekate/PHANOTATE), the only gene prediction program tailored to bacteriophages, as the default program for gene prediction. [Prodigal](https://github.com/hyattpd/Prodigal) is also available as an alternative. Following this, functional annotations are assigned by matching each predicted coding sequence (CDS) to the [PHROGs](https://phrogs.lmge.uca.fr), [CARD](https://card.mcmaster.ca) and [VFDB](http://www.mgc.ac.cn/VFs/main.htm) databases using [MMseqs2](https://github.com/soedinglab/MMseqs2). As of v1.4.0, Pharokka will also match each CDS to the PHROGs database using more sensitive Hidden Markov Models using [PyHMMER](https://github.com/althonos/pyhmmer). Pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). pharokka also generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage) and check out the full [documentation](https://pharokka.readthedocs.io) for more details.  
 
 ## Pharokka v 1.4.0 Update (22 August 2023)
 
 Pharokka v1.4.0 is a large update implementing:
 
-* More sensitive search for PHROGs using Hidden Markov Models (HMMs) using the amazing [Pyhmmer](https://github.com/althonos/pyhmmer).
+* More sensitive search for PHROGs using Hidden Markov Models (HMMs) using the amazing [PyHMMER](https://github.com/althonos/pyhmmer).
 * By default, Pharokka will now run both MMseqs2 (PHROGs, CARD and VFDB) and HMMs (PHROGs). MMseqs2 was kept for PHROGs as it provides more information than the HMM results (sequence identities, top hit PHROG protein).
 * `--fast` or `--hmm_only` which only runs HMMs on PHROGs, not MMseqs2. For phage isolates, this will be much faster than MMseqs2, but you will not get CARD or VFDB annotations. For metagenomes, this will be (much) slower though!
 * `--mmseqs_only` which will essentially runs Pharokka v1.3.2. 
 * `pharokka_proteins.py`, which takes an input file of amino acid proteins in FASTA format and runs MMseqs2 (PHROGs, CARD, VFDB) and Pyhmmer (PHROGs).
-* Automatic detection and reorientation to start your phage with the large terminase subunit using `--dnaapler`. For more information, see [dnaapler](https://github.com/gbouras13/dnaapler).
-* Updated databases as of 21 August 2023. You will need to re-download the v1.4.0 databases.
+* `--dnaapler`, which automatic detects and reorients your phage to start with the large terminase subunit. For more information, see [dnaapler](https://github.com/gbouras13/dnaapler).
+* Updated databases as of 21 August 2023. You will need to download the new v1.4.0 databases.
 * Fixes to `-c`, which should now workwith `-g prodigal` (thanks Alistair Legione).
 
 ## Pharokka v 1.3.0 Update
-
 
 Pharokka v1.3.0 implements `pharokka_plotter.py`, which creates a simple circular genome plot using the amazing [pyCirclize](https://github.com/moshi4/pyCirclize) package with output in PNG format. All CDS are coloured according to their PHROG functional group. 
 
@@ -346,7 +344,7 @@ George Bouras, Roshan Nepal, Ghais Houtak, Alkis James Psaltis, Peter-John Worma
 
 If you use pharokka, I would recommend a citation in your manuscript along the lines of:
 
-* All phages were annotated with Pharokka v ___ (Bouras, et al. 2023). Specifically, coding sequences (CDS) were predicted with PHANOTATE (McNair, et al. 2019), tRNAs were predicted with tRNAscan-SE 2.0 (Chan, et al. 2021), tmRNAs were predicted with Aragorn (Laslett, et al. 2004) and CRISPRs were preducted with CRT (Bland, et al. 2007). Functional annotation was generated by matching each CDS to the PHROGs (Terzian, et al. 2021), VFDB (Chen, et al. 2005) and CARD (Alcock, et al. 2020) databases using MMseqs2 (Steinegger, et al. 2017). Contigs were matched to their closest hit in the INPHARED database (Cook, et al. 2021) using mash (Ondov, et al. 2016). Plots were created with pyCirclize (Shimoyama, et al. 2022).
+* All phages were annotated with Pharokka v ___ (Bouras, et al. 2023). Specifically, coding sequences (CDS) were predicted with PHANOTATE (McNair, et al. 2019), tRNAs were predicted with tRNAscan-SE 2.0 (Chan, et al. 2021), tmRNAs were predicted with Aragorn (Laslett, et al. 2004) and CRISPRs were preducted with CRT (Bland, et al. 2007). Functional annotation was generated by matching each CDS to the PHROGs (Terzian, et al. 2021), VFDB (Chen, et al. 2005) and CARD (Alcock, et al. 2020) databases using MMseqs2 (Steinegger, et al. 2017) and PyHMMER (Larralde, et al. 2023). Contigs were matched to their closest hit in the INPHARED database (Cook, et al. 2021) using mash (Ondov, et al. 2016). Plots were created with pyCirclize (Shimoyama, et al. 2022).
 
 With the following full citations for the constituent tools below:
 

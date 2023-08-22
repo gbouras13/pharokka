@@ -2,7 +2,6 @@ import collections
 import os
 import random
 import string
-import subprocess as sp
 from cmath import nan
 from pathlib import Path
 from re import T
@@ -529,6 +528,9 @@ class Pharok:
         else:  # for meta use contig names
             locus_df["locus_tag"] = locus_df.contig + "_CDS_" + locus_df["count"]
 
+        # assign count and locus_tag to merged_df (for meta)
+        self.merged_df["locus_tag"] =  locus_df["locus_tag"]
+        self.merged_df["count"] =  locus_df["count"]
         #################################
 
         #########
@@ -616,9 +618,6 @@ class Pharok:
         # change start and stop to int
         gff_df["start"] = gff_df["start"].astype("int")
         gff_df["stop"] = gff_df["stop"].astype("int")
-
-        # with open(os.path.join(self.out_dir, "pharokka_tmp.gff"), "a") as f:
-        #     gff_df.to_csv(f, sep="\t", index=False, header=False)
 
         ### trnas
         # check if no trnas
@@ -984,6 +983,7 @@ class Pharok:
             for index, row in self.length_df.iterrows():
                 contig = row["contig"]
                 f.write(">Feature " + contig + "\n")
+
                 subset_df = self.merged_df[self.merged_df["contig"] == contig]
                 for index, row in subset_df.iterrows():
                     start = str(row["start"])

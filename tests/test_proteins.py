@@ -19,16 +19,6 @@ from unittest.mock import patch
 import pytest
 from loguru import logger
 
-from lib.input_commands import (
-    instantiate_dirs,
-    validate_fasta,
-    validate_gene_predictor,
-    validate_meta,
-    validate_strand,
-    validate_terminase,
-    validate_terminase_start,
-    validate_threads,
-)
 from lib.util import remove_directory
 
 # import functions
@@ -39,8 +29,9 @@ test_data = Path("tests/test_data")
 
 database_dir = Path(f"{test_data}/database")
 overall_data = Path(f"{test_data}/overall")
-meta_data = Path(f"{overall_data}/Meta_example")
-standard_data = Path(f"{overall_data}/Standard_examples")
+meta_data = Path(f"{test_data}/Meta_example")
+proteins_data = Path(f"{test_data}/proteins")
+
 
 logger.add(lambda _: sys.exit(1), level="ERROR")
 
@@ -72,34 +63,51 @@ def exec_command(cmnd, stdout=subprocess.PIPE, stderr=subprocess.PIPE):
     return out.decode("utf8") if out is not None else None
 
 
-# def test_download(tmp_dir):
-#     """test pharokka download"""
-#     cmd = f"install_databases.py -o {database_dir}"
-#     exec_command(cmd)
+def test_download(tmp_dir):
+    """test pharokka download"""
+    cmd = f"install_databases.py -o {database_dir}"
+    exec_command(cmd)
+
 
 
 def test_proteins(tmp_dir):
-    """test pharokka overall"""
-    input_fasta: Path = f"{meta_data}/fake_meta.fa"
+    """test pharokka proteins"""
+    input_fasta: Path = f"{proteins_data}/phanotate.faa"
     cmd = (
         f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t 1 -f"
     )
     exec_command(cmd)
 
 
-temp_dir = Path(f"{test_data}/fake_out")
+def test_proteins_hmm_only(tmp_dir):
+    """test pharokka proteins hmm_only"""
+    input_fasta: Path = f"{proteins_data}/phanotate.faa"
+    cmd = (
+        f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t 1 -f --hmm_only"
+    )
+    exec_command(cmd)
 
+def test_proteins_mmseqs_only(tmp_dir):
+    """test pharokka proteins mmseqs_only"""
+    input_fasta: Path = f"{proteins_data}/phanotate.faa"
+    cmd = (
+        f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t 1 -f --mmseqs2_only"
+    )
+    exec_command(cmd)
+
+
+temp_dir = Path(f"{test_data}/fake_out")
 
 class testFails(unittest.TestCase):
     """Tests for fails"""
 
     def test_proteins_pred(self):
-        """tests that pharokka exits if bad gene predictior"""
-        with self.assertRaises(SystemExit):
-            input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
+        """tests that pharokka breaks if nucleotide input"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{meta_data}/fake_meta.fasta"
             cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t 1 -f"
             exec_command(cmd)
 
 
 remove_directory(f"{temp_dir}")
-# remove_directory(f"{database_dir}")
+remove_directory(f"{database_dir}")

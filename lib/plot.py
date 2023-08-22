@@ -1,11 +1,9 @@
-import os
-import sys
-
 import numpy as np
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 from pycirclize import Circos
 from pycirclize.parser import Genbank, Gff
+from loguru import logger
 
 # Load GFF file
 
@@ -23,6 +21,7 @@ def create_plot(
     label_size,
     label_hypotheticals,
     remove_other_features_labels,
+    label_force_list
 ):
     gff = Gff(gff_file)
 
@@ -69,41 +68,6 @@ def create_plot(
         "head": {"col": "#ff008d", "fwd_list": [], "rev_list": []},
         "con": {"col": "#5A5A5A", "fwd_list": [], "rev_list": []},
     }
-
-    # vfdb_card_col = "#FF0000"
-    # unk_col = "#AAAAAA"
-    # other_col = "#4deeea"
-    # tail_col = "#74ee15"
-    # transcription_col = "#ffe700"
-    # dna_col = "#f000ff"
-    # lysis_col = "#001eff"
-    # moron_col = "#8900ff"
-    # int_col = "#E0B0FF"
-    # head_col = "#ff008d"
-    # con_col = "#808080"
-
-    # vfdb_card_fwd_list = []
-    # vfdb_card_rev_list = []
-    # unk_fwd_list = []
-    # unk_rev_list = []
-    # other_fwd_list = []
-    # other_rev_list = []
-    # tail_fwd_list = []
-    # tail_rev_list = []
-    # trans_reg_fwd_list = []
-    # trans_reg_rev_list = []
-    # dna_fwd_list = []
-    # dna_rev_list = []
-    # lysis_fwd_list = []
-    # lysis_rev_list = []
-    # moron_fwd_list = []
-    # moron_rev_list = []
-    # int_fwd_list = []
-    # int_rev_list = []
-    # head_fwd_list = []
-    # head_rev_list = []
-    # con_fwd_list = []
-    # con_rev_list = []
 
     # fwd
 
@@ -164,7 +128,7 @@ def create_plot(
                 data_dict["con"]["rev_list"].append(f)
 
     # add all the tracks
-
+    # fwd
     for key in data_dict.keys():
         cds_track.genomic_features(
             data_dict[key]["fwd_list"],
@@ -172,7 +136,7 @@ def create_plot(
             r_lim=(75, 80),
             fc=data_dict[key]["col"],
         )
-
+    # rev
         cds_track.genomic_features(
             data_dict[key]["rev_list"],
             plotstyle="arrow",
@@ -317,26 +281,42 @@ def create_plot(
     # truncation
     truncate = int(truncate)
 
+    # get labels from label_force_list
+
     # Extract CDS product labels
-    pos_list, labels, length_list = [], [], []
+    pos_list, labels, length_list, id_list = [], [], [], []
     for f in gff.extract_features("CDS"):
         start, end = int(str(f.location.end)), int(str(f.location.start))
         pos = (start + end) / 2.0
         length = end - start
         label = f.qualifiers.get("product", [""])[0]
+        id = f.qualifiers.get("ID", [""])[0]
+
         # skip hypotheticals if the flag is false (default)
-        if label_hypotheticals == False:
-            if (
+        if id in label_force_list: # if in the list
+            if len(label) > truncate:
+                label = label[:truncate] + "..."
+            pos_list.append(pos)
+            labels.append(label)
+            length_list.append(length)
+            id_list.append(id)
+            continue # to break if in the list
+        else:
+            if label_hypotheticals == False:
+                if (
                 label == ""
                 or label.startswith("hypothetical")
                 or label.startswith("unknown")
-            ):
-                continue
-        if len(label) > truncate:
-            label = label[:truncate] + "..."
-        pos_list.append(pos)
-        labels.append(label)
-        length_list.append(length)
+                    ):
+                    continue # if hypothetical not in the list
+                else: # all others
+                    if len(label) > truncate: 
+                        label = label[:truncate] + "..."
+                    pos_list.append(pos)
+                    labels.append(label)
+                    length_list.append(length)
+                    id_list.append(id)
+
 
     ###################################################
     #### thin out CDS annotations
@@ -344,40 +324,42 @@ def create_plot(
     annotations = float(annotations)
 
     if annotations == 0:
-        print(
+        logger.info(
             "by inputting --annotations 0 you have chosen to plot no annotations. Continuing."
         )
     elif annotations == 0:
-        print(
+        logger.info(
             "by inputting --annotations 1 you have chosen to plot all annotations. Continuing."
         )
     elif annotations > 1:
-        print(
+        logger.info(
             "You have input a --annotations value greater than 1. Setting to 1 (will plot all annotations). Continuing."
         )
         annotations = 1
     elif annotations < 0:
-        print(
+        logger.info(
             "You have input a --annotations value less than 1. Setting to 0 (will plot no annotations). Continuing."
         )
         annotations = 0
 
     ####### running the sparsity
 
-    median_length = np.quantile(length_list, annotations)
+    quantile_length = np.quantile(length_list, annotations)
     # Create an empty list to store the filtered indices
     filtered_indices = []
 
     # Loop through the indices of the length_list
     for i in range(len(length_list)):
         # If the length at this index is greater than or equal to the median, add the index to filtered_indices
-        if length_list[i] < median_length:
+        # captures the once in the label force list
+        if (length_list[i] < quantile_length) or (id_list[i] in label_force_list):
             filtered_indices.append(i)
 
     # Use the filtered indices to create new lists for pos_list, labels, and length_list
     pos_list = [pos_list[i] for i in filtered_indices]
     labels = [labels[i] for i in filtered_indices]
     length_list = [length_list[i] for i in filtered_indices]
+
 
     # Plot CDS product labels on outer position
     cds_track.xticks(

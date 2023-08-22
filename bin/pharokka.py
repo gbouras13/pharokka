@@ -105,7 +105,7 @@ def main():
     logger.info("Written by George Bouras: george.bouras@adelaide.edu.au")
 
     # check the database is installed
-    logger.info("Checking database installation.")
+    logger.info(f"Checking database installation in {db_dir}.")
 
     database_installed = check_db_installation(db_dir)
     if database_installed == True:
@@ -238,8 +238,8 @@ def main():
     # meta mode split input for trnascan and maybe phanotate
     if args.meta == True:
         num_fastas = split_input_fasta(input_fasta, out_dir)
-        # will generate split output gffs if meta flag is true
-        instantiate_split_output(out_dir, args.meta)
+        # will generate split output gffs if split flag is true
+        instantiate_split_output(out_dir, args.split)
 
     # CDS predicton
     # phanotate

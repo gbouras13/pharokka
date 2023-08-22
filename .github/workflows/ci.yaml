@@ -1,0 +1,42 @@
+name: CI
+
+on: [push,pull_request]
+
+jobs:
+  tests:
+    name: "Python ${{ matrix.python-version }}"
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-12, ubuntu-latest]
+        python-version: ["3.9", "3.10"]
+
+    steps:
+      - uses: "actions/checkout@v3"
+        with:
+          fetch-depth: 0
+
+      # Setup env
+      - uses: "actions/setup-python@v3"
+        with:
+          activate-environment: pharokka_env
+          environment-file: environment.yml
+          python-version: ${{ matrix.python-version }}
+          auto-activate-base: false
+          miniforge-variant: Mambaforge
+          channels: conda-forge,bioconda,defaults
+          channel-priority: strict
+          auto-update-conda: true
+
+      - name: Install pharokka
+        shell: bash -l {0}
+        run: |
+          mamba install python=${{ matrix.python-version }}
+          python -m pip install --upgrade pip
+          pip install .
+      
+      - name: "Generate coverage report on ${{ matrix.os }} for Python ${{ matrix.python-version }}"
+        run: |
+          pip install pytest pytest-cov
+          pytest --cov=./ --cov-report xml --cov-report lcov --cov-append

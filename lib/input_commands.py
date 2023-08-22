@@ -539,8 +539,11 @@ def check_dependencies():
     logger.info("Dnaapler version is ok.")
 
 
-def instantiate_split_output(out_dir, meta):
-    if meta == True:
+def instantiate_split_output(out_dir, split):
+    """
+    if the split flag is true, will create these output directories
+    """
+    if split == True:
         single_gff_dir = os.path.join(out_dir, "single_gffs")
         single_gbk_dir = os.path.join(out_dir, "single_gbks")
 

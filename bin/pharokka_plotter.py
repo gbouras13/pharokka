@@ -3,12 +3,12 @@ import argparse
 import os
 import sys
 from argparse import RawTextHelpFormatter
-
-import input_commands
 from loguru import logger
+from pathlib import Path
 
 from lib.input_commands import validate_fasta
 from lib.plot import create_plot
+from lib.util import get_version
 
 
 def get_input():
@@ -99,13 +99,25 @@ def get_input():
         default="1",
         help="Controls the proporition of annotations labelled. Must be a number between 0 and 1 inclusive. \n0 = no annotations, 0.5 = half of the annotations, 1 = all annotations. Defaults to 1. Chosen in order of CDS size.",
     )
+    parser.add_argument(
+        "--label_ids",
+        action="store",
+        default="",
+        help="Text file with list of CDS IDs (from gff file) that will be labelled.",
+    )
     args = parser.parse_args()
     return args
 
 
 if __name__ == "__main__":
     args = get_input()
+    # preamble
     logger.add(lambda _: sys.exit(1), level="ERROR")
+    logger.info(f"Starting pharokka v{get_version()}")
+    logger.info("Running pharokka_plotter.py to plot your phage.")
+    logger.info("Command executed: {}", args)
+    logger.info("Repository homepage is https://github.com/gbouras13/pharokka")
+    logger.info("Written by George Bouras: george.bouras@adelaide.edu.au")
     logger.info("Checking your inputs.")
 
     try:
@@ -147,7 +159,7 @@ if __name__ == "__main__":
     if args.outdir == "":
         plot_file = str(args.plot_name) + ".png"
     else:
-        plot_file = os.path.join(args.outdir, str(args.plot_name) + ".png")
+        plot_file = os.path.join(args.outdir, f"{args.plot_name}.png")
 
     if args.force == True:
         if os.path.isfile(plot_file) == True:
@@ -229,6 +241,34 @@ if __name__ == "__main__":
             f" {gbk_file} was not found. Please check the prefix value `-p` matches the pharokka output directory, \n or use --gff and --genbank to specify the gff and genbank files and try again."
         )
 
+    # check label_ids
+
+    # list of all IDs that need to be labelled from file
+    label_force_list = []
+
+    if args.label_ids != "":
+        logger.info(f"You have specified a file {args.label_ids} containing a list of CDS IDs to force label.")
+        # check if it is a file
+        if os.path.isfile(args.label_ids) == False:
+            logger.error(
+                f"{args.label_ids} was not found."
+            )
+        # check if it contains text
+        try:
+            # Open the file in read mode
+            with open(Path(args.label_ids), "r") as file:
+                # Read the first character
+                first_char = file.read(1)
+
+                # read all the labels
+                with open(Path(args.label_ids)) as f:
+                    ignore_dict = {x.rstrip().split()[0] for x in f}
+                # label force list
+                label_force_list = list(ignore_dict)
+
+        except FileNotFoundError:
+            logger.warning(f"{args.label_id} contains no text. No contigs will be ignored")
+
     logger.info("All files checked.")
     logger.info("Plotting the phage.")
 
@@ -245,4 +285,5 @@ if __name__ == "__main__":
         args.label_size,
         args.label_hypotheticals,
         args.remove_other_features_labels,
+        label_force_list
     )
