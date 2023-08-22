@@ -32,27 +32,13 @@ jobs:
           channels: conda-forge,bioconda,defaults
           channel-priority: strict
           auto-update-conda: true
-
       - name: Install pharokka and run tests
         shell: bash -l {0}
         run: |
           mamba install python=${{ matrix.python-version }}
           python -m pip install --upgrade pip
           pip install .
-          pytest --cov=./ --cov-report xml --cov-report lcov --cov-append
-      
-      - name: "Generate coverage report on ${{ matrix.os }} for Python ${{ matrix.python-version }}"
-        run: |
-          pip install pytest pytest-cov 
-          pytest --cov=./ --cov-report xml --cov-report lcov --cov-append
-
+      - name: Run tests and collect coverage
+        run: pytest --cov app
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
-
-  finish:
-    needs: tests
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-        python-version: ["3.9"]
