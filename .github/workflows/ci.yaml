@@ -7,9 +7,13 @@ jobs:
     name: "Python ${{ matrix.python-version }}"
     runs-on: ${{ matrix.os }}
 
+    defaults:
+      run:
+        shell: bash -el {0}
+
     strategy:
       matrix:
-        os: [macos-12, ubuntu-latest]
+        os: [macos-latest, ubuntu-latest]
         python-version: ["3.9"]
 
     steps:
@@ -29,14 +33,26 @@ jobs:
           channel-priority: strict
           auto-update-conda: true
 
-      - name: Install pharokka
+      - name: Install pharokka and run tests
         shell: bash -l {0}
         run: |
           mamba install python=${{ matrix.python-version }}
           python -m pip install --upgrade pip
           pip install .
+          pytest --cov=./ --cov-report xml --cov-report lcov --cov-append
       
       - name: "Generate coverage report on ${{ matrix.os }} for Python ${{ matrix.python-version }}"
         run: |
-          pip install pytest pytest-cov loguru
+          pip install pytest pytest-cov 
           pytest --cov=./ --cov-report xml --cov-report lcov --cov-append
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+
+  finish:
+      needs: tests
+      runs-on: ${{ matrix.os }}
+      strategy:
+        matrix:
+          os: [ubuntu-latest, macos-latest]
+          python-version: ["3.9"]
