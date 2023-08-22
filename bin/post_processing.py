@@ -12,8 +12,8 @@ from Bio import SeqIO
 from Bio.SeqUtils import GC
 from loguru import logger
 
-from lib.processes import convert_gff_to_gbk
-from lib.util import remove_directory, remove_file, touch_file
+from processes import convert_gff_to_gbk
+from util import remove_directory, remove_file, touch_file
 
 pd.options.mode.chained_assignment = None
 

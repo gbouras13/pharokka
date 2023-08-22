@@ -7,22 +7,22 @@ from pathlib import Path
 
 from loguru import logger
 
-from lib.databases import check_db_installation
+from databases import check_db_installation
 
-from lib.input_commands import (
+from input_commands import (
     check_dependencies,
     instantiate_dirs,
     validate_fasta,
     validate_threads,
 )
-from lib.post_processing import remove_directory, remove_file
-from lib.proteins import (
+from post_processing import remove_directory, remove_file
+from proteins import (
     Pharok_Prot,
     get_input_proteins,
     run_mmseqs_proteins,
     run_pyhmmer_proteins,
 )
-from lib.util import get_version
+from util import get_version
 
 
 def main():

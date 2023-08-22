@@ -8,9 +8,9 @@ from pathlib import Path
 
 from loguru import logger
 
-from lib.databases import check_db_installation
-from lib.hmm import run_pyhmmer
-from lib.input_commands import (
+from databases import check_db_installation
+from hmm import run_pyhmmer
+from input_commands import (
     check_dependencies,
     get_input,
     instantiate_dirs,
@@ -21,8 +21,8 @@ from lib.input_commands import (
     validate_terminase,
     validate_threads,
 )
-from lib.post_processing import Pharok, remove_post_processing_files
-from lib.processes import (
+from post_processing import Pharok, remove_post_processing_files
+from processes import (
     concat_phanotate_meta,
     concat_trnascan_meta,
     convert_gff_to_gbk,
@@ -42,7 +42,7 @@ from lib.processes import (
     split_input_fasta,
     translate_fastas,
 )
-from lib.util import get_version
+from util import get_version
 
 
 def main():

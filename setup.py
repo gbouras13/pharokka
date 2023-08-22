@@ -1,6 +1,6 @@
 import os
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 def get_version():
@@ -12,16 +12,6 @@ def get_version():
         )
     ) as f:
         return f.readline().strip()
-
-
-# recursively load package files
-def package_files(directory):
-    paths = []
-    for path, _, filenames in os.walk(directory):
-        for filename in filenames:
-            if not filename.endswith(".py"):
-                paths.append(os.path.join("..", path, filename))
-    return paths
 
 
 # read long description
@@ -42,12 +32,17 @@ setup(
         "bin/pharokka_plotter.py",
         "bin/install_databases.py",
         "bin/pharokka_proteins.py",
+        "bin/citation.py",
+        "bin/databases.py",
+        "bin/external_tools.py",
+        "bin/hmm.py",
+        "bin/plot.py",
+        "bin/post_processing.py",
+        "bin/processes.py",
+        "bin/proteins.py",
+        "bin/util.py",
+        "bin/version.py"
     ],
-    packages=["pharokka_runner"],
-    package_dir=dict(pharokka_runner="lib"),  # dict with 'package'='relative dir'
-    package_data=dict(
-        pharokka_runner=package_files("lib/")
-    ),  # add non-python data to package, relative paths
     license="MIT License",
     platforms=["Unix"],
     classifiers=[

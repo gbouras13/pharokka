@@ -19,8 +19,8 @@ from loguru import logger
 from pyhmmer.easel import SequenceFile
 from pyhmmer.plan7 import HMM, HMMFile
 
-from lib.external_tools import ExternalTool
-from lib.post_processing import (
+from external_tools import ExternalTool
+from post_processing import (
     process_card_results,
     process_pyhmmer_results,
     process_vfdb_results,

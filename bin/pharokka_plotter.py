@@ -6,9 +6,9 @@ from argparse import RawTextHelpFormatter
 from loguru import logger
 from pathlib import Path
 
-from lib.input_commands import validate_fasta
-from lib.plot import create_plot
-from lib.util import get_version
+from input_commands import validate_fasta
+from plot import create_plot
+from util import get_version
 
 
 def get_input():

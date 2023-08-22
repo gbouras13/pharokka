@@ -6,8 +6,8 @@ import pandas as pd
 from Bio import SeqIO
 from loguru import logger
 
-from lib.citation import __citation__
-from lib.version import __version__
+from citation import __citation__
+from version import __version__
 
 
 def get_version():

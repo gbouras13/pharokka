@@ -13,8 +13,8 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from loguru import logger
 
-from lib.external_tools import ExternalTool
-from lib.util import count_contigs, remove_directory
+from external_tools import ExternalTool
+from util import count_contigs, remove_directory
 
 ##### phanotate meta mode ########
 

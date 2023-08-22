@@ -5,7 +5,7 @@ import sys
 from argparse import RawTextHelpFormatter
 from loguru import logger
 
-from lib.databases import instantiate_install
+from databases import instantiate_install
 
 
 def get_db_input():
