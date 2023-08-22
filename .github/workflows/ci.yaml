@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-12, ubuntu-latest]
-        python-version: ["3.9", "3.10"]
+        python-version: ["3.9"]
 
     steps:
       - uses: "actions/checkout@v3"
@@ -18,7 +18,7 @@ jobs:
           fetch-depth: 0
 
       # Setup env
-      - uses: "actions/setup-python@v3"
+      - uses: "conda-incubator/setup-miniconda@v2"
         with:
           activate-environment: pharokka_env
           environment-file: environment.yml
