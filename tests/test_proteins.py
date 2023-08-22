@@ -19,7 +19,7 @@ from unittest.mock import patch
 import pytest
 from loguru import logger
 
-from lib.util import remove_directory
+from bin.util import remove_directory
 
 # import functions
 

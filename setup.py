@@ -14,6 +14,16 @@ def get_version():
         return f.readline().strip()
 
 
+# recursively load package files
+def package_files(directory):
+    paths = []
+    for path, _, filenames in os.walk(directory):
+        for filename in filenames:
+            if not filename.endswith(".py"):
+                paths.append(os.path.join("..", path, filename))
+    return paths
+
+
 # read long description
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -43,6 +53,10 @@ setup(
         "bin/util.py",
         "bin/version.py"
     ],
+    packages=['pharokka_runner'],                           
+    package_dir=dict(pharokka_runner='bin'),                        
+    package_data=dict(pharokka_runner=package_files('bin/')),
+    include_package_data=True,
     license="MIT License",
     platforms=["Unix"],
     classifiers=[

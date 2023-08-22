@@ -398,7 +398,7 @@ def main():
 
     # Show elapsed time for the process
     logger.info("pharokka has finished")
-    logger.info("Elapsed time: " + str(elapsed_time) + " seconds")
+    logger.info(f"Elapsed time: {elapsed_time} seconds")
 
     logger.info("If you use pharokka in your research, please cite:")
     logger.info(

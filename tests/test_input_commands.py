@@ -15,7 +15,7 @@ from unittest.mock import patch
 import pytest
 from loguru import logger
 
-from lib.input_commands import (
+from bin.input_commands import (
     instantiate_dirs,
     validate_fasta,
     validate_gene_predictor,
@@ -25,7 +25,7 @@ from lib.input_commands import (
     validate_terminase_start,
     validate_threads,
 )
-from lib.util import remove_directory
+from bin.util import remove_directory
 
 # test data
 test_data = Path("tests/test_data")

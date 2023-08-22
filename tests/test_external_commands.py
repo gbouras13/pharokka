@@ -14,7 +14,7 @@ from unittest.mock import patch
 import pytest
 from loguru import logger
 
-from lib.processes import (
+from bin.processes import (
     run_aragorn,
     run_mash_sketch,
     run_minced,
@@ -23,7 +23,7 @@ from lib.processes import (
 )
 
 # import functions
-from lib.util import remove_directory
+from bin.util import remove_directory
 
 # test data
 test_data = Path("tests/test_data")
