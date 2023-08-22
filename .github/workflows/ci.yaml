@@ -50,9 +50,9 @@ jobs:
         uses: codecov/codecov-action@v3
 
   finish:
-      needs: tests
-      runs-on: ${{ matrix.os }}
-      strategy:
-        matrix:
-          os: [ubuntu-latest, macos-latest]
-          python-version: ["3.9"]
+    needs: tests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: ["3.9"]
