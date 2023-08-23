@@ -10,7 +10,7 @@ from pyhmmer.plan7 import HMM, HMMFile
 
 def run_pyhmmer(db_dir, out_dir, threads, gene_predictor, evalue):
     """
-    Runs phymmer on phrogs
+    Runs PyHMMER on phrogs
     :param db_dir: database path
     :param out_dir: output directory
     :params threads: threads

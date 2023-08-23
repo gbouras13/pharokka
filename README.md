@@ -57,20 +57,21 @@ So if you can't get Pharokka to install on your machine for whatever reason or w
 
 pharokka uses [PHANOTATE](https://github.com/deprekate/PHANOTATE), the only gene prediction program tailored to bacteriophages, as the default program for gene prediction. [Prodigal](https://github.com/hyattpd/Prodigal) is also available as an alternative. Following this, functional annotations are assigned by matching each predicted coding sequence (CDS) to the [PHROGs](https://phrogs.lmge.uca.fr), [CARD](https://card.mcmaster.ca) and [VFDB](http://www.mgc.ac.cn/VFs/main.htm) databases using [MMseqs2](https://github.com/soedinglab/MMseqs2). As of v1.4.0, Pharokka will also match each CDS to the PHROGs database using more sensitive Hidden Markov Models using [PyHMMER](https://github.com/althonos/pyhmmer). Pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). pharokka also generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage) and check out the full [documentation](https://pharokka.readthedocs.io) for more details.  
 
-## Pharokka v 1.4.0 Update (22 August 2023)
+## Pharokka v 1.4.0 Update (23 August 2023)
 
 Pharokka v1.4.0 is a large update implementing:
 
 * More sensitive search for PHROGs using Hidden Markov Models (HMMs) using the amazing [PyHMMER](https://github.com/althonos/pyhmmer).
 * By default, Pharokka will now run both MMseqs2 (PHROGs, CARD and VFDB) and HMMs (PHROGs). MMseqs2 was kept for PHROGs as it provides more information than the HMM results (sequence identities, top hit PHROG protein).
 * `--fast` or `--hmm_only` which only runs HMMs on PHROGs, not MMseqs2. For phage isolates, this will be much faster than MMseqs2, but you will not get CARD or VFDB annotations. For metagenomes, this will be (much) slower though!
+* Updated databases as of 23 August 2023. You will need to download the new v1.4.0 databases. The VFDB database is now clustered at 50% sequence identity (which speeds up runtime).
 * `--mmseqs_only` which will essentially runs Pharokka v1.3.2 and is default in meta mode `-m` or `--meta`. 
 * `pharokka_proteins.py`, which takes an input file of amino acid proteins in FASTA format and runs MMseqs2 (PHROGs, CARD, VFDB) and Pyhmmer (PHROGs).
 * `--custom_hmm`, which allows for custom HMM profile databases to be used with Pharokka.
 * `create_custom_hmm.py` which facillitates the creation of a HMM profile database from multiple sequence alignments.
-* `--dnaapler`, which automatic detects and reorients your phage to start with the large terminase subunit. For more information, see [dnaapler](https://github.com/gbouras13/dnaapler).
-* Updated databases as of 23 August 2023. You will need to download the new v1.4.0 databases. The VFDB database is now clustered at 50% sequence identity (which speeds up runtime).
-* Fixes to `-c`, which should now workwith `-g prodigal` (thanks Alistair Legione).
+* `--dnaapler`, which automatically detects and reorients your phage to start with the large terminase subunit. For more information, see [dnaapler](https://github.com/gbouras13/dnaapler).
+* `--genbank`, which allows for genbank format input with `-i`.
+* Fixes to `-c`, which should now workwith `-g prodigal` (thanks Alistair Legione for the fixes).
 
 ## Pharokka v 1.3.0 Update
 
@@ -91,15 +92,14 @@ This will create `pharokka_plot.png` as an output file plot of your phage.
 An example plot is included below made with the following command (assuming Pharokka has been run with `SAOMS1_pharokka_output_directory` as the output directory).
 
 ``` 
-pharokka_plotter.py -i test_data/SAOMS1.fasta -n SAOMS1_plot -o SAOMS1_pharokka_output_directory --interval 8000 --annotations 0.5 --plot_title 'Staphylococcus Phage SAOMS1'
+pharokka_plotter.py -i test_data/SAOMS1.fasta -n SAOMS1_plot -o SAOMS1_pharokka_output_directory --interval 8000 --annotations 0.5 --plot_title '${Staphylococcus}$ Phage SAOMS1'
 ```
 
 <p align="center">
   <img src="img/SAOMS1_plot.png" alt="SAOMS1 example" height=600>
 </p>
 
-
-SAOMS1 phage isolated and sequenced by: Yerushalmy,O., Alkalay-Oren,S., Coppenhagen-Glazer,S. and Hazan,R, Institute of Dental Sciences and School of Dental Medicine, Hebrew University.
+SAOMS1 phage (GenBank: MW460250.1) was isolated and sequenced by: Yerushalmy,O., Alkalay-Oren,S., Coppenhagen-Glazer,S. and Hazan,R, from the Institute of Dental Sciences and School of Dental Medicine, Hebrew University, Israel.
 
 Please see [plotting](docs/plotting.md) for details on all plotting parameter options. 
 
@@ -112,7 +112,7 @@ Please see [plotting](docs/plotting.md) for details on all plotting parameter op
 - [Paper](#paper)
 - [Pharokka with Galaxy Europe Webserver](#pharokka-with-galaxy-europe-webserver)
 - [Brief Overview](#brief-overview)
-  - [Pharokka v 1.4.0 Update (22 August 2023)](#pharokka-v-140-update-22-august-2023)
+  - [Pharokka v 1.4.0 Update (23 August 2023)](#pharokka-v-140-update-23-august-2023)
   - [Pharokka v 1.3.0 Update](#pharokka-v-130-update)
   - [Table of Contents](#table-of-contents)
 - [Installation](#installation)
@@ -338,7 +338,7 @@ If you require  fast annotations of extremely large datasets (i.e. thousands of 
  
 # Bugs and Suggestions
 
-If you come across bugs with pharokka, or would like to make any suggestions to improve the program, please open an issue or email george.bouras@adelaide.edu.au
+If you come across bugs with pharokka, or would like to make any suggestions to improve the program, please open an issue or email george.bouras@adelaide.edu.au.
 
 # Citation
 

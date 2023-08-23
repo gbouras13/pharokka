@@ -3,14 +3,13 @@ import argparse
 import os
 import sys
 from argparse import RawTextHelpFormatter
-
 from databases import instantiate_install
 from loguru import logger
 
 
 def get_db_input():
     parser = argparse.ArgumentParser(
-        description="script to download required phrog databases",
+        description="script to download required Pharokka databases",
         formatter_class=RawTextHelpFormatter,
     )
     parser.add_argument(
@@ -23,7 +22,7 @@ def get_db_input():
         "-o",
         "--outdir",
         action="store",
-        help="Database Directory - will be created and must be specificed if -d is not used. ",
+        help="Database Directory. It will be created and must be specified if -d is not used. ",
     )
     args = parser.parse_args()
     return args

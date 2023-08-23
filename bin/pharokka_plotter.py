@@ -31,7 +31,7 @@ def get_input():
         "--plot_name",
         action="store",
         default="pharokka_plot",
-        help='Output plot file name. ".png" suffix will be added to this automatically. \nWill be output in the pharokka output directory if -o is specified, or in the working directory if --gff andf --genbank are specified.',
+        help='Output plot file name. ".png" suffix will be added to this automatically. \nWill be output in the Pharokka output directory if -o is specified, or in the working directory if --gff andf --genbank are specified.',
     )
     parser.add_argument(
         "-o", "--outdir", action="store", default="", help="Pharokka output directory."
@@ -113,7 +113,7 @@ if __name__ == "__main__":
     args = get_input()
     # preamble
     logger.add(lambda _: sys.exit(1), level="ERROR")
-    logger.info(f"Starting pharokka v{get_version()}")
+    logger.info(f"Starting Pharokka v{get_version()}")
     logger.info("Running pharokka_plotter.py to plot your phage.")
     logger.info("Command executed: {}", args)
     logger.info("Repository homepage is https://github.com/gbouras13/pharokka")

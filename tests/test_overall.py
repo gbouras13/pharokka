@@ -33,6 +33,8 @@ meta_data = Path(f"{overall_data}/Meta_example")
 standard_data = Path(f"{overall_data}/Standard_examples")
 standard_data_output = Path(f"{standard_data}/SAOMS1_Output")
 stop_recoding_data = Path(f"{overall_data}/stop_recoding")
+custom_db = Path(f"{test_data}/custom_db/microvirus.h3m")
+custom_data = Path(f"{overall_data}/custom_examples")
 logger.add(lambda _: sys.exit(1), level="ERROR")
 threads = 8
 
@@ -79,128 +81,157 @@ def test_overall(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
 
+def test_overall_locus(tmp_dir):
+    """test pharokka overall locus tag prefix"""
+    input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -l SAOMS1 -p SAOMS1"
+    exec_command(cmd)
 
-# def test_overall_prodigal(tmp_dir):
-#     """test pharokka overall prodigal"""
-#     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
-#     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g prodigal"
-#     exec_command(cmd)
+def test_custom(tmp_dir):
+    """test pharokka overall with custom db"""
+    input_fasta: Path = f"{custom_data}/MH649026.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} --custom_hmm {custom_db} -o {tmp_dir} -t {threads} -f "
+    exec_command(cmd)
 
+def test_custom_meta(tmp_dir):
+    """test pharokka overall with custom db"""
+    input_fasta: Path = f"{custom_data}/hundred_microviruses.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} --custom_hmm {custom_db} -o {tmp_dir} -t {threads} -f -m"
+    exec_command(cmd)
 
-# def test_overall_stop_recode(tmp_dir):
-#     """test pharokka overall recoded"""
-#     input_fasta: Path = f"{stop_recoding_data}/table_4/SRR1747055_scaffold_7.fa"
-#     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g prodigal -c 4"
-#     exec_command(cmd)
-
-
-# def test_overall_dnaapler(tmp_dir):
-#     """test pharokka overall dnaapler"""
-#     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
-#     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --dnaapler"
-#     exec_command(cmd)
-
-
-# def test_overall_fast(tmp_dir):
-#     """test pharokka overall fast"""
-#     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
-#     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --fast"
-#     exec_command(cmd)
+def test_overall_prodigal(tmp_dir):
+    """test pharokka overall prodigal"""
+    input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g prodigal"
+    exec_command(cmd)
 
 
-# def test_overall_mmseqs(tmp_dir):
-#     """test pharokka overall mmseqs2_only"""
-#     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
-#     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --mmseqs2_only"
-#     exec_command(cmd)
+def test_overall_stop_recode(tmp_dir):
+    """test pharokka overall recoded"""
+    input_fasta: Path = f"{stop_recoding_data}/table_4/SRR1747055_scaffold_7.fa"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g prodigal -c 4"
+    exec_command(cmd)
 
 
-# def test_meta(tmp_dir):
-#     """test pharokka meta"""
-#     input_fasta: Path = f"{meta_data}/fake_meta.fa"
-#     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m"
-#     exec_command(cmd)
-
-# def test_meta_hmm(tmp_dir):
-#     """test pharokka meta hmm"""
-#     input_fasta: Path = f"{meta_data}/fake_meta.fa"
-#     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m --meta_hmm"
-#     exec_command(cmd)
-
-# def test_meta_split(tmp_dir):
-#     """test pharokka meta split"""
-#     input_fasta: Path = f"{meta_data}/fake_meta.fa"
-#     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m -s"
-#     exec_command(cmd)
+def test_overall_dnaapler(tmp_dir):
+    """test pharokka overall dnaapler"""
+    input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --dnaapler"
+    exec_command(cmd)
 
 
-# def test_terminase(tmp_dir):
-#     """test pharokka terminase"""
-#     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
-#     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --terminase --terminase_start 340 --terminase_strand neg"
-#     exec_command(cmd)
-
-# def test_overall_genbank(tmp_dir):
-#     """test pharokka overall with genbank input"""
-#     input_gbk: Path = f"{standard_data_output}/SAOMS1.fasta"
-#     cmd = f"pharokka.py -i {input_gbk} -d {database_dir} -o {tmp_dir} -t {threads} -f --genbank"
-#     exec_command(cmd)
+def test_overall_fast(tmp_dir):
+    """test pharokka overall fast"""
+    input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --fast"
+    exec_command(cmd)
 
 
-# class testFails(unittest.TestCase):
-#     """Tests for fails"""
+def test_overall_mmseqs(tmp_dir):
+    """test pharokka overall mmseqs2_only"""
+    input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --mmseqs2_only"
+    exec_command(cmd)
 
-#     def test_meta_with_single_contig(self):
-#         """tests that pharokka exits if single contig is passed to meta"""
-#         with self.assertRaises(RuntimeError):
-#             input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
-#             cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t 1 -f -m"
-#             exec_command(cmd)
+def test_meta(tmp_dir):
+    """test pharokka meta"""
+    input_fasta: Path = f"{meta_data}/fake_meta.fa"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m"
+    exec_command(cmd)
 
-#     def test_meta_terminas(self):
-#         """tests that pharokka exits if multiple contigs passed to meta"""
-#         with self.assertRaises(RuntimeError):
-#             input_fasta: Path = f"{meta_data}/fake_meta.fa"
-#             cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t 1 -f -m --terminase"
-#             exec_command(cmd)
+def test_meta_hmm(tmp_dir):
+    """test pharokka meta hmm"""
+    input_fasta: Path = f"{meta_data}/fake_meta.fa"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m --meta_hmm"
+    exec_command(cmd)
 
-#     def test_bad_terminase(self):
-#         """tests that pharokka exits if only terminase specified"""
-#         with self.assertRaises(RuntimeError):
-#             input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
-#             cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t 1 -f --terminase"
-#             exec_command(cmd)
+def test_meta_split(tmp_dir):
+    """test pharokka meta split"""
+    input_fasta: Path = f"{meta_data}/fake_meta.fa"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m -s"
+    exec_command(cmd)
 
-#     def test_bad_terminase_start(self):
-#         """tests that pharokka exits if bad terminase start specified"""
-#         with self.assertRaises(RuntimeError):
-#             input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
-#             cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t 1 -f --terminase --terminase_start sf"
-#             exec_command(cmd)
+def test_terminase(tmp_dir):
+    """test pharokka terminase"""
+    input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --terminase --terminase_start 340 --terminase_strand neg"
+    exec_command(cmd)
 
-#     def test_bad_terminase_strand(self):
-#         """tests that pharokka exits if bad strand"""
-#         with self.assertRaises(RuntimeError):
-#             input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
-#             cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t 1 -f --terminase --terminase_start 34 --terminase_strand posit"
-#             exec_command(cmd)
 
-#     def test_bad_threads(self):
-#         """tests that pharokka exits if bad threads"""
-#         with self.assertRaises(RuntimeError):
-#             input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
-#             cmd = (
-#                 f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t sf -f"
-#             )
-#             exec_command(cmd)
+def test_overall_genbank(tmp_dir):
+    """test pharokka overall with genbank input"""
+    input_gbk: Path = f"{standard_data_output}/SAOMS1.fasta"
+    cmd = f"pharokka.py -i {input_gbk} -d {database_dir} -o {tmp_dir} -t {threads} -f --genbank"
+    exec_command(cmd)
 
-#     def test_bad_gene_pred(self):
-#         """tests that pharokka exits if bad gene predictior"""
-#         with self.assertRaises(RuntimeError):
-#             input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
-#             cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t 1 -g proddigal -f"
-#             exec_command(cmd)
+
+class testFails(unittest.TestCase):
+    """Tests for fails"""
+
+    def test_meta_with_single_contig(self):
+        """tests that pharokka exits if single contig is passed to meta"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
+            cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t 1 -f -m"
+            exec_command(cmd)
+
+    def test_meta_terminas(self):
+        """tests that pharokka exits if multiple contigs passed to meta"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{meta_data}/fake_meta.fa"
+            cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t 1 -f -m --terminase"
+            exec_command(cmd)
+
+    def test_bad_terminase(self):
+        """tests that pharokka exits if only terminase specified"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
+            cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t 1 -f --terminase"
+            exec_command(cmd)
+
+    def test_bad_terminase_start(self):
+        """tests that pharokka exits if bad terminase start specified"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
+            cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t 1 -f --terminase --terminase_start sf"
+            exec_command(cmd)
+
+    def test_bad_terminase_strand(self):
+        """tests that pharokka exits if bad strand"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
+            cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t 1 -f --terminase --terminase_start 34 --terminase_strand posit"
+            exec_command(cmd)
+
+    def test_bad_threads(self):
+        """tests that pharokka exits if bad threads"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
+            cmd = (
+                f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t sf -f"
+            )
+            exec_command(cmd)
+
+    def test_bad_gene_pred(self):
+        """tests that pharokka exits if bad gene predictior"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
+            cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t 1 -g proddigal -f"
+            exec_command(cmd)
+
+    def test_bad_genbank(tmp_dir):
+        """test pharokka overall with genbank input but no --genbank"""
+        input_gbk: Path = f"{standard_data_output}/SAOMS1.fasta"
+        cmd = f"pharokka.py -i {input_gbk} -d {database_dir} -o {tmp_dir} -t {threads} -f "
+        exec_command(cmd)
+
+    def test_custom_bad(tmp_dir):
+        """test pharokka overall with bad custom db"""
+        custom_db: Path = f"{standard_data_output}/SAOMS1.fasta"
+        input_fasta: Path = f"{custom_data}/MH649026.fasta"
+        cmd = f"pharokka.py -i {input_fasta} -d {database_dir} --custom_hmm {custom_db} -o {tmp_dir} -t {threads} -f "
+        exec_command(cmd)
 
 
 remove_directory(temp_dir)
-# remove_directory(f"{database_dir}")
+remove_directory(f"{database_dir}")

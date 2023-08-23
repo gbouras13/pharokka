@@ -31,7 +31,7 @@ def get_input():
     :return: args
     """
     parser = argparse.ArgumentParser(
-        description="create_custom_hmm.py: Creates HMMs from FASTA formatted MSAs with PyHMMER for use with pharokka v1.4.0 and higher.",
+        description="create_custom_hmm.py: Creates HMMs from FASTA formatted MSAs with PyHMMER for use with Pharokka v1.4.0 and higher.",
         formatter_class=RawTextHelpFormatter,
     )
     parser.add_argument(
@@ -51,7 +51,7 @@ def get_input():
         "--prefix",
         action="store",
         help="Prefix used to name HMMs. The relevant file be 'prefix'.h3m",
-        default="pharokka",
+        default="custom_db",
     )
 
     parser.add_argument(

@@ -32,6 +32,6 @@ For the crAss-like phage genomes, Pharokka meta mode `-m` was enabled.
 | Annotated Function CDS                         | 9341                         | 9228                         | 14461              |
 | Unknown Function CDS                           | 129287                       | 81269                        | 75341              |
 
-pharokka scales well for large metavirome datasets due to the speed of mmseqs2. In fact, as the size of the input file increases, the extra time taken is required for running gene prediction (particularly PHANOTATE) and tRNA-scan SE2 - the time taken to conduct mmseqs2 searches remain small due to its many vs many approach.
+`pharokka` scales well for large metavirome datasets due to the speed of MMseqs2. In fact, as the size of the input file increases, the extra time taken is required for running gene prediction (particularly PHANOTATE) and tRNA-scan SE2 - the time taken to conduct MMseqs2 searches remain small due to its many vs many approach.
 
-If you require  fast annotations of extremely large datasets (i.e. thousands of input contigs), running pharokka with Prodigal is recommended.
+If you require  fast annotations of extremely large datasets (i.e. thousands of input contigs), running `pharokka` with Prodigal is recommended.

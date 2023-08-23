@@ -240,7 +240,7 @@ def main():
     else:  # not in meta mode
         if args.meta_hmm is True:
             logger.warning(
-                "You have specified --meta_hmm to run pyhmmer HMM search in meta mode, but you have not specified -m to activate meta mode."
+                "You have specified --meta_hmm to run PyHMMER in meta mode, but you have not specified -m to activate meta mode."
             )
             logger.warning("Ignoring --meta_hmm")
 
@@ -251,7 +251,7 @@ def main():
         hmm_flag = True
 
     if args.mmseqs2_only == True:
-        logger.info("You have specified --mmseqs2_only. Pyhmmer will not be run.")
+        logger.info("You have specified --mmseqs2_only. PyHMMER will not be run.")
         mmseqs_flag = True
         hmm_flag = False
 
@@ -428,7 +428,7 @@ def main():
     elapsed_time = round(elapsed_time, 2)
 
     # Show elapsed time for the process
-    logger.info("pharokka has finished")
+    logger.info("Pharokka has finished.")
     logger.info(f"Elapsed time: {elapsed_time} seconds")
 
     logger.info("If you use pharokka in your research, please cite:")
