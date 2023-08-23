@@ -8,6 +8,7 @@ Usage: pytest .
 # import
 import os
 import shutil
+
 # import functions
 import subprocess
 import sys
@@ -34,6 +35,7 @@ stop_recoding_data = Path(f"{overall_data}/stop_recoding")
 logger.add(lambda _: sys.exit(1), level="ERROR")
 threads = 4
 
+
 def remove_directory(dir_path):
     if os.path.exists(dir_path):
         shutil.rmtree(dir_path)
@@ -43,7 +45,9 @@ def remove_directory(dir_path):
 def tmp_dir(tmpdir_factory):
     return tmpdir_factory.mktemp("tmp")
 
+
 temp_dir = Path(f"{test_data}/fake_out")
+
 
 def exec_command(cmnd, stdout=subprocess.PIPE, stderr=subprocess.PIPE):
     """executes shell command and returns stdout if completes exit code 0

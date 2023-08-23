@@ -53,6 +53,7 @@ setup(
         "bin/proteins.py",
         "bin/util.py",
         "bin/version.py",
+        "bin/create_hmms.py",
     ],
     packages=["pharokka_runner"],
     package_dir=dict(pharokka_runner="bin"),
