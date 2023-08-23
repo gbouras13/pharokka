@@ -959,7 +959,6 @@ class Pharok:
         # check if no trnas
         if self.trna_empty == False:
             trna_df = self.total_gff[self.total_gff["Method"] == "tRNAscan-SE"]
-            print(trna_df)
             # keep only trnas and pseudogenes
             trna_df.start = trna_df.start.astype(int)
             trna_df.stop = trna_df.stop.astype(int)
@@ -1896,9 +1895,7 @@ class Pharok:
 
         # read in the plasdb tsv
         inphared_tsv_file = os.path.join(self.db_dir, "1Aug2023_data.tsv")
-        # with open(plsdb_tsv_file, 'rb') as f:
-        #     result = chardet.detect(f.readline())
-        #     print(result)
+
         cols = [
             "Accession",
             "Description",

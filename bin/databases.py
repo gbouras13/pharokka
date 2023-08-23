@@ -12,7 +12,10 @@ mmseqs createdb protein_fasta_protein_homolog_model.fasta CARD
 # for VFDB, only need the FASTA
 
 # VFDB update as of August 18 2023 (not versioned)
-mmseqs createdb VFDB_setB_pro.fas vfdb
+# clustered 
+
+mmseqs easy-cluster VFDB_setB_pro_form.fas VFDBclusterRes tmp --min-seq-id 0.5 -c 0.8 --cov-mode 1
+mmseqs createdb VFDBclusterRes_rep_seq.fasta vfdb
 
 """
 
@@ -44,11 +47,11 @@ VERSION_DICTIONARY = {
 
 VERSION_DICTIONARY = {
     "1.4.0": {
-        "md5": "cd9cc60dfaa2de63ec23902ab6d5b9d7",
+        "md5": "c21144209b993c06fae2dac906d73b96",
         "major": 1,
         "minor": 4,
         "minorest": 0,
-        "db_url": "https://zenodo.org/record/8267900/files/pharokka_v1.4.0_databases.tar.gz",
+        "db_url": "https://zenodo.org/record/8276347/files/pharokka_v1.4.0_databases.tar.gz",
         "dir_name": "pharokka_v1.4.0_databases",
         "inphared_mash": "1Aug2023_genomes.fa.msh",
         "inphared_annot": "1Aug2023_data.tsv",

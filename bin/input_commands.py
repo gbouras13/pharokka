@@ -111,7 +111,7 @@ def get_input():
     )
     parser.add_argument(
         "--custom_hmm",
-        help="Runs pharokka with a set ",
+        help="Run pharokka with a custom HMM profile database suffixed .h3m. \nPlease use create this with the create_custom_hmm.py script.",
         action="store",
         default="",
     )
