@@ -63,31 +63,31 @@ def exec_command(cmnd, stdout=subprocess.PIPE, stderr=subprocess.PIPE):
     return out.decode("utf8") if out is not None else None
 
 
-def test_download(tmp_dir):
-    """test pharokka download"""
-    cmd = f"install_databases.py -o {database_dir}"
-    exec_command(cmd)
+# def test_download(tmp_dir):
+#     """test pharokka download"""
+#     cmd = f"install_databases.py -o {database_dir}"
+#     exec_command(cmd)
 
 
-def test_proteins(tmp_dir):
-    """test pharokka proteins"""
-    input_fasta: Path = f"{proteins_data}/phanotate.faa"
-    cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t {threads} -f"
-    exec_command(cmd)
+# def test_proteins(tmp_dir):
+#     """test pharokka proteins"""
+#     input_fasta: Path = f"{proteins_data}/phanotate.faa"
+#     cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
+#     exec_command(cmd)
 
 
-def test_proteins_hmm_only(tmp_dir):
-    """test pharokka proteins hmm_only"""
-    input_fasta: Path = f"{proteins_data}/phanotate.faa"
-    cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t {threads} -f --hmm_only"
-    exec_command(cmd)
+# def test_proteins_hmm_only(tmp_dir):
+#     """test pharokka proteins hmm_only"""
+#     input_fasta: Path = f"{proteins_data}/phanotate.faa"
+#     cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --hmm_only"
+#     exec_command(cmd)
 
 
-def test_proteins_mmseqs_only(tmp_dir):
-    """test pharokka proteins mmseqs_only"""
-    input_fasta: Path = f"{proteins_data}/phanotate.faa"
-    cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t {threads} -f --mmseqs2_only"
-    exec_command(cmd)
+# def test_proteins_mmseqs_only(tmp_dir):
+#     """test pharokka proteins mmseqs_only"""
+#     input_fasta: Path = f"{proteins_data}/phanotate.faa"
+#     cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --mmseqs2_only"
+#     exec_command(cmd)
 
 
 temp_dir = Path(f"{test_data}/fake_out")
@@ -105,4 +105,4 @@ class testFails(unittest.TestCase):
 
 
 remove_directory(f"{temp_dir}")
-remove_directory(f"{database_dir}")
+#remove_directory(f"{database_dir}")

@@ -8,7 +8,7 @@ out_dir="output"
 mkdir -p $out_dir
 
 # normal
-pharokka.py -i $test_data/Standard_examples/SAOMS1.fasta -d $db_dir-o $out_dir/SAOMS1 -t 8 -f
+pharokka.py -i $test_data/Standard_examples/SAOMS1.fasta -d $db_dir -o $out_dir/SAOMS1 -t 8 -f
 
 # AMR
 pharokka.py -i $test_data/AMR_example/NC_007458.fasta -d $db_dir -o $out_dir/NC_007458 -t 8 -f
@@ -55,4 +55,6 @@ pharokka.py -i $test_data/Standard_examples/SAOMS1.fasta -d $db_dir -o $out_dir/
 
 # proteins
 
-pharokka_proteins.py -i $test_data/proteins/phanotate.faa -d $db_dir -o $out_dir/proteins_test_mmseqs2_only -t 1 -f --mmseqs2_only
+pharokka_proteins.py -i tests/test_data/proteins/phanotate.faa -d $db_dir -o $out_dir/proteins_test -t 8 -f
+pharokka_proteins.py -i tests/test_data/proteins/phanotate.faa -d $db_dir -o $out_dir/proteins_test_mmseqs2_only -t 8 -f --mmseqs2_only
+

@@ -110,6 +110,12 @@ def get_input():
         action="store_true",
     )
     parser.add_argument(
+        "--custom_hmm",
+        help="Runs pharokka with a set ",
+        action="store",
+        default="",
+    )
+    parser.add_argument(
         "--terminase",
         help="Runs terminase large subunit re-orientation mode. Single genome input only and requires --terminase_strand and --terminase_start to be specified.",
         action="store_true",
@@ -549,3 +555,13 @@ def instantiate_split_output(out_dir, split):
             os.mkdir(single_gff_dir)
         if os.path.isdir(single_gbk_dir) == False:
             os.mkdir(single_gbk_dir)
+
+def validate_custom_hmm(filename):
+    suffix = ".h3m" 
+
+    logger.info(f"Checking custom hmm profile {filename}")
+
+    if filename.endswith(suffix) is True:
+        logger.info(f"{filename} checked.")
+    else:
+        logger.exit(f"{filename} does not end with .h3m . Please check your --custom_hmm parameter or use create_custom_hmm.py to create a custom HMM profile.")

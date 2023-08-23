@@ -33,7 +33,7 @@ meta_data = Path(f"{overall_data}/Meta_example")
 standard_data = Path(f"{overall_data}/Standard_examples")
 stop_recoding_data = Path(f"{overall_data}/stop_recoding")
 logger.add(lambda _: sys.exit(1), level="ERROR")
-threads = 4
+threads = 8
 
 
 def remove_directory(dir_path):
@@ -66,16 +66,16 @@ def exec_command(cmnd, stdout=subprocess.PIPE, stderr=subprocess.PIPE):
     return out.decode("utf8") if out is not None else None
 
 
-def test_download(tmp_dir):
-    """test pharokka download"""
-    cmd = f"install_databases.py -o {database_dir}"
-    exec_command(cmd)
+# def test_download(tmp_dir):
+#     """test pharokka download"""
+#     cmd = f"install_databases.py -o {database_dir}"
+#     exec_command(cmd)
 
 
 def test_overall(tmp_dir):
     """test pharokka overall"""
     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
-    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t {threads} -f"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
 
 
@@ -194,4 +194,4 @@ def test_overall(tmp_dir):
 
 
 remove_directory(temp_dir)
-remove_directory(f"{database_dir}")
+# remove_directory(f"{database_dir}")

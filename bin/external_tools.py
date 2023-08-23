@@ -48,8 +48,16 @@ class ExternalTool:
         with open(self.out_log, "w") as stdout_fh, open(self.err_log, "w") as stderr_fh:
             print(f"Command line: {self.command_as_str}", file=stderr_fh)
             logger.info(f"Started running {self.command_as_str} ...")
-            self._run_core(self.command, stdout_fh=stdout_fh, stderr_fh=stderr_fh)
-            logger.info(f"Done running {self.command_as_str}")
+            try:
+                self._run_core(self.command, stdout_fh=stdout_fh, stderr_fh=stderr_fh)
+                logger.info(f"Done running {self.command_as_str}")
+            except:
+                with open(self.out_log, "r") as file:
+                    file_contents = file.read()
+                    logger.info(file_contents)
+                with open(self.out_log, "r") as file:
+                    file_contents = file.read()
+                    logger.info(file_contents)
 
     def run_to_stdout(
         self,

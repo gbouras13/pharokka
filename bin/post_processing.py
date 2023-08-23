@@ -34,6 +34,9 @@ class Pharok:
         pyhmmer_results_dict: dict = {
             "p1": Result(protein="p1", phrog="phrog_1", bitscore=1, evalue=2.01e-01)
         },
+        custom_pyhmmer_results_dict: dict = {
+            "p1": Result(protein="p1", phrog="phrog_1", bitscore=1, evalue=2.01e-01)
+        },
         merged_df: pd.DataFrame() = pd.DataFrame(
             {"col1": [1, 2, 3], "col2": [4, 5, 6]}
         ),
@@ -54,6 +57,7 @@ class Pharok:
         coding_table: int = 11,
         mmseqs_flag: bool = True,
         hmm_flag: bool = True,
+        custom_hmm_flag: bool = False
     ) -> None:
         """
         Parameters
@@ -94,10 +98,12 @@ class Pharok:
             number of CRISPRs
         coding_table: int.
             number denoting the prodigal coding table (default 11)
-        run_mmseqs: bool
+        mmseqs_flag: bool
             whether MMseqs2 was run
-        run_hmm: bool
+        hmm_flag: bool
             whether HMM was run
+        custom_hmm_flag: bool
+            whether a custom db of HMMs was run
         """
         self.out_dir = out_dir
         self.db_dir = db_dir
@@ -107,6 +113,7 @@ class Pharok:
         self.meta_mode = meta_mode
         self.locustag = locustag
         self.pyhmmer_results_dict = pyhmmer_results_dict
+        self.custom_pyhmmer_results_dict = custom_pyhmmer_results_dict
         self.merged_df = merged_df
         self.vfdb_results = vfdb_results
         self.card_results = card_results
@@ -119,6 +126,7 @@ class Pharok:
         self.coding_table = coding_table
         self.mmseqs_flag = mmseqs_flag
         self.hmm_flag = hmm_flag
+        self.custom_hmm_flag = custom_hmm_flag
 
     def process_results(self):
         """
@@ -183,9 +191,14 @@ class Pharok:
         if self.hmm_flag is True:
             merged_df = process_pyhmmer_results(merged_df, self.pyhmmer_results_dict)
         else:
-            merged_df["pyhmmer_phrog"] = "No_HMM"
-            merged_df["pyhmmer_bitscore"] = "No_HMM"
-            merged_df["pyhmmer_evalue"] = "No_HMM"
+            merged_df["pyhmmer_phrog"] = "No_PHROGs_HMM"
+            merged_df["pyhmmer_bitscore"] = "No_PHROGs_HMM"
+            merged_df["pyhmmer_evalue"] = "No_PHROGs_HMM"
+
+        if self.custom_hmm_flag is True:
+            merged_df = process_custom_results(merged_df, self.pyhmmer_results_dict)
+        else:
+            merged_df["custom_hmm_id"] = "No_custom_HMM"
 
         # strip off phrog_ for both
         merged_df["mmseqs_phrog"] = merged_df["mmseqs_phrog"].str.replace("phrog_", "")
@@ -2079,6 +2092,43 @@ def process_pyhmmer_results(merged_df, pyhmmer_results_dict):
     # split to get protein name to match with pyhmmer
     merged_df["temp_prot"] = merged_df["gene"].str.split(" ", n=1).str[0]
 
+    merged_df["pyhmmer_phrog"] = "No_PHROG"
+    merged_df["pyhmmer_bitscore"] = "No_PHROG"
+    merged_df["pyhmmer_evalue"] = "No_PHROG"
+
+    # iterate over the df
+    for index, row in merged_df.iterrows():
+        if (
+            row["temp_prot"] in pyhmmer_results_dict
+        ):  # check if the protein is in the dictionary
+            merged_df.at[index, "pyhmmer_phrog"] = pyhmmer_results_dict[
+                row["temp_prot"]
+            ].phrog
+            merged_df.at[index, "pyhmmer_bitscore"] = round(
+                pyhmmer_results_dict[row["temp_prot"]].bitscore, 6
+            )
+            merged_df.at[index, "pyhmmer_evalue"] = pyhmmer_results_dict[
+                row["temp_prot"]
+            ].evalue
+
+    # drop temp prot
+
+    merged_df = merged_df.drop(columns=["temp_prot"])
+
+    return merged_df
+
+
+#### process pyhmmer hits
+def process_custom_pyhmmer_results(merged_df, custom_pyhmmer_results_dict):
+    """
+    Processes pyhmmer results for custom db
+    :param merged_df: merged_df in process_results
+    :param pyhmmer_results_dict: dictionary with pyhmmer results
+    :return: merged_df merged_df updated with pyhmmer results
+    """
+
+    # split to get protein name to match with pyhmmer
+    merged_df["temp_prot"] = merged_df["gene"].str.split(" ", n=1).str[0]
     merged_df["pyhmmer_phrog"] = "No_PHROG"
     merged_df["pyhmmer_bitscore"] = "No_PHROG"
     merged_df["pyhmmer_evalue"] = "No_PHROG"

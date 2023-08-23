@@ -18,7 +18,10 @@ from input_commands import (
     validate_meta,
     validate_terminase,
     validate_threads,
+    validate_custom_hmm
 )
+
+from custom_db import run_custom_pyhmmer
 from loguru import logger
 from post_processing import Pharok, remove_post_processing_files
 from processes import (
@@ -113,6 +116,15 @@ def main():
         logger.error(
             "\nThe database directory was unsuccessfully checked. Please run install_databases.py \n"
         )
+
+    ### custom hmm
+
+    custom_hmm_flag = False
+    if args.custom_hmm != "":
+        custom_hmm_flag = True
+
+    if custom_hmm_flag is True:
+        validate_custom_hmm(args.custom_hmm)
 
     # dependencies
     logger.info("Checking dependencies.")
@@ -305,10 +317,15 @@ def main():
 
     if hmm_flag is True:
         # runs pyhmmer on PHROGs
-        logger.info("Running pyhmmer.")
+        logger.info("Running PyHMMER .")
         best_results_pyhmmer = run_pyhmmer(
             db_dir, out_dir, args.threads, gene_predictor, args.evalue
         )
+
+    if custom_hmm_flag is True:
+        # runs pyhmmer on customer
+        logger.info(f"Running PyHMMER on custom HMM database {args.custom_hmm}.")
+        best_results_custom_pyhmmer = run_custom_pyhmmer(args.custom_hmm, out_dir, args.threads, gene_predictor, args.evalue)
 
     #################################################
     # post processing
@@ -328,8 +345,11 @@ def main():
     pharok.coding_table = args.coding_table
     pharok.mmseqs_flag = mmseqs_flag
     pharok.hmm_flag = hmm_flag
+    pharok.custom_hmm_flag = custom_hmm_flag
     if pharok.hmm_flag is True:
         pharok.pyhmmer_results_dict = best_results_pyhmmer
+    if pharok.custom_hmm_flag is True:
+        pharok.custom_pyhmmer_results_dict = best_results_custom_pyhmmer
 
     # post process results
     # includes vfdb and card

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
 """
-Script to create hmm profiles for each PHROG with pyhmmer
+Script to create hmm profile with pyhmmer
 
-create_hmms.py -i <directory of MSAs> -o <directory with HMMs>
+create_custom_hmm.py -i <directory of MSAs> -o <directory with HMMs>
 
-Note: all MSAs must be in FASTA format and labelled with only 1 full stop e.g. "name.suffix"
+Note: all MSAs must be in FASTA format and labelled with only 1 full stop e.g. "name.msa"
 
 """
 
@@ -27,11 +27,11 @@ from loguru import logger
 
 
 def get_input():
-    """gets input for create_hmms.py
+    """gets input for create_custom_hmm.py
     :return: args
     """
     parser = argparse.ArgumentParser(
-        description="create_hmms.py: Creates HMMs from FASTA formatted MSAs with PyHMMER for use with pharokka v1.4.0 and higher.",
+        description="create_custom_hmm.py: Creates HMMs from FASTA formatted MSAs with PyHMMER for use with pharokka v1.4.0 and higher.",
         formatter_class=RawTextHelpFormatter,
     )
     parser.add_argument(
@@ -163,7 +163,7 @@ def main():
                 f"HMM creation complete."
             )
     logger.info(
-                f"The combined file you will need to run with pharokka.py --custom_db is {HMM_dir}/{args.prefix}.h3m"
+                f"The combined file you will need to run with pharokka.py --custom_hmm is {HMM_dir}/{args.prefix}.h3m"
             )
 
 
