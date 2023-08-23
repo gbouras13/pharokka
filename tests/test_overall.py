@@ -66,10 +66,10 @@ def exec_command(cmnd, stdout=subprocess.PIPE, stderr=subprocess.PIPE):
     return out.decode("utf8") if out is not None else None
 
 
-# def test_download(tmp_dir):
-#     """test pharokka download"""
-#     cmd = f"install_databases.py -o {database_dir}"
-#     exec_command(cmd)
+def test_download(tmp_dir):
+    """test pharokka download"""
+    cmd = f"install_databases.py -o {database_dir}"
+    exec_command(cmd)
 
 
 def test_overall(tmp_dir):
