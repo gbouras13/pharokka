@@ -59,7 +59,7 @@ def get_input():
         "-g",
         "--gene_predictor",
         action="store",
-        help='User specified gene predictor. Use "-g phanotate" or "-g prodigal". Defaults to phanotate (not required unless prodigal is desired).',
+        help='User specified gene predictor. Use "-g phanotate" or "-g prodigal". \nDefaults to phanotate (not required unless prodigal is desired).',
         default="phanotate",
     )
     parser.add_argument(
@@ -84,14 +84,14 @@ def get_input():
     parser.add_argument(
         "-e",
         "--evalue",
-        help="E-value threshold for MMseqs2 database PHROGs, VFDB and CARD and pyhmmer PHROGs database search. Defaults to 1E-05.",
+        help="E-value threshold for MMseqs2 database PHROGs, VFDB and CARD and PyHMMER PHROGs database search. Defaults to 1E-05.",
         action="store",
         default="1E-05",
     )
     parser.add_argument(
         "--fast",
         "--hmm_only",
-        help="Runs pyhmmer (HMMs) with PHROGs only, not MMseqs2 with PHROGs, CARD or VFDB. Designed for phage isolates, will not likely be faster for large metagenomes.",
+        help="Runs PyHMMER (HMMs) with PHROGs only, not MMseqs2 with PHROGs, CARD or VFDB. \nDesigned for phage isolates, will not likely be faster for large metagenomes.",
         action="store_true",
     )
     parser.add_argument(
@@ -101,12 +101,12 @@ def get_input():
     )
     parser.add_argument(
         "--meta_hmm",
-        help="Overrides --mmseqs2_only in meta mode. Will run both MMseqs2 and HMM approaches.",
+        help="Overrides --mmseqs2_only in meta mode. Will run both MMseqs2 and PyHMMER.",
         action="store_true",
     )
     parser.add_argument(
         "--dnaapler",
-        help="Runs dnaapler to automatically re-orient all contigs to begin with terminase large subunit if found. Recommended over using '--terminase'.",
+        help="Runs dnaapler to automatically re-orient all contigs to begin with terminase large subunit if found. \nRecommended over using '--terminase'.",
         action="store_true",
     )
     parser.add_argument(
@@ -117,7 +117,7 @@ def get_input():
     )
     parser.add_argument(
         "--terminase",
-        help="Runs terminase large subunit re-orientation mode. Single genome input only and requires --terminase_strand and --terminase_start to be specified.",
+        help="Runs terminase large subunit re-orientation mode. \nSingle genome input only and requires --terminase_strand and --terminase_start to be specified.",
         action="store_true",
     )
     parser.add_argument(
@@ -174,7 +174,7 @@ def instantiate_dirs(output_dir, meta, force):
     mmseqs_dir = os.path.join(output_dir, "mmseqs/")
     if os.path.isdir(mmseqs_dir) == False:
         os.mkdir(mmseqs_dir)
-    vfdb_dir = os.path.join(output_dir, "vfdb/")
+    vfdb_dir = os.path.join(output_dir, "VFDB/")
     if os.path.isdir(vfdb_dir) == False:
         os.mkdir(vfdb_dir)
     CARD_dir = os.path.join(output_dir, "CARD/")

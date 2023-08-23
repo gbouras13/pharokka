@@ -468,7 +468,7 @@ def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, db_name
     elif db_name == "CARD":
         mmseqs_dir = os.path.join(out_dir, "CARD/")
         target_db_dir = os.path.join(out_dir, "CARD_target_dir/")
-        tmp_dir = os.path.join(out_dir, "VFDB_dir/")
+        tmp_dir = os.path.join(out_dir, "CARD_dir/")
         profile_db = os.path.join(db_dir, "CARD")
         mmseqs_result_tsv = os.path.join(out_dir, "CARD_results.tsv")
 
