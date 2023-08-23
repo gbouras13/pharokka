@@ -75,7 +75,7 @@ def test_download(tmp_dir):
 def test_overall(tmp_dir):
     """test pharokka overall"""
     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
-    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t {threads} -f"
     exec_command(cmd)
 
 
@@ -135,7 +135,7 @@ def test_overall(tmp_dir):
 #     exec_command(cmd)
 
 
-# temp_dir = Path(f"{test_data}/fake_out")
+
 
 
 # class testFails(unittest.TestCase):
