@@ -37,6 +37,9 @@ pharokka.py -i $test_data/Standard_examples/SAOMS1.fasta -d $db_dir -o $out_dir/
 # mmseqs2_only
 pharokka.py -i $test_data/Standard_examples/SAOMS1.fasta -d $db_dir -o $out_dir/SAOMS1_mmseqs2_only -t 8 -f --mmseqs2_only
 
+# normal
+pharokka.py -i $test_data/custom_examples/MH649026.fasta -d $db_dir -o $out_dir/MH649026 -t 8 -f
+
 # meta
 pharokka.py -i $test_data/Meta_example/fake_meta.fa -d $db_dir -o $out_dir/fake_meta -t 8 -f -m
 

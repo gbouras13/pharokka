@@ -2152,7 +2152,7 @@ def process_custom_pyhmmer_results(merged_df, custom_pyhmmer_results_dict):
             )
             merged_df.at[index, "custom_hmm_evalue"] = custom_pyhmmer_results_dict[
                 row["temp_prot"]
-            ].custom_hmm_evalue
+            ].evalue
 
     # drop temp prot
     merged_df = merged_df.drop(columns=["temp_prot"])

@@ -216,20 +216,20 @@ def validate_meta(filepath_in, meta, split):
     if meta == True:
         if num_fastas < 2:
             logger.error(
-                "ERROR: -m meta mode specified when the input file only contains 1 contig. Please re-run without specifying -m. \n"
+                "ERROR: -m meta mode specified when the input file only contains 1 contig. Please re-run without specifying -m."
             )
         else:
             message = f"{num_fastas} input contigs detected."
             logger.info(message)
             if split == True:
-                message = "Split mode activtated. \nSeparate output FASTA, gff and genbank files will be output for each contig."
+                message = "Split mode activtated. Separate output FASTA, gff and genbank files will be output for each contig."
                 logger.info(message)
     else:
         if num_fastas > 1:
-            message = "More than one contig detected in the input file. Re-running pharokka with -m meta mode is recommended unless this is a fragmented isolate genome. \nContinuing."
+            message = "More than one contig detected in the input file. Re-running pharokka with -m meta mode is recommended unless this is a fragmented isolate genome. Continuing."
             logger.info(message)
         if split == True:
-            message = "-s or --split was specified without -m or --meta and will be ignored. \nPlease specify -s with -m if you want to run split mode. \nContinuing."
+            message = "-s or --split was specified without -m or --meta and will be ignored. Please specify -s with -m if you want to run split mode. Continuing."
             logger.info(message)
 
 

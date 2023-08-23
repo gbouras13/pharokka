@@ -287,24 +287,24 @@ def main():
     # running mmseqs2 on the 3 databases
     if mmseqs_flag is True:
         logger.info("Starting MMseqs2.")
-        run_mmseqs(
-            db_dir,
-            out_dir,
-            args.threads,
-            logdir,
-            gene_predictor,
-            args.evalue,
-            db_name="PHROG",
-        )
-        run_mmseqs(
-            db_dir,
-            out_dir,
-            args.threads,
-            logdir,
-            gene_predictor,
-            args.evalue,
-            db_name="CARD",
-        )
+        # run_mmseqs(
+        #     db_dir,
+        #     out_dir,
+        #     args.threads,
+        #     logdir,
+        #     gene_predictor,
+        #     args.evalue,
+        #     db_name="PHROG",
+        # )
+        # run_mmseqs(
+        #     db_dir,
+        #     out_dir,
+        #     args.threads,
+        #     logdir,
+        #     gene_predictor,
+        #     args.evalue,
+        #     db_name="CARD",
+        # )
         run_mmseqs(
             db_dir,
             out_dir,
@@ -317,7 +317,7 @@ def main():
 
     if hmm_flag is True:
         # runs pyhmmer on PHROGs
-        logger.info("Running PyHMMER .")
+        logger.info("Running PyHMMER on PHROGs.")
         best_results_pyhmmer = run_pyhmmer(
             db_dir, out_dir, args.threads, gene_predictor, args.evalue
         )
