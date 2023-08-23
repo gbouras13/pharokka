@@ -195,10 +195,13 @@ class Pharok:
             merged_df["pyhmmer_bitscore"] = "No_PHROGs_HMM"
             merged_df["pyhmmer_evalue"] = "No_PHROGs_HMM"
 
+        # add custom db results
         if self.custom_hmm_flag is True:
-            merged_df = process_custom_results(merged_df, self.pyhmmer_results_dict)
+            merged_df = process_custom_pyhmmer_results(merged_df, self.custom_pyhmmer_results_dict)
         else:
             merged_df["custom_hmm_id"] = "No_custom_HMM"
+            merged_df["custom_hmm_bitscore"] = "No_custom_HMM"
+            merged_df["custom_hmm_evalue"] = "No_custom_HMM"
 
         # strip off phrog_ for both
         merged_df["mmseqs_phrog"] = merged_df["mmseqs_phrog"].str.replace("phrog_", "")
@@ -218,7 +221,7 @@ class Pharok:
                     row["phrog"], float
                 ):  # for all the rows without an mmseqs2 PHROG will be nan - floats
                     # to write all hits where there was no mmseqs but there was a hmm
-                    if row["pyhmmer_phrog"] != "No_PHROG":
+                    if row["pyhmmer_phrog"] != "No_PHROGs_HMM":
                         merged_df.at[index, "phrog"] = row["pyhmmer_phrog"]
 
         else:  # only need to worry about pyhmmer
@@ -560,6 +563,8 @@ class Pharok:
         # set phase to be 0
         self.merged_df["phase"] = 0
         # create attributes
+        # no custom 
+
         self.merged_df["attributes"] = (
             "ID="
             + locus_df["locus_tag"].astype(str)
@@ -578,6 +583,15 @@ class Pharok:
             + ";"
             + "product="
             + self.merged_df["annot"].astype(str)
+        )
+        # adds custom hmm database annotations
+        self.merged_df.loc[
+            self.merged_df["custom_hmm_id"] != "No_custom_HMM", "attributes"
+        ] = (
+            self.merged_df["attributes"].astype(str)
+            + ";"
+            + "custom_annotation="
+            + self.merged_df["custom_hmm_id"].astype(str)
         )
         # adds VFDB
         self.merged_df.loc[
@@ -609,7 +623,7 @@ class Pharok:
             + "CARD_species="
             + self.merged_df["CARD_species"].astype(str)
         )
-
+        
         # save back
 
         # get gff dataframe in correct order
@@ -722,9 +736,6 @@ class Pharok:
                 columns=["isotypes", "anticodon", "rest", "trna_product", "locus_tag"]
             )
 
-            # # append to the end of the gff
-            # with open(os.path.join(out_dir, "pharokka_tmp.gff"), "a") as f:
-            #     trna_df.to_csv(f, sep="\t", index=False, header=False)
 
         ### crisprs
         crispr_count = get_crispr_count(self.out_dir, self.prefix)
@@ -797,9 +808,6 @@ class Pharok:
             minced_df = minced_df.drop(
                 columns=["rpt_unit_seq", "rpt_family", "rpt_type", "locus_tag"]
             )
-            # append to the end of the gff
-            # with open(os.path.join(out_dir, "pharokka_tmp.gff"), "a") as f:
-            #     minced_df.to_csv(f, sep="\t", index=False, header=False)
 
         ### tmrna
         # add to gff there is a tmrna
@@ -849,9 +857,7 @@ class Pharok:
                 + tmrna_df["locus_tag"]
             )
             tmrna_df = tmrna_df.drop(columns=["locus_tag"])
-            # append to the end of the gff
-            # with open(os.path.join(out_dir, "pharokka_tmp.gff"), "a") as f:
-            #     tmrna_df.to_csv(f, sep="\t", index=False, header=False)
+
 
         # write header of final gff files
         with open(os.path.join(self.out_dir, self.prefix + ".gff"), "w") as f:
@@ -2092,9 +2098,9 @@ def process_pyhmmer_results(merged_df, pyhmmer_results_dict):
     # split to get protein name to match with pyhmmer
     merged_df["temp_prot"] = merged_df["gene"].str.split(" ", n=1).str[0]
 
-    merged_df["pyhmmer_phrog"] = "No_PHROG"
-    merged_df["pyhmmer_bitscore"] = "No_PHROG"
-    merged_df["pyhmmer_evalue"] = "No_PHROG"
+    merged_df["pyhmmer_phrog"] = "No_PHROGs_HMM"
+    merged_df["pyhmmer_bitscore"] = "No_PHROGs_HMM"
+    merged_df["pyhmmer_evalue"] = "No_PHROGs_HMM"
 
     # iterate over the df
     for index, row in merged_df.iterrows():
@@ -2129,29 +2135,27 @@ def process_custom_pyhmmer_results(merged_df, custom_pyhmmer_results_dict):
 
     # split to get protein name to match with pyhmmer
     merged_df["temp_prot"] = merged_df["gene"].str.split(" ", n=1).str[0]
-    merged_df["pyhmmer_phrog"] = "No_PHROG"
-    merged_df["pyhmmer_bitscore"] = "No_PHROG"
-    merged_df["pyhmmer_evalue"] = "No_PHROG"
+    merged_df["custom_hmm_id"] = "No_custom_HMM"
+    merged_df["custom_hmm_bitscore"] = "No_custom_HMM"
+    merged_df["custom_hmm_evalue"] = "No_custom_HMM"
 
     # iterate over the df
     for index, row in merged_df.iterrows():
         if (
-            row["temp_prot"] in pyhmmer_results_dict
+            row["temp_prot"] in custom_pyhmmer_results_dict
         ):  # check if the protein is in the dictionary
-            merged_df.at[index, "pyhmmer_phrog"] = pyhmmer_results_dict[
+            merged_df.at[index, "custom_hmm_id"] = custom_pyhmmer_results_dict[
                 row["temp_prot"]
-            ].phrog
-            merged_df.at[index, "pyhmmer_bitscore"] = round(
-                pyhmmer_results_dict[row["temp_prot"]].bitscore, 6
+            ].custom_hmm_id
+            merged_df.at[index, "custom_hmm_bitscore"] = round(
+                custom_pyhmmer_results_dict[row["temp_prot"]].bitscore, 6
             )
-            merged_df.at[index, "pyhmmer_evalue"] = pyhmmer_results_dict[
+            merged_df.at[index, "custom_hmm_evalue"] = custom_pyhmmer_results_dict[
                 row["temp_prot"]
-            ].evalue
+            ].custom_hmm_evalue
 
     # drop temp prot
-
     merged_df = merged_df.drop(columns=["temp_prot"])
-
     return merged_df
 
 

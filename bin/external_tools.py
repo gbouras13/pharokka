@@ -58,6 +58,8 @@ class ExternalTool:
                 with open(self.out_log, "r") as file:
                     file_contents = file.read()
                     logger.info(file_contents)
+            self._run_core(self.command, stdout_fh=stdout_fh, stderr_fh=stderr_fh)
+            logger.info(f"Done running {self.command_as_str}")
 
     def run_to_stdout(
         self,
