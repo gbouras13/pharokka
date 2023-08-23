@@ -25,7 +25,7 @@ import os
 import shutil
 import tarfile
 from pathlib import Path
-
+import sys
 import requests
 from alive_progress import alive_bar
 from loguru import logger
@@ -89,6 +89,8 @@ VFDB_DB_NAMES = [
     "vfdb_h",
     "vfdb_h.dbtype",
     "vfdb_h.index",
+    "VFDBclusterRes_cluster.tsv",
+    "VFDBclusterRes_rep_seq.fasta"
 ]
 
 CARD_DB_NAMES = [
@@ -105,6 +107,8 @@ CARD_DB_NAMES = [
 
 def instantiate_install(db_dir):
     instantiate_dir(db_dir)
+    # check the database is installed
+    logger.info(f"Checking Pharokka database installation in {db_dir}.")
     downloaded_flag = check_db_installation(db_dir)
     if downloaded_flag == True:
         logger.info("All Pharokka Databases have already been Downloaded and Checked.")

@@ -31,6 +31,7 @@ database_dir = Path(f"{test_data}/database")
 overall_data = Path(f"{test_data}/overall")
 meta_data = Path(f"{overall_data}/Meta_example")
 standard_data = Path(f"{overall_data}/Standard_examples")
+standard_data_output = Path(f"{standard_data}/SAOMS1_Output")
 stop_recoding_data = Path(f"{overall_data}/stop_recoding")
 logger.add(lambda _: sys.exit(1), level="ERROR")
 threads = 8
@@ -120,9 +121,14 @@ def test_overall(tmp_dir):
 #     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m"
 #     exec_command(cmd)
 
+# def test_meta_hmm(tmp_dir):
+#     """test pharokka meta hmm"""
+#     input_fasta: Path = f"{meta_data}/fake_meta.fa"
+#     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m --meta_hmm"
+#     exec_command(cmd)
 
 # def test_meta_split(tmp_dir):
-#     """test pharokka meta"""
+#     """test pharokka meta split"""
 #     input_fasta: Path = f"{meta_data}/fake_meta.fa"
 #     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m -s"
 #     exec_command(cmd)
@@ -134,8 +140,11 @@ def test_overall(tmp_dir):
 #     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --terminase --terminase_start 340 --terminase_strand neg"
 #     exec_command(cmd)
 
-
-
+# def test_overall_genbank(tmp_dir):
+#     """test pharokka overall with genbank input"""
+#     input_gbk: Path = f"{standard_data_output}/SAOMS1.fasta"
+#     cmd = f"pharokka.py -i {input_gbk} -d {database_dir} -o {tmp_dir} -t {threads} -f --genbank"
+#     exec_command(cmd)
 
 
 # class testFails(unittest.TestCase):

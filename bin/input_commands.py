@@ -116,6 +116,11 @@ def get_input():
         default="",
     )
     parser.add_argument(
+        "--genbank",
+        help='Flag denoting that -i/--input is a genbank file instead of the usual FASTA file',
+        action="store_true",
+    )
+    parser.add_argument(
         "--terminase",
         help="Runs terminase large subunit re-orientation mode. \nSingle genome input only and requires --terminase_strand and --terminase_start to be specified.",
         action="store_true",
@@ -565,3 +570,19 @@ def validate_custom_hmm(filename):
         logger.info(f"{filename} checked.")
     else:
         logger.exit(f"{filename} does not end with .h3m . Please check your --custom_hmm parameter or use create_custom_hmm.py to create a custom HMM profile.")
+
+
+
+def validate_and_extract_genbank(filename, out_dir):
+
+    # Open the GenBank file
+    with open(filename, "r") as genbank_file:
+        for record in SeqIO.parse(genbank_file, "genbank"):
+  
+            output_fasta_path = f"{out_dir}/genbank.fasta"
+            
+            # Write the sequence in FASTA format to the output file
+            with open(output_fasta_path, "w") as output_fasta:
+                SeqIO.write(record, output_fasta, "fasta" )
+      
+

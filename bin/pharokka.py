@@ -18,7 +18,8 @@ from input_commands import (
     validate_meta,
     validate_terminase,
     validate_threads,
-    validate_custom_hmm
+    validate_custom_hmm,
+    validate_and_extract_genbank
 )
 
 from custom_db import run_custom_pyhmmer
@@ -106,8 +107,6 @@ def main():
     logger.info("Repository homepage is https://github.com/gbouras13/pharokka")
     logger.info("Written by George Bouras: george.bouras@adelaide.edu.au")
 
-    # check the database is installed
-    logger.info(f"Checking database installation in {db_dir}.")
 
     database_installed = check_db_installation(db_dir)
     if database_installed == True:
@@ -131,22 +130,33 @@ def main():
     check_dependencies()
 
     # instantiation/checking fasta and gene_predictor
-    validate_fasta(args.infile)
+    if args.genbank is True:
+        logger.info("You have specified --genbank.")
+        logger.info(f"Therefore, {args.input} is a genbank file instead of a FASTA file.")
+        logger.info("Converting genbank to FASTA.")
+        validate_and_extract_genbank(args.infile, out_dir)
+        input_fasta = os.path.join(out_dir, "genbank.fasta")
+    else:
+        validate_fasta(args.infile)
+        input_fasta = args.infile
+
+    # other validations
     validate_gene_predictor(gene_predictor)
     validate_threads(args.threads)
 
-    # define input - overwrite if terminase reorienter is true
-    input_fasta = args.infile
+    ###################
+    # define input 
+    ###################
 
-    # reorient with dnaapler
-    if args.dnaapler == True:
+    # reorient with dnaapler if chosen
+    if args.dnaapler is True:
         logger.info(
             "You have chosen to reorient your contigs by specifying --dnaapler. Checking the input."
         )
 
         # in case both --dnaapler and --terminase is selected
         if args.terminase == True:
-            logger.info("Ignoring --terminase and dnaapler will be run instead.")
+            logger.info("Ignoring --terminase. Dnaapler will be run instead.")
             args.terminase = False
             args.terminase_strand = "nothing"
             args.terminase_start = "nothing"
@@ -162,32 +172,34 @@ def main():
             # copy FASTA to output
             shutil.copy(input_fasta, destination_file)
 
-    # terminase reorienting
-    if args.terminase == True:
-        logger.info(
-            "You have chosen to reorient your genome by specifying --terminase. Checking the input."
-        )
-        validate_terminase(args.infile, args.terminase_strand, args.terminase_start)
-        reorient_terminase(
-            args.infile,
-            out_dir,
-            prefix,
-            args.terminase_strand,
-            args.terminase_start,
-        )
-        input_fasta = os.path.join(
-            out_dir, prefix + "_genome_terminase_reoriented.fasta"
-        )
+    # terminase reorienting if chosen and dnaapler is False
+    if args.dnaapler is False:
+        if args.terminase is True:
+            logger.info(
+                "You have chosen to reorient your genome by specifying --terminase. Checking the input."
+            )
+            validate_terminase(input_fasta, args.terminase_strand, args.terminase_start)
+            reorient_terminase(
+                input_fasta,
+                out_dir,
+                prefix,
+                args.terminase_strand,
+                args.terminase_start,
+            )
+            # overwrite input_fasta if terminase reorienter is true
+            input_fasta = os.path.join( 
+                out_dir, prefix + "_genome_terminase_reoriented.fasta"
+            )
 
-    if args.terminase_strand != "nothing" and args.terminase == False:
-        logger.info(
-            "You have specified a terminase strand using --strand to reorient your genome, but you have not specified --terminase to activate terminase mode. \nContinuing without reorientation."
-        )
+        if args.terminase_strand != "nothing" and args.terminase == False:
+            logger.info(
+                "You have specified a terminase strand using --strand to reorient your genome, but you have not specified --terminase to activate terminase mode. \nContinuing without reorientation."
+            )
 
-    if args.terminase_strand != "nothing" and args.terminase_start == False:
-        logger.info(
-            "You have specified a terminase start coordinate using --terminase_start to reorient your genome, but you have not specified --terminase to activate terminase mode. \nContinuing without reorientation."
-        )
+        if args.terminase_strand != "nothing" and args.terminase_start == False:
+            logger.info(
+                "You have specified a terminase start coordinate using --terminase_start to reorient your genome, but you have not specified --terminase to activate terminase mode. \nContinuing without reorientation."
+            )
 
     ########
     # mmseqs2 and hmm decisions

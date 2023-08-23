@@ -4,6 +4,7 @@
 
 test_data="tests/test_data/overall"
 db_dir="tests/test_data/database"
+custom_dir="tests/test_data/custom_db"
 out_dir="output"
 mkdir -p $out_dir
 
@@ -26,7 +27,7 @@ pharokka.py -i $test_data/VFDB_example/NC_004617.fasta -d $db_dir -o $out_dir/VF
 pharokka.py -i $test_data/Standard_examples/SAOMS1.fasta -d $db_dir -o $out_dir/SAOMS1_prod -g prodigal -t 8 -f
 
 # stop recode
-pharokka.py -i $test_data/table_4/SRR1747055_scaffold_7.fa -d $db_dir -o $out_dir/SAOMS1_prod_table4 -g prodigal -t 8 -f -c 4
+pharokka.py -i $test_data/stop_recoding/table_4/SRR1747055_scaffold_7.fa -d $db_dir -o $out_dir/table4 -g prodigal -t 8 -f -c 4
 
 # normal
 pharokka.py -i $test_data/Standard_examples/SAOMS1.fasta -d $db_dir -o $out_dir/SAOMS1_dnaap -t 8 -f --dnaapler
@@ -37,8 +38,11 @@ pharokka.py -i $test_data/Standard_examples/SAOMS1.fasta -d $db_dir -o $out_dir/
 # mmseqs2_only
 pharokka.py -i $test_data/Standard_examples/SAOMS1.fasta -d $db_dir -o $out_dir/SAOMS1_mmseqs2_only -t 8 -f --mmseqs2_only
 
-# normal
-pharokka.py -i $test_data/custom_examples/MH649026.fasta -d $db_dir -o $out_dir/MH649026 -t 8 -f
+# custom db
+pharokka.py -i $test_data/custom_examples/MH649026.fasta -d $db_dir -o $out_dir/MH649026 -t 8 -f --custom_hmm $custom_dir/microvirus.h3m
+
+# custom db meta
+pharokka.py -i $test_data/custom_examples/hundred_microviruses.fasta -d $db_dir -o $out_dir/hundred_microviruses -t 8 -m -s -f --custom_hmm $custom_dir/microvirus.h3m --fast
 
 # meta
 pharokka.py -i $test_data/Meta_example/fake_meta.fa -d $db_dir -o $out_dir/fake_meta -t 8 -f -m
@@ -54,7 +58,6 @@ pharokka.py -i $test_data/Standard_examples/SAOMS1.fasta -d $db_dir -o $out_dir/
 
 # mmseqs2_only
 pharokka.py -i $test_data/Standard_examples/SAOMS1.fasta -d $db_dir -o $out_dir/SAOMS1_mmseqs2_only -t 8 -f --mmseqs2_only
-
 
 # proteins
 

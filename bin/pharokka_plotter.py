@@ -31,7 +31,7 @@ def get_input():
         "--plot_name",
         action="store",
         default="pharokka_plot",
-        help='Output plot file name. ".png" suffix will be added to this automatically. \nWill be output in the pharokka output directory if -o is specified, or in the working directory if --gff andf --genbank are specified/',
+        help='Output plot file name. ".png" suffix will be added to this automatically. \nWill be output in the pharokka output directory if -o is specified, or in the working directory if --gff andf --genbank are specified.',
     )
     parser.add_argument(
         "-o", "--outdir", action="store", default="", help="Pharokka output directory."
@@ -85,7 +85,7 @@ def get_input():
         "--truncate",
         action="store",
         default="20",
-        help="Number of characters to include in annoation labels before truncation with ellipsis. Must be an integer. Defaults to 20.",
+        help="Number of characters to include in annoation labels before truncation with ellipsis. \nMust be an integer. Defaults to 20.",
     )
     parser.add_argument(
         "--dpi",
@@ -97,13 +97,13 @@ def get_input():
         "--annotations",
         action="store",
         default="1",
-        help="Controls the proporition of annotations labelled. Must be a number between 0 and 1 inclusive. \n0 = no annotations, 0.5 = half of the annotations, 1 = all annotations. Defaults to 1. Chosen in order of CDS size.",
+        help="Controls the proporition of annotations labelled. Must be a number between 0 and 1 inclusive. \n0 = no annotations, 0.5 = half of the annotations, 1 = all annotations. \nDefaults to 1. Chosen in order of CDS size.",
     )
     parser.add_argument(
         "--label_ids",
         action="store",
         default="",
-        help="Text file with list of CDS IDs (from gff file) that will be labelled.",
+        help="Text file with list of CDS IDs (from gff file) that are guaranteed to be labelled.",
     )
     args = parser.parse_args()
     return args

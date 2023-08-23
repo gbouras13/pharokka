@@ -2031,6 +2031,7 @@ def remove_post_processing_files(out_dir, gene_predictor, meta):
     remove_file(os.path.join(out_dir, "vfdb_results.tsv"))
     remove_directory(os.path.join(out_dir, "CARD_tmp_dir"))
     remove_directory(os.path.join(out_dir, "CARD"))
+    remove_directory(os.path.join(out_dir, "CARD_dir"))
     remove_file(os.path.join(out_dir, "CARD_results.tsv"))
     remove_file(os.path.join(out_dir, "cleaned_" + gene_predictor + ".tsv"))
     remove_file(os.path.join(out_dir, "input_fasta_delim.fasta"))
@@ -2051,6 +2052,9 @@ def remove_post_processing_files(out_dir, gene_predictor, meta):
     # delete the tmp meta files
     if meta == True:
         remove_directory(os.path.join(out_dir, "input_split_tmp/"))
+
+    # if genbank input
+    remove_file(os.path.join(out_dir, "genbank.fasta"))
 
 
 def get_crispr_count(out_dir, prefix):
