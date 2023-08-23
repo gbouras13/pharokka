@@ -18,10 +18,6 @@ from unittest.mock import patch
 import pytest
 from loguru import logger
 
-from bin.input_commands import (instantiate_dirs, validate_fasta,
-                                validate_gene_predictor, validate_meta,
-                                validate_strand, validate_terminase,
-                                validate_terminase_start, validate_threads)
 from bin.util import remove_directory
 
 # import functions
@@ -36,7 +32,7 @@ meta_data = Path(f"{overall_data}/Meta_example")
 standard_data = Path(f"{overall_data}/Standard_examples")
 stop_recoding_data = Path(f"{overall_data}/stop_recoding")
 logger.add(lambda _: sys.exit(1), level="ERROR")
-
+threads = 4
 
 def remove_directory(dir_path):
     if os.path.exists(dir_path):
@@ -47,6 +43,7 @@ def remove_directory(dir_path):
 def tmp_dir(tmpdir_factory):
     return tmpdir_factory.mktemp("tmp")
 
+temp_dir = Path(f"{test_data}/fake_out")
 
 def exec_command(cmnd, stdout=subprocess.PIPE, stderr=subprocess.PIPE):
     """executes shell command and returns stdout if completes exit code 0
@@ -74,63 +71,63 @@ def test_download(tmp_dir):
 def test_overall(tmp_dir):
     """test pharokka overall"""
     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
-    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t 1 -f"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
 
 
 def test_overall_prodigal(tmp_dir):
     """test pharokka overall prodigal"""
     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
-    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t 1 -f -g prodigal"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g prodigal"
     exec_command(cmd)
 
 
 def test_overall_stop_recode(tmp_dir):
     """test pharokka overall recoded"""
     input_fasta: Path = f"{stop_recoding_data}/table_4/SRR1747055_scaffold_7.fa"
-    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t 1 -f -g prodigal -c 4"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g prodigal -c 4"
     exec_command(cmd)
 
 
 def test_overall_dnaapler(tmp_dir):
     """test pharokka overall dnaapler"""
     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
-    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t 1 -f --dnaapler"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --dnaapler"
     exec_command(cmd)
 
 
 def test_overall_fast(tmp_dir):
     """test pharokka overall fast"""
     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
-    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t 1 -f --fast"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --fast"
     exec_command(cmd)
 
 
 def test_overall_mmseqs(tmp_dir):
     """test pharokka overall mmseqs2_only"""
     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
-    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t 1 -f --mmseqs2_only"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --mmseqs2_only"
     exec_command(cmd)
 
 
 def test_meta(tmp_dir):
     """test pharokka meta"""
     input_fasta: Path = f"{meta_data}/fake_meta.fa"
-    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t 1 -f -m"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m"
     exec_command(cmd)
 
 
 def test_meta_split(tmp_dir):
     """test pharokka meta"""
     input_fasta: Path = f"{meta_data}/fake_meta.fa"
-    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t 1 -f -m -s"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m -s"
     exec_command(cmd)
 
 
 def test_terminase(tmp_dir):
     """test pharokka terminase"""
     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
-    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t 1 -f --terminase --terminase_start 340 --terminase_strand neg"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --terminase --terminase_start 340 --terminase_strand neg"
     exec_command(cmd)
 
 
@@ -193,4 +190,4 @@ class testFails(unittest.TestCase):
 
 
 remove_directory(temp_dir)
-remove_directory(f"{database_dir}")
+#remove_directory(f"{database_dir}")

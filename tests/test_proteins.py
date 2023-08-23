@@ -30,7 +30,7 @@ database_dir = Path(f"{test_data}/database")
 overall_data = Path(f"{test_data}/overall")
 meta_data = Path(f"{test_data}/Meta_example")
 proteins_data = Path(f"{test_data}/proteins")
-
+threads = 4
 
 logger.add(lambda _: sys.exit(1), level="ERROR")
 
@@ -72,7 +72,7 @@ def test_proteins(tmp_dir):
     """test pharokka proteins"""
     input_fasta: Path = f"{proteins_data}/phanotate.faa"
     cmd = (
-        f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t 1 -f"
+        f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     )
     exec_command(cmd)
 
@@ -80,14 +80,14 @@ def test_proteins(tmp_dir):
 def test_proteins_hmm_only(tmp_dir):
     """test pharokka proteins hmm_only"""
     input_fasta: Path = f"{proteins_data}/phanotate.faa"
-    cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t 1 -f --hmm_only"
+    cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --hmm_only"
     exec_command(cmd)
 
 
 def test_proteins_mmseqs_only(tmp_dir):
     """test pharokka proteins mmseqs_only"""
     input_fasta: Path = f"{proteins_data}/phanotate.faa"
-    cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t 1 -f --mmseqs2_only"
+    cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --mmseqs2_only"
     exec_command(cmd)
 
 
@@ -101,7 +101,7 @@ class testFails(unittest.TestCase):
         """tests that pharokka breaks if nucleotide input"""
         with self.assertRaises(RuntimeError):
             input_fasta: Path = f"{meta_data}/fake_meta.fasta"
-            cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t 1 -f"
+            cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t {threads} -f"
             exec_command(cmd)
 
 

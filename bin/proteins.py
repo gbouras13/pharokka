@@ -16,7 +16,7 @@ import pyhmmer
 from Bio import SeqIO
 from Bio.SeqUtils import GC
 from external_tools import ExternalTool
-from lib.util import (count_contigs, get_contig_headers, get_version,
+from util import (count_contigs, get_contig_headers, get_version,
                       remove_directory)
 from loguru import logger
 from post_processing import (process_card_results, process_pyhmmer_results,
