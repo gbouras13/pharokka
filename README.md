@@ -13,6 +13,8 @@ pharokka
   <img src="img/pharokka_logo.png" alt="pharokka Logo" height=400>
 </p>
 
+Extra special thanks to Ghais Houtak for making Pharokka's logo.
+
 ## Fast Phage Annotation Tool
 
 `pharokka` is a rapid standardised annotation tool for bacteriophage genomes and metagenomes.
