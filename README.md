@@ -64,7 +64,7 @@ Pharokka v1.4.0 is a large update implementing:
 * More sensitive search for PHROGs using Hidden Markov Models (HMMs) using the amazing [PyHMMER](https://github.com/althonos/pyhmmer).
 * By default, Pharokka will now run both MMseqs2 (PHROGs, CARD and VFDB) and HMMs (PHROGs). MMseqs2 was kept for PHROGs as it provides more information than the HMM results (sequence identities, top hit PHROG protein).
 * `--fast` or `--hmm_only` which only runs HMMs on PHROGs, not MMseqs2. For phage isolates, this will be much faster than MMseqs2, but you will not get CARD or VFDB annotations. For metagenomes, this will be (much) slower though!
-* Updated databases as of 23 August 2023. You will need to download the new v1.4.0 databases. The VFDB database is now clustered at 50% sequence identity (which speeds up runtime).
+* Updated databases as of 23 August 2023. You will need to download the new v1.4.0 databases to run v 1.4.0. The VFDB database is now clustered at 50% sequence identity (which speeds up runtime).
 * `--mmseqs_only` which will essentially runs Pharokka v1.3.2 and is default in meta mode `-m` or `--meta`. 
 * `pharokka_proteins.py`, which takes an input file of amino acid proteins in FASTA format and runs MMseqs2 (PHROGs, CARD, VFDB) and Pyhmmer (PHROGs).
 * `--custom_hmm`, which allows for custom HMM profile databases to be used with Pharokka.
