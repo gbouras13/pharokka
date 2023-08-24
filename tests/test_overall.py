@@ -222,14 +222,14 @@ class testFails(unittest.TestCase):
     def test_bad_genbank(tmp_dir):
         """test pharokka overall with genbank input but no --genbank"""
         input_gbk: Path = f"{standard_data_output}/SAOMS1.fasta"
-        cmd = f"pharokka.py -i {input_gbk} -d {database_dir} -o {tmp_dir} -t {threads} -f "
+        cmd = f"pharokka.py -i {input_gbk} -d {database_dir} -o {temp_dir} -t {threads} -f "
         exec_command(cmd)
 
     def test_custom_bad(tmp_dir):
         """test pharokka overall with bad custom db"""
         custom_db: Path = f"{standard_data_output}/SAOMS1.fasta"
         input_fasta: Path = f"{custom_data}/MH649026.fasta"
-        cmd = f"pharokka.py -i {input_fasta} -d {database_dir} --custom_hmm {custom_db} -o {tmp_dir} -t {threads} -f "
+        cmd = f"pharokka.py -i {input_fasta} -d {database_dir} --custom_hmm {custom_db} -o {temp_dir} -t {threads} -f "
         exec_command(cmd)
 
 

@@ -55,7 +55,7 @@ def main():
     logger.add(lambda _: sys.exit(1), level="ERROR")
 
     if args.citation == True:
-        logger.info("If you use pharokka in your research, please cite:")
+        logger.info("If you use Pharokka in your research, please cite:")
         logger.info(
             "George Bouras, Roshan Nepal, Ghais Houtak, Alkis James Psaltis, Peter-John Wormald, Sarah Vreugde."
         )
@@ -63,7 +63,7 @@ def main():
         logger.info("Bioinformatics, Volume 39, Issue 1, January 2023, btac776.")
         logger.info("https://doi.org/10.1093/bioinformatics/btac776.")
         logger.info(
-            "You should also cite the full list of tools pharokka uses, which can be found at https://github.com/gbouras13/pharokka#citation."
+            "You should also cite the full list of tools Pharokka uses, which can be found at https://github.com/gbouras13/pharokka#citation."
         )
         sys.exit()
 
@@ -102,7 +102,7 @@ def main():
     logger.add(log_file)
 
     # preamble
-    logger.info(f"Starting pharokka v{get_version()}")
+    logger.info(f"Starting Pharokka v{get_version()}")
     logger.info("Command executed: {}", args)
     logger.info("Repository homepage is https://github.com/gbouras13/pharokka")
     logger.info("Written by George Bouras: george.bouras@adelaide.edu.au")
@@ -132,7 +132,7 @@ def main():
     # instantiation/checking fasta and gene_predictor
     if args.genbank is True:
         logger.info("You have specified --genbank.")
-        logger.info(f"Therefore, {args.input} is a genbank file instead of a FASTA file.")
+        logger.info(f"Therefore, {args.infile} is a genbank file instead of a FASTA file.")
         logger.info("Converting genbank to FASTA.")
         validate_and_extract_genbank(args.infile, out_dir)
         input_fasta = os.path.join(out_dir, "genbank.fasta")
@@ -431,7 +431,7 @@ def main():
     logger.info("Pharokka has finished.")
     logger.info(f"Elapsed time: {elapsed_time} seconds")
 
-    logger.info("If you use pharokka in your research, please cite:")
+    logger.info("If you use Pharokka in your research, please cite:")
     logger.info(
         "George Bouras, Roshan Nepal, Ghais Houtak, Alkis James Psaltis, Peter-John Wormald, Sarah Vreugde."
     )
@@ -439,7 +439,7 @@ def main():
     logger.info("Bioinformatics, Volume 39, Issue 1, January 2023, btac776.")
     logger.info("https://doi.org/10.1093/bioinformatics/btac776.")
     logger.info(
-        "You should also cite the full list of tools pharokka uses, which can be found at https://github.com/gbouras13/pharokka#citation."
+        "You should also cite the full list of tools Pharokka uses, which can be found at https://github.com/gbouras13/pharokka#citation."
     )
 
 
