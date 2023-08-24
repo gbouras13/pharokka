@@ -14,7 +14,7 @@ A prefix is not required for pharokka by default. If you used a prefix to create
 
 `pharokka_plotter.py -i input.fasta -n pharokka_plot -o pharokka_output_directory -p my_prefix`
 
-If you want to give your plot a title (e.g. _Escherichia_ phage lambda): 
+If you want to give your plot a title (e.g. phage lambda): 
 
 `pharokka_plotter.py -i input.fasta -n pharokka_plot -o pharokka_output_directory -t 'phage lambda' `
 
@@ -56,7 +56,7 @@ If you want to change the plot resolution (default 600 dpi)
 
 `pharokka_plotter.py -i input.fasta -n pharokka_plot -o pharokka_output_directory -dpi 600`
 
-If you want to specify pharokka gff and genbank files instead of a directory, use `--gff` and `genbank`. Note that this will save `pharokka_plot.png` in the working directory. 
+If you want to specify `pharokka` gff and genbank files instead of a directory, use `--gff` and `genbank`. Note that this will save `pharokka_plot.png` in the working directory. 
 
 `pharokka_plotter.py -i input.fasta -n pharokka_plot --gff pharokka.gff --genbank pharokka.gbk`
 

@@ -1,6 +1,5 @@
 """
 Unit tests for pharokka overall
-
 Usage: pytest .
 
 """
@@ -217,6 +216,27 @@ class testFails(unittest.TestCase):
             cmd = (
                 f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t sf -f"
             )
+            exec_command(cmd)
+
+    def test_bad_fast_mmseqs2_only(self):
+        """tests that pharokka exits if both fast and mmseqs2_only"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
+            cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t {threads} --fast --mmseqs2_only -f"
+            exec_command(cmd)
+
+    def test_bad_fast_meta_gmm(self):
+        """tests that pharokka exits if both fast and meta_hmm"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
+            cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t {threads} --fast --meta_hmm -m -f"
+            exec_command(cmd)
+
+    def test_bad_fast_meta_gmm(self):
+        """tests that pharokka exits if both mmseqs2_only and meta_hmm"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
+            cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t {threads} --mmseqs2_only --meta_hmm -m -f"
             exec_command(cmd)
 
     def test_bad_gene_pred(self):

@@ -1,4 +1,4 @@
-pharokka creates a number of output files in different formats.
+`pharokka` creates a number of output files in different formats.
 
 Main Output
 ----------

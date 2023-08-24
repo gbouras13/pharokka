@@ -42,19 +42,23 @@ If you are annotating more than 1 contig, it is recommended that you run pharokk
 
 ## Advanced Parameters
 
-As of v1.4.0,  `pharokka` will automatically run MMseqs2 (PHROGs, CARD, VFDB) and PyHMMER (PHROGs). To turn off PyHMMER, use `--mmseqs2_only`
+As of v1.4.0,  `pharokka` will automatically run MMseqs2 (PHROGs, CARD, VFDB) and PyHMMER (PHROGs). To turn off PyHMMER, use `--mmseqs2_only`.
 
 `pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  --mmseqs2_only`
 
-As of v1.4.0,  `pharokka` will automatically run `--mmseqs2_only` if you specify `-m` or `--meta` for meta mode. To force `pharokka` to use PyHMMER in meta mode, use `--meta_hmm`. Note: this might take a long time if you have a large metagenome!
+As of v1.4.0,  `pharokka` will automatically run `--mmseqs2_only` if you specify `-m` or `--meta` for meta mode. To force `pharokka` to use PyHMMER on PHROGs in meta mode as well, use `--meta_hmm`. Note: this might take a long time if you have a large metagenome!
 
 `pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -m --meta_hmm`
+
+You can also force `pharokka` to only use PyHMMER on PHROGs in meta mode using `--fast`.
+
+`pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -m --fast`
 
 If you are running meta mode, you can optionally specify split mode using the `-s` flag. This will add output directories with separated FASTA, genbank and gff files for each input contig called `single_fastas`, `single_gbks` and `single_gffs`.
 
 `pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -m -s`
 
-There is also support for alternative genetic codes if pharokka is run with prodigal as a gene predictor using the `-c` flag. See Prodigal's [documentation](https://github.com/hyattpd/prodigal/wiki/Advice-by-Input-Type#alternate-genetic-codes), along with [Yutin et al. 2021](https://doi.org/10.1038/s41467-022-32979-6) and [Peters et al. 2022](https://doi.org/10.1038/s41467-022-32979-6) for more information and background on phage stop codon reassignment.
+There is also support for alternative genetic codes if `pharokka` is run with prodigal as a gene predictor using the `-c` flag. See Prodigal's [documentation](https://github.com/hyattpd/prodigal/wiki/Advice-by-Input-Type#alternate-genetic-codes), along with [Yutin et al. 2021](https://doi.org/10.1038/s41467-022-32979-6) and [Peters et al. 2022](https://doi.org/10.1038/s41467-022-32979-6) for more information and background on phage stop codon reassignment.
 
 `pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -g prodigal -c 4`
 
@@ -62,11 +66,11 @@ As of v1.4.0 you can specify a genbank input file with `--genbank`.
 
 `pharokka.py -i <GENBANK file> -o <output folder> -d <path/to/database_dir> -t <threads>  --genbank`
 
-As of v1.4.0 you want to reorient your phage to begin with the large terminase subunit, you can use `--dnaapler` which will run [dnaapler](https://github.com/gbouras13/dnaapler) to automatically reorient your phage. The reoriented FASTA will be named `<prefix>_dnaapler_reoriented.fasta` in the output directory.
+As of v1.4.0 you want to automatically reorient your phage to begin with the large terminase subunit, you can use `--dnaapler` which will run [dnaapler](https://github.com/gbouras13/dnaapler) to automatically reorient your phage. The reoriented FASTA will be named `<prefix>_dnaapler_reoriented.fasta` in the output directory.
 
 `pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  --dnaapler`
 
-`--dnaapler` is recommended for reorientation as of v1.4.0. However, if you need to reorient your phage to begin at a certain point (for example, to reorient the phage to begin with the large terminase subunit) or if `dnaapler` isn't working for you, you can acheive this using the `--terminase` command along with specifying the  `--terminase_strand` denoting the strandedness of the large terminase subunit (must be 'pos' or 'neg') and `--terminase_start` denoting the start co-ordinate. This requires the input to be a single contig, or else pharokka will fail and warn you. For example, if you annotate your phage using pharokka, and then see that your terminase large subunit begins at coordinate 9503 on the positive strand, you could run the following to reorient it to begin at the large terminase subunit:
+`--dnaapler` is recommended for reorientation as of v1.4.0. However, if you need to reorient your phage to begin at a certain point (for example, to reorient the phage to begin with the large terminase subunit) or if `dnaapler` isn't working for you, you can acheive this using the `--terminase` command along with specifying the  `--terminase_strand` denoting the strandedness of the large terminase subunit (must be 'pos' or 'neg') and `--terminase_start` denoting the start co-ordinate. This requires the input to be a single contig, or else `pharokka` will fail and warn you. For example, if you annotate your phage using `pharokka`, and then see that your terminase large subunit begins at coordinate 9503 on the positive strand, you could run the following to reorient it to begin at the large terminase subunit:
 
 `pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  --terminase --terminase_start 9503 --terminase_strand pos `
 

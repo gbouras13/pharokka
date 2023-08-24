@@ -1,3 +1,5 @@
+# Benchmarking v1.1.0 (from the Manuscript)
+
 pharokka (v1.1.0) has been benchmarked on an Intel Xeon CPU E5-4610 v2 @ 2.30 specifying 16 threads. Below is benchamarking comparing Pharokka run with PHANOTATE and Prodigal against Prokka v1.14.6 run with PHROGs HMM profiles, as modified by Andrew Millard (https://millardlab.org/2021/11/21/phage-annotation-with-phrogs/).
 
 Benchmarking was conducted on Enterbacteria Phage Lambda (Genbank accession J02459) Staphylococcus Phage SAOMS1 (Genbank Accession MW460250) and 673 crAss-like phage genomes in one multiFASTA input taken from Yutin, N., Benler, S., Shmakov, S.A. et al. Analysis of metagenome-assembled viral genomes from the human gut reveals diverse putative CrAss-like phages with unique genomic features. Nat Commun 12, 1044 (2021) https://doi.org/10.1038/s41467-021-21350-w.
@@ -35,3 +37,33 @@ For the crAss-like phage genomes, Pharokka meta mode `-m` was enabled.
 `pharokka` scales well for large metavirome datasets due to the speed of MMseqs2. In fact, as the size of the input file increases, the extra time taken is required for running gene prediction (particularly PHANOTATE) and tRNA-scan SE2 - the time taken to conduct MMseqs2 searches remain small due to its many vs many approach.
 
 If you require  fast annotations of extremely large datasets (i.e. thousands of input contigs), running `pharokka` with Prodigal is recommended.
+
+# Benchmarking v1.4.0 
+
+Pharokka v1.4.0 has also been run on phage SAOMS1 and also the same 673 crAss phage dataset to showcase:
+
+1. The improved sensitivity of gene annotation with PyHMMER using `--fast` (and a demonstration of how it is slower for metagenomes). If you can deal with the time cost (especially for large metagenomes), I highly recommend `--fast` or  `--meta_hmm` for metagenomes given how much more sensitive HMM search is.
+2. The slight speed-up over v1.3.2 with `--mmseqs2_only`.
+3. The large speed-up over v1.3.2 with `--fast` for phage isolates - with the proviso that no virulence factors or AMR genes will be detected.
+
+All benchmarking was conducted on a Intel® Core™ i7-10700K CPU @ 3.80GHz on a machine running Ubuntu 20.04.6 LTS with 16 threads (`-t 16`). 
+
+SAOMS1 was run with Phanotate
+
+| Phage SAOMS1           | pharokka v1.4.0 | pharokka v1.4.0 `--fast` | pharokka v1.3.2 |   
+|------------------------|-----------------|--------------------------|-----------------|
+| Time (min)             | 3.73            | 0.70                     | 0.93            | 
+| CDS                    | 246             | 212                      | 212             | 
+| Annotated Function CDS | 92              | 93                       | 92              | 
+| Unknown Function CDS   | 154             | 119                      | 120             |  
+
+The 673 crAss-like genomes were run with `-m` (defaults to `--mmseqs2_only` in v 1.4.0) and with `-g prodigal` (i.e. pyrodigal v2.3.0).
+
+| 673 crAss-like genomes | pharokka v1.4.0 `--fast`  | pharokka v1.4.0 `--mmseqs2_only` | pharokka v1.3.2 |
+|------------------------|---------------------------|----------------------------------|-----------------|
+| Time (min)             | 35.62                     | 11.05                            | 13.27           |
+| CDS                    | 91999                     | 91999                            | 91999           |
+| Annotated Function CDS | 16713                     | 9150                             | 9150            |
+| Unknown Function CDS   | 75286                     | 82849                            | 82849           |
+
+ 

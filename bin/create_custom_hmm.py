@@ -5,7 +5,7 @@ Script to create hmm profile with pyhmmer
 
 create_custom_hmm.py -i <directory of MSAs> -o <directory with HMMs>
 
-Note: all MSAs must be in FASTA format and labelled with only 1 full stop e.g. "name.msa"
+Note: all MSAs must be in FASTA format inside the directory provided with -i and labelled with only 1 full stop e.g. "name.msa"
 
 """
 
@@ -54,7 +54,7 @@ def get_input():
         "-p",
         "--prefix",
         action="store",
-        help="Prefix used to name HMMs. The relevant file be 'prefix'.h3m",
+        help="Prefix used to name the combined HMM file. The relevant file will be 'prefix'.h3m",
         default="custom_db",
     )
 

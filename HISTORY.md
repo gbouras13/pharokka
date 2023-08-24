@@ -10,7 +10,7 @@ History
 * `--mmseqs_only` which will essentially runs Pharokka v1.3.2 and is default in meta mode `-m` or `--meta`. 
 * `pharokka_proteins.py`, which takes an input file of amino acid proteins in FASTA format and runs MMseqs2 (PHROGs, CARD, VFDB) and Pyhmmer (PHROGs).
 * `--custom_hmm`, which allows for custom HMM profile databases to be used with Pharokka.
-* `create_custom_hmm.py` which facillitates the creation of a HMM profile database from multiple sequence alignments.
+* `create_custom_hmm.py` which facillitates the creation of a HMM profile database for use with `--custom_hmm` from multiple sequence alignments.
 * `--dnaapler`, which automatic detects and reorients your phage to start with the large terminase subunit. For more information, see [dnaapler](https://github.com/gbouras13/dnaapler).
 * Updated databases as of 23 August 2023. You will need to download the new v1.4.0 databases. The VFDB database is now clustered at 50% sequence identity (which speeds up runtime).
 * Fixes to `-c`, which should now workwith `-g prodigal` (thanks Alistair Legione).
