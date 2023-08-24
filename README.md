@@ -70,10 +70,10 @@ So if you can't get `pharokka` to install on your machine for whatever reason or
 Pharokka v1.4.0 is a large update implementing:
 
 * More sensitive search for PHROGs using Hidden Markov Models (HMMs) using the amazing [PyHMMER](https://github.com/althonos/pyhmmer).
-* By default, `pharokka` will now run both MMseqs2 (PHROGs, CARD and VFDB) and HMMs (PHROGs). MMseqs2 was kept for PHROGs as it provides more information than the HMM results (sequence identities, top hit PHROG protein).
-* `--fast` or `--hmm_only` which only runs HMMs on PHROGs, not MMseqs2. For phage isolates, this will be much faster than v1.3.2, but you will not get CARD or VFDB annotations. For metagenomes, this will be (much) slower though!
-* Other changes in the codebase should make `pharokka` v1.4.0 run slightly faster than v1.3.2, even if `--fast` is not used.
-* Updated databases as of 23 August 2023. You will need to download the new v1.4.0 databases to run v 1.4.0. The VFDB database is now clustered at 50% sequence identity (which speeds up runtime).
+* By default, `pharokka` will now run searches using both MMseqs2 (PHROGs, CARD and VFDB) and HMMs (PHROGs). MMseqs2 was kept for PHROGs as it provides more information than the HMM results (e.g. sequence alignment identities & top hit PHROG protein) if it finds a hit. 
+* `--fast` or `--hmm_only` which only runs PyHMMER on PHROGs. It will not run MMseqs2 at all on PHROGs, CARD or VFDB. For phage isolates, this will be much faster than v1.3.2, but you will not get CARD or VFDB annotations. For metagenomes, this will be (much) slower though!
+* Other changes in the codebase should make `pharokka` v1.4.0 run somewhat faster than v1.3.2, even if PyHMMER is not used and `--mmseqs2_only` is specified.
+* Updated databases as of 23 August 2023. You will need to download the new `pharokka` v1.4.0 databases. The VFDB database is now clustered at 50% sequence identity (which speeds up runtime).
 * `--mmseqs2_only` which will essentially run `pharokka` v1.3.2 and is default in meta mode `-m` or `--meta`. 
 * `pharokka_proteins.py`, which takes an input file of amino acid proteins in FASTA format and runs MMseqs2 (PHROGs, CARD, VFDB) and PyHMMER (PHROGs). See the [proteins documentation](docs/proteins.md) for more details.
 * `--custom_hmm`, which allows for custom HMM profile databases to be used with `pharokka`.
@@ -372,9 +372,10 @@ If you require  fast annotations of extremely large datasets (i.e. thousands of 
 
 `pharokka` v1.4.0 has also been run on phage SAOMS1 and also the same 673 crAss phage dataset to showcase:
 
-1. The improved sensitivity of gene annotation with PyHMMER using `--fast` (and a demonstration of how it is slower for metagenomes). If you can deal with the compute cost (especially for large metagenomes), I highly recommend `--fast` or  `--meta_hmm` for metagenomes given how much more sensitive HMM search is.
+1. The improved sensitivity of gene annotation with PyHMMER and a demonstration of how `--fast` is slower for metagenomes. 
+   * If you can deal with the compute cost (especially for large metagenomes), I highly recommend `--fast` or  `--meta_hmm` for metagenomes given how much more sensitive HMM search is.
 2. The slight speed-up over v1.3.2 with `--mmseqs2_only`.
-3. The large speed-up over v1.3.2 with `--fast` for phage isolates - with the proviso that no virulence factors or AMR genes will be detected.
+3. The large speed-up over v1.3.2 with `--fast` for phage isolates - with the proviso that no virulence factors or AMR genes will be not detected.
 
 All benchmarking was conducted on a Intel® Core™ i7-10700K CPU @ 3.80GHz on a machine running Ubuntu 20.04.6 LTS with 16 threads (`-t 16`). 
 
@@ -387,7 +388,7 @@ SAOMS1 was run with Phanotate
 | Annotated Function CDS | 93                        | 92              | 92              | 
 | Unknown Function CDS   | 153                       | 154             | 154             |  
 
-The 673 crAss-like genomes were run with `-m` (defaults to `--mmseqs2_only` in v 1.4.0) and with `-g prodigal` (i.e. pyrodigal v2.3.0).
+The 673 crAss-like genomes were run with `-m` (defaults to `--mmseqs2_only` in v 1.4.0) and with `-g prodigal` (pyrodigal v2.1.0).
 
 | 673 crAss-like genomes | `pharokka` v1.4.0 `--fast`  | `pharokka` v1.4.0 `--mmseqs2_only` | `pharokka` v1.3.2 |
 |------------------------|---------------------------|----------------------------------|-----------------|

@@ -40,11 +40,12 @@ If you require  fast annotations of extremely large datasets (i.e. thousands of 
 
 # Benchmarking v1.4.0 
 
-Pharokka v1.4.0 has also been run on phage SAOMS1 and also the same 673 crAss phage dataset to showcase:
+`pharokka` v1.4.0 has also been run on phage SAOMS1 and also the same 673 crAss phage dataset to showcase:
 
-1. The improved sensitivity of gene annotation with PyHMMER using `--fast` (and a demonstration of how it is slower for metagenomes). If you can deal with the time cost (especially for large metagenomes), I highly recommend `--fast` or  `--meta_hmm` for metagenomes given how much more sensitive HMM search is.
+1. The improved sensitivity of gene annotation with PyHMMER and a demonstration of how `--fast` is slower for metagenomes. 
+   * If you can deal with the compute cost (especially for large metagenomes), I highly recommend `--fast` or  `--meta_hmm` for metagenomes given how much more sensitive HMM search is.
 2. The slight speed-up over v1.3.2 with `--mmseqs2_only`.
-3. The large speed-up over v1.3.2 with `--fast` for phage isolates - with the proviso that no virulence factors or AMR genes will be detected.
+3. The large speed-up over v1.3.2 with `--fast` for phage isolates - with the proviso that no virulence factors or AMR genes will be not detected.
 
 All benchmarking was conducted on a Intel® Core™ i7-10700K CPU @ 3.80GHz on a machine running Ubuntu 20.04.6 LTS with 16 threads (`-t 16`). 
 
@@ -52,7 +53,7 @@ SAOMS1 was run with Phanotate
 
 | Phage SAOMS1           | pharokka v1.4.0 | pharokka v1.4.0 `--fast` | pharokka v1.3.2 |   
 |------------------------|-----------------|--------------------------|-----------------|
-| Time (min)             | 3.73            | 0.70                     | 0.93            | 
+| Time (min)             | 3.73            | 0.70                     | 5.08            | 
 | CDS                    | 246             | 212                      | 212             | 
 | Annotated Function CDS | 92              | 93                       | 92              | 
 | Unknown Function CDS   | 154             | 119                      | 120             |  
