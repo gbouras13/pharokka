@@ -160,7 +160,7 @@ def test_terminase(tmp_dir):
 
 def test_overall_genbank(tmp_dir):
     """test pharokka overall with genbank input"""
-    input_gbk: Path = f"{standard_data_output}/SAOMS1.gbk"
+    input_gbk: Path = f"{standard_data_output}/pharokka.gbk"
     cmd = f"pharokka.py -i {input_gbk} -d {database_dir} -o {tmp_dir} -t {threads} -f --genbank"
     exec_command(cmd)
 
