@@ -25,7 +25,6 @@ import os
 import shutil
 import tarfile
 from pathlib import Path
-import sys
 import requests
 from alive_progress import alive_bar
 from loguru import logger
@@ -115,14 +114,12 @@ def instantiate_install(db_dir):
     else:
         logger.info("Some Databases are missing.")
 
-        db_url = VERSION_DICTIONARY["1.4.0"]["dir_name"]
+        db_url = VERSION_DICTIONARY["1.4.0"]["db_url"]
+        requiredmd5 = VERSION_DICTIONARY["1.4.0"]["md5"]
 
         logger.info(f"Downloading Pharokka Databases from {db_url}.")
 
         tarball_path = Path(f"{db_dir}/pharokka_v1.4.0_databases.tar.gz")
-
-        db_url = VERSION_DICTIONARY["1.4.0"]["db_url"]
-        requiredmd5 = VERSION_DICTIONARY["1.4.0"]["md5"]
 
         download(db_url, tarball_path)
 

@@ -63,7 +63,7 @@ def main():
     # get start time
     start_time = time.time()
     # initial logging stuff
-    log_file = os.path.join(args.outdir, f"{prefix}_pharokka_proteins_{start_time}.log")
+    log_file = os.path.join(args.outdir, f"pharokka_proteins_{start_time}.log")
     # adds log file
     logger.add(log_file)
 

@@ -97,7 +97,7 @@ def main():
     # get start time
     start_time = time.time()
     # initial logging stuff
-    log_file = os.path.join(args.outdir, f"{prefix}_pharokka_{start_time}.log")
+    log_file = os.path.join(args.outdir, f"pharokka_{start_time}.log")
     # adds log file
     logger.add(log_file)
 
@@ -230,7 +230,7 @@ def main():
     if args.meta is True:  # meta mode default only mmseqs
         if args.meta_hmm is True:  # with --meta_hmm
             logger.info(
-                "You have specified --meta_hmm and -m/--meta. This may be take a while, please be patient."
+                "You have specified --meta_hmm and -m/--meta to run PyHMMER as well as MMseqs2 in meta mode. This may be take a while, please be patient."
             )
             mmseqs_flag = True
             hmm_flag = True
@@ -242,11 +242,15 @@ def main():
             logger.warning(
                 "You have specified --meta_hmm to run PyHMMER in meta mode, but you have not specified -m to activate meta mode."
             )
-            logger.warning("Ignoring --meta_hmm")
+            logger.warning("Ignoring --meta_hmm.")
 
     # overrides if fast/hmm_only is chosen
     if args.fast == True:
         logger.info("You have specified --fast or --hmm_only. MMseqs2 will not be run.")
+        if args.meta is True:
+            logger.warning(
+                "You have specified --fast with -m/--meta. This may be take a while, please be patient."
+            )
         mmseqs_flag = False
         hmm_flag = True
 

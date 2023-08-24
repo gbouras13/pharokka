@@ -160,7 +160,7 @@ def test_terminase(tmp_dir):
 
 def test_overall_genbank(tmp_dir):
     """test pharokka overall with genbank input"""
-    input_gbk: Path = f"{standard_data_output}/SAOMS1.fasta"
+    input_gbk: Path = f"{standard_data_output}/SAOMS1.gbk"
     cmd = f"pharokka.py -i {input_gbk} -d {database_dir} -o {tmp_dir} -t {threads} -f --genbank"
     exec_command(cmd)
 
@@ -219,18 +219,20 @@ class testFails(unittest.TestCase):
             cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t 1 -g proddigal -f"
             exec_command(cmd)
 
-    def test_bad_genbank(tmp_dir):
+    def test_bad_genbank(self):
         """test pharokka overall with genbank input but no --genbank"""
-        input_gbk: Path = f"{standard_data_output}/SAOMS1.fasta"
-        cmd = f"pharokka.py -i {input_gbk} -d {database_dir} -o {temp_dir} -t {threads} -f "
-        exec_command(cmd)
+        with self.assertRaises(RuntimeError):
+            input_gbk: Path = f"{standard_data_output}/SAOMS1.fasta"
+            cmd = f"pharokka.py -i {input_gbk} -d {database_dir} -o {temp_dir} -t {threads} -f "
+            exec_command(cmd)
 
-    def test_custom_bad(tmp_dir):
+    def test_custom_bad(self):
         """test pharokka overall with bad custom db"""
-        custom_db: Path = f"{standard_data_output}/SAOMS1.fasta"
-        input_fasta: Path = f"{custom_data}/MH649026.fasta"
-        cmd = f"pharokka.py -i {input_fasta} -d {database_dir} --custom_hmm {custom_db} -o {temp_dir} -t {threads} -f "
-        exec_command(cmd)
+        with self.assertRaises(RuntimeError):
+            custom_db: Path = f"{standard_data_output}/SAOMS1.fasta"
+            input_fasta: Path = f"{custom_data}/MH649026.fasta"
+            cmd = f"pharokka.py -i {input_fasta} -d {database_dir} --custom_hmm {custom_db} -o {temp_dir} -t {threads} -f "
+            exec_command(cmd)
 
 
 remove_directory(temp_dir)
