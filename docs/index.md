@@ -6,6 +6,10 @@
 
 `pharokka` then uses the lightweight PHROGS database (Terzian et al 2021) for functional annotation of all predicted CDSs using MMseqs2 (Steinegger et al 2017), and as of v1.4.0, PyHMMER (Larralde and Zeller 2023) for more sensitive annotations. `pharokka` also matches each predicted CDS against the VFDB (Chen et al 2005) and CARD (Alcock et al 2020) databases to predict virulence factors and antimicrobial resistance, respectively. 
 
+For more information, please read the `pharokka` manuscript:
+
+George Bouras, Roshan Nepal, Ghais Houtak, Alkis James Psaltis, Peter-John Wormald, Sarah Vreugde, Pharokka: a fast scalable bacteriophage annotation tool, Bioinformatics, Volume 39, Issue 1, January 2023, btac776, https://doi.org/10.1093/bioinformatics/btac776
+
 ![Image](pharokka_workflow.png)
 
 

@@ -75,9 +75,9 @@ Pharokka v1.4.0 is a large update implementing:
 * Other changes in the codebase should make `pharokka` v1.4.0 run slightly faster than v1.3.2, even if `--fast` is not used.
 * Updated databases as of 23 August 2023. You will need to download the new v1.4.0 databases to run v 1.4.0. The VFDB database is now clustered at 50% sequence identity (which speeds up runtime).
 * `--mmseqs2_only` which will essentially run `pharokka` v1.3.2 and is default in meta mode `-m` or `--meta`. 
-* `pharokka_proteins.py`, which takes an input file of amino acid proteins in FASTA format and runs MMseqs2 (PHROGs, CARD, VFDB) and PyHMMER (PHROGs).
+* `pharokka_proteins.py`, which takes an input file of amino acid proteins in FASTA format and runs MMseqs2 (PHROGs, CARD, VFDB) and PyHMMER (PHROGs). See the [proteins documentation](docs/proteins.md) for more details.
 * `--custom_hmm`, which allows for custom HMM profile databases to be used with `pharokka`.
-* `create_custom_hmm.py` which facilitates  the creation of a HMM profile database from multiple sequence alignments.
+* `create_custom_hmm.py` which facilitates  the creation of a HMM profile database from multiple sequence alignments.  See the [documentation](docs/custom.md) for more details about how to create a compatible HMM profile database.
 * `--dnaapler`, which automatically detects and reorients your phage to start with the large terminase subunit. For more information, see [dnaapler](https://github.com/gbouras13/dnaapler).
 * `--genbank`, which allows for genbank format input with `-i`.
 * Fixes to `-c`, which should now work with `-g prodigal` (thanks Alistair Legione for the fixes).
@@ -108,7 +108,7 @@ pharokka_plotter.py -i test_data/SAOMS1.fasta -n SAOMS1_plot -o SAOMS1_pharokka_
   <img src="img/SAOMS1_plot.png" alt="SAOMS1 example" height=600>
 </p>
 
-SAOMS1 phage (GenBank: MW460250.1) was isolated and sequenced by: Yerushalmy,O., Alkalay-Oren,S., Coppenhagen-Glazer,S. and Hazan,R, from the Institute of Dental Sciences and School of Dental Medicine, Hebrew University, Israel.
+SAOMS1 phage (GenBank: MW460250.1) was isolated and sequenced by: Yerushalmy, O., Alkalay-Oren, S., Coppenhagen-Glazer, S. and Hazan, R. from the Institute of Dental Sciences and School of Dental Medicine, Hebrew University, Israel.
 
 Please see [plotting](docs/plotting.md) for details on all plotting parameter options. 
 
@@ -126,7 +126,7 @@ Please see [plotting](docs/plotting.md) for details on all plotting parameter op
   - [Table of Contents](#table-of-contents)
 - [Installation](#installation)
   - [Conda Installation](#conda-installation)
-    - [Pip](#pip)
+  - [Pip](#pip)
   - [Source](#source)
 - [Database Installation](#database-installation)
 - [Beginner Conda Installation](#beginner-conda-installation)
@@ -157,7 +157,7 @@ conda install mamba
 mamba install -c bioconda pharokka
 ```
 
-### Pip
+## Pip
 
 As of v1.4.0, you can also install the python components of `pharokka` with pip.
 

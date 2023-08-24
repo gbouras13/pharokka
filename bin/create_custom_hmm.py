@@ -39,7 +39,7 @@ def get_input():
         "-i",
         "--indir",
         action="store",
-        help="Input directory containing FASTA formatted Multiple Sequence Alignments.",
+        help="Input directory containing FASTA formatted MSAs (Multiple Sequence Alignments).",
     )
 
     parser.add_argument(
@@ -54,7 +54,7 @@ def get_input():
         "-p",
         "--prefix",
         action="store",
-        help="Prefix used to name the combined HMM file. The relevant file will be 'prefix'.h3m",
+        help="Prefix used to name the combined HMM file. The relevant file will be prefix.h3m",
         default="custom_db",
     )
 
@@ -74,9 +74,10 @@ def get_input():
 
 
 def main():
+    args = get_input()
+
     logger.add(lambda _: sys.exit(1), level="ERROR")
     logger.info(f"Starting pharokka v{get_version()} - create_hmms.py")
-    args = get_input()
 
     MSA_dir = args.indir
     HMM_dir = args.outdir

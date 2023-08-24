@@ -2027,6 +2027,7 @@ def remove_post_processing_files(out_dir, gene_predictor, meta):
     remove_directory(os.path.join(out_dir, "mmseqs"))
     remove_directory(os.path.join(out_dir, "vfdb_tmp_dir"))
     remove_directory(os.path.join(out_dir, "VFDB_dir"))
+    remove_directory(os.path.join(out_dir, "VFDB"))
     remove_directory(os.path.join(out_dir, "vfdb"))
     remove_file(os.path.join(out_dir, "vfdb_results.tsv"))
     remove_directory(os.path.join(out_dir, "CARD_tmp_dir"))

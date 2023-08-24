@@ -15,7 +15,7 @@ conda install mamba
 mamba install -c bioconda pharokka
 ```
 
-### Pip
+## Pip
 
 As of v1.4.0, you can also install the python components of `pharokka` with pip.
 

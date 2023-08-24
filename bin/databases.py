@@ -236,13 +236,13 @@ def check_db_installation(db_dir):
     # mash files
     path = os.path.join(db_dir, VERSION_DICTIONARY["1.4.0"]["inphared_annot"])
     if os.path.isfile(path) == False:
-        logger.info("INPHARED Mash Annotation File is missing. ")
+        logger.info("INPHARED Mash Annotation File is missing.")
         downloaded_flag = False
 
     # mash files
     path = os.path.join(db_dir, VERSION_DICTIONARY["1.4.0"]["inphared_mash"])
     if os.path.isfile(path) == False:
-        logger.info("INPHARED Mash Sketch File is missing. ")
+        logger.info("INPHARED Mash Sketch File is missing.")
         downloaded_flag = False
 
     return downloaded_flag
