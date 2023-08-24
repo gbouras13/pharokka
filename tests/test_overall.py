@@ -8,7 +8,6 @@ Usage: pytest .
 # import
 import os
 import shutil
-
 # import functions
 import subprocess
 import sys
@@ -81,11 +80,13 @@ def test_overall(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
 
+
 def test_overall_locus(tmp_dir):
     """test pharokka overall locus tag prefix"""
     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -l SAOMS1 -p SAOMS1"
     exec_command(cmd)
+
 
 def test_custom(tmp_dir):
     """test pharokka overall with custom db"""
@@ -93,11 +94,13 @@ def test_custom(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} --custom_hmm {custom_db} -o {tmp_dir} -t {threads} -f "
     exec_command(cmd)
 
+
 def test_custom_meta(tmp_dir):
     """test pharokka overall with custom db"""
     input_fasta: Path = f"{custom_data}/hundred_microviruses.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} --custom_hmm {custom_db} -o {tmp_dir} -t {threads} -f -m"
     exec_command(cmd)
+
 
 def test_overall_prodigal(tmp_dir):
     """test pharokka overall prodigal"""
@@ -133,11 +136,13 @@ def test_overall_mmseqs(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --mmseqs2_only"
     exec_command(cmd)
 
+
 def test_meta(tmp_dir):
     """test pharokka meta"""
     input_fasta: Path = f"{meta_data}/fake_meta.fa"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m"
     exec_command(cmd)
+
 
 def test_meta_hmm(tmp_dir):
     """test pharokka meta hmm"""
@@ -145,11 +150,13 @@ def test_meta_hmm(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m --meta_hmm"
     exec_command(cmd)
 
+
 def test_meta_split(tmp_dir):
     """test pharokka meta split"""
     input_fasta: Path = f"{meta_data}/fake_meta.fa"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m -s"
     exec_command(cmd)
+
 
 def test_terminase(tmp_dir):
     """test pharokka terminase"""

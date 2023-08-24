@@ -10,9 +10,10 @@ Note: all MSAs must be in FASTA format and labelled with only 1 full stop e.g. "
 """
 
 import os
-from pathlib import Path
-import pyhmmer
 import shutil
+from pathlib import Path
+
+import pyhmmer
 from util import get_version
 
 alphabet = pyhmmer.easel.Alphabet.amino()
@@ -22,8 +23,8 @@ import os
 import sys
 from argparse import RawTextHelpFormatter
 from pathlib import Path
-from loguru import logger
 
+from loguru import logger
 
 
 def get_input():
@@ -42,10 +43,13 @@ def get_input():
     )
 
     parser.add_argument(
-        "-o", "--outdir", action="store",
-          default="", help="Output directory to store HMM profiles."
+        "-o",
+        "--outdir",
+        action="store",
+        default="",
+        help="Output directory to store HMM profiles.",
     )
-    
+
     parser.add_argument(
         "-p",
         "--prefix",
@@ -70,14 +74,12 @@ def get_input():
 
 
 def main():
-
     logger.add(lambda _: sys.exit(1), level="ERROR")
     logger.info(f"Starting pharokka v{get_version()} - create_hmms.py")
     args = get_input()
-        
+
     MSA_dir = args.indir
     HMM_dir = args.outdir
-
 
     #### force
     if args.force == True:
@@ -107,13 +109,11 @@ def main():
         os.mkdir(HMM_dir)
 
     logger.info(
-                f"Creating HMMs in the directory {HMM_dir} from MSAs in the directory {MSA_dir}."
-            )
-
+        f"Creating HMMs in the directory {HMM_dir} from MSAs in the directory {MSA_dir}."
+    )
 
     # Get a list of all files in the directory
     file_list = os.listdir(MSA_dir)
-
 
     # loop over each PHROG
     for file in file_list:
@@ -136,8 +136,9 @@ def main():
             with open(f"{HMM_dir}/{name}.hmm", "wb") as output_file:
                 hmm.write(output_file)
         else:
-            logger.warning(f"{MSA_dir}/{file} does not seem to be a FASTA formatted MSA. Skipping.")
-
+            logger.warning(
+                f"{MSA_dir}/{file} does not seem to be a FASTA formatted MSA. Skipping."
+            )
 
     # to concatenate all hmms
 
@@ -159,18 +160,17 @@ def main():
     # writes all out together to .h3m, .h3p, .h3i, .h3f files prefixed "prefix"
     pyhmmer.hmmer.hmmpress(hmms, f"{HMM_dir}/{args.prefix}")
 
+    logger.info(f"HMM creation complete.")
     logger.info(
-                f"HMM creation complete."
-            )
-    logger.info(
-                f"The combined file you will need to run with pharokka.py --custom_hmm is {HMM_dir}/{args.prefix}.h3m"
-            )
+        f"The combined file you will need to run with pharokka.py --custom_hmm is {HMM_dir}/{args.prefix}.h3m"
+    )
 
 
 def is_fasta_msa(filename):
     with open(filename, "r") as file:
         lines = file.readlines()
     return len([line for line in lines if line.startswith(">")]) > 1
+
 
 if __name__ == "__main__":
     main()

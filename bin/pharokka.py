@@ -6,45 +6,24 @@ import sys
 import time
 from pathlib import Path
 
+from custom_db import run_custom_pyhmmer
 from databases import check_db_installation
 from hmm import run_pyhmmer
-from input_commands import (
-    check_dependencies,
-    get_input,
-    instantiate_dirs,
-    instantiate_split_output,
-    validate_fasta,
-    validate_gene_predictor,
-    validate_meta,
-    validate_terminase,
-    validate_threads,
-    validate_custom_hmm,
-    validate_and_extract_genbank
-)
-
-from custom_db import run_custom_pyhmmer
+from input_commands import (check_dependencies, get_input, instantiate_dirs,
+                            instantiate_split_output,
+                            validate_and_extract_genbank, validate_custom_hmm,
+                            validate_fasta, validate_gene_predictor,
+                            validate_meta, validate_terminase,
+                            validate_threads)
 from loguru import logger
 from post_processing import Pharok, remove_post_processing_files
-from processes import (
-    concat_phanotate_meta,
-    concat_trnascan_meta,
-    convert_gff_to_gbk,
-    reorient_terminase,
-    run_aragorn,
-    run_dnaapler,
-    run_mash_dist,
-    run_mash_sketch,
-    run_minced,
-    run_mmseqs,
-    run_phanotate,
-    run_phanotate_fasta_meta,
-    run_phanotate_txt_meta,
-    run_pyrodigal,
-    run_trna_scan,
-    run_trnascan_meta,
-    split_input_fasta,
-    translate_fastas,
-)
+from processes import (concat_phanotate_meta, concat_trnascan_meta,
+                       convert_gff_to_gbk, reorient_terminase, run_aragorn,
+                       run_dnaapler, run_mash_dist, run_mash_sketch,
+                       run_minced, run_mmseqs, run_phanotate,
+                       run_phanotate_fasta_meta, run_phanotate_txt_meta,
+                       run_pyrodigal, run_trna_scan, run_trnascan_meta,
+                       split_input_fasta, translate_fastas)
 from util import get_version
 
 
@@ -107,13 +86,13 @@ def main():
     logger.info("Repository homepage is https://github.com/gbouras13/pharokka")
     logger.info("Written by George Bouras: george.bouras@adelaide.edu.au")
 
-
+    logger.info(f"Checking database installation in {db_dir}.")
     database_installed = check_db_installation(db_dir)
     if database_installed == True:
         logger.info("All databases have been successfully checked.")
     else:
         logger.error(
-            "\nThe database directory was unsuccessfully checked. Please run install_databases.py \n"
+            "The database directory was unsuccessfully checked. Please run install_databases.py."
         )
 
     ### custom hmm
@@ -132,7 +111,9 @@ def main():
     # instantiation/checking fasta and gene_predictor
     if args.genbank is True:
         logger.info("You have specified --genbank.")
-        logger.info(f"Therefore, {args.infile} is a genbank file instead of a FASTA file.")
+        logger.info(
+            f"Therefore, {args.infile} is a genbank file instead of a FASTA file."
+        )
         logger.info("Converting genbank to FASTA.")
         validate_and_extract_genbank(args.infile, out_dir)
         input_fasta = os.path.join(out_dir, "genbank.fasta")
@@ -145,7 +126,7 @@ def main():
     validate_threads(args.threads)
 
     ###################
-    # define input 
+    # define input
     ###################
 
     # reorient with dnaapler if chosen
@@ -187,7 +168,7 @@ def main():
                 args.terminase_start,
             )
             # overwrite input_fasta if terminase reorienter is true
-            input_fasta = os.path.join( 
+            input_fasta = os.path.join(
                 out_dir, prefix + "_genome_terminase_reoriented.fasta"
             )
 
@@ -341,7 +322,9 @@ def main():
     if custom_hmm_flag is True:
         # runs pyhmmer on customer
         logger.info(f"Running PyHMMER on custom HMM database {args.custom_hmm}.")
-        best_results_custom_pyhmmer = run_custom_pyhmmer(args.custom_hmm, out_dir, args.threads, gene_predictor, args.evalue)
+        best_results_custom_pyhmmer = run_custom_pyhmmer(
+            args.custom_hmm, out_dir, args.threads, gene_predictor, args.evalue
+        )
 
     #################################################
     # post processing

@@ -1,6 +1,6 @@
 import os
 
-from setuptools import find_packages, setup
+from setuptools import setup
 
 
 def get_version():
@@ -92,6 +92,6 @@ setup(
         "pytest-cov>=3.0.0",
         "alive-progress>=3.0.1",
         "requests>=2.25.1",
-        "bcbio-gff >=0.7.0"
+        "bcbio-gff >=0.7.0",
     ],
 )

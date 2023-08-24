@@ -25,6 +25,7 @@ import os
 import shutil
 import tarfile
 from pathlib import Path
+
 import requests
 from alive_progress import alive_bar
 from loguru import logger
@@ -89,7 +90,7 @@ VFDB_DB_NAMES = [
     "vfdb_h.dbtype",
     "vfdb_h.index",
     "VFDBclusterRes_cluster.tsv",
-    "VFDBclusterRes_rep_seq.fasta"
+    "VFDBclusterRes_rep_seq.fasta",
 ]
 
 CARD_DB_NAMES = [

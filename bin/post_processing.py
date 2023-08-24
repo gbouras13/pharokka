@@ -57,7 +57,7 @@ class Pharok:
         coding_table: int = 11,
         mmseqs_flag: bool = True,
         hmm_flag: bool = True,
-        custom_hmm_flag: bool = False
+        custom_hmm_flag: bool = False,
     ) -> None:
         """
         Parameters
@@ -197,7 +197,9 @@ class Pharok:
 
         # add custom db results
         if self.custom_hmm_flag is True:
-            merged_df = process_custom_pyhmmer_results(merged_df, self.custom_pyhmmer_results_dict)
+            merged_df = process_custom_pyhmmer_results(
+                merged_df, self.custom_pyhmmer_results_dict
+            )
         else:
             merged_df["custom_hmm_id"] = "No_custom_HMM"
             merged_df["custom_hmm_bitscore"] = "No_custom_HMM"
@@ -563,7 +565,7 @@ class Pharok:
         # set phase to be 0
         self.merged_df["phase"] = 0
         # create attributes
-        # no custom 
+        # no custom
 
         self.merged_df["attributes"] = (
             "ID="
@@ -623,7 +625,7 @@ class Pharok:
             + "CARD_species="
             + self.merged_df["CARD_species"].astype(str)
         )
-        
+
         # save back
 
         # get gff dataframe in correct order
@@ -735,7 +737,6 @@ class Pharok:
             trna_df = trna_df.drop(
                 columns=["isotypes", "anticodon", "rest", "trna_product", "locus_tag"]
             )
-
 
         ### crisprs
         crispr_count = get_crispr_count(self.out_dir, self.prefix)
@@ -857,7 +858,6 @@ class Pharok:
                 + tmrna_df["locus_tag"]
             )
             tmrna_df = tmrna_df.drop(columns=["locus_tag"])
-
 
         # write header of final gff files
         with open(os.path.join(self.out_dir, self.prefix + ".gff"), "w") as f:

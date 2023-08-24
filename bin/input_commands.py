@@ -6,6 +6,7 @@ from argparse import RawTextHelpFormatter
 
 from Bio import SeqIO
 from loguru import logger
+from pyrodigal import __version__
 from util import get_version
 
 
@@ -117,7 +118,7 @@ def get_input():
     )
     parser.add_argument(
         "--genbank",
-        help='Flag denoting that -i/--input is a genbank file instead of the usual FASTA file',
+        help="Flag denoting that -i/--input is a genbank file instead of the usual FASTA file",
         action="store_true",
     )
     parser.add_argument(
@@ -310,13 +311,7 @@ def check_dependencies():
     phanotate_minorest_version = phanotate_out.split(".")[2]
 
     logger.info(
-        "Phanotate version found is v"
-        + str(phanotate_major_version)
-        + "."
-        + str(phanotate_minor_version)
-        + "."
-        + phanotate_minorest_version
-        + "."
+        f"Phanotate version found is v{phanotate_major_version}.{phanotate_minor_version}.{phanotate_minorest_version}"
     )
 
     if phanotate_major_version < 1:
@@ -347,11 +342,7 @@ def check_dependencies():
     mmseqs_minor_version = int(mmseqs_version.split(".")[1])
 
     logger.info(
-        "MMseqs2 version found is v"
-        + str(mmseqs_major_version)
-        + "."
-        + str(mmseqs_minor_version)
-        + "."
+        f"MMseqs2 version found is v{mmseqs_major_version}.{mmseqs_minor_version}"
     )
 
     if mmseqs_major_version != 13:
@@ -384,13 +375,7 @@ def check_dependencies():
     trna_minorest_version = int(trna_version.split(".")[2])
 
     logger.info(
-        "tRNAscan-SE version found is v"
-        + str(trna_major_version)
-        + "."
-        + str(mmseqs_minor_version)
-        + "."
-        + str(trna_minorest_version)
-        + "."
+        f"tRNAscan-SE version found is v{trna_major_version}.{trna_minor_version}.{trna_minorest_version}"
     )
 
     if trna_major_version != 2:
@@ -425,13 +410,7 @@ def check_dependencies():
     minced_minorest_version = int(minced_version.split(".")[2])
 
     logger.info(
-        "MinCED version found is v"
-        + str(minced_major_version)
-        + "."
-        + str(minced_minor_version)
-        + "."
-        + str(minced_minorest_version)
-        + "."
+        f"MinCED version found is v{minced_major_version}.{minced_minor_version}.{minced_minorest_version}"
     )
 
     if minced_major_version != 0:
@@ -468,13 +447,7 @@ def check_dependencies():
     aragorn_minorest_version = int(aragorn_version.split(".")[2])
 
     logger.info(
-        "ARAGORN version found is v"
-        + str(aragorn_major_version)
-        + "."
-        + str(aragorn_minor_version)
-        + "."
-        + str(aragorn_minorest_version)
-        + "."
+        f"ARAGORN version found is v{aragorn_major_version}.{aragorn_minor_version}.{aragorn_minorest_version}"
     )
 
     if aragorn_major_version != 1:
@@ -500,13 +473,7 @@ def check_dependencies():
     mash_major_version = int(mash_out.split(".")[0])
     mash_minor_version = int(mash_out.split(".")[1])
 
-    logger.info(
-        "mash version found is v"
-        + str(mash_major_version)
-        + "."
-        + str(mash_minor_version)
-        + "."
-    )
+    logger.info(f"mash version found is v{mash_major_version}.{mash_minor_version}")
 
     if mash_major_version != 2:
         logger.error("mash is the wrong version. Please re-install pharokka.")
@@ -533,19 +500,25 @@ def check_dependencies():
     dnaapler_minorest_version = int(dnaapler_out.split(".")[2])
 
     logger.info(
-        "Dnaapler version found is v"
-        + str(dnaapler_major_version)
-        + "."
-        + str(dnaapler_minor_version)
-        + "."
-        + str(dnaapler_minorest_version)
-        + "."
+        f"Dnaapler version found is v{dnaapler_major_version}.{dnaapler_minor_version}.{dnaapler_minorest_version}"
     )
 
     if dnaapler_minor_version < 2:
         logger.error("Dnaapler is the wrong version. Please re-install pharokka.")
 
     logger.info("Dnaapler version is ok.")
+
+    #######
+    # pyrodigal
+    #######
+
+    pyrodigal_major_version = int(__version__.split(".")[0])
+
+    if pyrodigal_major_version < 2:
+        logger.error("Pyrodigal is the wrong version. Please re-install pharokka.")
+
+    logger.info(f"Pyrodigal version is v{__version__}")
+    logger.info(f"Pyrodigal version is ok.")
 
 
 def instantiate_split_output(out_dir, split):
@@ -561,28 +534,26 @@ def instantiate_split_output(out_dir, split):
         if os.path.isdir(single_gbk_dir) == False:
             os.mkdir(single_gbk_dir)
 
+
 def validate_custom_hmm(filename):
-    suffix = ".h3m" 
+    suffix = ".h3m"
 
     logger.info(f"Checking custom hmm profile {filename}")
 
     if filename.endswith(suffix) is True:
         logger.info(f"{filename} checked.")
     else:
-        logger.exit(f"{filename} does not end with .h3m . Please check your --custom_hmm parameter or use create_custom_hmm.py to create a custom HMM profile.")
-
+        logger.exit(
+            f"{filename} does not end with .h3m . Please check your --custom_hmm parameter or use create_custom_hmm.py to create a custom HMM profile."
+        )
 
 
 def validate_and_extract_genbank(filename, out_dir):
-
     # Open the GenBank file
     with open(filename, "r") as genbank_file:
         for record in SeqIO.parse(genbank_file, "genbank"):
-  
             output_fasta_path = f"{out_dir}/genbank.fasta"
-            
+
             # Write the sequence in FASTA format to the output file
             with open(output_fasta_path, "w") as output_fasta:
-                SeqIO.write(record, output_fasta, "fasta" )
-      
-
+                SeqIO.write(record, output_fasta, "fasta")
