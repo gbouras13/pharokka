@@ -1,0 +1,46 @@
+name: CI
+
+on: [push,pull_request]
+
+jobs:
+  tests:
+    name: "Python ${{ matrix.python-version }}"
+    runs-on: ${{ matrix.os }}
+
+    defaults:
+      run:
+        shell: bash -el {0}
+
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+        python-version: ["3.9"]
+
+    steps:
+      - uses: "actions/checkout@v3"
+        with:
+          fetch-depth: 0
+
+      # Setup env
+      - uses: "conda-incubator/setup-miniconda@v2"
+        with:
+          activate-environment: pharokka_env
+          environment-file: environment.yml
+          python-version: ${{ matrix.python-version }}
+          auto-activate-base: false
+          miniforge-variant: Mambaforge
+          channels: conda-forge,bioconda,defaults
+          channel-priority: strict
+          auto-update-conda: true
+      - name: Install pharokka 
+        shell: bash -l {0}
+        run: |
+          mamba install python=${{ matrix.python-version }}
+          python -m pip install --upgrade pip
+          pip install -e .
+      - name: Run tests and collect coverage
+        run: pytest --cov=./ --cov-report=xml
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

@@ -1,0 +1,7 @@
+Status: Running Infernal analysis
+Sequence   		tRNA  	Bounds	tRNA	Anti	Intron Bounds	Inf	      
+Name       	tRNA #	Begin 	End   	Type	Codon	Begin	End	Score	Note
+--------   	------	----- 	------	----	-----	-----	----	------	------
+MW460250_1 	1	138642	138569	Asp	GTC	0	0	58.8	
+MW460250_1 	2	138562	138490	Phe	GAA	0	0	67.8	
+MW460250_1 	3	115265	115194	Met	CAT	0	0	61.2	

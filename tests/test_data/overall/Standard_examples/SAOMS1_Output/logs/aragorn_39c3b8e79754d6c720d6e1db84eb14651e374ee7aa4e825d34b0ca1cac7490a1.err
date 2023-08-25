@@ -1,0 +1,1 @@
+Command line: aragorn -l -gcbact -w -m -o SAOMS1_Output/pharokka_aragorn.txt tests/test_data/overall/Standard_examples/SAOMS1.fasta

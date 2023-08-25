@@ -1,4 +1,4 @@
-* phrokka version:
+* pharokka version:
 * Python version:
 * Operating System:
 

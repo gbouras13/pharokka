@@ -19,6 +19,8 @@ nav:
       - Usage: run.md
       - Benchmarking: benchmarking.md
       - Plotting: plotting.md
+      - Proteins: proteins.md
+      - Custom Databases: custom.md
     - OUTPUT:
       - Output: output.md
 

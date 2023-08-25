@@ -1,0 +1,1 @@
+Command line: minced tests/test_data/overall/Standard_examples/SAOMS1.fasta SAOMS1_Output/pharokka_minced_spacers.txt SAOMS1_Output/pharokka_minced.gff

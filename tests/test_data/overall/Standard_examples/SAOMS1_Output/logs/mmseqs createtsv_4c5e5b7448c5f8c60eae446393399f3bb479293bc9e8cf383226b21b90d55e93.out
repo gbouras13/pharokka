@@ -1,0 +1,14 @@
+createtsv ../../databases/CARD SAOMS1_Output/CARD_target_dir/target_seqs SAOMS1_Output/CARD/results_mmseqs SAOMS1_Output/CARD_results.tsv --full-header --threads 8 
+
+MMseqs Version:                 	13.45111
+First sequence as representative	false
+Target column                   	1
+Add full header                 	true
+Sequence source                 	0
+Database output                 	false
+Threads                         	8
+Compressed                      	0
+Verbosity                       	3
+
+Time for merging to CARD_results.tsv: 0h 0m 0s 4ms
+Time for processing: 0h 0m 0s 13ms

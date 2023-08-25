@@ -1,0 +1,1 @@
+Command line: phanotate.py -f fasta -o SAOMS1_Output/phanotate_out_tmp.fasta tests/test_data/overall/Standard_examples/SAOMS1.fasta

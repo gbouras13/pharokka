@@ -1,0 +1,1 @@
+Command line: mmseqs createtsv ../../databases/vfdb SAOMS1_Output/VFDB_target_dir/target_seqs SAOMS1_Output/VFDB/results_mmseqs SAOMS1_Output/vfdb_results.tsv --full-header --threads 8

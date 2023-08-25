@@ -1,6 +1,20 @@
 History
 =======
 
+1.4.0 (2023-08-23)
+------------------
+
+* More sensitive search for PHROGs using Hidden Markov Models (HMMs) using the amazing [PyHMMER](https://github.com/althonos/pyhmmer).
+* By default, Pharokka will now run both MMseqs2 (PHROGs, CARD and VFDB) and HMMs (PHROGs). MMseqs2 was kept for PHROGs as it provides more information than the HMM results (sequence identities, top hit PHROG protein).
+* `--fast` or `--hmm_only` which only runs HMMs on PHROGs, not MMseqs2. For phage isolates, this will be much faster than MMseqs2, but you will not get CARD or VFDB annotations. For metagenomes, this will be (much) slower though!
+* `--mmseqs_only` which will essentially runs Pharokka v1.3.2 and is default in meta mode `-m` or `--meta`. 
+* `pharokka_proteins.py`, which takes an input file of amino acid proteins in FASTA format and runs MMseqs2 (PHROGs, CARD, VFDB) and Pyhmmer (PHROGs).
+* `--custom_hmm`, which allows for custom HMM profile databases to be used with Pharokka.
+* `create_custom_hmm.py` which facillitates the creation of a HMM profile database for use with `--custom_hmm` from multiple sequence alignments.
+* `--dnaapler`, which automatic detects and reorients your phage to start with the large terminase subunit. For more information, see [dnaapler](https://github.com/gbouras13/dnaapler).
+* Updated databases as of 23 August 2023. You will need to download the new v1.4.0 databases. The VFDB database is now clustered at 50% sequence identity (which speeds up runtime).
+* Fixes to `-c`, which should now workwith `-g prodigal` (thanks Alistair Legione).
+
 1.3.2 (2023-04-26)
 ------------------
 

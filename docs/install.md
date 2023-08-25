@@ -1,10 +1,12 @@
 # Installation
 
-The easiest way to install pharokka is via conda. For inexperienced command line users, this method is highly recommended.
+## Conda
+
+The easiest way to install `pharokka` is via conda. For inexperienced command line users, this method is highly recommended.
 
 `conda install -c bioconda pharokka`
 
-This will install all the dependencies along with pharokka. The dependencies are listed in environment.yml.
+This will install all the dependencies along with `pharokka`. The dependencies are listed in environment.yml.
 
 If conda is taking a long time to solve the environment, try using mamba:
 
@@ -13,26 +15,36 @@ conda install mamba
 mamba install -c bioconda pharokka
 ```
 
-Alternatively, the development version of pharokka can be installed manually via github. 
+## Pip
 
-`git clone https://github.com/gbouras13/pharokka.git`
+As of v1.4.0, you can also install the python components of `pharokka` with pip.
+
+```
+pip install pharokka
+```
+
+You will still need to install the non-python dependencies manually.
+
+## Source
+
+Alternatively, the development version of `pharokka` (which may include new, untested features) can be installed manually via github. 
+
+```
+git clone https://github.com/gbouras13/pharokka.git
+cd pharokka
+pip install -e .
+pharokka.py --help
+```
 
 The dependencies found in environment.yml will then need to be installed manually.
 
 For example using conda to install the required dependencies:
 
 ```
-git clone https://github.com/gbouras13/pharokka.git
-cd pharokka
+# assuming you are in the pharokka directory
 conda env create -f environment.yml
 conda activate pharokka_env
-```
-
-And then to run pharokka (assuming you are still in the pharokka directory)
-
-```
-./bin/install_databases.py -h
-./bin/pharokka.py -h
+pharokka.py --help
 ```
 
 # Database Installation
