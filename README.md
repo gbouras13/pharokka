@@ -1,6 +1,7 @@
 [![Paper](https://img.shields.io/badge/paper-Bioinformatics-teal.svg?style=flat-square&maxAge=3600)](https://doi.org/10.1093/bioinformatics/btac776)
 [![CI](https://github.com/gbouras13/pharokka/actions/workflows/ci.yaml/badge.svg)](https://github.com/gbouras13/pharokka/actions/workflows/ci.yaml)
 [![BioConda Install](https://img.shields.io/conda/dn/bioconda/pharokka.svg?style=flag&label=BioConda%20install)](https://anaconda.org/bioconda/pharokka)
+[![codecov](https://codecov.io/gh/gbouras13/pharokka/branch/master/graph/badge.svg?token=4B1T2PGM9V)](https://codecov.io/gh/gbouras13/pharokka)
 
 [![Anaconda-Server Badge](https://anaconda.org/bioconda/pharokka/badges/version.svg)](https://anaconda.org/bioconda/pharokka)
 [![Bioconda Downloads](https://img.shields.io/conda/dn/bioconda/pharokka)](https://img.shields.io/conda/dn/bioconda/pharokka)

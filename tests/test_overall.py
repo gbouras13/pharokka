@@ -37,6 +37,7 @@ tmrna_data = Path(f"{overall_data}/tmRNA_example")
 AMR_data = Path(f"{overall_data}/AMR_example")
 CRISPR_data = Path(f"{overall_data}/CRISPR_example")
 VFDB_data = Path(f"{overall_data}/VFDB_example")
+genbank_data = Path(f"{overall_data}/genbank_examples")
 logger.add(lambda _: sys.exit(1), level="ERROR")
 threads = 8
 
@@ -174,7 +175,6 @@ def test_meta_hmm(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m --meta_hmm"
     exec_command(cmd)
 
-
 def test_meta_split(tmp_dir):
     """test pharokka meta split"""
     input_fasta: Path = f"{meta_data}/fake_meta.fa"
@@ -188,11 +188,16 @@ def test_terminase(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --terminase --terminase_start 340 --terminase_strand neg"
     exec_command(cmd)
 
-
 def test_overall_genbank(tmp_dir):
     """test pharokka overall with genbank input"""
-    input_gbk: Path = f"{standard_data_output}/pharokka.gbk"
+    input_gbk: Path = f"{genbank_data}/SAOMS1.gbk"
     cmd = f"pharokka.py -i {input_gbk} -d {database_dir} -o {tmp_dir} -t {threads} -f --genbank"
+    exec_command(cmd)
+
+def test_overall_genbank_meta(tmp_dir):
+    """test pharokka overall meta with genbank input"""
+    input_gbk: Path = f"{genbank_data}/hundred_microviruses.gbk"
+    cmd = f"pharokka.py -i {input_gbk} -d {database_dir} -o {tmp_dir} -t {threads} -f --genbank -m --meta_hmm"
     exec_command(cmd)
 
 

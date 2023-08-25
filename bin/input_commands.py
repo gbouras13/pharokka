@@ -118,7 +118,7 @@ def get_input():
     )
     parser.add_argument(
         "--genbank",
-        help="Flag denoting that -i/--input is a genbank file instead of the usual FASTA file",
+        help="Flag denoting that -i/--input is a genbank file instead of the usual FASTA file. \n The CDS calls in this file will be preserved and re-annotated.",
         action="store_true",
     )
     parser.add_argument(
@@ -206,37 +206,43 @@ def validate_fasta(filename):
             logger.error("Error: Input file is not in the FASTA format.\n")
 
 
-def validate_gene_predictor(gene_predictor):
+def validate_gene_predictor(gene_predictor, genbank_flag):
     if gene_predictor == "phanotate":
         logger.info("Phanotate will be used for gene prediction.")
     elif gene_predictor == "prodigal":
         logger.info("Prodigal will be used for gene prediction.")
+    elif gene_predictor == "genbank":
+        if genbank_flag is False:
+            logger.error(
+            "Error: you have specified -g genbank without --genbank. Please just use --genbank."
+        )
     else:
         logger.error(
-            "Error: gene predictor was incorrectly specified. Please use 'phanotate' or 'prodigal'.\n"
+            "Error: gene predictor was incorrectly specified. Please use 'phanotate' or 'prodigal'."
         )
 
 
-def validate_meta(filepath_in, meta, split):
-    num_fastas = len([1 for line in open(filepath_in) if line.startswith(">")])
-    if meta == True:
-        if num_fastas < 2:
-            logger.error(
-                "ERROR: -m meta mode specified when the input file only contains 1 contig. Please re-run without specifying -m."
-            )
-        else:
-            message = f"{num_fastas} input contigs detected."
-            logger.info(message)
-            if split == True:
-                message = "Split mode activtated. Separate output FASTA, gff and genbank files will be output for each contig."
+def validate_meta(filepath_in, meta, split, genbank):
+    if genbank is False:
+        num_fastas = len([1 for line in open(filepath_in) if line.startswith(">")])
+        if meta == True:
+            if num_fastas < 2:
+                logger.error(
+                    "ERROR: -m meta mode specified when the input file only contains 1 contig. Please re-run without specifying -m."
+                )
+            else:
+                message = f"{num_fastas} input contigs detected."
                 logger.info(message)
-    else:
-        if num_fastas > 1:
-            message = "More than one contig detected in the input file. Re-running pharokka with -m meta mode is recommended unless this is a fragmented isolate genome. Continuing."
-            logger.info(message)
-        if split == True:
-            message = "-s or --split was specified without -m or --meta and will be ignored. Please specify -s with -m if you want to run split mode. Continuing."
-            logger.info(message)
+                if split == True:
+                    message = "Split mode activtated. Separate output FASTA, gff and genbank files will be output for each contig."
+                    logger.info(message)
+        else:
+            if num_fastas > 1:
+                message = "More than one contig detected in the input file. Re-running pharokka with -m meta mode is recommended unless this is a fragmented isolate genome. Continuing."
+                logger.info(message)
+            if split == True:
+                message = "-s or --split was specified without -m or --meta and will be ignored. Please specify -s with -m if you want to run split mode. Continuing."
+                logger.info(message)
 
 
 def validate_strand(strand):
@@ -550,10 +556,16 @@ def validate_custom_hmm(filename):
 
 def validate_and_extract_genbank(filename, out_dir):
     # Open the GenBank file
-    with open(filename, "r") as genbank_file:
-        for record in SeqIO.parse(genbank_file, "genbank"):
-            output_fasta_path = f"{out_dir}/genbank.fasta"
+    try:
+        with open(filename, "r") as genbank_file:
+            for record in SeqIO.parse(genbank_file, "genbank"):
+                output_fasta_path = f"{out_dir}/genbank.fasta"
 
-            # Write the sequence in FASTA format to the output file
-            with open(output_fasta_path, "w") as output_fasta:
-                SeqIO.write(record, output_fasta, "fasta")
+                # Write the sequence in FASTA format to the output file
+                with open(output_fasta_path, "a") as output_fasta:
+                    SeqIO.write(record, output_fasta, "fasta")
+    except:
+        logger.error(
+            f"{filename} is not a genbank format file."
+        )
+

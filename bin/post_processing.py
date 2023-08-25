@@ -249,8 +249,10 @@ class Pharok:
         # add columns
         if self.gene_predictor == "phanotate":
             merged_df["Method"] = "PHANOTATE"
-        if self.gene_predictor == "prodigal":
+        elif self.gene_predictor == "prodigal":
             merged_df["Method"] = "PRODIGAL"
+        elif self.gene_predictor == "genbank":
+            merged_df["Method"] = "CUSTOM"
         merged_df["Region"] = "CDS"
 
         # # replace with No_PHROG if nothing found
@@ -627,7 +629,6 @@ class Pharok:
         )
 
         # save back
-
         # get gff dataframe in correct order
         gff_df = self.merged_df[
             [
@@ -945,8 +946,10 @@ class Pharok:
 
         if self.gene_predictor == "phanotate":
             cds_df = self.total_gff[self.total_gff["Method"] == "PHANOTATE"]
-        else:
+        elif self.gene_predictor == "prodigal":
             cds_df = self.total_gff[self.total_gff["Method"] == "PRODIGAL"]
+        elif self.gene_predictor == "genbank":
+            cds_df = self.total_gff[self.total_gff["Method"] == "CUSTOM"]
 
         cds_df[["attributes", "locus_tag"]] = cds_df["attributes"].str.split(
             ";locus_tag=", expand=True
