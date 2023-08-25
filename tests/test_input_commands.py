@@ -73,12 +73,19 @@ class TestValidateGenePredictor(unittest.TestCase):
     """Tests of validate_gene_predictor"""
 
     def test_validate_gene_predictor(self):
-        validate_gene_predictor("phanotate")
-        validate_gene_predictor("prodigal")
+        genbank_flag = False
+        validate_gene_predictor("phanotate", genbank_flag)
+        validate_gene_predictor("prodigal", genbank_flag)
 
-    def test_validate_fasta_bad(self):
+    def test_validate_genbank_flag(self):
+        genbank_flag = True
+        validate_gene_predictor("genbank", genbank_flag)
+
+
+    def test_gene_predictor_bad(self):
+        genbank_flag = False
         with self.assertRaises(SystemExit):
-            validate_gene_predictor("blah")
+            validate_gene_predictor("blah", genbank_flag)
 
 
 class TestValidateMeta(unittest.TestCase):
@@ -86,24 +93,24 @@ class TestValidateMeta(unittest.TestCase):
 
     def test_validate_meta_good(self):
         fasta: Path = f"{meta_data}/fake_meta.fa"
-        validate_meta(fasta, meta=True, split=False)
+        validate_meta(fasta, meta=True, split=False, genbank=False)
 
     def test_validate_meta_good_split(self):
         fasta: Path = f"{meta_data}/fake_meta.fa"
-        validate_meta(fasta, meta=True, split=True)
+        validate_meta(fasta, meta=True, split=True, genbank=False)
 
     def test_validate_meta_bad(self):
         with self.assertRaises(SystemExit):
             fasta: Path = f"{standard_data}/SAOMS1.fasta"
-            validate_meta(fasta, meta=True, split=True)
+            validate_meta(fasta, meta=True, split=True, genbank=False)
 
     def test_validate_no_meta_split(self):
         fasta: Path = f"{meta_data}/fake_meta.fa"
-        validate_meta(fasta, meta=False, split=True)
+        validate_meta(fasta, meta=False, split=True, genbank=False)
 
     def test_validate_no_meta_no_split(self):
         fasta: Path = f"{meta_data}/fake_meta.fa"
-        validate_meta(fasta, meta=False, split=False)
+        validate_meta(fasta, meta=False, split=False, genbank=False)
 
 
 class TestValidateStrand(unittest.TestCase):
