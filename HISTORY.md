@@ -13,6 +13,7 @@ History
 * `create_custom_hmm.py` which facillitates the creation of a HMM profile database for use with `--custom_hmm` from multiple sequence alignments.
 * `--dnaapler`, which automatic detects and reorients your phage to start with the large terminase subunit. For more information, see [dnaapler](https://github.com/gbouras13/dnaapler).
 * Updated databases as of 23 August 2023. You will need to download the new v1.4.0 databases. The VFDB database is now clustered at 50% sequence identity (which speeds up runtime).
+* `--genbank`, which allows for genbank format input with `-i`. This will take all (custom) CDS calls in genbank file and PHANOTATE/pyrodigal will not be run. So if you have done manual gene curation, this option is recommended.
 * Fixes to `-c`, which should now workwith `-g prodigal` (thanks Alistair Legione).
 
 1.3.2 (2023-04-26)
