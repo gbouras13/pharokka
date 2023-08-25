@@ -62,7 +62,7 @@ There is also support for alternative genetic codes if `pharokka` is run with pr
 
 `pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -g prodigal -c 4`
 
-As of v1.4.0 you can specify a genbank input file with `--genbank`.
+As of v1.4.0 you can specify a genbank input file with `--genbank`. This will take all (custom) CDS calls in genbank file and PHANOTATE/pyrodigal will not be run. So if you have done manual gene curation, I recommend this option.
 
 `pharokka.py -i <GENBANK file> -o <output folder> -d <path/to/database_dir> -t <threads>  --genbank`
 
