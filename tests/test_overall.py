@@ -33,6 +33,10 @@ standard_data_output = Path(f"{standard_data}/SAOMS1_Output")
 stop_recoding_data = Path(f"{overall_data}/stop_recoding")
 custom_db = Path(f"{test_data}/custom_db/microvirus.h3m")
 custom_data = Path(f"{overall_data}/custom_examples")
+tmrna_data = Path(f"{overall_data}/tmRNA_example")
+AMR_data = Path(f"{overall_data}/AMR_example")
+CRISPR_data = Path(f"{overall_data}/CRISPR_example")
+VFDB_data = Path(f"{overall_data}/VFDB_example")
 logger.add(lambda _: sys.exit(1), level="ERROR")
 threads = 8
 
@@ -72,13 +76,41 @@ def test_download(tmp_dir):
     cmd = f"install_databases.py -o {database_dir}"
     exec_command(cmd)
 
-
 def test_overall(tmp_dir):
     """test pharokka overall"""
     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
 
+def test_overall_crispr(tmp_dir):
+    """test pharokka overall crispr"""
+    input_fasta: Path = f"{CRISPR_data}/Biggiephage_A_fullcontig_CasΦ1.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
+    exec_command(cmd)
+
+def test_overall_vfdb(tmp_dir):
+    """test pharokka overall crispr"""
+    input_fasta: Path = f"{VFDB_data}/NC_004617.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
+    exec_command(cmd)
+
+def test_overall_amr(tmp_dir):
+    """test pharokka overall amr"""
+    input_fasta: Path = f"{AMR_data}/NC_007458.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
+    exec_command(cmd)
+
+def test_overall_tmrna(tmp_dir):
+    """test pharokka overall tmrna"""
+    input_fasta: Path = f"{tmrna_data}/NC_051700.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
+    exec_command(cmd)
+
+def test_meta_(tmp_dir):
+    """test pharokka meta"""
+    input_fasta: Path = f"{meta_data}/combined_meta.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m"
+    exec_command(cmd)
 
 def test_overall_locus(tmp_dir):
     """test pharokka overall locus tag prefix"""
@@ -86,13 +118,11 @@ def test_overall_locus(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -l SAOMS1 -p SAOMS1"
     exec_command(cmd)
 
-
 def test_custom(tmp_dir):
     """test pharokka overall with custom db"""
     input_fasta: Path = f"{custom_data}/MH649026.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} --custom_hmm {custom_db} -o {tmp_dir} -t {threads} -f "
     exec_command(cmd)
-
 
 def test_custom_meta(tmp_dir):
     """test pharokka overall with custom db"""
@@ -100,20 +130,17 @@ def test_custom_meta(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} --custom_hmm {custom_db} -o {tmp_dir} -t {threads} -f -m"
     exec_command(cmd)
 
-
 def test_overall_prodigal(tmp_dir):
     """test pharokka overall prodigal"""
     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g prodigal"
     exec_command(cmd)
 
-
 def test_overall_stop_recode(tmp_dir):
     """test pharokka overall recoded"""
     input_fasta: Path = f"{stop_recoding_data}/table_4/SRR1747055_scaffold_7.fa"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g prodigal -c 4"
     exec_command(cmd)
-
 
 def test_overall_dnaapler(tmp_dir):
     """test pharokka overall dnaapler"""
@@ -135,13 +162,11 @@ def test_overall_mmseqs(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --mmseqs2_only"
     exec_command(cmd)
 
-
-def test_meta(tmp_dir):
-    """test pharokka meta"""
+def test_meta_no_cds_contig(tmp_dir):
+    """test pharokka meta with a contig with empty contigs"""
     input_fasta: Path = f"{meta_data}/fake_meta.fa"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m"
     exec_command(cmd)
-
 
 def test_meta_hmm(tmp_dir):
     """test pharokka meta hmm"""
