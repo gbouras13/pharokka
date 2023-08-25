@@ -1,6 +1,7 @@
 [![Paper](https://img.shields.io/badge/paper-Bioinformatics-teal.svg?style=flat-square&maxAge=3600)](https://doi.org/10.1093/bioinformatics/btac776)
 [![CI](https://github.com/gbouras13/pharokka/actions/workflows/ci.yaml/badge.svg)](https://github.com/gbouras13/pharokka/actions/workflows/ci.yaml)
 [![BioConda Install](https://img.shields.io/conda/dn/bioconda/pharokka.svg?style=flag&label=BioConda%20install)](https://anaconda.org/bioconda/pharokka)
+[![codecov](https://codecov.io/gh/gbouras13/pharokka/branch/master/graph/badge.svg?token=4B1T2PGM9V)](https://codecov.io/gh/gbouras13/pharokka)
 
 [![Anaconda-Server Badge](https://anaconda.org/bioconda/pharokka/badges/version.svg)](https://anaconda.org/bioconda/pharokka)
 [![Bioconda Downloads](https://img.shields.io/conda/dn/bioconda/pharokka)](https://img.shields.io/conda/dn/bioconda/pharokka)
@@ -80,7 +81,7 @@ Pharokka v1.4.0 is a large update implementing:
 * `--custom_hmm`, which allows for custom HMM profile databases to be used with `pharokka`.
 * `create_custom_hmm.py` which facilitates  the creation of a HMM profile database from multiple sequence alignments.  See the [documentation](docs/custom.md) for more details about how to create a compatible HMM profile database.
 * `--dnaapler`, which automatically detects and reorients your phage to start with the large terminase subunit. For more information, see [dnaapler](https://github.com/gbouras13/dnaapler).
-* `--genbank`, which allows for genbank format input with `-i`.
+* `--genbank`, which allows for genbank format input with `-i`. This will take all (custom) CDS calls in genbank file and PHANOTATE/pyrodigal will not be run. So if you have done manual gene curation, this option is recommended.
 * Fixes to `-c`, which should now work with `-g prodigal` (thanks Alistair Legione for the fixes).
 
 ## Pharokka v 1.3.0 Update

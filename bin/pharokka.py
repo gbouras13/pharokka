@@ -114,15 +114,16 @@ def main():
         logger.info(
             f"Therefore, {args.infile} is a genbank file instead of a FASTA file."
         )
-        logger.info("Converting genbank to FASTA.")
+        logger.info("Your custom CDS calls in this genbank file will be preserved.")
         validate_and_extract_genbank(args.infile, out_dir)
-        input_fasta = os.path.join(out_dir, "genbank.fasta")
+        gene_predictor = 'genbank'
+        input_fasta = f"{out_dir}/genbank.fasta"
     else:
         validate_fasta(args.infile)
         input_fasta = args.infile
 
     # other validations
-    validate_gene_predictor(gene_predictor)
+    validate_gene_predictor(gene_predictor, args.genbank)
     validate_threads(args.threads)
 
     ###################
@@ -241,7 +242,7 @@ def main():
         hmm_flag = False
 
     # validates meta mode
-    validate_meta(input_fasta, args.meta, args.split)
+    validate_meta(input_fasta, args.meta, args.split, args.genbank)
 
     # meta mode split input for trnascan and maybe phanotate
     if args.meta == True:
@@ -260,14 +261,14 @@ def main():
             concat_phanotate_meta(out_dir, num_fastas)
         else:
             run_phanotate(input_fasta, out_dir, logdir)
-
-    if gene_predictor == "prodigal":
+    elif gene_predictor == "prodigal":
         logger.info("Implementing Prodigal using Pyrodigal.")
         run_pyrodigal(input_fasta, out_dir, args.meta, args.coding_table)
+    elif gene_predictor == "genbank":
+        logger.info("Extracting CDS information from your genbank file.")
 
-    # translate fastas
-    logger.info("Translating gene predicted fastas.")
-    translate_fastas(out_dir, gene_predictor, args.coding_table)
+    # translate fastas (parse genbank)
+    translate_fastas(out_dir, gene_predictor, args.coding_table, args.infile)
 
     # run trna-scan meta mode if required
     if args.meta == True:
@@ -275,7 +276,7 @@ def main():
         run_trnascan_meta(input_fasta, out_dir, args.threads, num_fastas)
         concat_trnascan_meta(out_dir, num_fastas)
     else:
-        logger.info("Starting tRNA-scanSE")
+        logger.info("Starting tRNA-scanSE.")
         run_trna_scan(input_fasta, args.threads, out_dir, logdir)
     # run minced and aragorn
     run_minced(input_fasta, out_dir, prefix, logdir)
