@@ -384,11 +384,11 @@ All benchmarking was conducted on a Intel® Core™ i7-10700K CPU @ 3.80GHz on a
 SAOMS1 was run with Phanotate
 
 | Phage SAOMS1           | `pharokka` v1.4.0 `--fast`  | `pharokka` v1.4.0 | `pharokka` v1.3.2 |   
-|------------------------|---------------------------|-----------------|-----------------|
-| Time (min)             | 0.70                      | 3.73            | 5.08            | 
-| CDS                    | 246                       | 246             | 246             | 
-| Annotated Function CDS | 93                        | 92              | 92              | 
-| Unknown Function CDS   | 153                       | 154             | 154             |  
+|------------------------|-----------------------------|-------------------|-----------------|
+| Time (min)             | 0.70                        | 3.73              | 5.08            | 
+| CDS                    | 246                         | 246               | 246             | 
+| Annotated Function CDS | 93                          | 93                | 92              | 
+| Unknown Function CDS   | 153                         | 153               | 154             |  
 
 The 673 crAss-like genomes were run with `-m` (defaults to `--mmseqs2_only` in v 1.4.0) and with `-g prodigal` (pyrodigal v2.1.0).
 

@@ -107,7 +107,7 @@ def test_overall_tmrna(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
 
-def test_meta_(tmp_dir):
+def test_meta(tmp_dir):
     """test pharokka meta"""
     input_fasta: Path = f"{meta_data}/combined_meta.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m"

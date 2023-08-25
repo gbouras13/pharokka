@@ -1,20 +1,25 @@
 History
 =======
 
-1.4.0 (2023-08-23)
+1.4.0 (2023-08-25)
 ------------------
 
-* More sensitive search for PHROGs using Hidden Markov Models (HMMs) using the amazing [PyHMMER](https://github.com/althonos/pyhmmer).
-* By default, Pharokka will now run both MMseqs2 (PHROGs, CARD and VFDB) and HMMs (PHROGs). MMseqs2 was kept for PHROGs as it provides more information than the HMM results (sequence identities, top hit PHROG protein).
-* `--fast` or `--hmm_only` which only runs HMMs on PHROGs, not MMseqs2. For phage isolates, this will be much faster than MMseqs2, but you will not get CARD or VFDB annotations. For metagenomes, this will be (much) slower though!
-* `--mmseqs_only` which will essentially runs Pharokka v1.3.2 and is default in meta mode `-m` or `--meta`. 
-* `pharokka_proteins.py`, which takes an input file of amino acid proteins in FASTA format and runs MMseqs2 (PHROGs, CARD, VFDB) and Pyhmmer (PHROGs).
-* `--custom_hmm`, which allows for custom HMM profile databases to be used with Pharokka.
-* `create_custom_hmm.py` which facillitates the creation of a HMM profile database for use with `--custom_hmm` from multiple sequence alignments.
-* `--dnaapler`, which automatic detects and reorients your phage to start with the large terminase subunit. For more information, see [dnaapler](https://github.com/gbouras13/dnaapler).
-* Updated databases as of 23 August 2023. You will need to download the new v1.4.0 databases. The VFDB database is now clustered at 50% sequence identity (which speeds up runtime).
-* `--genbank`, which allows for genbank format input with `-i`. This will take all (custom) CDS calls in genbank file and PHANOTATE/pyrodigal will not be run. So if you have done manual gene curation, this option is recommended.
-* Fixes to `-c`, which should now workwith `-g prodigal` (thanks Alistair Legione).
+Pharokka v1.4.0 is a large update implementing:
+ 
+* More sensitive search for PHROGs using Hidden Markov Models (HMMs) using the amazing [PyHMMER](https://github.com/althonos/pyhmmer). Thanks to @althonos for some of the best written and well documented software I have ever used.
+* By default, `pharokka` will now run searches using both MMseqs2 (PHROGs, CARD and VFDB) and HMMs (PHROGs). MMseqs2 was kept for PHROGs as it provides more information than the HMM results (e.g. sequence alignment identities & top hit PHROG protein) if it finds a hit.
+* `--fast` or `--hmm_only` parameter, which only runs PyHMMER on PHROGs. It will not run MMseqs2 at all on PHROGs, CARD or VFDB. For phage isolates, this will be much faster than v1.3.2, but you will not get CARD or VFDB annotations. For metagenomes, this will be (much) slower though!
+* Updated databases as of 23 August 2023. You will need to download the new `pharokka v1.4.0` databases because these now contain PHROG HMM profiles. The VFDB database is now clustered at 50% sequence identity (which speeds up runtime).
+* Other changes in the codebase should make `pharokka v1.4.0` run somewhat faster than v1.3.2, even if PyHMMER is not used i.e. `--mmseqs2_only` is specified.
+* The print screen and log files are neater and more information rich using loguru. There is also a new `logs` directory containing separate log files for each tool in the pipeline. This is thanks to taking and modifying some code from @mbhall88 [tbpore](https://github.com/mbhall88/tbpore).
+* `install_databases.py` has been modified to be more robust and somewhat faster. This is thanks to taking ideas and modifying some code from @oschwengers [bakta](https://github.com/oschwengers/bakta).
+* `--mmseqs2_only` which will essentially run `pharokka` as it was v1.3.2. It is default in meta mode `-m` or `--meta`.
+* `pharokka_proteins.py`, which takes an input file of amino acid proteins in FASTA format and runs MMseqs2 (PHROGs, CARD, VFDB) and PyHMMER (PHROGs). See the [proteins documentation](docs/proteins.md) for more details. Thanks to Brady Cress for the idea.
+* `--custom_hmm` parameter, which allows for custom HMM profile databases to be used with `pharokka`. Thanks to @pck00 for the idea.
+* `create_custom_hmm.py` which facilitates  the creation of a HMM profile database from multiple sequence alignments.  See the [documentation](docs/custom.md) for more details about how to create a compatible HMM profile database.
+* `--dnaapler` flag, which automatically detects and reorients your phage to start with the large terminase subunit. For more information, see [dnaapler](https://github.com/gbouras13/dnaapler).
+* `--genbank` flag, which allows for genbank format input with `-i`. This will take all (customised) CDS calls in genbank file and PHANOTATE/pyrodigal will not be run. So if you have done manual custom gene curation and want to functionally annotate your customised CDS, this option is recommended. Thanks to @pck00 for the idea.
+* Fixes to `-c`, which should now work properly with `-g prodigal` (thanks @alegione for the fixes).
 
 1.3.2 (2023-04-26)
 ------------------
