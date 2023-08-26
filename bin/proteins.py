@@ -413,11 +413,6 @@ class Pharok_Prot:
             else:  # no mmseqs2 hits
                 tophits_df["mmseqs_top_hit"] = "No_MMseqs_PHROG_hit"
 
-        tophits_df.to_csv(
-            os.path.join(self.out_dir, f"{self.prefix}_tophits_test.tsv"),
-            sep="\t",
-            index=False,
-        )
         ####################
         # combine phrogs
         ####################
@@ -437,6 +432,7 @@ class Pharok_Prot:
         tophits_df["pyhmmer_phrog"] = tophits_df["pyhmmer_phrog"].str.replace(
             "phrog_", ""
         )
+
 
         ############
         # code to create 1 overall phrog column
@@ -510,10 +506,11 @@ class Pharok_Prot:
         fasta_sequences = SeqIO.parse(open(self.input_fasta), "fasta")
         contig_names = []
         lengths = []
-        gc = []
+
         for fasta in fasta_sequences:
             contig_names.append(fasta.id)
             lengths.append(len(fasta.seq))
+    
         length_df = pd.DataFrame(
             {
                 "gene": contig_names,
@@ -532,6 +529,7 @@ class Pharok_Prot:
         (tophits_df, card_results) = process_card_results(
             self.out_dir, tophits_df, self.db_dir
         )
+
 
         # Rename the "gene" column to "id"
         tophits_df.rename(columns={"gene": "ID"}, inplace=True)
