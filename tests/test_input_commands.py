@@ -81,7 +81,6 @@ class TestValidateGenePredictor(unittest.TestCase):
         genbank_flag = True
         validate_gene_predictor("genbank", genbank_flag)
 
-
     def test_gene_predictor_bad(self):
         genbank_flag = False
         with self.assertRaises(SystemExit):

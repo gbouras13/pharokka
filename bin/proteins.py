@@ -433,7 +433,6 @@ class Pharok_Prot:
             "phrog_", ""
         )
 
-
         ############
         # code to create 1 overall phrog column
         # pick the mmseqs PHROG column first if it was run
@@ -510,7 +509,7 @@ class Pharok_Prot:
         for fasta in fasta_sequences:
             contig_names.append(fasta.id)
             lengths.append(len(fasta.seq))
-    
+
         length_df = pd.DataFrame(
             {
                 "gene": contig_names,
@@ -529,7 +528,6 @@ class Pharok_Prot:
         (tophits_df, card_results) = process_card_results(
             self.out_dir, tophits_df, self.db_dir
         )
-
 
         # Rename the "gene" column to "id"
         tophits_df.rename(columns={"gene": "ID"}, inplace=True)

@@ -214,8 +214,8 @@ def validate_gene_predictor(gene_predictor, genbank_flag):
     elif gene_predictor == "genbank":
         if genbank_flag is False:
             logger.error(
-            "Error: you have specified -g genbank without --genbank. Please just use --genbank."
-        )
+                "Error: you have specified -g genbank without --genbank. Please just use --genbank."
+            )
     else:
         logger.error(
             "Error: gene predictor was incorrectly specified. Please use 'phanotate' or 'prodigal'."
@@ -565,7 +565,4 @@ def validate_and_extract_genbank(filename, out_dir):
                 with open(output_fasta_path, "a") as output_fasta:
                     SeqIO.write(record, output_fasta, "fasta")
     except:
-        logger.error(
-            f"{filename} is not a genbank format file."
-        )
-
+        logger.error(f"{filename} is not a genbank format file.")

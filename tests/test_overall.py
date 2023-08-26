@@ -77,11 +77,13 @@ def test_download(tmp_dir):
     cmd = f"install_databases.py -o {database_dir}"
     exec_command(cmd)
 
+
 def test_overall(tmp_dir):
     """test pharokka overall"""
     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
+
 
 def test_overall_crispr(tmp_dir):
     """test pharokka overall crispr"""
@@ -89,11 +91,13 @@ def test_overall_crispr(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
 
+
 def test_overall_vfdb(tmp_dir):
     """test pharokka overall crispr"""
     input_fasta: Path = f"{VFDB_data}/NC_004617.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
+
 
 def test_overall_amr(tmp_dir):
     """test pharokka overall amr"""
@@ -101,11 +105,13 @@ def test_overall_amr(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
 
+
 def test_overall_tmrna(tmp_dir):
     """test pharokka overall tmrna"""
     input_fasta: Path = f"{tmrna_data}/NC_051700.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
+
 
 def test_meta(tmp_dir):
     """test pharokka meta"""
@@ -113,11 +119,13 @@ def test_meta(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m"
     exec_command(cmd)
 
+
 def test_overall_locus(tmp_dir):
     """test pharokka overall locus tag prefix"""
     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -l SAOMS1 -p SAOMS1"
     exec_command(cmd)
+
 
 def test_custom(tmp_dir):
     """test pharokka overall with custom db"""
@@ -125,11 +133,13 @@ def test_custom(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} --custom_hmm {custom_db} -o {tmp_dir} -t {threads} -f "
     exec_command(cmd)
 
+
 def test_custom_meta(tmp_dir):
     """test pharokka overall with custom db"""
     input_fasta: Path = f"{custom_data}/hundred_microviruses.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} --custom_hmm {custom_db} -o {tmp_dir} -t {threads} -f -m"
     exec_command(cmd)
+
 
 def test_overall_prodigal(tmp_dir):
     """test pharokka overall prodigal"""
@@ -137,11 +147,13 @@ def test_overall_prodigal(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g prodigal"
     exec_command(cmd)
 
+
 def test_overall_stop_recode(tmp_dir):
     """test pharokka overall recoded"""
     input_fasta: Path = f"{stop_recoding_data}/table_4/SRR1747055_scaffold_7.fa"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g prodigal -c 4"
     exec_command(cmd)
+
 
 def test_overall_dnaapler(tmp_dir):
     """test pharokka overall dnaapler"""
@@ -163,17 +175,20 @@ def test_overall_mmseqs(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --mmseqs2_only"
     exec_command(cmd)
 
+
 def test_meta_no_cds_contig(tmp_dir):
     """test pharokka meta with a contig with empty contigs"""
     input_fasta: Path = f"{meta_data}/fake_meta.fa"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m"
     exec_command(cmd)
 
+
 def test_meta_hmm(tmp_dir):
     """test pharokka meta hmm"""
     input_fasta: Path = f"{meta_data}/fake_meta.fa"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m --meta_hmm"
     exec_command(cmd)
+
 
 def test_meta_split(tmp_dir):
     """test pharokka meta split"""
@@ -188,11 +203,13 @@ def test_terminase(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --terminase --terminase_start 340 --terminase_strand neg"
     exec_command(cmd)
 
+
 def test_overall_genbank(tmp_dir):
     """test pharokka overall with genbank input"""
     input_gbk: Path = f"{genbank_data}/SAOMS1.gbk"
     cmd = f"pharokka.py -i {input_gbk} -d {database_dir} -o {tmp_dir} -t {threads} -f --genbank"
     exec_command(cmd)
+
 
 def test_overall_genbank_meta(tmp_dir):
     """test pharokka overall meta with genbank input"""

@@ -116,7 +116,7 @@ def main():
         )
         logger.info("Your custom CDS calls in this genbank file will be preserved.")
         validate_and_extract_genbank(args.infile, out_dir)
-        gene_predictor = 'genbank'
+        gene_predictor = "genbank"
         input_fasta = f"{out_dir}/genbank.fasta"
     else:
         validate_fasta(args.infile)
