@@ -4,9 +4,11 @@
 
 The easiest way to do this is with the `create_custom_hmm.py` script that comes with `pharokka` as follows:
 
-`create_custom_hmm.py -i <input directory of MSAs> -o <outdir> -p <prefix>`
+```
+create_custom_hmm.py -i <input directory of MSAs> -o <outdir> -p <prefix>
+```
 
-The resulting output you need to feed into `pharokka` in that example will be `outdir/prefix.h3m`
+The resulting output you need to feed into `pharokka.py` with the `--custom_hmm` parameter will be `outdir/prefix.h3m`
 
 ## Input
 
@@ -21,15 +23,21 @@ MSKSSGYATTSKPQEVVTRDIERKPYDLSHWSFKTGHIGRLQTFSVIPVVAGDSIELNMSAVLRLSPLRHFMYLDAVVDL
 ----------------MKGTDTRCLYDLDHWSHVSGNIGSLQTLSAIPVVAGDSMELNFTSLFRLSPLRRNLYLDAMVDLFAFYVPYRHVYG-----DTWIDFIKEGYDESQTLGTYT-IAAGEFINCTGAY-----LESQAVIPKWSIASYTRIWNRYFRHPTDSNEKDDDDLI----TASSGNQIYGYNCCHMKNIWSTGVDSELT--DDD--HKVDVTASKVDLLEIIQKKARFKTERQREWFG-QRYTDILDSVWGSNVNIDADERPELIMRTSTWLSGYDVDGTTETNIGTFSGKAFTTARLQFPMKYFNEHGTI-YIVALVRFPTIHAFERHYLFGKSEPTYKEIAGDPNVIRNEPPQAINPTDYIEN-ATATDVGLQPYAQWYRTHPSYTSLGFSNLDGHPFLQK-IIA-----NTDDAVYVDSNDYDEIFQTQQLQQWQSQGYVGLKAKRNIPDPRKSIFAGVK-----------
 ```
 
-For example, if my input directory was called `my_tail_msa` and contained 3 MSA files names `tail_family_1.fasta`, `tail_family_2.fasta` and `tail_family_3.fasta`, the follow command will create HMM profiles for all 3 MSA files, and combine them together into a `h3m` file with the prefix `tail`:
+For example, if my input directory was called `my_tail_msa` and contained 3 MSA files names `tail_family_1.fasta`, `tail_family_2.fasta` and `tail_family_3.fasta`, the following command will create HMM profiles for all 3 MSA files, and combine them together into a `h3m` file with the prefix `tail`:
 
-`create_custom_hmm.py -i my_tail_msa -o tail_hmms -p tail`
+```
+create_custom_hmm.py -i my_tail_msa -o tail_hmms -p tail
+```
 
 The resulting file to be used with `--custom_hmm` is `tail_hmms/tail.h3m`
 
+## Output
+
 So on a genome, you would run `pharokka` as follows:
 
-`pharokka.py -i <input fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  --custom_hmm tail_hmms/tail.h3m`
+```
+pharokka.py -i <input fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  --custom_hmm tail_hmms/tail.h3m
+```
 
 A gene hit to e.g. the tail_family_2 HMM profile found by PyHMMER will be indicated in the `custom_hmm_id` column of the `pharokka_cds_final_merged_output.tsv` output file as `tail_family_2`, with information about the `custom_hmm_bitscore`	`custom_hmm_evalue` for bitscore and evalue from PyHMMER. The annotations will supplement any PHROG annotation found and will be included in the `pharokka.gff` and `pharokka.gbk` files as 'custom_annotation=tail_family_2' in this example.
 

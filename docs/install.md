@@ -4,7 +4,9 @@
 
 The easiest way to install `pharokka` is via conda. For inexperienced command line users, this method is highly recommended.
 
-`conda install -c bioconda pharokka`
+```
+conda install -c bioconda pharokka
+```
 
 This will install all the dependencies along with `pharokka`. The dependencies are listed in environment.yml.
 
@@ -41,17 +43,17 @@ The dependencies found in environment.yml will then need to be installed manuall
 For example using conda to install the required dependencies:
 
 ```
-# assuming you are in the pharokka directory
 conda env create -f environment.yml
 conda activate pharokka_env
+# assuming you are in the pharokka directory 
+# installs pharokka from source
+pip install -e .
 pharokka.py --help
 ```
 
 # Database Installation
 
-* Pharokka v1.2.0 implements a major new feature. It quickly matches each input contig against the INPHARED database using mash distances,which may be useful if you are annotating novel phages or metagenomic input samples.
-* You will need to re-install the databases if you updating from an earlier version of pharokka than v1.2.0. 
-* This database will apply for all versions of Pharokka v1.2.0 and later.
+* **Note v 1.4.0 implements a new database with PHROGs HMM profiles. You will need to update the Pharokka database to use v1.4.0**
 
 To install the pharokka database to the default directory:
 
@@ -61,16 +63,16 @@ If you would like to specify a different database directory (recommended), that 
 
 `install_databases.py -o <path/to/databse_dir>`
 
-If this does not work, you an alternatively download the databases from Zenodo at https://zenodo.org/record/7563578/files/pharokka_v1.2.0_database.tar.gz and untar the directory in a location of your choice.
+If this does not work, you an alternatively download the databases from Zenodo at https://zenodo.org/record/8267900/files/pharokka_v1.4.0_databases.tar.gz and untar the directory in a location of your choice.
 
 If you prefer to use the command line:
 
 ```
-wget "https://zenodo.org/record/7563578/files/pharokka_v1.2.0_database.tar.gz"
-tar -xzf pharokka_v1.2.0_database.tar.gz
+wget "https://zenodo.org/record/8267900/files/pharokka_v1.4.0_databases.tar.gz"
+tar -xzf pharokka_v1.4.0_databases.tar.gz
 ```
 
-which will create a directory called "pharokka_v1.2.0_database" containing the databases.
+which will create a directory called "pharokka_v1.4.0_databases" containing the databases.
 
 # Beginner Conda Installation
 

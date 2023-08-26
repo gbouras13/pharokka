@@ -44,8 +44,8 @@ If you require  fast annotations of extremely large datasets (i.e. thousands of 
 
 1. The improved sensitivity of gene annotation with PyHMMER and a demonstration of how `--fast` is slower for metagenomes. 
    * If you can deal with the compute cost (especially for large metagenomes), I highly recommend `--fast` or  `--meta_hmm` for metagenomes given how much more sensitive HMM search is.
-2. The slight speed-up over v1.3.2 with `--mmseqs2_only`.
-3. The large speed-up over v1.3.2 with `--fast` for phage isolates - with the proviso that no virulence factors or AMR genes will be not detected.
+2. The large speed-up over v1.3.2 with `--fast` for phage isolates - with the proviso that no virulence factors or AMR genes will be not detected. 
+3. The slight speed-up over v1.3.2 with `--mmseqs2_only`.
 
 All benchmarking was conducted on a Intel® Core™ i7-10700K CPU @ 3.80GHz on a machine running Ubuntu 20.04.6 LTS with 16 threads (`-t 16`). 
 
@@ -54,9 +54,9 @@ SAOMS1 was run with Phanotate
 | Phage SAOMS1           | pharokka v1.4.0 | pharokka v1.4.0 `--fast` | pharokka v1.3.2 |   
 |------------------------|-----------------|--------------------------|-----------------|
 | Time (min)             | 3.73            | 0.70                     | 5.08            | 
-| CDS                    | 246             | 212                      | 212             | 
-| Annotated Function CDS | 92              | 93                       | 92              | 
-| Unknown Function CDS   | 154             | 119                      | 120             |  
+| CDS                    | 246             | 246                      | 246             | 
+| Annotated Function CDS | 93              | 93                       | 92              | 
+| Unknown Function CDS   | 153             | 153                      | 154             |  
 
 The 673 crAss-like genomes were run with `-m` (defaults to `--mmseqs2_only` in v 1.4.0) and with `-g prodigal` (i.e. pyrodigal v2.3.0).
 
@@ -64,7 +64,7 @@ The 673 crAss-like genomes were run with `-m` (defaults to `--mmseqs2_only` in v
 |------------------------|---------------------------|----------------------------------|-----------------|
 | Time (min)             | 35.62                     | 11.05                            | 13.27           |
 | CDS                    | 91999                     | 91999                            | 91999           |
-| Annotated Function CDS | 16713                     | 9150                             | 9150            |
+| Annotated Function CDS | **16713**                 | 9150                             | 9150            |
 | Unknown Function CDS   | 75286                     | 82849                            | 82849           |
 
  
