@@ -379,13 +379,13 @@ def main():
         # splits the input fasta into single fastas
         pharok.split_fasta_singles()
 
-    # write vfdb and card tophits
+    # create and write vfdb and card tophits
     # needs to be before .create_txt or else won't count properly
-    # only if mmseqs2 has been run
-    if pharok.mmseqs_flag is True:
-        pharok.write_tophits_vfdb_card()
+    # will only write to file if mmseqs2 has been run (in function)
 
-    # write the summary tsv outputs
+    pharok.write_tophits_vfdb_card()
+
+    # write the summary tsv outputs and functions
     pharok.create_txt()
 
     # convert to genbank

@@ -1316,10 +1316,12 @@ class Pharok:
             "stop",
             "frame",
         ]
-        self.vfdb_results = self.vfdb_results.sort_values(by=["start"])
-        self.vfdb_results.to_csv(
-            os.path.join(self.out_dir, "top_hits_vfdb.tsv"), sep="\t", index=False
-        )
+
+        if self.mmseqs_flag is True:
+            self.vfdb_results = self.vfdb_results.sort_values(by=["start"])
+            self.vfdb_results.to_csv(
+                os.path.join(self.out_dir, "top_hits_vfdb.tsv"), sep="\t", index=False
+            )
 
         ######################################
         ##### update card with locus tag #####
@@ -1357,10 +1359,11 @@ class Pharok:
             "stop",
             "frame",
         ]
-        self.card_results = self.card_results.sort_values(by=["start"])
-        self.card_results.to_csv(
-            os.path.join(self.out_dir, "top_hits_card.tsv"), sep="\t", index=False
-        )
+        if self.mmseqs_flag is True:
+            self.card_results = self.card_results.sort_values(by=["start"])
+            self.card_results.to_csv(
+                os.path.join(self.out_dir, "top_hits_card.tsv"), sep="\t", index=False
+            )
 
     def create_txt(self):
         """
