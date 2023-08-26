@@ -1295,6 +1295,7 @@ class Pharok:
         # keep only desired columns  and save
         self.vfdb_results = self.vfdb_results[
             [
+                "contig",
                 "locus_tag",
                 "vfdb_hit_x",
                 "vfdb_alnScore_x",
@@ -1306,6 +1307,7 @@ class Pharok:
         ]
 
         self.vfdb_results.columns = [
+            "contig",
             "gene",
             "vfdb_hit",
             "vfdb_alnScore",
@@ -1335,6 +1337,7 @@ class Pharok:
         # keep only desired columns   sand save
         self.card_results = self.card_results[
             [
+                "contig",
                 "locus_tag",
                 "CARD_hit_x",
                 "CARD_alnScore_x",
@@ -1345,6 +1348,7 @@ class Pharok:
             ]
         ]
         self.card_results.columns = [
+            "contig",
             "gene",
             "card_hit",
             "card_alnScore",
@@ -1417,56 +1421,6 @@ class Pharok:
             names=col_list,
         )
 
-        #### vfdb
-        # gene has the contig
-        try:
-            # strip off the CDS part
-            self.vfdb_results[["gene", "coordinate"]] = self.vfdb_results[
-                "gene"
-            ].str.split("_CDS_", expand=True)
-            # # strip off the index with the last period delimiter
-            # just need this to set contig
-            self.vfdb_results["contig"] = self.vfdb_results[
-                "gene"
-            ]  # .str.rsplit("\\.",1)
-        except:
-            # instantiate empty dataframe if there are no hits
-            self.vfdb_results = pd.DataFrame(
-                columns=[
-                    "vfdb_hit",
-                    "gene",
-                    "coordinate",
-                    "contig",
-                    "vfdb_alnScore",
-                    "vfdb_seqIdentity",
-                    "vfdb_eVal",
-                ]
-            )
-
-        #### card
-        # gene has the contig
-        try:
-            self.card_results[["gene", "coordinate"]] = self.card_results[
-                "gene"
-            ].str.split("_CDS_", expand=True)
-            # # strip off the index with the last period delimiter
-            # just need this to set contig
-            self.card_results["contig"] = self.card_results[
-                "gene"
-            ]  # .str.rsplit("\\.",1)
-        except:
-            # instantiate empty dataframe if there are no hits
-            self.card_results = pd.DataFrame(
-                columns=[
-                    "CARD_hit",
-                    "gene",
-                    "coordinate",
-                    "contig",
-                    "CARD_alnScore",
-                    "CARD_seqIdentity",
-                    "CARD_eVal",
-                ]
-            )
         # write descriptions for each contig
         for contig in contigs:
             # get cds's in the contig
@@ -1484,14 +1438,14 @@ class Pharok:
                 vfdb_count = len(
                     self.vfdb_results[self.vfdb_results["contig"] == contig]
                 )
-                vfdb_count = self.vfdb_results["gene"].str.contains(contig).sum()
+                vfdb_count = self.vfdb_results["contig"].str.contains(contig).sum()
             else:
                 vfdb_count = 0
             if len(self.card_results["contig"]) != 0:
                 CARD_count = len(
                     self.card_results[self.card_results["contig"] == contig]
                 )
-                CARD_count = self.card_results["gene"].str.contains(contig).sum()
+                CARD_count = self.card_results["contig"].str.contains(contig).sum()
             else:
                 CARD_count = 0
             # get the total length of the contig

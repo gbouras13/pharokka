@@ -374,6 +374,7 @@ def tidy_prodigal_output(out_dir):
     )
     return prod_filt_df
 
+
 def tidy_genbank_output(out_dir, genbank_file, coding_table):
     """
     Tidies phanotate output
@@ -390,22 +391,22 @@ def tidy_genbank_output(out_dir, genbank_file, coding_table):
     # output nuc
     fasta_nucl_tmp = "genbank_out_tmp.fasta"
     # output aa file
-    fasta_output_aas_tmp =  "genbank_aas_tmp.fasta"
+    fasta_output_aas_tmp = "genbank_aas_tmp.fasta"
 
     # make dataframe
-    for record in SeqIO.parse(genbank_file, 'genbank'):
+    for record in SeqIO.parse(genbank_file, "genbank"):
         for feature in record.features:
-            if feature.type == 'CDS':
+            if feature.type == "CDS":
                 frame = feature.location.strand
-                if frame == 1: # pos
+                if frame == 1:  # pos
                     frame = "+"
                     start = feature.location.start
                     stop = feature.location.end
-                else: # neg
+                else:  # neg
                     frame = "-"
                     start = feature.location.end
                     stop = feature.location.start
-                    
+
                 contig = record.id
                 starts.append(start)
                 stops.append(stop)
@@ -413,15 +414,10 @@ def tidy_genbank_output(out_dir, genbank_file, coding_table):
                 contigs.append(contig)
 
     # Create a pandas DataFrame
-    data = {
-        'start': starts,
-        'stop': stops,
-        'frame': frames,
-        'contig': contigs
-    }
+    data = {"start": starts, "stop": stops, "frame": frames, "contig": contigs}
 
     gen_df = pd.DataFrame(data)
-    gen_df['score'] = "No_score"
+    gen_df["score"] = "No_score"
 
     # get the gene
     gen_df["gene"] = (
@@ -433,27 +429,28 @@ def tidy_genbank_output(out_dir, genbank_file, coding_table):
         + gen_df["stop"].astype(str)
     )
 
-    gen_df.to_csv(
-        os.path.join(out_dir, "cleaned_genbank.tsv"), sep="\t", index=False
-    )
-    
+    gen_df.to_csv(os.path.join(out_dir, "cleaned_genbank.tsv"), sep="\t", index=False)
 
     # get temporary AA output
     with open(os.path.join(out_dir, fasta_nucl_tmp), "w") as nt_fa:
         with open(os.path.join(out_dir, fasta_output_aas_tmp), "w") as aa_fa:
             i = 0
-            for record in SeqIO.parse(genbank_file, 'genbank'):
+            for record in SeqIO.parse(genbank_file, "genbank"):
                 for feature in record.features:
-                    if feature.type == 'CDS':
+                    if feature.type == "CDS":
                         header = str(gen_df["contig"].iloc[i]) + str(i)
                         description = (
-                            str(gen_df["start"].iloc[i]) + "_" + str(gen_df["stop"].iloc[i])
+                            str(gen_df["start"].iloc[i])
+                            + "_"
+                            + str(gen_df["stop"].iloc[i])
                         )
 
                         # Extract NT and CDS sequence
                         cds_nt_seq = feature.location.extract(record.seq)
-                        cds_amino_acid_seq = cds_nt_seq.translate(to_stop=True, table=coding_table)
-                        
+                        cds_amino_acid_seq = cds_nt_seq.translate(
+                            to_stop=True, table=coding_table
+                        )
+
                         # save to file
                         nt_record = aa_record = SeqRecord(
                             cds_nt_seq,
@@ -473,7 +470,7 @@ def tidy_genbank_output(out_dir, genbank_file, coding_table):
 
     return gen_df
 
- 
+
 def translate_fastas(out_dir, gene_predictor, coding_table, genbank_file):
     """
     Translates input CDSs to amino acids. For genbank, it will just output the CDS coordinates in the file
@@ -493,11 +490,12 @@ def translate_fastas(out_dir, gene_predictor, coding_table, genbank_file):
     fasta_output_aas_tmp = gene_predictor + "_aas_tmp.fasta"
 
     if gene_predictor != "genbank":
-
         # translate for temporary AA output
         with open(os.path.join(out_dir, fasta_output_aas_tmp), "w") as aa_fa:
             i = 0
-            for dna_record in SeqIO.parse(os.path.join(out_dir, fasta_input_tmp), "fasta"):
+            for dna_record in SeqIO.parse(
+                os.path.join(out_dir, fasta_input_tmp), "fasta"
+            ):
                 dna_header = str(clean_df["contig"].iloc[i]) + str(i)
                 dna_description = (
                     str(clean_df["start"].iloc[i]) + "_" + str(clean_df["stop"].iloc[i])

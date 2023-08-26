@@ -14,13 +14,19 @@ pharokka.py -i $test_data/Standard_examples/SAOMS1.fasta -d $db_dir -o $out_dir/
 # AMR
 pharokka.py -i $test_data/AMR_example/NC_007458.fasta -d $db_dir -o $out_dir/NC_007458 -t 8 -f
 
+# genbank
+pharokka.py -i $test_data/Standard_examples/SAOMS1_Output/pharokka.gbk -d $db_dir -o $out_dir/SAOMS1_genbank -t 8 -f --genbank
+
+# meta genbank
+pharokka.py -i $test_data/genbank_examples/hundred_microviruses.gbk -d $db_dir -o $out_dir/hundred_microviruses_genbank -m -t 8 -f --genbank
+
 # CRISPR
 pharokka.py -i $test_data/CRISPR_example/Biggiephage_A_fullcontig_CasΦ1.fasta -d $db_dir -o $out_dir/Biggiephage -t 8 -f
 
 # tmRNA
 pharokka.py -i $test_data/tmRNA_example/NC_051700.fasta -d $db_dir -o $out_dir/tmRNA -t 8 -f
 
-# tmRNA
+# vfdb
 pharokka.py -i $test_data/VFDB_example/NC_004617.fasta -d $db_dir -o $out_dir/VFDB -t 8 -f
 
 # normal prod
