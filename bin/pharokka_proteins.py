@@ -143,7 +143,7 @@ def main():
 
     if hmm_flag is True:
         # runs pyhmmer on PHROGs
-        logger.info("Running pyhmmer.")
+        logger.info("Running PyHMMER.")
         best_results_pyhmmer = run_pyhmmer_proteins(
             input_fasta, db_dir, args.threads, args.evalue
         )
@@ -177,6 +177,13 @@ def main():
     # cleanup
 
     remove_directory(os.path.join(out_dir, "mmseqs"))
+    remove_file(os.path.join(out_dir, "CARD_results.tsv"))
+    remove_file(os.path.join(out_dir, "vfdb_results.tsv"))
+    remove_directory(os.path.join(out_dir, "CARD"))
+    remove_directory(os.path.join(out_dir, "vfdb"))
+    remove_directory(os.path.join(out_dir, "VFDB_dir"))
+    remove_directory(os.path.join(out_dir, "tmp_dir"))
+    remove_file(os.path.join(out_dir, "mmseqs_results.tsv"))
     remove_file(os.path.join(out_dir, "CARD_results.tsv"))
     remove_file(os.path.join(out_dir, "vfdb_results.tsv"))
     remove_directory(os.path.join(out_dir, "CARD"))
