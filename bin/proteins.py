@@ -413,6 +413,11 @@ class Pharok_Prot:
             else:  # no mmseqs2 hits
                 tophits_df["mmseqs_top_hit"] = "No_MMseqs_PHROG_hit"
 
+        tophits_df.to_csv(
+            os.path.join(self.out_dir, f"{self.prefix}_tophits_test.tsv"),
+            sep="\t",
+            index=False,
+        )
         ####################
         # combine phrogs
         ####################

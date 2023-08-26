@@ -181,6 +181,13 @@ def main():
     remove_file(os.path.join(out_dir, "vfdb_results.tsv"))
     remove_directory(os.path.join(out_dir, "CARD"))
     remove_directory(os.path.join(out_dir, "vfdb"))
+    remove_directory(os.path.join(out_dir, "VFDB_dir"))
+    remove_directory(os.path.join(out_dir, "tmp_dir"))
+    remove_directory(os.path.join(out_dir, "mmseqs_results.tsv"))
+    remove_file(os.path.join(out_dir, "CARD_results.tsv"))
+    remove_file(os.path.join(out_dir, "vfdb_results.tsv"))
+    remove_directory(os.path.join(out_dir, "CARD"))
+    remove_directory(os.path.join(out_dir, "vfdb"))
 
     # Determine elapsed time
     elapsed_time = time.time() - start_time
