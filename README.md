@@ -114,7 +114,7 @@ SAOMS1 phage (GenBank: MW460250.1) was isolated and sequenced by: Yerushalmy, O.
 
 Please see [plotting](docs/plotting.md) for details on all plotting parameter options. 
 
-## Table of Contents
+# Table of Contents
 
 - [pharokka](#pharokka)
   - [Fast Phage Annotation Tool](#fast-phage-annotation-tool)
@@ -125,7 +125,7 @@ Please see [plotting](docs/plotting.md) for details on all plotting parameter op
 - [Brief Overview](#brief-overview)
   - [Pharokka v 1.4.0 Update (25 August 2023)](#pharokka-v-140-update-25-august-2023)
   - [Pharokka v 1.3.0 Update](#pharokka-v-130-update)
-  - [Table of Contents](#table-of-contents)
+- [Table of Contents](#table-of-contents)
 - [Installation](#installation)
   - [Conda Installation](#conda-installation)
   - [Pip](#pip)
@@ -377,8 +377,8 @@ If you require  fast annotations of extremely large datasets (i.e. thousands of 
 `pharokka` v1.4.0 has also been run on phage SAOMS1 and also the same 673 crAss phage dataset to showcase:
 
 1. The improved sensitivity of gene annotation with PyHMMER and a demonstration of how `--fast` is slower for metagenomes. 
-   * If you can deal with the compute cost (especially for large metagenomes), I highly recommend `--fast` or  `--meta_hmm` for metagenomes given how much more sensitive HMM search is.
-2. The large speed-up over v1.3.2 with `--fast` for phage isolates - with the proviso that no virulence factors or AMR genes will be not detected. 
+    * If you can deal with the compute cost (especially for large metagenomes), I highly recommend `--fast` or  `--meta_hmm` for metagenomes given how much more sensitive HMM search is.
+2. The large speed-up over v1.3.2 with `--fast` for phage isolates - with the proviso that no virulence factors or AMR genes will be detected. 
 3. The slight speed-up over v1.3.2 with `--mmseqs2_only`.
 
 All benchmarking was conducted on a Intel® Core™ i7-10700K CPU @ 3.80GHz on a machine running Ubuntu 20.04.6 LTS with 16 threads (`-t 16`). 
