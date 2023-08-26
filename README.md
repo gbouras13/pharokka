@@ -114,7 +114,7 @@ SAOMS1 phage (GenBank: MW460250.1) was isolated and sequenced by: Yerushalmy, O.
 
 Please see [plotting](docs/plotting.md) for details on all plotting parameter options. 
 
-## Table of Contents
+# Table of Contents
 
 - [pharokka](#pharokka)
   - [Fast Phage Annotation Tool](#fast-phage-annotation-tool)
@@ -125,7 +125,7 @@ Please see [plotting](docs/plotting.md) for details on all plotting parameter op
 - [Brief Overview](#brief-overview)
   - [Pharokka v 1.4.0 Update (25 August 2023)](#pharokka-v-140-update-25-august-2023)
   - [Pharokka v 1.3.0 Update](#pharokka-v-130-update)
-  - [Table of Contents](#table-of-contents)
+- [Table of Contents](#table-of-contents)
 - [Installation](#installation)
   - [Conda Installation](#conda-installation)
   - [Pip](#pip)

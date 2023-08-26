@@ -90,7 +90,10 @@ pharokka.py \
   --terminase_start 82226 \
   --terminase_strand neg
 ```
+
+
 Of course, you can also use this functionality to reorient your phage however you wish!
+
 
 ```
 usage: pharokka.py [-h] [-i INFILE] [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG] [-g GENE_PREDICTOR] [-m] [-s] [-c CODING_TABLE]
