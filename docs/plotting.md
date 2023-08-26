@@ -108,6 +108,6 @@ options:
                         Text file with list of CDS IDs (from gff file) that are guaranteed to be labelled.
 ```
 
-![Image](SAOMS1.png)
+![Image](SAOMS1_plot.png)
 
 SAOMS1 phage (GenBank: MW460250.1) was isolated and sequenced by: Yerushalmy, O., Alkalay-Oren, S., Coppenhagen-Glazer, S. and Hazan, R. from the Institute of Dental Sciences and School of Dental Medicine, Hebrew University, Israel.
