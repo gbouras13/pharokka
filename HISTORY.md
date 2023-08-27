@@ -1,7 +1,7 @@
 History
 =======
 
-1.4.0 (2023-08-25)
+1.4.0 (2023-08-27)
 ------------------
 
 Pharokka v1.4.0 is a large update implementing:
