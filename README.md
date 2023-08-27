@@ -67,7 +67,7 @@ So if you can't get `pharokka` to install on your machine for whatever reason or
 
 `pharokka` uses [PHANOTATE](https://github.com/deprekate/PHANOTATE), the only gene prediction program tailored to bacteriophages, as the default program for gene prediction. [Prodigal](https://github.com/hyattpd/Prodigal) is also available as an alternative. Following this, functional annotations are assigned by matching each predicted coding sequence (CDS) to the [PHROGs](https://phrogs.lmge.uca.fr), [CARD](https://card.mcmaster.ca) and [VFDB](http://www.mgc.ac.cn/VFs/main.htm) databases using [MMseqs2](https://github.com/soedinglab/MMseqs2). As of v1.4.0, `pharokka` will also match each CDS to the PHROGs database using more sensitive Hidden Markov Models using [PyHMMER](https://github.com/althonos/pyhmmer). Pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). `pharokka` also generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage) and check out the full [documentation](https://pharokka.readthedocs.io) for more details.  
 
-## Pharokka v 1.4.0 Update (25 August 2023)
+## Pharokka v 1.4.0 Update (27 August 2023)
 
 Pharokka v1.4.0 is a large update implementing:
 
@@ -123,7 +123,7 @@ Please see [plotting](docs/plotting.md) for details on all plotting parameter op
 - [Paper](#paper)
 - [Pharokka with Galaxy Europe Webserver](#pharokka-with-galaxy-europe-webserver)
 - [Brief Overview](#brief-overview)
-  - [Pharokka v 1.4.0 Update (25 August 2023)](#pharokka-v-140-update-25-august-2023)
+  - [Pharokka v 1.4.0 Update (27 August 2023)](#pharokka-v-140-update-27-august-2023)
   - [Pharokka v 1.3.0 Update](#pharokka-v-130-update)
 - [Table of Contents](#table-of-contents)
 - [Installation](#installation)
