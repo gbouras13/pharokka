@@ -120,6 +120,13 @@ def test_meta(tmp_dir):
     exec_command(cmd)
 
 
+def test_meta_dnaapler_all_bug(tmp_dir):
+    """test pharokka meta dnaapler bu"""
+    input_fasta: Path = f"{meta_data}/combined_meta.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m -s --dnaapler --meta_hmm"
+    exec_command(cmd)
+
+
 def test_overall_locus(tmp_dir):
     """test pharokka overall locus tag prefix"""
     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"

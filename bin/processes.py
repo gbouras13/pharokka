@@ -1,8 +1,5 @@
-import logging
 import os
-import shutil
 import subprocess as sp
-import sys
 from datetime import datetime
 
 import pandas as pd
@@ -13,7 +10,7 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from external_tools import ExternalTool
 from loguru import logger
-from util import count_contigs, remove_directory
+from util import remove_directory
 
 ##### phanotate meta mode ########
 
@@ -849,10 +846,11 @@ def run_mash_dist(out_dir, db_dir, logdir):
         logger.error("Error with mash dist\n")
 
 
-def run_dnaapler(filepath_in, out_dir, threads, logdir):
+def run_dnaapler(filepath_in, contig_count, out_dir, threads, logdir):
     """
     Runs dnaapler
     :param filepath_in: input fasta file
+    :param contig_count: int numbher of contigs
     :param out_dir: output directory
     :param threads: number of threads
     :params prefix: prefix
@@ -864,8 +862,6 @@ def run_dnaapler(filepath_in, out_dir, threads, logdir):
     )
 
     dnaapler_output_dir = os.path.join(out_dir, "dnaapler")
-
-    contig_count = count_contigs(filepath_in)
 
     if contig_count == 1:
         dnaapler = ExternalTool(
