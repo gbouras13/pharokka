@@ -121,7 +121,7 @@ def test_meta(tmp_dir):
 
 
 def test_meta_dnaapler_all_bug(tmp_dir):
-    """test pharokka meta dnaapler bu"""
+    """test pharokka meta dnaapler bug and split"""
     input_fasta: Path = f"{meta_data}/combined_meta.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m -s --dnaapler --meta_hmm"
     exec_command(cmd)
@@ -190,18 +190,18 @@ def test_meta_no_cds_contig(tmp_dir):
     exec_command(cmd)
 
 
-def test_meta_hmm(tmp_dir):
-    """test pharokka meta hmm"""
-    input_fasta: Path = f"{meta_data}/fake_meta.fa"
-    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m --meta_hmm"
-    exec_command(cmd)
+# def test_meta_hmm(tmp_dir):
+#     """test pharokka meta hmm"""
+#     input_fasta: Path = f"{meta_data}/fake_meta.fa"
+#     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m --meta_hmm"
+#     exec_command(cmd)
 
 
-def test_meta_split(tmp_dir):
-    """test pharokka meta split"""
-    input_fasta: Path = f"{meta_data}/fake_meta.fa"
-    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m -s"
-    exec_command(cmd)
+# def test_meta_split(tmp_dir):
+#     """test pharokka meta split"""
+#     input_fasta: Path = f"{meta_data}/fake_meta.fa"
+#     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m -s"
+#     exec_command(cmd)
 
 
 def test_terminase(tmp_dir):
