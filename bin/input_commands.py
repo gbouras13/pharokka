@@ -197,13 +197,16 @@ def instantiate_dirs(output_dir, meta, force):
 
 
 def validate_fasta(filename):
-    with open(filename, "r") as handle:
-        fasta = SeqIO.parse(handle, "fasta")
-        logger.info("Checking Input FASTA.")
-        if any(fasta):
-            logger.info("FASTA checked.")
-        else:
-            logger.error("Error: Input file is not in the FASTA format.\n")
+    if os.path.isfile(filename) == False: # if file doesnt exist
+        logger.error(f"Error: Input file {filename} does not exist. Please check your input.")
+    else:
+        with open(filename, "r") as handle:
+            fasta = SeqIO.parse(handle, "fasta")
+            logger.info("Checking Input FASTA.")
+            if any(fasta):
+                logger.info("FASTA checked.")
+            else:
+                logger.error("Error: Input file is not in the FASTA format.")
 
 
 def validate_gene_predictor(gene_predictor, genbank_flag):

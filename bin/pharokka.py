@@ -24,7 +24,7 @@ from processes import (concat_phanotate_meta, concat_trnascan_meta,
                        run_phanotate_fasta_meta, run_phanotate_txt_meta,
                        run_pyrodigal, run_trna_scan, run_trnascan_meta,
                        split_input_fasta, translate_fastas)
-from util import get_version
+from util import count_contigs, get_version
 
 
 def main():
@@ -143,11 +143,23 @@ def main():
             args.terminase_strand = "nothing"
             args.terminase_start = "nothing"
 
+        # count contigs
+        contig_count = count_contigs(input_fasta)
+
         # runs dnaapler
-        dnaapler_success = run_dnaapler(input_fasta, out_dir, args.threads, logdir)
+        dnaapler_success = run_dnaapler(
+            input_fasta, contig_count, out_dir, args.threads, logdir
+        )
 
         if dnaapler_success == True:
-            input_fasta = os.path.join(out_dir, "dnaapler/dnaapler_reoriented.fasta")
+            if contig_count == 1:
+                input_fasta = os.path.join(
+                    out_dir, "dnaapler/dnaapler_reoriented.fasta"
+                )
+            elif contig_count > 1:  # dnaapler all
+                input_fasta = os.path.join(
+                    out_dir, "dnaapler/dnaapler_all_reoriented.fasta"
+                )
             destination_file = os.path.join(
                 out_dir, f"{prefix}_dnaapler_reoriented.fasta"
             )

@@ -16,7 +16,7 @@ jobs:
       with:
         python-version: 3.9
         activate-environment: pharokka_env
-        environment-file: environment.yaml
+        environment-file: environment.yml
         auto-activate-base: false
         miniforge-variant: Mambaforge
         channels: conda-forge,bioconda,defaults
