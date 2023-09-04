@@ -30,7 +30,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="Pharokka",
-    version="1.4.0",
+    version="1.4.1",
     author="George Bouras",
     author_email="george.bouras@adelaide.edu.au",
     description="Fast phage annotation tool",
