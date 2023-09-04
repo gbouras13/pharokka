@@ -1,6 +1,12 @@
 History
 =======
 
+1.4.1 (2023-09-04)
+------------------
+
+Pharokka v1.4.1 is a small patch fix release fixing #286, where if you specified `--dnaapler` and `-m`, pharokka would not find the correct output file from `dnaapler` and would crash. 
+
+
 1.4.0 (2023-08-27)
 ------------------
 
