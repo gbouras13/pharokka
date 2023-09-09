@@ -213,7 +213,9 @@ def validate_gene_predictor(gene_predictor, genbank_flag):
     if gene_predictor == "phanotate":
         logger.info("Phanotate will be used for gene prediction.")
     elif gene_predictor == "prodigal":
-        logger.info("Prodigal will be used for gene prediction.")
+        logger.info("Prodigal implemented with pyrodigal will be used for gene prediction.")
+    elif gene_predictor == "prodigal-gv":
+        logger.info("Prodigal-gv implemented with pyrodigal-gv will be used for gene prediction.")
     elif gene_predictor == "genbank":
         if genbank_flag is False:
             logger.error(

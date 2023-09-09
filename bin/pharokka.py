@@ -26,6 +26,7 @@ from processes import (concat_phanotate_meta, concat_trnascan_meta,
                        split_input_fasta, translate_fastas)
 from util import count_contigs, get_version
 
+from pyrodigal_gv import   run_pyrodigal_gv
 
 def main():
     # get the args
@@ -278,6 +279,9 @@ def main():
         run_pyrodigal(input_fasta, out_dir, args.meta, args.coding_table)
     elif gene_predictor == "genbank":
         logger.info("Extracting CDS information from your genbank file.")
+    elif gene_predictor == "prodigal-gv":
+        logger.info("Implementing Prodigal-gv using Pyrodigal-gv.")
+        run_pyrodigal_gv(input_fasta, out_dir, args.coding_table)
 
     # translate fastas (parse genbank)
     translate_fastas(out_dir, gene_predictor, args.coding_table, args.infile)

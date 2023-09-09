@@ -273,12 +273,12 @@ def run_pyrodigal(filepath_in, out_dir, meta, coding_table):
     # for training if you want different coding table
     seqs = [bytes(record.seq) for record in SeqIO.parse(filepath_in, "fasta")]
     record = SeqIO.parse(filepath_in, "fasta")
-    orf_finder = pyrodigal.OrfFinder(meta=prodigal_metamode)
+    orf_finder = pyrodigal.GeneFinder(meta=prodigal_metamode)
 
     # coding table possible if false
     if prodigal_metamode == False:
         trainings_info = orf_finder.train(*seqs, translation_table=int(coding_table))
-        orf_finder = pyrodigal.OrfFinder(trainings_info, meta=prodigal_metamode)
+        orf_finder = pyrodigal.GeneFinder(trainings_info, meta=prodigal_metamode)
 
     with open(os.path.join(out_dir, "prodigal_out.gff"), "w") as dst:
         for i, record in enumerate(SeqIO.parse(filepath_in, "fasta")):
