@@ -514,9 +514,9 @@ def translate_fastas(out_dir, gene_predictor, coding_table, genbank_file):
     if gene_predictor == "phanotate":
         clean_df = tidy_phanotate_output(out_dir)
     elif gene_predictor == "prodigal":
-        clean_df = tidy_prodigal_output(out_dir)
+        clean_df = tidy_prodigal_output(out_dir, False) # gv_flag is false
     elif gene_predictor == "prodigal-gv":
-        clean_df = tidy_prodigal_output(out_dir)
+        clean_df = tidy_prodigal_output(out_dir, True)  # gv_flag is true
     elif gene_predictor == "genbank":
         clean_df = tidy_genbank_output(out_dir, genbank_file, coding_table)
 
