@@ -180,7 +180,8 @@ class Pharok:
         )
         prot_dict = SeqIO.to_dict(SeqIO.parse(fasta_input_aas_tmp, "fasta"))
 
-        self.prot_seq_df = cds_df
+        # make a copy of cds_df
+        self.prot_seq_df = cds_df.copy()
 
         # to match the output for gff
         self.prot_seq_df[["gene", "st"]] = self.prot_seq_df["gene"].str.split(
