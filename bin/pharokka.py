@@ -128,7 +128,7 @@ def main():
 
     # dependencies
     logger.info("Checking dependencies.")
-    check_dependencies()
+    (phanotate_version, prodigal_version) = check_dependencies()
 
     # instantiation/checking fasta and gene_predictor
     if args.genbank is True:
@@ -383,6 +383,8 @@ def main():
     pharok.mmseqs_flag = mmseqs_flag
     pharok.hmm_flag = hmm_flag
     pharok.custom_hmm_flag = custom_hmm_flag
+    pharok.phanotate_version = prodigal_version
+    pharok.prodigal_version = prodigal_version
     if pharok.hmm_flag is True:
         pharok.pyhmmer_results_dict = best_results_pyhmmer
     if pharok.custom_hmm_flag is True:

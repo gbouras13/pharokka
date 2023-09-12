@@ -322,10 +322,10 @@ def check_dependencies():
     except:
         logger.error("Phanotate not found. Please reinstall pharokka.")
     phan_out, _ = process.communicate()
-    phanotate_out = phan_out.decode().strip()
-    phanotate_major_version = int(phanotate_out.split(".")[0])
-    phanotate_minor_version = int(phanotate_out.split(".")[1])
-    phanotate_minorest_version = phanotate_out.split(".")[2]
+    phanotate_version = phan_out.decode().strip()
+    phanotate_major_version = int(phanotate_version.split(".")[0])
+    phanotate_minor_version = int(phanotate_version.split(".")[1])
+    phanotate_minorest_version = phanotate_version.split(".")[2]
 
     logger.info(
         f"Phanotate version found is v{phanotate_major_version}.{phanotate_minor_version}.{phanotate_minorest_version}"
@@ -529,13 +529,18 @@ def check_dependencies():
     # pyrodigal
     #######
 
+    pyrodigal_version = __version__
     pyrodigal_major_version = int(__version__.split(".")[0])
 
-    if pyrodigal_major_version < 2:
+    if pyrodigal_major_version < 3:
         logger.error("Pyrodigal is the wrong version. Please re-install pharokka.")
 
     logger.info(f"Pyrodigal version is v{__version__}")
     logger.info(f"Pyrodigal version is ok.")
+
+    return phanotate_version, pyrodigal_version
+
+
 
 
 def instantiate_split_output(out_dir, split):

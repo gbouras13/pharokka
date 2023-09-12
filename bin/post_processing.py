@@ -58,6 +58,8 @@ class Pharok:
         mmseqs_flag: bool = True,
         hmm_flag: bool = True,
         custom_hmm_flag: bool = False,
+        phanotate_version: str = "1.5.0",
+        prodigal_version: str = "3.0.0"
     ) -> None:
         """
         Parameters
@@ -104,6 +106,10 @@ class Pharok:
             whether HMM was run
         custom_hmm_flag: bool
             whether a custom db of HMMs was run
+        phanotate_version: str
+            phanotate_version from check_dependencies()
+        prodigal_version: str
+            prodigal_version from check_dependencies()
         """
         self.out_dir = out_dir
         self.db_dir = db_dir
@@ -127,6 +133,8 @@ class Pharok:
         self.mmseqs_flag = mmseqs_flag
         self.hmm_flag = hmm_flag
         self.custom_hmm_flag = custom_hmm_flag
+        self.phanotate_version = phanotate_version
+        self.prodigal_version = prodigal_version
 
     def process_results(self):
         """
@@ -2012,6 +2020,8 @@ def remove_post_processing_files(out_dir, gene_predictor, meta):
         remove_file(os.path.join(out_dir, "phanotate_out.txt"))
     if gene_predictor == "prodigal":
         remove_file(os.path.join(out_dir, "prodigal_out.gff"))
+    elif gene_predictor == "prodigal-gv":
+        remove_file(os.path.join(out_dir, "prodigal-gv_out.gff"))
     # delete the tmp meta files
     if meta == True:
         remove_directory(os.path.join(out_dir, "input_split_tmp/"))
