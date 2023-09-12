@@ -686,7 +686,7 @@ def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, coding_table):
             record.annotations["molecule_type"] = "DNA"
             record.annotations["date"] = datetime.today()
             record.annotations["topology"] = "linear"
-            record.annotations["data_file_division"] = "VRL"
+            record.annotations["data_file_division"] = "PHG" # https://github.com/RyanCook94/inphared/issues/22 
             # add features to the record
             for feature in record.features:
                 # add translation only if CDS

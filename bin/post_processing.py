@@ -253,6 +253,8 @@ class Pharok:
             merged_df["Method"] = "PRODIGAL"
         elif self.gene_predictor == "genbank":
             merged_df["Method"] = "CUSTOM"
+        elif self.gene_predictor == "prodigal-gv":
+            merged_df["Method"] = "PRODIGAL-gv"
         merged_df["Region"] = "CDS"
 
         # # replace with No_PHROG if nothing found
