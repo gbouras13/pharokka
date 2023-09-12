@@ -1088,6 +1088,8 @@ class Pharok:
 
         # get the cds
 
+        self.total_gff = self.total_gff(drop=True)
+
         if self.gene_predictor == "phanotate":
             cds_df = self.total_gff[
                 self.total_gff["Method"] == f"PHANOTATE_{self.phanotate_version}"
@@ -1103,6 +1105,7 @@ class Pharok:
         elif self.gene_predictor == "genbank":
             cds_df = self.total_gff[self.total_gff["Method"] == "CUSTOM"]
 
+        
         print(cds_df)
         cds_df[["attributes", "locus_tag"]] = cds_df["attributes"].str.split(
             ";locus_tag=", expand=True

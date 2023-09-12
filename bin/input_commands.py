@@ -549,8 +549,8 @@ def check_dependencies():
     if pyrodigal_major_version < 0:
         logger.error("Pyrodigal_gv is the wrong version. Please re-install pharokka.")
 
-    logger.info(f"Pyrodigal version is v{pyrodigal_gv_version}")
-    logger.info(f"Pyrodigal version is ok.")
+    logger.info(f"Pyrodigal_gv version is v{pyrodigal_gv_version}")
+    logger.info(f"Pyrodigal_gv version is ok.")
 
     return (
         phanotate_version,
