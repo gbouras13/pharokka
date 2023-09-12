@@ -1088,7 +1088,7 @@ class Pharok:
 
         # get the cds
 
-        self.total_gff = self.total_gff(drop=True)
+        self.total_gff = self.total_gff.reset_index(drop=True)
 
         if self.gene_predictor == "phanotate":
             cds_df = self.total_gff[
