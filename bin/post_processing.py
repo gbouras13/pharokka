@@ -51,6 +51,7 @@ class Pharok:
         ),
         gff_df: pd.DataFrame() = pd.DataFrame({"col1": [1, 2, 3], "col2": [4, 5, 6]}),
         locus_df: pd.DataFrame() = pd.DataFrame({"col1": [1, 2, 3], "col2": [4, 5, 6]}),
+        prot_seq_df: pd.DataFrame() = pd.DataFrame({"col1": [1, 2, 3], "col2": [4, 5, 6]}),
         tmrna_flag: bool = False,
         trna_empty: bool = False,
         crispr_count: int = 0,
@@ -63,7 +64,8 @@ class Pharok:
         pyrodigal_gv_version: str = "0.1.0",
         trna_version: str = "2.0.12",
         aragorn_version: str = "1.2.41",
-        minced_version: str = "0.4.2"
+        minced_version: str = "0.4.2",
+        
     ) -> None:
         """
         Parameters
@@ -122,6 +124,8 @@ class Pharok:
             aragorn_version from check_dependencies()
         minced_version: str
             minced_version from check dependencies()
+        prot_seq_df: pd.DataFrame,
+            dataframe with protein sequence  information for each egene
         """
         self.out_dir = out_dir
         self.db_dir = db_dir
@@ -151,6 +155,7 @@ class Pharok:
         self.trna_version = trna_version
         self.aragorn_version = aragorn_version
         self.minced_version = minced_version
+        self.prot_seq_df = prot_seq_df
 
     def process_results(self):
         """
@@ -167,6 +172,31 @@ class Pharok:
         cds_file = os.path.join(self.out_dir, "cleaned_" + self.gene_predictor + ".tsv")
         cds_df = pd.read_csv(cds_file, sep="\t", index_col=False)
 
+        ###########################################
+        # add the sequence to the df for the genbank conversion later on
+        fasta_input_aas_tmp = os.path.join(self.out_dir,  f"{self.gene_predictor}_aas_tmp.fasta")
+        prot_dict = SeqIO.to_dict(SeqIO.parse(fasta_input_aas_tmp, "fasta"))
+
+        self.prot_seq_df = cds_df
+
+        # to match the output for gff
+        self.prot_seq_df[["gene", "st"]] = self.prot_seq_df[
+                    "gene"
+                ].str.split(" ", expand=True)
+        
+        self.prot_seq_df = self.prot_seq_df.drop(columns=["st"])
+
+        # get sequences for each gene in df
+        self.prot_seq_df ["sequence"] = "MA"
+
+        for index, row in self.prot_seq_df .iterrows():
+            # get the gene id 
+            gene = row['gene']
+            if gene in prot_dict.keys():
+                # add the AA sequence
+                self.prot_seq_df .at[index, 'sequence'] = prot_dict[gene].seq
+
+        ##########################################
         # create the tophits_df and write it to file
         if self.mmseqs_flag is True:
             tophits_df = create_mmseqs_tophits(self.out_dir)
@@ -327,23 +357,80 @@ class Pharok:
 
     def get_contig_name_lengths(self):
         """
-        Gets contig name and length in the input fasta file and calculates gc
+        Gets contig name and length in the input fasta file and calculates gc.
+        Also adds translation table
         :param fasta_input: input fasta file
         :return: length_df a pandas dataframe (to class)
         """
+        
         fasta_sequences = SeqIO.parse(open(self.input_fasta), "fasta")
+
+        if self.gene_predictor == "prodigal-gv":
+            # define col list
+            col_list = [
+                "contig",
+                "Method",
+                "Region",
+                "start",
+                "stop",
+                "score",
+                "frame",
+                "phase",
+                "attributes",
+            ]
+            # read gff (no fasta output)
+            pyrodigal_gv_gff = pd.read_csv(
+                os.path.join(self.out_dir, "prodigal-gv_out.gff"),
+                delimiter="\t",
+                index_col=False,
+                names=col_list,
+            )
+
+
+
+            pyrodigal_gv_gff[["attributes", "transl_table"]] = pyrodigal_gv_gff["attributes"].str.split(
+                "transl_table=", expand=True
+            )
+            pyrodigal_gv_gff[["transl_table", "rest"]] = pyrodigal_gv_gff["transl_table"].str.split(
+                ";conf", expand=True
+            )
+            # drop and then remove duplicates in df
+            pyrodigal_gv_gff = pyrodigal_gv_gff.drop(columns=["rest","Method","Region","start","stop","score","frame","phase","attributes"])
+            # Remove duplicate rows based on all columns
+            pyrodigal_gv_gff = pyrodigal_gv_gff.drop_duplicates()     
+            # Convert to a dictionary
+            trans_table_dict = pyrodigal_gv_gff.set_index('contig')['trans_table'].to_dict()
+
         contig_names = []
         lengths = []
         gc = []
-        for fasta in fasta_sequences:
-            contig_names.append(fasta.id)
-            lengths.append(len(fasta.seq))
-            gc.append(round(GC(fasta.seq), 2))
+        trans_tables = []
+
+
+        trans_table = "11"
+        if self.gene_predictor == "phanotate":
+            trans_table = "11"
+        elif self.gene_predictor == "prodigal":
+            trans_table = self.coding_table
+        elif self.gene_predictor == "genbank":
+            trans_table = "custom_gene_calls_from_genbank"
+
+        for record in fasta_sequences:
+            contig_names.append(record.id)
+            lengths.append(len(record.seq))
+            gc.append(round(GC(record.seq), 2))
+            # pyrodigal-gv lookup from teh dict
+            if self.gene_predictor == "prodigal-gv":
+                trans_table = trans_table_dict[record.id]
+            
+            trans_tables.append(trans_table)
+
         length_df = pd.DataFrame(
             {
                 "contig": contig_names,
                 "length": lengths,
                 "gc_perc": gc,
+                "trans_table": trans_tables,
             }
         )
         self.length_df = length_df
@@ -542,6 +629,12 @@ class Pharok:
         # get all contigs
         contigs = self.length_df["contig"].astype("string")
 
+        # add the translation table
+        trans_table_df = self.length_df.drop(columns=["length", "gc_perc"])
+        self.merged_df = self.merged_df.merge(
+            trans_table_df, how="left", on="contig"
+        )
+
         ############ locus tag #########
         # write df for locus tag parsing
         # zfill - makes the CDS 4 digits trailing zeroes for vcontact
@@ -576,6 +669,7 @@ class Pharok:
         # assign count and locus_tag to merged_df (for meta)
         self.merged_df["locus_tag"] = locus_df["locus_tag"]
         self.merged_df["count"] = locus_df["count"]
+
         #################################
 
         #########
@@ -598,6 +692,9 @@ class Pharok:
         self.merged_df["attributes"] = (
             "ID="
             + locus_df["locus_tag"].astype(str)
+            + ";"
+            + "trans_table"
+            + locus_df["trans_table"].astype(str)
             + ";"
             + "phrog="
             + self.merged_df["phrog"].astype(str)
@@ -749,6 +846,9 @@ class Pharok:
                 "ID="
                 + trna_df["locus_tag"]
                 + ";"
+                + "trans_table"
+                + locus_df["trans_table"].astype(str)
+                + ";"
                 + "trna="
                 + trna_df["trna_product"].astype(str)
                 + ";"
@@ -821,6 +921,9 @@ class Pharok:
                 "ID="
                 + minced_df["locus_tag"]
                 + ";"
+                + "trans_table"
+                + locus_df["trans_table"].astype(str)
+                + ";"
                 + "rpt_type="
                 + minced_df["rpt_type"].astype(str)
                 + ";"
@@ -879,6 +982,9 @@ class Pharok:
             tmrna_df["attributes"] = (
                 "ID="
                 + tmrna_df["locus_tag"]
+                + ";"
+                + "trans_table"
+                + locus_df["trans_table"].astype(str)
                 + ";"
                 + tmrna_df["attributes"].astype(str)
                 + ";locus_tag="
@@ -980,6 +1086,7 @@ class Pharok:
             cds_df = self.total_gff[self.total_gff["Method"] == "CUSTOM"]
 
 
+
         cds_df[["attributes", "locus_tag"]] = cds_df["attributes"].str.split(
             ";locus_tag=", expand=True
         )
@@ -1074,7 +1181,7 @@ class Pharok:
                         + "\t"
                         + "transl_table"
                         + "\t"
-                        + str(self.coding_table)
+                        + str(subset_df["trans_table"])
                         + "\n"
                     )
                 if self.trna_empty == False:
@@ -1119,7 +1226,7 @@ class Pharok:
                             + "\t"
                             + "transl_table"
                             + "\t"
-                            + str(self.coding_table)
+                            + str(subset_df["trans_table"])
                             + "\n"
                         )
                 if self.crispr_count > 0:
@@ -1164,7 +1271,7 @@ class Pharok:
                             + "\t"
                             + "transl_table"
                             + "\t"
-                            + str(self.coding_table)
+                            + str(subset_df["trans_table"])
                             + "\n"
                         )
                 if self.tmrna_flag == True:
@@ -1209,7 +1316,7 @@ class Pharok:
                             + "\t"
                             + "transl_table"
                             + "\t"
-                            + str(self.coding_table)
+                            + str(subset_df["trans_table"])
                             + "\n"
                         )
 

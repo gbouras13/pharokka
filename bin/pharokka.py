@@ -303,7 +303,7 @@ def main():
         logger.info("Extracting CDS information from your genbank file.")
     elif gene_predictor == "prodigal-gv":
         logger.info("Implementing Prodigal-gv using Pyrodigal-gv.")
-        run_pyrodigal_gv(input_fasta, out_dir, args.coding_table)
+        run_pyrodigal_gv(input_fasta, out_dir)
 
     # translate fastas (parse genbank)
     translate_fastas(out_dir, gene_predictor, args.coding_table, args.infile)
@@ -397,14 +397,18 @@ def main():
         pharok.custom_pyhmmer_results_dict = best_results_custom_pyhmmer
 
 
+    #####################################
+    # post processing
+    #####################################
+
+    # gets df of length and gc for each contig
+    pharok.get_contig_name_lengths()
+
     # post process results
     # includes vfdb and card
     # adds the merged df, vfdb and card top hits dfs to the class objec
     # no need to specify params as they are in the class :)
     pharok.process_results()
-
-    # gets df of length and gc for each contig
-    pharok.get_contig_name_lengths()
 
     # parse the aragorn output
     # get flag whether there is a tmrna from aragor

@@ -14,7 +14,7 @@ from loguru import logger
 from util import remove_directory
 
 
-def run_pyrodigal_gv(filepath_in, out_dir, coding_table):
+def run_pyrodigal_gv(filepath_in, out_dir):
     """
     Gets CDS using pyrodigal_gv
     :param filepath_in: input filepath
@@ -668,53 +668,55 @@ def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, db_name
     remove_directory(target_db_dir)
 
 
-def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, coding_table):
+def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, prot_seq_df):
     """
     Converts the gff to genbank
     :param filepath_in: input fasta file
-    :param input_dir: input directory of the gff. same as output_dir for the overall gff, diff for meta mode
+    :param input_dir: input directory of the gff. same as output_dir for the overall gff in normal mode, differeny for meta mode
     :param out_dir: output directory of the gbk
     :param prefix: prefix
+    :param prefix: prot_seq_df from pharok object with gene name + protein sequence for all genes (from create_gff()).
     :return:
     """
-    gff_file = os.path.join(input_dir, prefix + ".gff")
-    gbk_file = os.path.join(out_dir, prefix + ".gbk")
+
+
+    gff_file = os.path.join(input_dir,f"{prefix}.gff")
+    gbk_file = os.path.join(out_dir, f"{prefix}.gbk")
+
     with open(gbk_file, "wt") as gbk_handler:
         fasta_handler = SeqIO.to_dict(SeqIO.parse(filepath_in, "fasta"))
         for record in GFF.parse(gff_file, fasta_handler):
+            # sequence in each contig (record)
+            subset_seqs_df = prot_seq_df.loc[ prot_seq_df["contig"] == record.id]
+            # get all the seqs in the contigs - and drop the index to reset for 0 indexed loop
+            subset_seqs = subset_seqs_df['sequence'].reset_index(drop=True)
+            # start the loop
+            i = 0 
+
             # instantiate record
             record.annotations["molecule_type"] = "DNA"
             record.annotations["date"] = datetime.today()
             record.annotations["topology"] = "linear"
-            record.annotations["data_file_division"] = "PHG" # https://github.com/RyanCook94/inphared/issues/22 
+            record.annotations["data_file_division"] = "PHG"
             # add features to the record
             for feature in record.features:
                 # add translation only if CDS
                 if feature.type == "CDS":
+                    #aa = prot_records[i].seq
                     if feature.strand == 1:
                         feature.qualifiers.update(
                             {
-                                "translation": Seq.translate(
-                                    record.seq[
-                                        feature.location.start.position : feature.location.end.position
-                                    ],
-                                    to_stop=True,
-                                    table=coding_table,
-                                )
+                                "translation": subset_seqs[i] # from the aa seq
                             }
                         )
                     else:  # reverse strand -1 needs reverse compliment
                         feature.qualifiers.update(
                             {
-                                "translation": Seq.translate(
-                                    record.seq[
-                                        feature.location.start.position : feature.location.end.position
-                                    ].reverse_complement(),
-                                    to_stop=True,
-                                    table=coding_table,
-                                )
+
+                                "translation": subset_seqs[i] # from the aa seq
                             }
                         )
+                    i += 1
             SeqIO.write(record, gbk_handler, "genbank")
 
 
