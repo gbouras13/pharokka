@@ -197,8 +197,10 @@ def instantiate_dirs(output_dir, meta, force):
 
 
 def validate_fasta(filename):
-    if os.path.isfile(filename) == False: # if file doesnt exist
-        logger.error(f"Error: Input file {filename} does not exist. Please check your input.")
+    if os.path.isfile(filename) == False:  # if file doesnt exist
+        logger.error(
+            f"Error: Input file {filename} does not exist. Please check your input."
+        )
     else:
         with open(filename, "r") as handle:
             fasta = SeqIO.parse(handle, "fasta")
@@ -213,9 +215,13 @@ def validate_gene_predictor(gene_predictor, genbank_flag):
     if gene_predictor == "phanotate":
         logger.info("Phanotate will be used for gene prediction.")
     elif gene_predictor == "prodigal":
-        logger.info("Prodigal implemented with pyrodigal will be used for gene prediction.")
+        logger.info(
+            "Prodigal implemented with pyrodigal will be used for gene prediction."
+        )
     elif gene_predictor == "prodigal-gv":
-        logger.info("Prodigal-gv implemented with pyrodigal-gv will be used for gene prediction.")
+        logger.info(
+            "Prodigal-gv implemented with pyrodigal-gv will be used for gene prediction."
+        )
     elif gene_predictor == "genbank":
         if genbank_flag is False:
             logger.error(

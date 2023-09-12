@@ -84,7 +84,6 @@ setup(
         "pyyaml>=6.0",
         "pandas>=1.4.2",
         "biopython>=1.76",
-        "pyrodigal>=3.0.0",
         "pyhmmer>=0.10.0",
         "black>=22.3.0",
         "isort>=5.10.1",
@@ -93,6 +92,5 @@ setup(
         "alive-progress>=3.0.1",
         "requests>=2.25.1",
         "bcbio-gff >=0.7.0",
-        "pyrodigal-gv"
     ],
 )
