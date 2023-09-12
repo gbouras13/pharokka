@@ -646,6 +646,7 @@ class Pharok:
         # add the translation table
         transl_table_df = self.length_df.drop(columns=["length", "gc_perc"])
         self.merged_df = self.merged_df.merge(transl_table_df, how="left", on="contig")
+        self.merged_df = self.merged_df.drop(columns=["index"])
 
         ############ locus tag #########
         # write df for locus tag parsing
@@ -705,7 +706,7 @@ class Pharok:
             "ID="
             + locus_df["locus_tag"].astype(str)
             + ";"
-            + "transl_table"
+            + "transl_table="
             + locus_df["transl_table"].astype(str)
             + ";"
             + "phrog="
@@ -858,7 +859,7 @@ class Pharok:
                 "ID="
                 + trna_df["locus_tag"]
                 + ";"
-                + "transl_table"
+                + "transl_table="
                 + locus_df["transl_table"].astype(str)
                 + ";"
                 + "trna="
@@ -933,7 +934,7 @@ class Pharok:
                 "ID="
                 + minced_df["locus_tag"]
                 + ";"
-                + "transl_table"
+                + "transl_table="
                 + locus_df["transl_table"].astype(str)
                 + ";"
                 + "rpt_type="
@@ -995,7 +996,7 @@ class Pharok:
                 "ID="
                 + tmrna_df["locus_tag"]
                 + ";"
-                + "transl_table"
+                + "transl_table="
                 + locus_df["transl_table"].astype(str)
                 + ";"
                 + tmrna_df["attributes"].astype(str)
