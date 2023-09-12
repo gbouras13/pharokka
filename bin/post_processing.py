@@ -231,11 +231,6 @@ class Pharok:
         # get best protein from top mmseqs2 hit
         # add test if empty - crashes if no gene call hits
 
-        print(cds_df)
-        print(tophits_df)
-
-        print(merged_df)
-
         if len(tophits_df["mmseqs_phrog"]) == 0:
             merged_df["mmseqs_top_hit"] = "No_PHROG"
         else:
