@@ -425,7 +425,7 @@ def main():
     # convert to genbank
     logger.info("Converting gff to genbank.")
     # not part of the class so from processes.py
-    convert_gff_to_gbk(input_fasta, out_dir, out_dir, prefix, args.coding_table)
+    convert_gff_to_gbk(input_fasta, out_dir, out_dir, prefix, pharok.prot_seq_df)
 
     # update fasta headers and final output tsv
     pharok.update_fasta_headers()
