@@ -28,12 +28,12 @@ def run_pyrodigal_gv(filepath_in, out_dir, coding_table):
     # true
     orf_finder = pyrodigal_gv.ViralGeneFinder(meta=True)
 
-    with open(os.path.join(out_dir, "prodigal_out.gff"), "w") as dst:
+    with open(os.path.join(out_dir, "prodigal-gv_out.gff"), "w") as dst:
         for i, record in enumerate(SeqIO.parse(filepath_in, "fasta")):
             genes = orf_finder.find_genes(str(record.seq))
             genes.write_gff(dst, sequence_id=record.id,include_translation_table=True)
 
-    with open(os.path.join(out_dir, "prodigal_out_tmp.fasta"), "w") as dst:
+    with open(os.path.join(out_dir, "prodigal-gv_out_tmp.fasta"), "w") as dst:
         for i, record in enumerate(SeqIO.parse(filepath_in, "fasta")):
             genes = orf_finder.find_genes(str(record.seq))
             genes.write_genes(dst, sequence_id=record.id)
