@@ -348,13 +348,19 @@ def tidy_phanotate_output(out_dir):
     return phan_df
 
 
-def tidy_prodigal_output(out_dir):
+def tidy_prodigal_output(out_dir, gv_flag):
     """
     Tidies prodigal output
     :param out_dir: output directory
+    :param gv_flag: if prodigal-gv, then True
     :return: prod_filt_df pandas dataframe
     """
-    prod_file = os.path.join(out_dir, "prodigal_out.gff")
+    if gv_flag is True:
+        prefix = "prodigal-gv"
+    else:
+        prefix = "prodigal"
+
+    prod_file = os.path.join(out_dir, f"{prefix}_out.gff")
     col_list = [
         "contig",
         "prod",
@@ -396,7 +402,7 @@ def tidy_prodigal_output(out_dir):
         + prod_filt_df["stop"].astype(str)
     )
     prod_filt_df.to_csv(
-        os.path.join(out_dir, "cleaned_prodigal.tsv"), sep="\t", index=False
+        os.path.join(out_dir, f"cleaned_{prefix}.tsv"), sep="\t", index=False
     )
     return prod_filt_df
 
@@ -508,6 +514,8 @@ def translate_fastas(out_dir, gene_predictor, coding_table, genbank_file):
     if gene_predictor == "phanotate":
         clean_df = tidy_phanotate_output(out_dir)
     elif gene_predictor == "prodigal":
+        clean_df = tidy_prodigal_output(out_dir)
+    elif gene_predictor == "prodigal-gv":
         clean_df = tidy_prodigal_output(out_dir)
     elif gene_predictor == "genbank":
         clean_df = tidy_genbank_output(out_dir, genbank_file, coding_table)
