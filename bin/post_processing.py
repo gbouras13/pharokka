@@ -59,7 +59,11 @@ class Pharok:
         hmm_flag: bool = True,
         custom_hmm_flag: bool = False,
         phanotate_version: str = "1.5.0",
-        prodigal_version: str = "3.0.0"
+        pyrodigal_version: str = "3.0.0",
+        pyrodigal_gv_version: str = "0.1.0",
+        trna_version: str = "2.0.12",
+        aragorn_version: str = "1.2.41",
+        minced_version: str = "0.4.2"
     ) -> None:
         """
         Parameters
@@ -110,6 +114,14 @@ class Pharok:
             phanotate_version from check_dependencies()
         prodigal_version: str
             prodigal_version from check_dependencies()
+        pyrodigal_gv_version: str
+            pyrodigal_gv_version from check dependencies()
+        trna_version: str
+            trnascan_version from check_dependencies()
+        aragorn_version: str
+            aragorn_version from check_dependencies()
+        minced_version: str
+            minced_version from check dependencies()
         """
         self.out_dir = out_dir
         self.db_dir = db_dir
@@ -134,7 +146,11 @@ class Pharok:
         self.hmm_flag = hmm_flag
         self.custom_hmm_flag = custom_hmm_flag
         self.phanotate_version = phanotate_version
-        self.prodigal_version = prodigal_version
+        self.pyrodigal_version = pyrodigal_version
+        self.pyrodigal_gv_version = pyrodigal_gv_version
+        self.trna_version = trna_version
+        self.aragorn_version = aragorn_version
+        self.minced_version = minced_version
 
     def process_results(self):
         """
@@ -256,13 +272,13 @@ class Pharok:
 
         # add columns
         if self.gene_predictor == "phanotate":
-            merged_df["Method"] = "PHANOTATE"
+            merged_df["Method"] = f"PHANOTATE_{self.phanotate_version}"
         elif self.gene_predictor == "prodigal":
-            merged_df["Method"] = "PRODIGAL"
+            merged_df["Method"] = f"Pyrodigal_{self.pyrodigal_version}"
         elif self.gene_predictor == "genbank":
             merged_df["Method"] = "CUSTOM"
         elif self.gene_predictor == "prodigal-gv":
-            merged_df["Method"] = "PRODIGAL-gv"
+            merged_df["Method"] = f"Pyrodigal-gv_{self.pyrodigal_gv_version}"
         merged_df["Region"] = "CDS"
 
         # # replace with No_PHROG if nothing found
@@ -380,7 +396,7 @@ class Pharok:
                     split = line.split()
                     start_stops = split[2].replace("[", "").replace("]", "").split(",")
                     contig = self.length_df["contig"][0]
-                    method = "Aragorn"
+                    method = f"Aragorn_{self.aragorn_version}"
                     region = "tmRNA"
                     start = start_stops[0].replace(
                         "c", ""
@@ -440,7 +456,7 @@ class Pharok:
                                 split[2].replace("[", "").replace("]", "").split(",")
                             )
                             contig = self.length_df["contig"][j]
-                            method = "Aragorn"
+                            method = f"Aragorn_{self.aragorn_version}"
                             region = "tmRNA"
                             start = start_stops[0].replace(
                                 "c", ""
@@ -955,11 +971,14 @@ class Pharok:
         # get the cds
 
         if self.gene_predictor == "phanotate":
-            cds_df = self.total_gff[self.total_gff["Method"] == "PHANOTATE"]
+            cds_df = self.total_gff[self.total_gff["Method"] == f"PHANOTATE_{self.phanotate_version}" ]
         elif self.gene_predictor == "prodigal":
-            cds_df = self.total_gff[self.total_gff["Method"] == "PRODIGAL"]
+            cds_df = self.total_gff[self.total_gff["Method"] == f"Pyrodigal_{self.pyrodigal_version}" ]
+        elif self.gene_predictor == "prodigal-gv":
+            cds_df = self.total_gff[self.total_gff["Method"] == f"Pyrodigal-gv{self.pyrodigal_gv_version}" ]
         elif self.gene_predictor == "genbank":
             cds_df = self.total_gff[self.total_gff["Method"] == "CUSTOM"]
+
 
         cds_df[["attributes", "locus_tag"]] = cds_df["attributes"].str.split(
             ";locus_tag=", expand=True
@@ -971,7 +990,7 @@ class Pharok:
         ### trnas
         # check if no trnas
         if self.trna_empty == False:
-            trna_df = self.total_gff[self.total_gff["Method"] == "tRNAscan-SE"]
+            trna_df = self.total_gff[self.total_gff["Method"] == f"tRNAscan-SE_{self.trna_version}"]
             # keep only trnas and pseudogenes
             trna_df.start = trna_df.start.astype(int)
             trna_df.stop = trna_df.stop.astype(int)

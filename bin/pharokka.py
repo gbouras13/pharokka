@@ -128,7 +128,8 @@ def main():
 
     # dependencies
     logger.info("Checking dependencies.")
-    (phanotate_version, prodigal_version) = check_dependencies()
+    # output versions
+    (phanotate_version, pyrodigal_version, pyrodigal_gv_version, trna_version, aragorn_version, minced_version) = check_dependencies()
 
     # instantiation/checking fasta and gene_predictor
     if args.genbank is True:
@@ -383,12 +384,18 @@ def main():
     pharok.mmseqs_flag = mmseqs_flag
     pharok.hmm_flag = hmm_flag
     pharok.custom_hmm_flag = custom_hmm_flag
-    pharok.phanotate_version = prodigal_version
-    pharok.prodigal_version = prodigal_version
+    pharok.phanotate_version = phanotate_version
+    pharok.prodigal_version = pyrodigal_version
+    pharok.pyrodigal_gv_version = pyrodigal_gv_version
+    pharok.trna_version = trna_version
+    pharok.aragorn_version = aragorn_version
+    pharok.minced_version = minced_version
+    
     if pharok.hmm_flag is True:
         pharok.pyhmmer_results_dict = best_results_pyhmmer
     if pharok.custom_hmm_flag is True:
         pharok.custom_pyhmmer_results_dict = best_results_custom_pyhmmer
+
 
     # post process results
     # includes vfdb and card

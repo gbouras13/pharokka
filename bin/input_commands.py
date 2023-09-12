@@ -6,7 +6,8 @@ from argparse import RawTextHelpFormatter
 
 from Bio import SeqIO
 from loguru import logger
-from pyrodigal import __version__
+import pyrodigal_gv
+import pyrodigal
 from util import get_version
 
 
@@ -529,16 +530,30 @@ def check_dependencies():
     # pyrodigal
     #######
 
-    pyrodigal_version = __version__
-    pyrodigal_major_version = int(__version__.split(".")[0])
+    pyrodigal_version = pyrodigal.__version__
+    pyrodigal_major_version = int(pyrodigal_version.split(".")[0])
 
     if pyrodigal_major_version < 3:
         logger.error("Pyrodigal is the wrong version. Please re-install pharokka.")
 
-    logger.info(f"Pyrodigal version is v{__version__}")
+    logger.info(f"Pyrodigal version is v{pyrodigal_version}")
     logger.info(f"Pyrodigal version is ok.")
 
-    return phanotate_version, pyrodigal_version
+   #######
+    # pyrodigal
+    #######
+
+    pyrodigal_gv_version = pyrodigal_gv.__version__
+    pyrodigal_major_version = int(pyrodigal_gv_version.split(".")[0])
+
+    if pyrodigal_major_version < 0:
+        logger.error("Pyrodigal_gv is the wrong version. Please re-install pharokka.")
+
+    logger.info(f"Pyrodigal version is v{pyrodigal_gv_version}")
+    logger.info(f"Pyrodigal version is ok.")
+    
+    
+    return (phanotate_version, pyrodigal_version, pyrodigal_gv_version, trna_version, aragorn_version, minced_version)
 
 
 
