@@ -646,7 +646,6 @@ class Pharok:
         # add the translation table
         transl_table_df = self.length_df.drop(columns=["length", "gc_perc"])
         self.merged_df = self.merged_df.merge(transl_table_df, how="left", on="contig")
-        self.merged_df = self.merged_df.drop(columns=["index"])
 
         ############ locus tag #########
         # write df for locus tag parsing
