@@ -387,11 +387,10 @@ class Pharok:
             )
 
 
-
-            pyrodigal_gv_gff[["attributes", "transl_table"]] = pyrodigal_gv_gff["attributes"].str.split(
+            pyrodigal_gv_gff[["attributes", "trans_table"]] = pyrodigal_gv_gff["attributes"].str.split(
                 "transl_table=", expand=True
             )
-            pyrodigal_gv_gff[["transl_table", "rest"]] = pyrodigal_gv_gff["transl_table"].str.split(
+            pyrodigal_gv_gff[["transl_table", "rest"]] = pyrodigal_gv_gff["trans_table"].str.split(
                 ";conf", expand=True
             )
             # drop and then remove duplicates in df
