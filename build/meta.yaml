@@ -25,7 +25,8 @@ requirements:
   - minced >=0.4.2
   - aragorn >=1.2.41
   - mash >=2.2
-  - pyrodigal >=2.0.1
+  - pyrodigal >=3.0.0
+  - pyrodigal_gv >=0.1.0
   - pycirclize >=0.3.1
   - dnaapler >= 0.3.0
 
