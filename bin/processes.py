@@ -31,14 +31,12 @@ def run_pyrodigal_gv(filepath_in, out_dir):
     with open(os.path.join(out_dir, "prodigal-gv_out.gff"), "w") as dst:
         for i, record in enumerate(SeqIO.parse(filepath_in, "fasta")):
             genes = orf_finder.find_genes(str(record.seq))
-            genes.write_gff(dst, sequence_id=record.id,include_translation_table=True)
+            genes.write_gff(dst, sequence_id=record.id, include_translation_table=True)
 
     with open(os.path.join(out_dir, "prodigal-gv_out_tmp.fasta"), "w") as dst:
         for i, record in enumerate(SeqIO.parse(filepath_in, "fasta")):
             genes = orf_finder.find_genes(str(record.seq))
             genes.write_genes(dst, sequence_id=record.id)
-
-
 
 
 ##### phanotate meta mode ########
@@ -514,7 +512,7 @@ def translate_fastas(out_dir, gene_predictor, coding_table, genbank_file):
     if gene_predictor == "phanotate":
         clean_df = tidy_phanotate_output(out_dir)
     elif gene_predictor == "prodigal":
-        clean_df = tidy_prodigal_output(out_dir, False) # gv_flag is false
+        clean_df = tidy_prodigal_output(out_dir, False)  # gv_flag is false
     elif gene_predictor == "prodigal-gv":
         clean_df = tidy_prodigal_output(out_dir, True)  # gv_flag is true
     elif gene_predictor == "genbank":
@@ -679,42 +677,38 @@ def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, prot_seq_df):
     :return:
     """
 
-
-    gff_file = os.path.join(input_dir,f"{prefix}.gff")
+    gff_file = os.path.join(input_dir, f"{prefix}.gff")
     gbk_file = os.path.join(out_dir, f"{prefix}.gbk")
 
     with open(gbk_file, "wt") as gbk_handler:
         fasta_handler = SeqIO.to_dict(SeqIO.parse(filepath_in, "fasta"))
         for record in GFF.parse(gff_file, fasta_handler):
             # sequence in each contig (record)
-            subset_seqs_df = prot_seq_df.loc[ prot_seq_df["contig"] == record.id]
+            subset_seqs_df = prot_seq_df.loc[prot_seq_df["contig"] == record.id]
             # get all the seqs in the contigs - and drop the index to reset for 0 indexed loop
-            subset_seqs = subset_seqs_df['sequence'].reset_index(drop=True)
+            subset_seqs = subset_seqs_df["sequence"].reset_index(drop=True)
             # start the loop
-            i = 0 
+            i = 0
 
             # instantiate record
             record.annotations["molecule_type"] = "DNA"
             record.annotations["date"] = datetime.today()
             record.annotations["topology"] = "linear"
-            record.annotations["data_file_division"] = "PHG" # https://github.com/RyanCook94/inphared/issues/22
+            record.annotations[
+                "data_file_division"
+            ] = "PHG"  # https://github.com/RyanCook94/inphared/issues/22
             # add features to the record
             for feature in record.features:
                 # add translation only if CDS
                 if feature.type == "CDS":
-                    #aa = prot_records[i].seq
+                    # aa = prot_records[i].seq
                     if feature.strand == 1:
                         feature.qualifiers.update(
-                            {
-                                "translation": subset_seqs[i] # from the aa seq
-                            }
+                            {"translation": subset_seqs[i]}  # from the aa seq
                         )
                     else:  # reverse strand -1 needs reverse compliment
                         feature.qualifiers.update(
-                            {
-
-                                "translation": subset_seqs[i] # from the aa seq
-                            }
+                            {"translation": subset_seqs[i]}  # from the aa seq
                         )
                     i += 1
             SeqIO.write(record, gbk_handler, "genbank")

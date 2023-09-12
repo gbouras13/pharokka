@@ -4,10 +4,10 @@ import shutil
 import subprocess as sp
 from argparse import RawTextHelpFormatter
 
+import pyrodigal
+import pyrodigal_gv
 from Bio import SeqIO
 from loguru import logger
-import pyrodigal_gv
-import pyrodigal
 from util import get_version
 
 
@@ -539,7 +539,7 @@ def check_dependencies():
     logger.info(f"Pyrodigal version is v{pyrodigal_version}")
     logger.info(f"Pyrodigal version is ok.")
 
-   #######
+    #######
     # pyrodigal
     #######
 
@@ -551,11 +551,15 @@ def check_dependencies():
 
     logger.info(f"Pyrodigal version is v{pyrodigal_gv_version}")
     logger.info(f"Pyrodigal version is ok.")
-    
-    
-    return (phanotate_version, pyrodigal_version, pyrodigal_gv_version, trna_version, aragorn_version, minced_version)
 
-
+    return (
+        phanotate_version,
+        pyrodigal_version,
+        pyrodigal_gv_version,
+        trna_version,
+        aragorn_version,
+        minced_version,
+    )
 
 
 def instantiate_split_output(out_dir, split):

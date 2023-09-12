@@ -17,14 +17,12 @@ from Bio import SeqIO
 from Bio.SeqUtils import GC
 from external_tools import ExternalTool
 from loguru import logger
-from post_processing import (
-    process_card_results,
-    process_pyhmmer_results,
-    process_vfdb_results,
-)
+from post_processing import (process_card_results, process_pyhmmer_results,
+                             process_vfdb_results)
 from pyhmmer.easel import SequenceFile
 from pyhmmer.plan7 import HMM, HMMFile
-from util import count_contigs, get_contig_headers, get_version, remove_directory
+from util import (count_contigs, get_contig_headers, get_version,
+                  remove_directory)
 
 Result = collections.namedtuple("Result", ["protein", "phrog", "bitscore", "evalue"])
 
