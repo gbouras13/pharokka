@@ -804,6 +804,10 @@ class Pharok:
                 index_col=False,
                 names=col_list,
             )
+
+            # convert the method to update with version
+            trna_df["Method"] = f"tRNAscan-SE_{self.trna_version}"
+
             # index hack if meta mode
             if self.meta_mode == True:
                 subset_dfs = []
@@ -1119,7 +1123,6 @@ class Pharok:
             trna_df = self.total_gff[
                 self.total_gff["Method"] == f"tRNAscan-SE_{self.trna_version}"
             ]
-            print(trna_df)
             # keep only trnas and pseudogenes
             trna_df.start = trna_df.start.astype(int)
             trna_df.stop = trna_df.stop.astype(int)
