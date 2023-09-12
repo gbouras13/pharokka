@@ -1105,8 +1105,6 @@ class Pharok:
         elif self.gene_predictor == "genbank":
             cds_df = self.total_gff[self.total_gff["Method"] == "CUSTOM"]
 
-        
-        print(cds_df)
         cds_df[["attributes", "locus_tag"]] = cds_df["attributes"].str.split(
             ";locus_tag=", expand=True
         )
@@ -1117,9 +1115,11 @@ class Pharok:
         ### trnas
         # check if no trnas
         if self.trna_empty == False:
+            
             trna_df = self.total_gff[
                 self.total_gff["Method"] == f"tRNAscan-SE_{self.trna_version}"
             ]
+            print(trna_df)
             # keep only trnas and pseudogenes
             trna_df.start = trna_df.start.astype(int)
             trna_df.stop = trna_df.stop.astype(int)
