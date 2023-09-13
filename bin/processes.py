@@ -45,14 +45,14 @@ def run_pyrodigal_gv(filepath_in, out_dir, num_threads):
     Multi-threaded implementation of pyrodigal_gv
     :param filepath_in: input filepath
     :param out_dir: output directory
-    :param num_threads: number of threads (int) 
+    :param num_threads: number of threads (str) 
     :return:
     """
 
     records = list(SeqIO.parse(filepath_in, "fasta"))
 
     # Create a ThreadPoolExecutor with the desired number of threads
-    with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=int(num_threads)) as executor:
         # Submit tasks for each record to be processed concurrently
         futures = {executor.submit(process_record, record, out_dir): record for record in records}
         # Wait for all tasks to complete
