@@ -288,7 +288,7 @@ def main():
         logger.info("Extracting CDS information from your genbank file.")
     elif gene_predictor == "prodigal-gv":
         logger.info("Implementing Prodigal-gv using Pyrodigal-gv.")
-        run_pyrodigal_gv(input_fasta, out_dir, args.threads)
+        run_pyrodigal_gv(input_fasta, out_dir)
 
     # translate fastas (parse genbank)
     translate_fastas(out_dir, gene_predictor, args.coding_table, args.infile)

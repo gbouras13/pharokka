@@ -1,8 +1,6 @@
 import os
 import subprocess as sp
 from datetime import datetime
-import concurrent.futures
-import multiprocessing
 
 import pandas as pd
 import pyrodigal
@@ -14,50 +12,28 @@ from Bio.SeqRecord import SeqRecord
 from external_tools import ExternalTool
 from loguru import logger
 from util import remove_directory
-from time import sleep
 
-def process_pyrodigal_gv_record(record, out_dir, orf_finder):
+
+def run_pyrodigal_gv(filepath_in, out_dir):
     """
-    predict CDS in a SeqRecord using pyrodigal_gv
-    :param record: SeqRecord 
-    :param out_dir: output directory
-    """
-
-    # true
-    with open(os.path.join(out_dir, "prodigal-gv_out.gff"), "a") as gff:
-        with open(os.path.join(out_dir, "prodigal-gv_out_tmp.fasta"), "a") as fasta:
-            genes = orf_finder.find_genes(str(record.seq))
-            genes.write_gff(gff, sequence_id=record.id, include_translation_table=True)
-            genes.write_genes(fasta, sequence_id=record.id)
-
-    gff.close()
-    fasta.close()
-
-    return record.id
-
-def run_pyrodigal_gv(filepath_in, out_dir, num_threads):
-    """
-    Multi-threaded implementation of pyrodigal_gv
+    Gets CDS using pyrodigal_gv
     :param filepath_in: input filepath
     :param out_dir: output directory
-    :param num_threads: number of threads (str) 
+    :param logger logger
+    :param meta Boolean - metagenomic mode flag
+    :param coding_table coding table for prodigal (default 11)
     :return:
     """
 
-    records = list(SeqIO.parse(filepath_in, "fasta"))
+    # true
     orf_finder = pyrodigal_gv.ViralGeneFinder(meta=True)
-    print(int(num_threads))
 
-   # Create a Pool with the desired number of processes
-    pool = multiprocessing.get_context("spawn").Pool(processes=int(num_threads))
-    # Use map to apply the function to each record concurrently
-    pool.starmap(process_pyrodigal_gv_record, [(record, out_dir, orf_finder) for record in records])
-    pool.close()
-
-
-
-
-
+    with open(os.path.join(out_dir, "prodigal-gv_out.gff"), "w") as dst:
+        with open(os.path.join(out_dir, "prodigal-gv_out_tmp.fasta"), "w") as gff:
+            for i, record in enumerate(SeqIO.parse(filepath_in, "fasta")):
+                genes = orf_finder.find_genes(str(record.seq))
+                genes.write_gff(dst, sequence_id=record.id, include_translation_table=True)
+                genes.write_genes(gff, sequence_id=record.id)
 
 ##### phanotate meta mode ########
 
