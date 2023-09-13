@@ -30,6 +30,9 @@ def process_pyrodigal_gv_record(record, out_dir, orf_finder):
             genes.write_gff(gff, sequence_id=record.id, include_translation_table=True)
             genes.write_genes(fasta, sequence_id=record.id)
 
+    gff.close()
+    fasta.close()
+
     return record.id
 
 def run_pyrodigal_gv(filepath_in, out_dir, num_threads):
