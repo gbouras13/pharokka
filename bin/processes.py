@@ -1,6 +1,7 @@
 import os
 import subprocess as sp
 from datetime import datetime
+import concurrent.futures
 
 import pandas as pd
 import pyrodigal
@@ -13,27 +14,50 @@ from external_tools import ExternalTool
 from loguru import logger
 from util import remove_directory
 
+# Define your function to process records
+def process_record(record, out_dir):
+    output_file_path = os.path.join(out_dir, "prodigal-gv_out_tmp.fasta")
+    
+    with open(output_file_path, "w") as gff:
+        genes = orf_finder.find_genes(str(record.seq))
+        genes.write_gff(gff, sequence_id=record.id, include_translation_table=True)
+        genes.write_genes(gff, sequence_id=record.id)
 
-def run_pyrodigal_gv(filepath_in, out_dir):
+def process_pyrodigal_gv_record(record, out_dir):
     """
-    Gets CDS using pyrodigal_gv
-    :param filepath_in: input filepath
+    predict CDS in a SeqRecord using pyrodigal_gv
+    :param record: SeqRecord 
     :param out_dir: output directory
-    :param logger logger
-    :param meta Boolean - metagenomic mode flag
-    :param coding_table coding table for prodigal (default 11)
-    :return:
     """
 
     # true
     orf_finder = pyrodigal_gv.ViralGeneFinder(meta=True)
 
-    with open(os.path.join(out_dir, "prodigal-gv_out.gff"), "w") as dst:
-        with open(os.path.join(out_dir, "prodigal-gv_out_tmp.fasta"), "w") as gff:
-            for i, record in enumerate(SeqIO.parse(filepath_in, "fasta")):
+    with open(os.path.join(out_dir, "prodigal-gv_out.gff"), "w") as gff:
+        with open(os.path.join(out_dir, "prodigal-gv_out_tmp.fasta"), "w") as fasta:
+
                 genes = orf_finder.find_genes(str(record.seq))
-                genes.write_gff(dst, sequence_id=record.id, include_translation_table=True)
-                genes.write_genes(gff, sequence_id=record.id)
+                genes.write_gff(gff, sequence_id=record.id, include_translation_table=True)
+                genes.write_genes(fasta, sequence_id=record.id)
+
+def run_pyrodigal_gv(filepath_in, out_dir, num_threads):
+    """
+    Multi-threaded implementation of pyrodigal_gv
+    :param filepath_in: input filepath
+    :param out_dir: output directory
+    :param num_threads: number of threads (int) 
+    :return:
+    """
+
+    records = list(SeqIO.parse(filepath_in, "fasta"))
+
+    # Create a ThreadPoolExecutor with the desired number of threads
+    with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
+        # Submit tasks for each record to be processed concurrently
+        futures = {executor.submit(process_record, record, out_dir): record for record in records}
+        # Wait for all tasks to complete
+        concurrent.futures.wait(futures)
+
 
 ##### phanotate meta mode ########
 
