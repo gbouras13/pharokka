@@ -29,15 +29,11 @@ def run_pyrodigal_gv(filepath_in, out_dir):
     orf_finder = pyrodigal_gv.ViralGeneFinder(meta=True)
 
     with open(os.path.join(out_dir, "prodigal-gv_out.gff"), "w") as dst:
-        for i, record in enumerate(SeqIO.parse(filepath_in, "fasta")):
-            genes = orf_finder.find_genes(str(record.seq))
-            genes.write_gff(dst, sequence_id=record.id, include_translation_table=True)
-
-    with open(os.path.join(out_dir, "prodigal-gv_out_tmp.fasta"), "w") as dst:
-        for i, record in enumerate(SeqIO.parse(filepath_in, "fasta")):
-            genes = orf_finder.find_genes(str(record.seq))
-            genes.write_genes(dst, sequence_id=record.id)
-
+        with open(os.path.join(out_dir, "prodigal-gv_out_tmp.fasta"), "w") as gff:
+            for i, record in enumerate(SeqIO.parse(filepath_in, "fasta")):
+                genes = orf_finder.find_genes(str(record.seq))
+                genes.write_gff(dst, sequence_id=record.id, include_translation_table=True)
+                genes.write_genes(gff, sequence_id=record.id)
 
 ##### phanotate meta mode ########
 
@@ -308,14 +304,11 @@ def run_pyrodigal(filepath_in, out_dir, meta, coding_table):
         orf_finder = pyrodigal.GeneFinder(trainings_info, meta=prodigal_metamode)
 
     with open(os.path.join(out_dir, "prodigal_out.gff"), "w") as dst:
-        for i, record in enumerate(SeqIO.parse(filepath_in, "fasta")):
-            genes = orf_finder.find_genes(str(record.seq))
-            genes.write_gff(dst, sequence_id=record.id)
-
-    with open(os.path.join(out_dir, "prodigal_out_tmp.fasta"), "w") as dst:
-        for i, record in enumerate(SeqIO.parse(filepath_in, "fasta")):
-            genes = orf_finder.find_genes(str(record.seq))
-            genes.write_genes(dst, sequence_id=record.id)
+        with open(os.path.join(out_dir, "prodigal_out_tmp.fasta"), "w") as gff:
+            for i, record in enumerate(SeqIO.parse(filepath_in, "fasta")):
+                genes = orf_finder.find_genes(str(record.seq))
+                genes.write_gff(dst, sequence_id=record.id)
+                genes.write_genes(gff, sequence_id=record.id)
 
 
 def tidy_phanotate_output(out_dir):
@@ -564,7 +557,7 @@ def run_trna_scan(filepath_in, threads, out_dir, logdir):
     try:
         ExternalTool.run_tool(trna)
     except:
-        logger.error("Error: tRNAscan-SE not found\n")
+        logger.error("Error with tRNAscan-SE")
         return 0
 
 
