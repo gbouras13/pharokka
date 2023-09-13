@@ -49,10 +49,13 @@ def run_pyrodigal_gv(filepath_in, out_dir, num_threads):
     print(int(num_threads))
 
    # Create a Pool with the desired number of processes
-    with multiprocessing.get_context("spawn").Pool(processes=int(num_threads)) as pool:
-        # Use map to apply the function to each record concurrently
-        for result in pool.starmap(process_pyrodigal_gv_record, [(record, out_dir, orf_finder) for record in records]):
-            print(result, flush=True)
+    pool = multiprocessing.get_context("spawn").Pool(processes=int(num_threads))
+    # Use map to apply the function to each record concurrently
+    pool.starmap(process_pyrodigal_gv_record, [(record, out_dir, orf_finder) for record in records])
+    pool.close()
+
+
+
 
 
 
