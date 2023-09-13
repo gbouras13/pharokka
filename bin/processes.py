@@ -14,7 +14,7 @@ from Bio.SeqRecord import SeqRecord
 from external_tools import ExternalTool
 from loguru import logger
 from util import remove_directory
-
+from time import sleep
 
 def process_pyrodigal_gv_record(record, out_dir, orf_finder):
     """
@@ -29,6 +29,8 @@ def process_pyrodigal_gv_record(record, out_dir, orf_finder):
             genes = orf_finder.find_genes(str(record.seq))
             genes.write_gff(gff, sequence_id=record.id, include_translation_table=True)
             genes.write_genes(fasta, sequence_id=record.id)
+
+    return record.id
 
 def run_pyrodigal_gv(filepath_in, out_dir, num_threads):
     """
@@ -46,7 +48,8 @@ def run_pyrodigal_gv(filepath_in, out_dir, num_threads):
    # Create a Pool with the desired number of processes
     with multiprocessing.Pool(processes=int(num_threads)) as pool:
         # Use map to apply the function to each record concurrently
-        pool.starmap(process_pyrodigal_gv_record, [(record, out_dir, orf_finder) for record in records])
+        for result in pool.starmap(process_pyrodigal_gv_record, [(record, out_dir, orf_finder) for record in records]):
+            print(result, flush=True)
 
 
 
