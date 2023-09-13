@@ -15,7 +15,7 @@ from loguru import logger
 from util import remove_directory
 
 
-def process_pyrodigal_gv_record(record, out_dir):
+def process_pyrodigal_gv_record(record, out_dir, orf_finder):
     """
     predict CDS in a SeqRecord using pyrodigal_gv
     :param record: SeqRecord 
@@ -23,7 +23,7 @@ def process_pyrodigal_gv_record(record, out_dir):
     """
 
     # true
-    orf_finder = pyrodigal_gv.ViralGeneFinder(meta=True)
+    
     with open(os.path.join(out_dir, "prodigal-gv_out.gff"), "w") as gff:
         with open(os.path.join(out_dir, "prodigal-gv_out_tmp.fasta"), "w") as fasta:
             genes = orf_finder.find_genes(str(record.seq))
@@ -40,6 +40,7 @@ def run_pyrodigal_gv(filepath_in, out_dir, num_threads):
     """
 
     records = list(SeqIO.parse(filepath_in, "fasta"))
+    orf_finder = pyrodigal_gv.ViralGeneFinder(meta=True)
 
     # Create a ThreadPoolExecutor with the desired number of threads
     with concurrent.futures.ThreadPoolExecutor(max_workers=int(num_threads)) as executor:
@@ -49,7 +50,7 @@ def run_pyrodigal_gv(filepath_in, out_dir, num_threads):
         #concurrent.futures.wait(futures)
         futures = []
         for record in records:
-            futures.append(executor.submit(process_pyrodigal_gv_record, record, out_dir))
+            futures.append(executor.submit(process_pyrodigal_gv_record, record, out_dir, orf_finder))
         #concurrent.futures.wait(futures)
         for future in concurrent.futures.as_completed(futures):
             try:
