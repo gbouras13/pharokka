@@ -14,14 +14,6 @@ from external_tools import ExternalTool
 from loguru import logger
 from util import remove_directory
 
-# Define your function to process records
-def process_record(record, out_dir):
-    output_file_path = os.path.join(out_dir, "prodigal-gv_out_tmp.fasta")
-    
-    with open(output_file_path, "w") as gff:
-        genes = orf_finder.find_genes(str(record.seq))
-        genes.write_gff(gff, sequence_id=record.id, include_translation_table=True)
-        genes.write_genes(gff, sequence_id=record.id)
 
 def process_pyrodigal_gv_record(record, out_dir):
     """
@@ -32,7 +24,6 @@ def process_pyrodigal_gv_record(record, out_dir):
 
     # true
     orf_finder = pyrodigal_gv.ViralGeneFinder(meta=True)
-
     with open(os.path.join(out_dir, "prodigal-gv_out.gff"), "w") as gff:
         with open(os.path.join(out_dir, "prodigal-gv_out_tmp.fasta"), "w") as fasta:
             genes = orf_finder.find_genes(str(record.seq))
@@ -58,10 +49,14 @@ def run_pyrodigal_gv(filepath_in, out_dir, num_threads):
         #concurrent.futures.wait(futures)
         futures = []
         for record in records:
-            futures.append(executor.submit(process_record, record, out_dir))
+            futures.append(executor.submit(process_pyrodigal_gv_record, record, out_dir))
         #concurrent.futures.wait(futures)
         for future in concurrent.futures.as_completed(futures):
-            print(future.result())
+            try:
+                print(future.result())
+            except:
+                print('error')
+                print(future.result())
 
 
 ##### phanotate meta mode ########
