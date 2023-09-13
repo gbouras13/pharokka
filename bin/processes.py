@@ -51,6 +51,8 @@ def run_pyrodigal_gv(filepath_in, out_dir, num_threads):
 
     records = list(SeqIO.parse(filepath_in, "fasta"))
 
+    print(records)
+
     # Create a ThreadPoolExecutor with the desired number of threads
     with concurrent.futures.ThreadPoolExecutor(max_workers=int(num_threads)) as executor:
         # Submit tasks for each record to be processed concurrently
