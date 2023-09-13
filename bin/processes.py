@@ -24,9 +24,8 @@ def process_pyrodigal_gv_record(record, out_dir, orf_finder):
     """
 
     # true
-    
-    with open(os.path.join(out_dir, "prodigal-gv_out.gff"), "w") as gff:
-        with open(os.path.join(out_dir, "prodigal-gv_out_tmp.fasta"), "w") as fasta:
+    with open(os.path.join(out_dir, "prodigal-gv_out.gff"), "a") as gff:
+        with open(os.path.join(out_dir, "prodigal-gv_out_tmp.fasta"), "a") as fasta:
             genes = orf_finder.find_genes(str(record.seq))
             genes.write_gff(gff, sequence_id=record.id, include_translation_table=True)
             genes.write_genes(fasta, sequence_id=record.id)
