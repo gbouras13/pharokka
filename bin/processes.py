@@ -41,6 +41,7 @@ def run_pyrodigal_gv(filepath_in, out_dir, num_threads):
 
     records = list(SeqIO.parse(filepath_in, "fasta"))
     orf_finder = pyrodigal_gv.ViralGeneFinder(meta=True)
+    print(int(num_threads))
 
     # Create a ThreadPoolExecutor with the desired number of threads
     with concurrent.futures.ThreadPoolExecutor(max_workers=int(num_threads)) as executor:
