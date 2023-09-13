@@ -26,7 +26,7 @@ def run_pyrodigal_gv(filepath_in, out_dir):
     """
 
     # true
-    orf_finder = pyrodigal_gv.ViralGeneFinder(meta=True)
+    orf_finder = pyrodigal_gv.ViralGeneFinder(meta=True, viral_only=True)
 
     with open(os.path.join(out_dir, "prodigal-gv_out.gff"), "w") as dst:
         for i, record in enumerate(SeqIO.parse(filepath_in, "fasta")):
