@@ -2,6 +2,7 @@ import os
 import subprocess as sp
 from datetime import datetime
 import concurrent.futures
+import multiprocessing
 
 import pandas as pd
 import pyrodigal
@@ -43,22 +44,11 @@ def run_pyrodigal_gv(filepath_in, out_dir, num_threads):
     orf_finder = pyrodigal_gv.ViralGeneFinder(meta=True)
     print(int(num_threads))
 
-    # Create a ThreadPoolExecutor with the desired number of threads
-    with concurrent.futures.ThreadPoolExecutor(max_workers=int(num_threads)) as executor:
-        # Submit tasks for each record to be processed concurrently
-        #futures = {executor.submit(process_record, record, out_dir): record for record in records}
-        # Wait for all tasks to complete
-        #concurrent.futures.wait(futures)
-        futures = []
-        for record in records:
-            futures.append(executor.submit(process_pyrodigal_gv_record, record, out_dir, orf_finder))
-        #concurrent.futures.wait(futures)
-        for future in concurrent.futures.as_completed(futures):
-            try:
-                print(future.result())
-            except Exception:
-                print('error')
-                print(future.result())
+   # Create a Pool with the desired number of processes
+    with multiprocessing.Pool(processes=int(num_threads)) as pool:
+        # Use map to apply the function to each record concurrently
+        pool.starmap(process_pyrodigal_gv_record, [(record, out_dir, orf_finder) for record in records])
+
 
 
 ##### phanotate meta mode ########
