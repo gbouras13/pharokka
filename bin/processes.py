@@ -54,7 +54,7 @@ def run_pyrodigal_gv(filepath_in, out_dir, num_threads):
         for future in concurrent.futures.as_completed(futures):
             try:
                 print(future.result())
-            except:
+            except Exception:
                 print('error')
                 print(future.result())
 
