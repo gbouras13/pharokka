@@ -35,9 +35,9 @@ def process_pyrodigal_gv_record(record, out_dir):
 
     with open(os.path.join(out_dir, "prodigal-gv_out.gff"), "w") as gff:
         with open(os.path.join(out_dir, "prodigal-gv_out_tmp.fasta"), "w") as fasta:
-                genes = orf_finder.find_genes(str(record.seq))
-                genes.write_gff(gff, sequence_id=record.id, include_translation_table=True)
-                genes.write_genes(fasta, sequence_id=record.id)
+            genes = orf_finder.find_genes(str(record.seq))
+            genes.write_gff(gff, sequence_id=record.id, include_translation_table=True)
+            genes.write_genes(fasta, sequence_id=record.id)
 
 def run_pyrodigal_gv(filepath_in, out_dir, num_threads):
     """
@@ -59,7 +59,9 @@ def run_pyrodigal_gv(filepath_in, out_dir, num_threads):
         futures = []
         for record in records:
             futures.append(executor.submit(process_record, record, out_dir))
-        concurrent.futures.wait(futures)
+        #concurrent.futures.wait(futures)
+        for future in concurrent.futures.as_completed(futures):
+            print(future.result())
 
 
 ##### phanotate meta mode ########
