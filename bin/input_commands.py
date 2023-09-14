@@ -230,7 +230,7 @@ def validate_gene_predictor(gene_predictor, genbank_flag):
             )
     else:
         logger.error(
-            "Error: gene predictor was incorrectly specified. Please use 'phanotate' or 'prodigal'."
+            "Error: gene predictor was incorrectly specified. Please use 'phanotate', 'prodigal', 'prodigal-gv' or 'custom'."
         )
 
 

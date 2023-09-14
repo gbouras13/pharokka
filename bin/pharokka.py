@@ -370,7 +370,7 @@ def main():
     pharok.hmm_flag = hmm_flag
     pharok.custom_hmm_flag = custom_hmm_flag
     pharok.phanotate_version = phanotate_version
-    pharok.prodigal_version = pyrodigal_version
+    pharok.pyrodigal_version = pyrodigal_version
     pharok.pyrodigal_gv_version = pyrodigal_gv_version
     pharok.trna_version = trna_version
     pharok.aragorn_version = aragorn_version
