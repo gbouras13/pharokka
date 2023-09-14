@@ -1407,7 +1407,7 @@ class Pharok:
             )
             contig = row["contig"]
             convert_gff_to_gbk(
-                fasta_file, single_gff_dir, single_gbk_dir, contig, self.coding_table
+                fasta_file, single_gff_dir, single_gbk_dir, contig, self.prot_seq_df
             )
 
     def split_fasta_singles(self):
