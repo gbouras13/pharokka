@@ -283,12 +283,12 @@ def main():
             run_phanotate(input_fasta, out_dir, logdir)
     elif gene_predictor == "prodigal":
         logger.info("Implementing Prodigal using Pyrodigal.")
-        run_pyrodigal(input_fasta, out_dir, args.meta, args.coding_table)
+        run_pyrodigal(input_fasta, out_dir, args.meta, args.coding_table, int(args.threads))
     elif gene_predictor == "genbank":
         logger.info("Extracting CDS information from your genbank file.")
     elif gene_predictor == "prodigal-gv":
         logger.info("Implementing Prodigal-gv using Pyrodigal-gv.")
-        run_pyrodigal_gv(input_fasta, out_dir)
+        run_pyrodigal_gv(input_fasta, out_dir, int(args.threads))
 
     # translate fastas (parse genbank)
     translate_fastas(out_dir, gene_predictor, args.coding_table, args.infile)
