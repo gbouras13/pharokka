@@ -2172,8 +2172,10 @@ def remove_post_processing_files(out_dir, gene_predictor, meta):
         remove_file(os.path.join(out_dir, "phanotate_out.txt"))
     if gene_predictor == "prodigal":
         remove_file(os.path.join(out_dir, "prodigal_out.gff"))
+        remove_file(os.path.join(out_dir, "prodigal_out_aas_tmp.fasta") )
     elif gene_predictor == "prodigal-gv":
         remove_file(os.path.join(out_dir, "prodigal-gv_out.gff"))
+        remove_file(os.path.join(out_dir, "prodigal-gv_out_aas_tmp.fasta") )
     # delete the tmp meta files
     if meta == True:
         remove_directory(os.path.join(out_dir, "input_split_tmp/"))

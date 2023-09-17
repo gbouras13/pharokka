@@ -61,7 +61,7 @@ def get_input():
         "-g",
         "--gene_predictor",
         action="store",
-        help='User specified gene predictor. Use "-g phanotate" or "-g prodigal". \nDefaults to phanotate (not required unless prodigal is desired).',
+        help='User specified gene predictor. Use "-g phanotate" or "-g prodigal" or "-g prodigal-gv" or "-g genbank". \nDefaults to phanotate (not required unless prodigal is desired).',
         default="phanotate",
     )
     parser.add_argument(
@@ -79,7 +79,7 @@ def get_input():
     parser.add_argument(
         "-c",
         "--coding_table",
-        help="translation table for prodigal. Defaults to 11. Experimental only.",
+        help="translation table for prodigal. Defaults to 11.",
         action="store",
         default="11",
     )
