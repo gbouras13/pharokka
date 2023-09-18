@@ -15,7 +15,7 @@ import pytest
 from loguru import logger
 
 from bin.processes import (run_aragorn, run_mash_sketch, run_minced,
-                           run_phanotate, run_pyrodigal)
+                           run_phanotate, run_pyrodigal, run_pyrodigal_gv)
 # import functions
 from bin.util import remove_directory
 
@@ -49,19 +49,27 @@ class testGenePred(unittest.TestCase):
         fasta: Path = f"{standard_data}/SAOMS1.fasta"
         coding_table = 11
         meta = False
-        run_pyrodigal(fasta, standard_data_output, meta, coding_table)  # meta = False
+        threads = 2
+        run_pyrodigal(fasta, standard_data_output, meta, coding_table, threads)  # meta = False
 
     def test_run_pyrodigal_meta(self):
         fasta: Path = f"{standard_data}/SAOMS1.fasta"
         coding_table = 11
         meta = True
-        run_pyrodigal(fasta, standard_data_output, meta, coding_table)  # meta = False
+        threads = 2
+        run_pyrodigal(fasta, standard_data_output, meta, coding_table, threads)  # meta = False
 
     def test_run_pyrodigal_c4(self):
         fasta: Path = f"{standard_data}/SAOMS1.fasta"
         coding_table = 4
         meta = False
-        run_pyrodigal(fasta, standard_data_output, meta, coding_table)  # meta = False
+        threads = 2
+        run_pyrodigal(fasta, standard_data_output, meta, coding_table, threads)  # meta = False
+
+    def test_run_pyrodigal_gv(self):
+        fasta: Path = f"{standard_data}/SAOMS1.fasta"
+        threads = 2
+        run_pyrodigal_gv(fasta, standard_data_output, threads)  # meta = False
 
     def test_run_minced(self):
         fasta: Path = f"{standard_data}/SAOMS1.fasta"
