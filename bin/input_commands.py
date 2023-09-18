@@ -205,13 +205,33 @@ def validate_fasta(filename):
     else:
         with open(filename, "r") as handle:
             fasta = SeqIO.parse(handle, "fasta")
-            logger.info("Checking Input FASTA.")
+            logger.info(f"Checking input {filename}.")
             if any(fasta):
-                logger.info("FASTA checked.")
+                logger.info(f"Input {filename} is in FASTA format.")
             else:
                 logger.error("Error: Input file is not in the FASTA format.")
 
+    # check for duplicate headers
+    check_duplicate_headers(filename)
+    logger.info(f"All entries in {filename} has unique headers.")
 
+def check_duplicate_headers(fasta_file):
+    """
+    checks if there are duplicated in the FASTA header
+    in response to Tina's issue
+    https://github.com/gbouras13/pharokka/issues/293
+    """
+    header_set = set()
+
+    # Iterate through the FASTA file and check for duplicate headers
+    for record in SeqIO.parse(fasta_file, "fasta"):
+        header = record.description
+        if header in header_set:
+            logger.error(f"Duplicate header found: {header}") # errors if duplicate header found
+        else:
+            header_set.add(header)
+    # if it finished it will be fine
+     
 def validate_gene_predictor(gene_predictor, genbank_flag):
     if gene_predictor == "phanotate":
         logger.info("Phanotate will be used for gene prediction.")
@@ -230,7 +250,7 @@ def validate_gene_predictor(gene_predictor, genbank_flag):
             )
     else:
         logger.error(
-            "Error: gene predictor was incorrectly specified. Please use 'phanotate', 'prodigal', 'prodigal-gv' or 'custom'."
+            "Error: gene predictor was incorrectly specified. Please use 'phanotate', 'prodigal' or 'prodigal-gv'."
         )
 
 
