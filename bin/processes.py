@@ -1,6 +1,6 @@
+import multiprocessing.pool
 import os
 import subprocess as sp
-import multiprocessing.pool
 from datetime import datetime
 
 import pandas as pd
@@ -36,14 +36,17 @@ def run_pyrodigal_gv(filepath_in, out_dir, threads):
     with multiprocessing.pool.ThreadPool(threads) as pool:
         with open(os.path.join(out_dir, "prodigal-gv_out.gff"), "w") as gff:
             with open(os.path.join(out_dir, "prodigal-gv_out_tmp.fasta"), "w") as dst:
-                with open(os.path.join(out_dir, "prodigal-gv_out_aas_tmp.fasta"), "w") as aa_fasta:
+                with open(
+                    os.path.join(out_dir, "prodigal-gv_out_aas_tmp.fasta"), "w"
+                ) as aa_fasta:
                     records = SeqIO.parse(filepath_in, "fasta")
                     for record_id, genes in pool.imap(_find_genes, records):
-                        genes.write_gff(gff, sequence_id=record_id, include_translation_table=True)
+                        genes.write_gff(
+                            gff, sequence_id=record_id, include_translation_table=True
+                        )
                         genes.write_genes(dst, sequence_id=record_id)
                         # need to write the translation
                         genes.write_translations(aa_fasta, sequence_id=record_id)
-
 
 
 ##### phanotate meta mode ########
@@ -305,15 +308,36 @@ def run_pyrodigal(filepath_in, out_dir, meta, coding_table, threads):
         prodigal_metamode = True
         logger.info("Prodigal Meta Mode Enabled")
 
-    # for training if you want different coding table
-    seqs = [bytes(record.seq) for record in SeqIO.parse(filepath_in, "fasta")]
-    record = SeqIO.parse(filepath_in, "fasta")
-    orf_finder = pyrodigal.GeneFinder(meta=prodigal_metamode)
+    #######################################################
+    # if under 20000, pyrodigal will only work in meta mode
+    # https://github.com/hyattpd/prodigal/wiki/Advice-by-Input-Type#plasmids-phages-viruses-and-other-short-sequences
+    # https://github.com/hyattpd/Prodigal/issues/51
+    # so make sure of this
+    #######################################################
 
-    # coding table possible if false
-    if prodigal_metamode == False:
-        orf_finder.train(*seqs, translation_table=int(coding_table))
+    # get total length of input
+    total_length = 0
 
+    with open(filepath_in, "r") as handle:
+        for record in SeqIO.parse(handle, "fasta"):
+            total_length += len(record.seq)
+
+    # if the length is 20000 or under, use meta mode by default
+    if total_length < 20001:
+        orf_finder = pyrodigal.GeneFinder(meta=True)
+    # otherwise train it
+    # recommend pyrodigal-gv anyway
+    else:
+        # for training if you want different coding table
+        seqs = [bytes(record.seq) for record in SeqIO.parse(filepath_in, "fasta")]
+        record = SeqIO.parse(filepath_in, "fasta")
+        orf_finder = pyrodigal.GeneFinder(meta=prodigal_metamode)
+
+        # make coding table possible if false
+        if prodigal_metamode == False:
+            orf_finder.train(*seqs, translation_table=int(coding_table))
+
+    # define for the multithreadpool
     def _find_genes(record):
         genes = orf_finder.find_genes(str(record.seq))
         return (record.id, genes)
@@ -321,7 +345,9 @@ def run_pyrodigal(filepath_in, out_dir, meta, coding_table, threads):
     with multiprocessing.pool.ThreadPool(threads) as pool:
         with open(os.path.join(out_dir, "prodigal_out.gff"), "w") as gff:
             with open(os.path.join(out_dir, "prodigal_out_tmp.fasta"), "w") as dst:
-                with open(os.path.join(out_dir, "prodigal_out_aas_tmp.fasta"), "w") as aa_fasta:
+                with open(
+                    os.path.join(out_dir, "prodigal_out_aas_tmp.fasta"), "w"
+                ) as aa_fasta:
                     records = SeqIO.parse(filepath_in, "fasta")
                     for record_id, genes in pool.imap(_find_genes, records):
                         genes.write_gff(gff, sequence_id=record_id)
@@ -552,25 +578,25 @@ def translate_fastas(out_dir, gene_predictor, coding_table, genbank_file):
                 )
                 SeqIO.write(aa_record, aa_fa, "fasta")
                 i += 1
-    elif gene_predictor == "prodigal-gv" or gene_predictor == "prodigal" :
+    elif gene_predictor == "prodigal-gv" or gene_predictor == "prodigal":
         # read in the AA file instead and parse that to clean the header
         fasta_input_tmp = gene_predictor + "_out_aas_tmp.fasta"
         with open(os.path.join(out_dir, fasta_output_aas_tmp), "w") as aa_fa:
-                i = 0
-                for dna_record in SeqIO.parse(
-                    os.path.join(out_dir, fasta_input_tmp), "fasta"
-                ):
-                    dna_header = str(clean_df["contig"].iloc[i]) + str(i)
-                    dna_description = (
-                        str(clean_df["start"].iloc[i]) + "_" + str(clean_df["stop"].iloc[i])
-                    )
-                    aa_record = SeqRecord(
-                        dna_record.seq,
-                        id=dna_header,
-                        description=dna_description,
-                    )
-                    SeqIO.write(aa_record, aa_fa, "fasta")
-                    i += 1
+            i = 0
+            for dna_record in SeqIO.parse(
+                os.path.join(out_dir, fasta_input_tmp), "fasta"
+            ):
+                dna_header = str(clean_df["contig"].iloc[i]) + str(i)
+                dna_description = (
+                    str(clean_df["start"].iloc[i]) + "_" + str(clean_df["stop"].iloc[i])
+                )
+                aa_record = SeqRecord(
+                    dna_record.seq,
+                    id=dna_header,
+                    description=dna_description,
+                )
+                SeqIO.write(aa_record, aa_fa, "fasta")
+                i += 1
     # for genbank do nothing
 
 

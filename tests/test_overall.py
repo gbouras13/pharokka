@@ -119,17 +119,20 @@ def test_meta(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m"
     exec_command(cmd)
 
-def test_meta(tmp_dir):
+
+def test_meta_prodigal_gv(tmp_dir):
     """test pharokka meta with prodigal-gv"""
     input_fasta: Path = f"{meta_data}/combined_meta.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m -g prodigal-gv"
     exec_command(cmd)
+
 
 def test_meta_dnaapler_all_bug(tmp_dir):
     """test pharokka meta dnaapler bug and split"""
     input_fasta: Path = f"{meta_data}/combined_meta.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m -s --dnaapler --meta_hmm"
     exec_command(cmd)
+
 
 def test_overall_locus(tmp_dir):
     """test pharokka overall locus tag prefix"""
@@ -192,6 +195,7 @@ def test_meta_no_cds_contig(tmp_dir):
     input_fasta: Path = f"{meta_data}/fake_meta.fa"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m"
     exec_command(cmd)
+
 
 ######
 # pharokka CI was timing out (>6 hours)

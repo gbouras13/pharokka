@@ -212,8 +212,10 @@ def validate_fasta(filename):
                 logger.error("Error: Input file is not in the FASTA format.")
 
     # check for duplicate headers
+    logger.info(f"Checking input {filename} for duplicate FASTA headers.")
     check_duplicate_headers(filename)
-    logger.info(f"All entries in {filename} has unique headers.")
+    logger.info(f"All headers in {filename} are unique.")
+
 
 def check_duplicate_headers(fasta_file):
     """
@@ -227,11 +229,14 @@ def check_duplicate_headers(fasta_file):
     for record in SeqIO.parse(fasta_file, "fasta"):
         header = record.description
         if header in header_set:
-            logger.error(f"Duplicate header found: {header}") # errors if duplicate header found
+            logger.error(
+                f"Duplicate header found: {header}"
+            )  # errors if duplicate header found
         else:
             header_set.add(header)
     # if it finished it will be fine
-     
+
+
 def validate_gene_predictor(gene_predictor, genbank_flag):
     if gene_predictor == "phanotate":
         logger.info("Phanotate will be used for gene prediction.")

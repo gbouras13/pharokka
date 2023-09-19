@@ -50,21 +50,39 @@ class testGenePred(unittest.TestCase):
         coding_table = 11
         meta = False
         threads = 2
-        run_pyrodigal(fasta, standard_data_output, meta, coding_table, threads)  # meta = False
+        run_pyrodigal(
+            fasta, standard_data_output, meta, coding_table, threads
+        )  # meta = False
+
+    def test_run_pyrodigal_small_fasta(self):
+        """
+        handle instance where input is under 20000 nucleotides
+        """
+        fasta: Path = f"{standard_data}/SAOMS1_subset.fasta"
+        coding_table = 11
+        meta = False
+        threads = 2
+        run_pyrodigal(
+            fasta, standard_data_output, meta, coding_table, threads
+        )  # meta = False
 
     def test_run_pyrodigal_meta(self):
         fasta: Path = f"{standard_data}/SAOMS1.fasta"
         coding_table = 11
         meta = True
         threads = 2
-        run_pyrodigal(fasta, standard_data_output, meta, coding_table, threads)  # meta = False
+        run_pyrodigal(
+            fasta, standard_data_output, meta, coding_table, threads
+        )  # meta = False
 
     def test_run_pyrodigal_c4(self):
         fasta: Path = f"{standard_data}/SAOMS1.fasta"
         coding_table = 4
         meta = False
         threads = 2
-        run_pyrodigal(fasta, standard_data_output, meta, coding_table, threads)  # meta = False
+        run_pyrodigal(
+            fasta, standard_data_output, meta, coding_table, threads
+        )  # meta = False
 
     def test_run_pyrodigal_gv(self):
         fasta: Path = f"{standard_data}/SAOMS1.fasta"
