@@ -2101,41 +2101,7 @@ def create_mmseqs_tophits(out_dir):
     # Group by 'gene' and find the top hit for each group
     tophits_df = mmseqs_df.groupby('gene').apply(lambda group: group.nsmallest(1, 'mmseqs_eVal')).reset_index(drop=True)
 
-    # # get list of genes
-    # genes = mmseqs_df.gene.unique()
-
-    # # instantiate tophits list
-    # tophits = []
-
-    # for gene in genes:
-    #     tmp_df = (
-    #         mmseqs_df.loc[mmseqs_df["gene"] == gene]
-    #         .sort_values("mmseqs_eVal")
-    #         .reset_index(drop=True)
-    #         .loc[0]
-    #     )
-    #     tophits.append(
-    #         [
-    #             tmp_df.mmseqs_phrog,
-    #             tmp_df.gene,
-    #             tmp_df.mmseqs_alnScore,
-    #             tmp_df.mmseqs_seqIdentity,
-    #             tmp_df.mmseqs_eVal,
-    #         ]
-    #     )
-
-    # # create tophits df
-    # tophits_df = pd.DataFrame(
-    #     tophits,
-    #     columns=[
-    #         "mmseqs_phrog",
-    #         "gene",
-    #         "mmseqs_alnScore",
-    #         "mmseqs_seqIdentity",
-    #         "mmseqs_eVal",
-    #     ],
-    # )
-
+    
     # create tophits df
     tophits_df = tophits_df[[
         "mmseqs_phrog",
