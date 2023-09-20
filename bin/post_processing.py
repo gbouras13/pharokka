@@ -2078,7 +2078,7 @@ def create_mmseqs_tophits(out_dir):
 
     ##mmseqs
     mmseqs_file = os.path.join(out_dir, "mmseqs_results.tsv")
-    logger.info("Processing mmseqs2 outputs.")
+    logger.info("Processing MMseqs2 outputs.")
     logger.info("Processing PHROGs output.")
     col_list = [
         "mmseqs_phrog",
@@ -2096,40 +2096,57 @@ def create_mmseqs_tophits(out_dir):
     mmseqs_df = pd.read_csv(
         mmseqs_file, delimiter="\t", index_col=False, names=col_list
     )
-    # get list of genes
-    genes = mmseqs_df.gene.unique()
 
-    # instantiate tophits list
-    tophits = []
+    # optimise the tophits generation
+    # Group by 'gene' and find the top hit for each group
+    tophits_df = mmseqs_df.groupby('gene').apply(lambda group: group.nsmallest(1, 'mmseqs_eVal')).reset_index(drop=True)
 
-    for gene in genes:
-        tmp_df = (
-            mmseqs_df.loc[mmseqs_df["gene"] == gene]
-            .sort_values("mmseqs_eVal")
-            .reset_index(drop=True)
-            .loc[0]
-        )
-        tophits.append(
-            [
-                tmp_df.mmseqs_phrog,
-                tmp_df.gene,
-                tmp_df.mmseqs_alnScore,
-                tmp_df.mmseqs_seqIdentity,
-                tmp_df.mmseqs_eVal,
-            ]
-        )
+    # # get list of genes
+    # genes = mmseqs_df.gene.unique()
+
+    # # instantiate tophits list
+    # tophits = []
+
+    # for gene in genes:
+    #     tmp_df = (
+    #         mmseqs_df.loc[mmseqs_df["gene"] == gene]
+    #         .sort_values("mmseqs_eVal")
+    #         .reset_index(drop=True)
+    #         .loc[0]
+    #     )
+    #     tophits.append(
+    #         [
+    #             tmp_df.mmseqs_phrog,
+    #             tmp_df.gene,
+    #             tmp_df.mmseqs_alnScore,
+    #             tmp_df.mmseqs_seqIdentity,
+    #             tmp_df.mmseqs_eVal,
+    #         ]
+    #     )
+
+    # # create tophits df
+    # tophits_df = pd.DataFrame(
+    #     tophits,
+    #     columns=[
+    #         "mmseqs_phrog",
+    #         "gene",
+    #         "mmseqs_alnScore",
+    #         "mmseqs_seqIdentity",
+    #         "mmseqs_eVal",
+    #     ],
+    # )
 
     # create tophits df
-    tophits_df = pd.DataFrame(
-        tophits,
-        columns=[
-            "mmseqs_phrog",
-            "gene",
-            "mmseqs_alnScore",
-            "mmseqs_seqIdentity",
-            "mmseqs_eVal",
-        ],
-    )
+    tophits_df = tophits_df[[
+        "mmseqs_phrog",
+        "gene",
+        "mmseqs_alnScore",
+        "mmseqs_seqIdentity",
+        "mmseqs_eVal",
+    ]]
+
+
+
     tophits_df.to_csv(
         os.path.join(out_dir, "top_hits_mmseqs.tsv"), sep="\t", index=False
     )
@@ -2315,32 +2332,23 @@ def process_vfdb_results(out_dir, merged_df):
     touch_file(vfdb_file)
 
     vfdb_df = pd.read_csv(vfdb_file, delimiter="\t", index_col=False, names=col_list)
-    genes = vfdb_df.gene.unique()
 
-    # get top hit
-    tophits = []
 
-    for gene in genes:
-        tmp_df = (
-            vfdb_df.loc[vfdb_df["gene"] == gene]
-            .sort_values("vfdb_eVal")
-            .reset_index(drop=True)
-            .loc[0]
-        )
-        tophits.append(
-            [
-                tmp_df.vfdb_hit,
-                tmp_df.gene,
-                tmp_df.vfdb_alnScore,
-                tmp_df.vfdb_seqIdentity,
-                tmp_df.vfdb_eVal,
-            ]
-        )
+    # optimise the tophits generation
+    # Group by 'gene' and find the top hit for each group
+    tophits_df = vfdb_df.groupby('gene').apply(lambda group: group.nsmallest(1, 'vfdb_eVal')).reset_index(drop=True)
 
-    tophits_df = pd.DataFrame(
-        tophits,
-        columns=["vfdb_hit", "gene", "vfdb_alnScore", "vfdb_seqIdentity", "vfdb_eVal"],
-    )
+   
+
+    # create tophits df
+    tophits_df = tophits_df[[
+        "vfdb_hit",
+        "gene",
+        "vfdb_alnScore",
+        "vfdb_seqIdentity",
+        "vfdb_eVal",
+    ]]
+
 
     # left join vfdb to merged_df
     tophits_df["gene"] = tophits_df["gene"].astype(str)
@@ -2419,32 +2427,21 @@ def process_card_results(out_dir, merged_df, db_dir):
     ]
     touch_file(card_file)
     card_df = pd.read_csv(card_file, delimiter="\t", index_col=False, names=col_list)
-    genes = card_df.gene.unique()
 
-    # get top hit
-    tophits = []
+    #
+    tophits_df = card_df.groupby('gene').apply(lambda group: group.nsmallest(1, 'CARD_eVal')).reset_index(drop=True)
 
-    for gene in genes:
-        tmp_df = (
-            card_df.loc[card_df["gene"] == gene]
-            .sort_values("CARD_eVal")
-            .reset_index(drop=True)
-            .loc[0]
-        )
-        tophits.append(
-            [
-                tmp_df.CARD_hit,
-                tmp_df.gene,
-                tmp_df.CARD_alnScore,
-                tmp_df.CARD_seqIdentity,
-                tmp_df.CARD_eVal,
-            ]
-        )
+   
 
-    tophits_df = pd.DataFrame(
-        tophits,
-        columns=["CARD_hit", "gene", "CARD_alnScore", "CARD_seqIdentity", "CARD_eVal"],
-    )
+    # create tophits df
+    tophits_df = tophits_df[[
+        "CARD_hit",
+        "gene",
+        "CARD_alnScore",
+        "CARD_seqIdentity",
+        "CARD_eVal",
+    ]]
+   
 
     # left join tophits_df to merged_df
     tophits_df["gene"] = tophits_df["gene"].astype(str)
