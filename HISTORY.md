@@ -10,7 +10,8 @@ History
 * `-g prodigal` and `-g prodigal-gv` should be much faster thanks to multithread support added by @althonos.
 * Genbank format output will be designated with PHG not VRL (https://github.com/RyanCook94/inphared/issues/22).
 * The `_length_gc_cds_density.tsv` and `_cds_final_merged_output.tsv` files now contain the translation table/genetic code for each contig (usually 11 but now not always if you use `pyrodigal-gv`). 
-
+* `--skip_mash` flag added to skip finding the closest match for each contig in INPHARED using mash.
+* `--skip_extra_annotations` flag added to skip running tRNA-scanSE, MINced and Aragorn in case you only want CDS predictions and functional annotations.
 
 1.4.1 (2023-09-04)
 ------------------

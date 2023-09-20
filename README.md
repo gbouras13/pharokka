@@ -23,6 +23,33 @@ Extra special thanks to Ghais Houtak for making Pharokka's logo.
 
 If you are looking for rapid standardised annotation of bacterial genomes, please use [Bakta](https://github.com/oschwengers/bakta). [Prokka](https://github.com/tseemann/prokka), which inspired the creation and naming of `pharokka`, is another good option, but Bakta is [Prokka's worthy successor](https://twitter.com/torstenseemann/status/1565471892840259585).
 
+# Table of Contents
+
+- [pharokka](#pharokka)
+  - [Fast Phage Annotation Tool](#fast-phage-annotation-tool)
+- [Table of Contents](#table-of-contents)
+- [Quick Start](#quick-start)
+- [Documentation](#documentation)
+- [Paper](#paper)
+- [Pharokka with Galaxy Europe Webserver](#pharokka-with-galaxy-europe-webserver)
+- [Brief Overview](#brief-overview)
+  - [Pharokka v 1.4.0 Update (27 August 2023)](#pharokka-v-140-update-27-august-2023)
+  - [Pharokka v 1.3.0 Update](#pharokka-v-130-update)
+- [Installation](#installation)
+  - [Conda Installation](#conda-installation)
+  - [Pip](#pip)
+  - [Source](#source)
+- [Database Installation](#database-installation)
+- [Beginner Conda Installation](#beginner-conda-installation)
+- [Usage](#usage)
+- [Version Log](#version-log)
+- [System](#system)
+- [Time](#time)
+- [Original Benchmarking (v1.1.0)](#original-benchmarking-v110)
+- [Benchmarking v1.4.0](#benchmarking-v140)
+- [Bugs and Suggestions](#bugs-and-suggestions)
+- [Citation](#citation)
+
 # Quick Start
 
 The easiest way to install `pharokka` is via conda:
@@ -113,33 +140,6 @@ pharokka_plotter.py -i test_data/SAOMS1.fasta -n SAOMS1_plot -o SAOMS1_pharokka_
 SAOMS1 phage (GenBank: MW460250.1) was isolated and sequenced by: Yerushalmy, O., Alkalay-Oren, S., Coppenhagen-Glazer, S. and Hazan, R. from the Institute of Dental Sciences and School of Dental Medicine, Hebrew University, Israel.
 
 Please see [plotting](docs/plotting.md) for details on all plotting parameter options. 
-
-# Table of Contents
-
-- [pharokka](#pharokka)
-  - [Fast Phage Annotation Tool](#fast-phage-annotation-tool)
-- [Quick Start](#quick-start)
-- [Documentation](#documentation)
-- [Paper](#paper)
-- [Pharokka with Galaxy Europe Webserver](#pharokka-with-galaxy-europe-webserver)
-- [Brief Overview](#brief-overview)
-  - [Pharokka v 1.4.0 Update (27 August 2023)](#pharokka-v-140-update-27-august-2023)
-  - [Pharokka v 1.3.0 Update](#pharokka-v-130-update)
-- [Table of Contents](#table-of-contents)
-- [Installation](#installation)
-  - [Conda Installation](#conda-installation)
-  - [Pip](#pip)
-  - [Source](#source)
-- [Database Installation](#database-installation)
-- [Beginner Conda Installation](#beginner-conda-installation)
-- [Usage](#usage)
-- [Version Log](#version-log)
-- [System](#system)
-- [Time](#time)
-- [Original Benchmarking (v1.1.0)](#original-benchmarking-v110)
-- [Benchmarking v1.4.0](#benchmarking-v140)
-- [Bugs and Suggestions](#bugs-and-suggestions)
-- [Citation](#citation)
 
 
 # Installation
