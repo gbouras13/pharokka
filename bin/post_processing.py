@@ -1059,7 +1059,7 @@ class Pharok:
         total_gff.stop = total_gff.stop.astype(int)
 
         # sorts all features by start
-        total_gff = total_gff.groupby(["contig"], sort=False, as_index=False).apply(
+        total_gff = total_gff.groupby(["contig"], sort=False, as_index=False, group_keys=True).apply(
             pd.DataFrame.sort_values, "start", ascending=True
         )
 
@@ -1808,11 +1808,11 @@ class Pharok:
                 self.length_df["contig"] == contig, "cds_coding_density"
             ] = cds_coding_density
             # eappend it all to combo_list
+            combo_list.append(cds_df)
             if self.skip_extra_annotations is False:
-                combo_list.append(cds_df)
                 combo_list.append(trna_row)
                 combo_list.append(crispr_row)
-            combo_list.append(tmrna_row)
+                combo_list.append(tmrna_row)
             combo_list.append(vfdb_row)
             combo_list.append(CARD_row)
 
@@ -2122,8 +2122,8 @@ def create_mmseqs_tophits(out_dir):
 
     # optimise the tophits generation
     # Group by 'gene' and find the top hit for each group
-    tophits_df = mmseqs_df.groupby('gene').apply(lambda group: group.nsmallest(1, 'mmseqs_eVal')).reset_index(drop=True)
-
+    tophits_df = mmseqs_df.groupby('gene', group_keys=True).apply(lambda group: group.nsmallest(1, 'mmseqs_eVal')).reset_index(drop=True)
+    
     
     # create tophits df
     tophits_df = tophits_df[[
@@ -2325,7 +2325,7 @@ def process_vfdb_results(out_dir, merged_df):
 
     # optimise the tophits generation
     # Group by 'gene' and find the top hit for each group
-    tophits_df = vfdb_df.groupby('gene').apply(lambda group: group.nsmallest(1, 'vfdb_eVal')).reset_index(drop=True)
+    tophits_df = vfdb_df.groupby('gene', group_keys=True).apply(lambda group: group.nsmallest(1, 'vfdb_eVal')).reset_index(drop=True)
 
    
 
@@ -2418,7 +2418,7 @@ def process_card_results(out_dir, merged_df, db_dir):
     card_df = pd.read_csv(card_file, delimiter="\t", index_col=False, names=col_list)
 
     #
-    tophits_df = card_df.groupby('gene').apply(lambda group: group.nsmallest(1, 'CARD_eVal')).reset_index(drop=True)
+    tophits_df = card_df.groupby('gene', group_keys=True).apply(lambda group: group.nsmallest(1, 'CARD_eVal')).reset_index(drop=True)
 
    
 

@@ -399,8 +399,9 @@ def main():
     pharok.process_results()
 
     # parse the aragorn output
-    # get flag whether there is a tmrna from aragor
-    pharok.parse_aragorn()
+    # only if not skipping annots
+    if args.skip_extra_annotations is False:
+        pharok.parse_aragorn()
 
     # create gff and save locustag to class for table
     pharok.create_gff()
