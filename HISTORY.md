@@ -1,6 +1,12 @@
 History
 =======
 
+1.5.0 (2023-09-20)
+------------------
+
+* Adds support for `pyrodigal-gv` implementing `prodigal-gv` as a gene predictor ([pyrodigal-gv]() and [prodigal-gv]()). This can be specified with `-g prodigal-gv`
+
+
 1.4.1 (2023-09-04)
 ------------------
 

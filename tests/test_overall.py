@@ -93,16 +93,16 @@ def test_overall_crispr(tmp_dir):
 
 
 def test_overall_vfdb(tmp_dir):
-    """test pharokka overall crispr"""
+    """test pharokka overall on a phage with vfdb hits. Also include --skip_extra_annotations"""
     input_fasta: Path = f"{VFDB_data}/NC_004617.fasta"
-    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --skip_extra_annotations"
     exec_command(cmd)
 
 
 def test_overall_amr(tmp_dir):
-    """test pharokka overall amr"""
+    """test pharokka overall amr also includes '--skip_mash"""
     input_fasta: Path = f"{AMR_data}/NC_007458.fasta"
-    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --skip_mash"
     exec_command(cmd)
 
 

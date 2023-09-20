@@ -448,8 +448,8 @@ def main():
         # part of the class
         pharok.inphared_top_hits()
     else:
-        logger.info(f"You have chosen --skip_mash.")
-        logger.info(f"Skipping finding the closest match for each contig in INPHARED using mash.")
+        logger.info("You have chosen --skip_mash.")
+        logger.info("Skipping finding the closest match for each contig in INPHARED using mash.")
 
     # delete tmp files
     remove_post_processing_files(out_dir, gene_predictor, args.meta)

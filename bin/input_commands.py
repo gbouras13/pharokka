@@ -146,7 +146,7 @@ def get_input():
     ),
     parser.add_argument(
         "--skip_mash",
-        help="Skips mash.",
+        help="Skips running mash to find the closest match for each contig in INPHARED.",
         action="store_true",
     )
     parser.add_argument(
