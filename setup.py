@@ -91,8 +91,8 @@ setup(
         "pytest-cov>=3.0.0",
         "alive-progress>=3.0.1",
         "requests>=2.25.1",
-        "bcbio-gff >=0.7.0",
-        "pyrodigal >=3.0.0",
-        "pyrodigal_gv >= 0.1.0"
+        "bcbio-gff>=0.7.0",
+        "pyrodigal>=3.0.0",
+        "pyrodigal_gv>=0.1.0"
     ],
 )
