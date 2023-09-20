@@ -296,16 +296,17 @@ def main():
     translate_fastas(out_dir, gene_predictor, args.coding_table, args.infile)
 
     # run trna-scan meta mode if required
-    if args.meta == True:
-        logger.info("Starting tRNA-scanSE. Applying meta mode.")
-        run_trnascan_meta(input_fasta, out_dir, args.threads, num_fastas)
-        concat_trnascan_meta(out_dir, num_fastas)
-    else:
-        logger.info("Starting tRNA-scanSE.")
-        run_trna_scan(input_fasta, args.threads, out_dir, logdir)
-    # run minced and aragorn
-    run_minced(input_fasta, out_dir, prefix, logdir)
-    run_aragorn(input_fasta, out_dir, prefix, logdir)
+    if args.skip_extra_annotations is False:
+        if args.meta == True:
+            logger.info("Starting tRNA-scanSE. Applying meta mode.")
+            run_trnascan_meta(input_fasta, out_dir, args.threads, num_fastas)
+            concat_trnascan_meta(out_dir, num_fastas)
+        else:
+            logger.info("Starting tRNA-scanSE.")
+            run_trna_scan(input_fasta, args.threads, out_dir, logdir)
+        # run minced and aragorn
+        run_minced(input_fasta, out_dir, prefix, logdir)
+        run_aragorn(input_fasta, out_dir, prefix, logdir)
 
     # running mmseqs2 on the 3 databases
     if mmseqs_flag is True:
@@ -377,6 +378,7 @@ def main():
     pharok.trna_version = trna_version
     pharok.aragorn_version = aragorn_version
     pharok.minced_version = minced_version
+    pharok.skip_extra_annotations = args.skip_extra_annotations
 
     if pharok.hmm_flag is True:
         pharok.pyhmmer_results_dict = best_results_pyhmmer
