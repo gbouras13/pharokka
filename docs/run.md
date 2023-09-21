@@ -50,11 +50,31 @@ To use Prodigal (pyrodigal) gene predictions instead of PHANOTATE use `-g prodig
 pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -g prodigal
 ```
 
-If you are annotating more than 1 contig, it is recommended that you run pharokka in meta mode using the `-m` flag, which will enable pharokka to finish faster by making full use of all available threads when running PHANOTATE and tRNAscan-SE 2.
+To use Prodigal-gv (pyrodigal-gv) gene predictions instead of PHANOTATE use `-g prodigal-gv`. This is recommended for metagenomic datasets where some phages likely have [alternate genetic codes](https://github.com/apcamargo/prodigal-gv).
 
 ```
-pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -m
+pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -g prodigal-gv
 ```
+
+If you are annotating more than 1 contig, it is recommended that you run pharokka in meta mode using the `-m` flag, which will enable pharokka to finish faster by making full use of all available threads when running tRNAscan-SE 2.
+
+```
+pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  -m  -g prodigal-gv
+```
+
+As of v1.5.0, you can skip running mash to find the closest match for each contig in INPHARED using `skip_mash`.
+
+```
+pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  --skip_mash
+```
+
+As of v1.5.0, you can skip running tRNAscan-SE 2, MinCED and Aragorn fusingg `skip_extra_annotations`.
+
+```
+pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  --skip_extra_annotations
+```
+
+
 
 ## Advanced Parameters
 
@@ -128,9 +148,9 @@ Of course, you can also use this functionality to reorient your phage however yo
 
 
 ```
-usage: pharokka.py [-h] [-i INFILE] [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG] [-g GENE_PREDICTOR] [-m] [-s] [-c CODING_TABLE]
-                   [-e EVALUE] [--fast] [--mmseqs2_only] [--meta_hmm] [--dnaapler] [--custom_hmm CUSTOM_HMM] [--genbank] [--terminase]
-                   [--terminase_strand TERMINASE_STRAND] [--terminase_start TERMINASE_START] [-V] [--citation]
+usage: pharokka.py [-h] [-i INFILE] [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG] [-g GENE_PREDICTOR] [-m] [-s] [-c CODING_TABLE] [-e EVALUE] [--fast] [--mmseqs2_only]
+                   [--meta_hmm] [--dnaapler] [--custom_hmm CUSTOM_HMM] [--genbank] [--terminase] [--terminase_strand TERMINASE_STRAND] [--terminase_start TERMINASE_START]
+                   [--skip_extra_annotations] [--skip_mash] [-V] [--citation]
 
 pharokka: fast phage annotation program
 
@@ -150,13 +170,13 @@ options:
   -l LOCUSTAG, --locustag LOCUSTAG
                         User specified locus tag for the gff/gbk files. This is not required. A random locus tag will be generated instead.
   -g GENE_PREDICTOR, --gene_predictor GENE_PREDICTOR
-                        User specified gene predictor. Use "-g phanotate" or "-g prodigal". 
+                        User specified gene predictor. Use "-g phanotate" or "-g prodigal" or "-g prodigal-gv" or "-g genbank". 
                         Defaults to phanotate (not required unless prodigal is desired).
   -m, --meta            meta mode for metavirome input samples
   -s, --split           split mode for metavirome samples. -m must also be specified. 
                         Will output separate split FASTA, gff and genbank files for each input contig.
   -c CODING_TABLE, --coding_table CODING_TABLE
-                        translation table for prodigal. Defaults to 11. Experimental only.
+                        translation table for prodigal. Defaults to 11.
   -e EVALUE, --evalue EVALUE
                         E-value threshold for MMseqs2 database PHROGs, VFDB and CARD and PyHMMER PHROGs database search. Defaults to 1E-05.
   --fast, --hmm_only    Runs PyHMMER (HMMs) with PHROGs only, not MMseqs2 with PHROGs, CARD or VFDB. 
@@ -168,13 +188,17 @@ options:
   --custom_hmm CUSTOM_HMM
                         Run pharokka with a custom HMM profile database suffixed .h3m. 
                         Please use create this with the create_custom_hmm.py script.
-  --genbank             Flag denoting that -i/--input is a genbank file instead of the usual FASTA file
+  --genbank             Flag denoting that -i/--input is a genbank file instead of the usual FASTA file. 
+                         The CDS calls in this file will be preserved and re-annotated.
   --terminase           Runs terminase large subunit re-orientation mode. 
                         Single genome input only and requires --terminase_strand and --terminase_start to be specified.
   --terminase_strand TERMINASE_STRAND
                         Strand of terminase large subunit. Must be "pos" or "neg".
   --terminase_start TERMINASE_START
                         Start coordinate of the terminase large subunit.
+  --skip_extra_annotations
+                        Skips tRNAscan-se, MINced and Aragorn.
+  --skip_mash           Skips running mash to find the closest match for each contig in INPHARED.
   -V, --version         Print pharokka Version
   --citation            Print pharokka Citation
   ```

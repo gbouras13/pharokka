@@ -141,7 +141,7 @@ def get_input():
     )
     parser.add_argument(
         "--skip_extra_annotations",
-        help="Skips tRNAscan-se, MINced and Aragorn.",
+        help="Skips tRNAscan-SE 2, MinCED and Aragorn.",
         action="store_true",
     ),
     parser.add_argument(
@@ -577,7 +577,7 @@ def check_dependencies(skip_mash):
     logger.info(f"Pyrodigal version is ok.")
 
     #######
-    # pyrodigal
+    # pyrodigal gv
     #######
 
     pyrodigal_gv_version = pyrodigal_gv.__version__

@@ -67,4 +67,20 @@ The 673 crAss-like genomes were run with `-m` (defaults to `--mmseqs2_only` in v
 | Annotated Function CDS | **16713**                 | 9150                             | 9150            |
 | Unknown Function CDS   | 75286                     | 82849                            | 82849           |
 
- 
+
+# Benchmarking v1.5.0
+
+`pharokka v1.5.0` was run on the 673 crAss phage dataset to showcase the improved CDS prediction of `-g prodigal-gv` for metagenomic datasets where some phages likely have alternative genetic codes. 
+
+All benchmarking was conducted on a Intel® Core™ i7-10700K CPU @ 3.80GHz on a machine running Ubuntu 20.04.6 LTS with 8 threads (`-t 8`). `pyrodigal-gv v0.1.0` and `pyrodigal v3.0.0` were used respectively with `--fast`.
+
+| 673 crAss-like genomes | `pharokka` v1.5.0 `-g prodigal-gv`  | `pharokka` v1.5.0 `-g prodigal` | 
+|------------------------|------------------------------------|----------------------------------|
+| Total CDS              | 81730                              | 91999                            | 
+| Annotated Function CDS | **20344**                          | 17458                            | 
+| Unknown Function CDS   | 61386                              | 74541                            |
+| Contigs with genetic code 15 | 229                          | NA                               | 
+| Contigs with genetic code 4 | 38                            | NA                               | 
+| Contigs with genetic code 11 | 406                          | 673                              | 
+
+Fewer larger CDS were predicted more accurately, leading to an increase in the number of coding sequences with annotated functions. Approximately 40% of contigs in this dataset were predicted to use non-standard genetic codes according to `pyrodigal-gv`.

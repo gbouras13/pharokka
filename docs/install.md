@@ -53,7 +53,7 @@ pharokka.py --help
 
 # Database Installation
 
-* **Note v 1.4.0 implements a new database with PHROGs HMM profiles. You will need to update the Pharokka database to use v1.4.0**
+* **Note v 1.4.0 implements a new database with PHROGs HMM profiles. You will need to update the Pharokka database to use v1.4.0 and higher**
 
 To install the pharokka database to the default directory:
 
