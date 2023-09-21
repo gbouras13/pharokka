@@ -4,9 +4,10 @@ import shutil
 import subprocess as sp
 from argparse import RawTextHelpFormatter
 
+import pyrodigal
+import pyrodigal_gv
 from Bio import SeqIO
 from loguru import logger
-from pyrodigal import __version__
 from util import get_version
 
 
@@ -60,7 +61,7 @@ def get_input():
         "-g",
         "--gene_predictor",
         action="store",
-        help='User specified gene predictor. Use "-g phanotate" or "-g prodigal". \nDefaults to phanotate (not required unless prodigal is desired).',
+        help='User specified gene predictor. Use "-g phanotate" or "-g prodigal" or "-g prodigal-gv" or "-g genbank". \nDefaults to phanotate (not required unless prodigal is desired).',
         default="phanotate",
     )
     parser.add_argument(
@@ -78,7 +79,7 @@ def get_input():
     parser.add_argument(
         "-c",
         "--coding_table",
-        help="translation table for prodigal. Defaults to 11. Experimental only.",
+        help="translation table for prodigal. Defaults to 11.",
         action="store",
         default="11",
     )
@@ -139,6 +140,16 @@ def get_input():
         default="nothing",
     )
     parser.add_argument(
+        "--skip_extra_annotations",
+        help="Skips tRNAscan-SE 2, MinCED and Aragorn.",
+        action="store_true",
+    ),
+    parser.add_argument(
+        "--skip_mash",
+        help="Skips running mash to find the closest match for each contig in INPHARED.",
+        action="store_true",
+    )
+    parser.add_argument(
         "-V",
         "--version",
         help="Print pharokka Version",
@@ -197,23 +208,56 @@ def instantiate_dirs(output_dir, meta, force):
 
 
 def validate_fasta(filename):
-    if os.path.isfile(filename) == False: # if file doesnt exist
-        logger.error(f"Error: Input file {filename} does not exist. Please check your input.")
+    if os.path.isfile(filename) == False:  # if file doesnt exist
+        logger.error(
+            f"Error: Input file {filename} does not exist. Please check your input."
+        )
     else:
         with open(filename, "r") as handle:
             fasta = SeqIO.parse(handle, "fasta")
-            logger.info("Checking Input FASTA.")
+            logger.info(f"Checking input {filename}.")
             if any(fasta):
-                logger.info("FASTA checked.")
+                logger.info(f"Input {filename} is in FASTA format.")
             else:
                 logger.error("Error: Input file is not in the FASTA format.")
+
+    # check for duplicate headers
+    logger.info(f"Checking input {filename} for duplicate FASTA headers.")
+    check_duplicate_headers(filename)
+    logger.info(f"All headers in {filename} are unique.")
+
+
+def check_duplicate_headers(fasta_file):
+    """
+    checks if there are duplicated in the FASTA header
+    in response to Tina's issue
+    https://github.com/gbouras13/pharokka/issues/293
+    """
+    header_set = set()
+
+    # Iterate through the FASTA file and check for duplicate headers
+    for record in SeqIO.parse(fasta_file, "fasta"):
+        header = record.description
+        if header in header_set:
+            logger.error(
+                f"Duplicate header found: {header}"
+            )  # errors if duplicate header found
+        else:
+            header_set.add(header)
+    # if it finished it will be fine
 
 
 def validate_gene_predictor(gene_predictor, genbank_flag):
     if gene_predictor == "phanotate":
         logger.info("Phanotate will be used for gene prediction.")
     elif gene_predictor == "prodigal":
-        logger.info("Prodigal will be used for gene prediction.")
+        logger.info(
+            "Prodigal implemented with pyrodigal will be used for gene prediction."
+        )
+    elif gene_predictor == "prodigal-gv":
+        logger.info(
+            "Prodigal-gv implemented with pyrodigal-gv will be used for gene prediction."
+        )
     elif gene_predictor == "genbank":
         if genbank_flag is False:
             logger.error(
@@ -221,7 +265,7 @@ def validate_gene_predictor(gene_predictor, genbank_flag):
             )
     else:
         logger.error(
-            "Error: gene predictor was incorrectly specified. Please use 'phanotate' or 'prodigal'."
+            "Error: gene predictor was incorrectly specified. Please use 'phanotate', 'prodigal' or 'prodigal-gv'."
         )
 
 
@@ -300,8 +344,9 @@ def validate_threads(threads):
 #######
 
 
-def check_dependencies():
+def check_dependencies(skip_mash):
     """Checks the dependencies and versions
+    skip_mash flag from args, won't check mash is skip mash specified
     :return:
     """
     #############
@@ -314,10 +359,10 @@ def check_dependencies():
     except:
         logger.error("Phanotate not found. Please reinstall pharokka.")
     phan_out, _ = process.communicate()
-    phanotate_out = phan_out.decode().strip()
-    phanotate_major_version = int(phanotate_out.split(".")[0])
-    phanotate_minor_version = int(phanotate_out.split(".")[1])
-    phanotate_minorest_version = phanotate_out.split(".")[2]
+    phanotate_version = phan_out.decode().strip()
+    phanotate_major_version = int(phanotate_version.split(".")[0])
+    phanotate_minor_version = int(phanotate_version.split(".")[1])
+    phanotate_minorest_version = phanotate_version.split(".")[2]
 
     logger.info(
         f"Phanotate version found is v{phanotate_major_version}.{phanotate_minor_version}.{phanotate_minorest_version}"
@@ -471,25 +516,26 @@ def check_dependencies():
     #############
     # mash
     #############
-    try:
-        process = sp.Popen(["mash", "--version"], stdout=sp.PIPE, stderr=sp.STDOUT)
-    except:
-        logger.error("mash not found. Please reinstall pharokka.")
+    if skip_mash is False:
+        try:
+            process = sp.Popen(["mash", "--version"], stdout=sp.PIPE, stderr=sp.STDOUT)
+        except:
+            logger.error("mash not found. Please reinstall pharokka.")
 
-    mash_out, _ = process.communicate()
-    mash_out = mash_out.decode().strip()
+        mash_out, _ = process.communicate()
+        mash_out = mash_out.decode().strip()
 
-    mash_major_version = int(mash_out.split(".")[0])
-    mash_minor_version = int(mash_out.split(".")[1])
+        mash_major_version = int(mash_out.split(".")[0])
+        mash_minor_version = int(mash_out.split(".")[1])
 
-    logger.info(f"mash version found is v{mash_major_version}.{mash_minor_version}")
+        logger.info(f"mash version found is v{mash_major_version}.{mash_minor_version}")
 
-    if mash_major_version != 2:
-        logger.error("mash is the wrong version. Please re-install pharokka.")
-    if mash_minor_version < 2:
-        logger.error("mash is the wrong version. Please re-install pharokka.")
+        if mash_major_version != 2:
+            logger.error("mash is the wrong version. Please re-install pharokka.")
+        if mash_minor_version < 2:
+            logger.error("mash is the wrong version. Please re-install pharokka.")
 
-    logger.info("mash version is ok.")
+        logger.info("mash version is ok.")
 
     #############
     # dnaapler
@@ -521,13 +567,36 @@ def check_dependencies():
     # pyrodigal
     #######
 
-    pyrodigal_major_version = int(__version__.split(".")[0])
+    pyrodigal_version = pyrodigal.__version__
+    pyrodigal_major_version = int(pyrodigal_version.split(".")[0])
 
-    if pyrodigal_major_version < 2:
+    if pyrodigal_major_version < 3:
         logger.error("Pyrodigal is the wrong version. Please re-install pharokka.")
 
-    logger.info(f"Pyrodigal version is v{__version__}")
+    logger.info(f"Pyrodigal version is v{pyrodigal_version}")
     logger.info(f"Pyrodigal version is ok.")
+
+    #######
+    # pyrodigal gv
+    #######
+
+    pyrodigal_gv_version = pyrodigal_gv.__version__
+    pyrodigal_major_version = int(pyrodigal_gv_version.split(".")[0])
+
+    if pyrodigal_major_version < 0:
+        logger.error("Pyrodigal_gv is the wrong version. Please re-install pharokka.")
+
+    logger.info(f"Pyrodigal_gv version is v{pyrodigal_gv_version}")
+    logger.info(f"Pyrodigal_gv version is ok.")
+
+    return (
+        phanotate_version,
+        pyrodigal_version,
+        pyrodigal_gv_version,
+        trna_version,
+        aragorn_version,
+        minced_version,
+    )
 
 
 def instantiate_split_output(out_dir, split):

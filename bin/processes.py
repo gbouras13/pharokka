@@ -1,9 +1,11 @@
+import multiprocessing.pool
 import os
 import subprocess as sp
 from datetime import datetime
 
 import pandas as pd
 import pyrodigal
+import pyrodigal_gv
 from BCBio import GFF
 from Bio import SeqIO
 from Bio.Seq import Seq
@@ -11,6 +13,41 @@ from Bio.SeqRecord import SeqRecord
 from external_tools import ExternalTool
 from loguru import logger
 from util import remove_directory
+
+
+def run_pyrodigal_gv(filepath_in, out_dir, threads):
+    """
+    Gets CDS using pyrodigal_gv
+    :param filepath_in: input filepath
+    :param out_dir: output directory
+    :param logger logger
+    :param meta Boolean - metagenomic mode flag
+    :param coding_table coding table for prodigal (default 11)
+    :return:
+    """
+
+    # true
+    orf_finder = pyrodigal_gv.ViralGeneFinder(meta=True)
+
+    def _find_genes(record):
+        genes = orf_finder.find_genes(str(record.seq))
+        return (record.id, genes)
+
+    with multiprocessing.pool.ThreadPool(threads) as pool:
+        with open(os.path.join(out_dir, "prodigal-gv_out.gff"), "w") as gff:
+            with open(os.path.join(out_dir, "prodigal-gv_out_tmp.fasta"), "w") as dst:
+                with open(
+                    os.path.join(out_dir, "prodigal-gv_out_aas_tmp.fasta"), "w"
+                ) as aa_fasta:
+                    records = SeqIO.parse(filepath_in, "fasta")
+                    for record_id, genes in pool.imap(_find_genes, records):
+                        genes.write_gff(
+                            gff, sequence_id=record_id, include_translation_table=True
+                        )
+                        genes.write_genes(dst, sequence_id=record_id)
+                        # need to write the translation
+                        genes.write_translations(aa_fasta, sequence_id=record_id)
+
 
 ##### phanotate meta mode ########
 
@@ -254,7 +291,7 @@ def run_phanotate(filepath_in, out_dir, logdir):
         logger.error("Error with Phanotate\n")
 
 
-def run_pyrodigal(filepath_in, out_dir, meta, coding_table):
+def run_pyrodigal(filepath_in, out_dir, meta, coding_table, threads):
     """
     Gets CDS using pyrodigal
     :param filepath_in: input filepath
@@ -262,6 +299,7 @@ def run_pyrodigal(filepath_in, out_dir, meta, coding_table):
     :param logger logger
     :param meta Boolean - metagenomic mode flag
     :param coding_table coding table for prodigal (default 11)
+    :param threads: threads
     :return:
     """
 
@@ -270,25 +308,52 @@ def run_pyrodigal(filepath_in, out_dir, meta, coding_table):
         prodigal_metamode = True
         logger.info("Prodigal Meta Mode Enabled")
 
-    # for training if you want different coding table
-    seqs = [bytes(record.seq) for record in SeqIO.parse(filepath_in, "fasta")]
-    record = SeqIO.parse(filepath_in, "fasta")
-    orf_finder = pyrodigal.OrfFinder(meta=prodigal_metamode)
+    #######################################################
+    # if under 20000, pyrodigal will only work in meta mode
+    # https://github.com/hyattpd/prodigal/wiki/Advice-by-Input-Type#plasmids-phages-viruses-and-other-short-sequences
+    # https://github.com/hyattpd/Prodigal/issues/51
+    # so make sure of this
+    #######################################################
 
-    # coding table possible if false
-    if prodigal_metamode == False:
-        trainings_info = orf_finder.train(*seqs, translation_table=int(coding_table))
-        orf_finder = pyrodigal.OrfFinder(trainings_info, meta=prodigal_metamode)
+    # get total length of input
+    total_length = 0
 
-    with open(os.path.join(out_dir, "prodigal_out.gff"), "w") as dst:
-        for i, record in enumerate(SeqIO.parse(filepath_in, "fasta")):
-            genes = orf_finder.find_genes(str(record.seq))
-            genes.write_gff(dst, sequence_id=record.id)
+    with open(filepath_in, "r") as handle:
+        for record in SeqIO.parse(handle, "fasta"):
+            total_length += len(record.seq)
 
-    with open(os.path.join(out_dir, "prodigal_out_tmp.fasta"), "w") as dst:
-        for i, record in enumerate(SeqIO.parse(filepath_in, "fasta")):
-            genes = orf_finder.find_genes(str(record.seq))
-            genes.write_genes(dst, sequence_id=record.id)
+    # if the length is 100000 or under, use meta mode by default
+    if total_length < 100001:
+        orf_finder = pyrodigal.GeneFinder(meta=True)
+    # otherwise train it
+    # recommend pyrodigal-gv anyway
+    else:
+        # for training if you want different coding table
+        seqs = [bytes(record.seq) for record in SeqIO.parse(filepath_in, "fasta")]
+        record = SeqIO.parse(filepath_in, "fasta")
+        orf_finder = pyrodigal.GeneFinder(meta=prodigal_metamode)
+
+        # make coding table possible if false
+        if prodigal_metamode == False:
+            orf_finder.train(*seqs, translation_table=int(coding_table))
+
+    # define for the multithreadpool
+    def _find_genes(record):
+        genes = orf_finder.find_genes(str(record.seq))
+        return (record.id, genes)
+
+    with multiprocessing.pool.ThreadPool(threads) as pool:
+        with open(os.path.join(out_dir, "prodigal_out.gff"), "w") as gff:
+            with open(os.path.join(out_dir, "prodigal_out_tmp.fasta"), "w") as dst:
+                with open(
+                    os.path.join(out_dir, "prodigal_out_aas_tmp.fasta"), "w"
+                ) as aa_fasta:
+                    records = SeqIO.parse(filepath_in, "fasta")
+                    for record_id, genes in pool.imap(_find_genes, records):
+                        genes.write_gff(gff, sequence_id=record_id)
+                        genes.write_genes(dst, sequence_id=record_id)
+                        # need to write the translation
+                        genes.write_translations(aa_fasta, sequence_id=record_id)
 
 
 def tidy_phanotate_output(out_dir):
@@ -319,13 +384,19 @@ def tidy_phanotate_output(out_dir):
     return phan_df
 
 
-def tidy_prodigal_output(out_dir):
+def tidy_prodigal_output(out_dir, gv_flag):
     """
     Tidies prodigal output
     :param out_dir: output directory
+    :param gv_flag: if prodigal-gv, then True
     :return: prod_filt_df pandas dataframe
     """
-    prod_file = os.path.join(out_dir, "prodigal_out.gff")
+    if gv_flag is True:
+        prefix = "prodigal-gv"
+    else:
+        prefix = "prodigal"
+
+    prod_file = os.path.join(out_dir, f"{prefix}_out.gff")
     col_list = [
         "contig",
         "prod",
@@ -367,7 +438,7 @@ def tidy_prodigal_output(out_dir):
         + prod_filt_df["stop"].astype(str)
     )
     prod_filt_df.to_csv(
-        os.path.join(out_dir, "cleaned_prodigal.tsv"), sep="\t", index=False
+        os.path.join(out_dir, f"cleaned_{prefix}.tsv"), sep="\t", index=False
     )
     return prod_filt_df
 
@@ -479,14 +550,17 @@ def translate_fastas(out_dir, gene_predictor, coding_table, genbank_file):
     if gene_predictor == "phanotate":
         clean_df = tidy_phanotate_output(out_dir)
     elif gene_predictor == "prodigal":
-        clean_df = tidy_prodigal_output(out_dir)
+        clean_df = tidy_prodigal_output(out_dir, False)  # gv_flag is false
+    elif gene_predictor == "prodigal-gv":
+        clean_df = tidy_prodigal_output(out_dir, True)  # gv_flag is true
     elif gene_predictor == "genbank":
         clean_df = tidy_genbank_output(out_dir, genbank_file, coding_table)
 
-    fasta_input_tmp = gene_predictor + "_out_tmp.fasta"
     fasta_output_aas_tmp = gene_predictor + "_aas_tmp.fasta"
 
-    if gene_predictor != "genbank":
+    if gene_predictor == "phanotate":
+        # read the nucl fasta
+        fasta_input_tmp = gene_predictor + "_out_tmp.fasta"
         # translate for temporary AA output
         with open(os.path.join(out_dir, fasta_output_aas_tmp), "w") as aa_fa:
             i = 0
@@ -504,6 +578,26 @@ def translate_fastas(out_dir, gene_predictor, coding_table, genbank_file):
                 )
                 SeqIO.write(aa_record, aa_fa, "fasta")
                 i += 1
+    elif gene_predictor == "prodigal-gv" or gene_predictor == "prodigal":
+        # read in the AA file instead and parse that to clean the header
+        fasta_input_tmp = gene_predictor + "_out_aas_tmp.fasta"
+        with open(os.path.join(out_dir, fasta_output_aas_tmp), "w") as aa_fa:
+            i = 0
+            for dna_record in SeqIO.parse(
+                os.path.join(out_dir, fasta_input_tmp), "fasta"
+            ):
+                dna_header = str(clean_df["contig"].iloc[i]) + str(i)
+                dna_description = (
+                    str(clean_df["start"].iloc[i]) + "_" + str(clean_df["stop"].iloc[i])
+                )
+                aa_record = SeqRecord(
+                    dna_record.seq,
+                    id=dna_header,
+                    description=dna_description,
+                )
+                SeqIO.write(aa_record, aa_fa, "fasta")
+                i += 1
+    # for genbank do nothing
 
 
 def run_trna_scan(filepath_in, threads, out_dir, logdir):
@@ -529,7 +623,7 @@ def run_trna_scan(filepath_in, threads, out_dir, logdir):
     try:
         ExternalTool.run_tool(trna)
     except:
-        logger.error("Error: tRNAscan-SE not found\n")
+        logger.error("Error with tRNAscan-SE")
         return 0
 
 
@@ -631,53 +725,51 @@ def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, db_name
     remove_directory(target_db_dir)
 
 
-def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, coding_table):
+def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, prot_seq_df):
     """
     Converts the gff to genbank
     :param filepath_in: input fasta file
-    :param input_dir: input directory of the gff. same as output_dir for the overall gff, diff for meta mode
+    :param input_dir: input directory of the gff. same as output_dir for the overall gff in normal mode, differeny for meta mode
     :param out_dir: output directory of the gbk
     :param prefix: prefix
+    :param prefix: prot_seq_df from pharok object with gene name + protein sequence for all genes (from create_gff()).
     :return:
     """
-    gff_file = os.path.join(input_dir, prefix + ".gff")
-    gbk_file = os.path.join(out_dir, prefix + ".gbk")
+
+    gff_file = os.path.join(input_dir, f"{prefix}.gff")
+    gbk_file = os.path.join(out_dir, f"{prefix}.gbk")
+
     with open(gbk_file, "wt") as gbk_handler:
         fasta_handler = SeqIO.to_dict(SeqIO.parse(filepath_in, "fasta"))
         for record in GFF.parse(gff_file, fasta_handler):
+            # sequence in each contig (record)
+            subset_seqs_df = prot_seq_df.loc[prot_seq_df["contig"] == record.id]
+            # get all the seqs in the contigs - and drop the index to reset for 0 indexed loop
+            subset_seqs = subset_seqs_df["sequence"].reset_index(drop=True)
+            # start the loop
+            i = 0
+
             # instantiate record
             record.annotations["molecule_type"] = "DNA"
             record.annotations["date"] = datetime.today()
             record.annotations["topology"] = "linear"
-            record.annotations["data_file_division"] = "VRL"
+            record.annotations[
+                "data_file_division"
+            ] = "PHG"  # https://github.com/RyanCook94/inphared/issues/22
             # add features to the record
             for feature in record.features:
                 # add translation only if CDS
                 if feature.type == "CDS":
+                    # aa = prot_records[i].seq
                     if feature.strand == 1:
                         feature.qualifiers.update(
-                            {
-                                "translation": Seq.translate(
-                                    record.seq[
-                                        feature.location.start.position : feature.location.end.position
-                                    ],
-                                    to_stop=True,
-                                    table=coding_table,
-                                )
-                            }
+                            {"translation": subset_seqs[i]}  # from the aa seq
                         )
                     else:  # reverse strand -1 needs reverse compliment
                         feature.qualifiers.update(
-                            {
-                                "translation": Seq.translate(
-                                    record.seq[
-                                        feature.location.start.position : feature.location.end.position
-                                    ].reverse_complement(),
-                                    to_stop=True,
-                                    table=coding_table,
-                                )
-                            }
+                            {"translation": subset_seqs[i]}  # from the aa seq
                         )
+                    i += 1
             SeqIO.write(record, gbk_handler, "genbank")
 
 

@@ -23,6 +23,35 @@ Extra special thanks to Ghais Houtak for making Pharokka's logo.
 
 If you are looking for rapid standardised annotation of bacterial genomes, please use [Bakta](https://github.com/oschwengers/bakta). [Prokka](https://github.com/tseemann/prokka), which inspired the creation and naming of `pharokka`, is another good option, but Bakta is [Prokka's worthy successor](https://twitter.com/torstenseemann/status/1565471892840259585).
 
+# Table of Contents
+
+- [pharokka](#pharokka)
+  - [Fast Phage Annotation Tool](#fast-phage-annotation-tool)
+- [Table of Contents](#table-of-contents)
+- [Quick Start](#quick-start)
+- [Documentation](#documentation)
+- [Paper](#paper)
+- [Pharokka with Galaxy Europe Webserver](#pharokka-with-galaxy-europe-webserver)
+- [Brief Overview](#brief-overview)
+  - [Pharokka v 1.5.0 Update (20 September 2023)](#pharokka-v-150-update-20-september-2023)
+  - [Pharokka v 1.4.0 Update (27 August 2023)](#pharokka-v-140-update-27-august-2023)
+  - [Pharokka v 1.3.0 Update](#pharokka-v-130-update)
+- [Installation](#installation)
+  - [Conda Installation](#conda-installation)
+  - [Pip](#pip)
+  - [Source](#source)
+- [Database Installation](#database-installation)
+- [Beginner Conda Installation](#beginner-conda-installation)
+- [Usage](#usage)
+- [Version Log](#version-log)
+- [System](#system)
+- [Time](#time)
+- [Benchmarking v1.5.0](#benchmarking-v150)
+- [Benchmarking v1.4.0](#benchmarking-v140)
+- [Original Benchmarking (v1.1.0)](#original-benchmarking-v110)
+- [Bugs and Suggestions](#bugs-and-suggestions)
+- [Citation](#citation)
+
 # Quick Start
 
 The easiest way to install `pharokka` is via conda:
@@ -65,11 +94,22 @@ So if you can't get `pharokka` to install on your machine for whatever reason or
   <img src="img/pharokka_workflow.png" alt="pharokka Workflow" height=600>
 </p>
 
-`pharokka` uses [PHANOTATE](https://github.com/deprekate/PHANOTATE), the only gene prediction program tailored to bacteriophages, as the default program for gene prediction. [Prodigal](https://github.com/hyattpd/Prodigal) is also available as an alternative. Following this, functional annotations are assigned by matching each predicted coding sequence (CDS) to the [PHROGs](https://phrogs.lmge.uca.fr), [CARD](https://card.mcmaster.ca) and [VFDB](http://www.mgc.ac.cn/VFs/main.htm) databases using [MMseqs2](https://github.com/soedinglab/MMseqs2). As of v1.4.0, `pharokka` will also match each CDS to the PHROGs database using more sensitive Hidden Markov Models using [PyHMMER](https://github.com/althonos/pyhmmer). Pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). `pharokka` also generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage) and check out the full [documentation](https://pharokka.readthedocs.io) for more details.  
+`pharokka` uses [PHANOTATE](https://github.com/deprekate/PHANOTATE), the only gene prediction program tailored to bacteriophages, as the default program for gene prediction. [Prodigal](https://github.com/hyattpd/Prodigal) implemented with [pyrodigal](https://github.com/althonos/pyrodigal) and [Prodigal-gv](https://github.com/apcamargo/prodigal-gv) implemented with [pyrodigal-gv](https://github.com/althonos/pyrodigal-gv) are also available as alternatives. Following this, functional annotations are assigned by matching each predicted coding sequence (CDS) to the [PHROGs](https://phrogs.lmge.uca.fr), [CARD](https://card.mcmaster.ca) and [VFDB](http://www.mgc.ac.cn/VFs/main.htm) databases using [MMseqs2](https://github.com/soedinglab/MMseqs2). As of v1.4.0, `pharokka` will also match each CDS to the PHROGs database using more sensitive Hidden Markov Models using [PyHMMER](https://github.com/althonos/pyhmmer). Pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). `pharokka` also generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage) and check out the full [documentation](https://pharokka.readthedocs.io) for more details.  
+
+## Pharokka v 1.5.0 Update (20 September 2023)
+
+* Adds support for `pyrodigal-gv` implementing `prodigal-gv` as a gene predictor for alternate genetic codes ([pyrodigal-gv](https://github.com/althonos/pyrodigal-gv) and [prodigal-gv](https://github.com/apcamargo/prodigal-gv)). This can be specified with `-g prodigal-gv` and is recommended for metagenomic input datasets. Thanks to @[althonos](https://github.com/althonos) and @[apcamargo](https://github.com/apcamargo) for making this possible, and to @[asierFernandezP](https://github.com/asierFernandezP) for raising this as an issue in the first place [here](https://github.com/gbouras13/pharokka/issues/290).
+* `-g prodigal` and `-g prodigal-gv` should be much faster thanks to multithread support added by the inimitable @[althonos](https://github.com/althonos).
+* Adds checks to determine if your input FASTA has duplicated [contig headers](https://github.com/gbouras13/pharokka/issues/293). Thanks @[thauptfeld](https://github.com/thauptfeld) for raising this.
+* Genbank format output will be designated with PHG not VRL.
+* The `_length_gc_cds_density.tsv` and `_cds_final_merged_output.tsv` files now contain the translation table/genetic code for each contig.
+* `--skip_mash` flag added to skip finding the closest match for each contig in INPHARED using mash.
+* `--skip_extra_annotations` flag added to skip running tRNA-scanSE, MinCED and Aragorn in case you only want CDS predictions and functional annotations.
+
 
 ## Pharokka v 1.4.0 Update (27 August 2023)
 
-Pharokka v1.4.0 is a large update implementing:
+`pharokka` v1.4.0 is a large update implementing:
 
 * More sensitive search for PHROGs using Hidden Markov Models (HMMs) using the amazing [PyHMMER](https://github.com/althonos/pyhmmer).
 * By default, `pharokka` will now run searches using both MMseqs2 (PHROGs, CARD and VFDB) and HMMs (PHROGs). MMseqs2 was kept for PHROGs as it provides more information than the HMM results (e.g. sequence alignment identities & top hit PHROG protein) if it finds a hit. 
@@ -113,33 +153,6 @@ pharokka_plotter.py -i test_data/SAOMS1.fasta -n SAOMS1_plot -o SAOMS1_pharokka_
 SAOMS1 phage (GenBank: MW460250.1) was isolated and sequenced by: Yerushalmy, O., Alkalay-Oren, S., Coppenhagen-Glazer, S. and Hazan, R. from the Institute of Dental Sciences and School of Dental Medicine, Hebrew University, Israel.
 
 Please see [plotting](docs/plotting.md) for details on all plotting parameter options. 
-
-# Table of Contents
-
-- [pharokka](#pharokka)
-  - [Fast Phage Annotation Tool](#fast-phage-annotation-tool)
-- [Quick Start](#quick-start)
-- [Documentation](#documentation)
-- [Paper](#paper)
-- [Pharokka with Galaxy Europe Webserver](#pharokka-with-galaxy-europe-webserver)
-- [Brief Overview](#brief-overview)
-  - [Pharokka v 1.4.0 Update (27 August 2023)](#pharokka-v-140-update-27-august-2023)
-  - [Pharokka v 1.3.0 Update](#pharokka-v-130-update)
-- [Table of Contents](#table-of-contents)
-- [Installation](#installation)
-  - [Conda Installation](#conda-installation)
-  - [Pip](#pip)
-  - [Source](#source)
-- [Database Installation](#database-installation)
-- [Beginner Conda Installation](#beginner-conda-installation)
-- [Usage](#usage)
-- [Version Log](#version-log)
-- [System](#system)
-- [Time](#time)
-- [Original Benchmarking (v1.1.0)](#original-benchmarking-v110)
-- [Benchmarking v1.4.0](#benchmarking-v140)
-- [Bugs and Suggestions](#bugs-and-suggestions)
-- [Citation](#citation)
 
 
 # Installation
@@ -267,9 +280,9 @@ For a full explanation of all arguments, please see [usage](docs/run.md).
 pharokka defaults to 1 thread.
 
 ```
-usage: pharokka.py [-h] [-i INFILE] [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG] [-g GENE_PREDICTOR] [-m] [-s] [-c CODING_TABLE]
-                   [-e EVALUE] [--fast] [--mmseqs2_only] [--meta_hmm] [--dnaapler] [--custom_hmm CUSTOM_HMM] [--genbank] [--terminase]
-                   [--terminase_strand TERMINASE_STRAND] [--terminase_start TERMINASE_START] [-V] [--citation]
+usage: pharokka.py [-h] [-i INFILE] [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG] [-g GENE_PREDICTOR] [-m] [-s] [-c CODING_TABLE] [-e EVALUE] [--fast] [--mmseqs2_only]
+                   [--meta_hmm] [--dnaapler] [--custom_hmm CUSTOM_HMM] [--genbank] [--terminase] [--terminase_strand TERMINASE_STRAND] [--terminase_start TERMINASE_START]
+                   [--skip_extra_annotations] [--skip_mash] [-V] [--citation]
 
 pharokka: fast phage annotation program
 
@@ -289,13 +302,13 @@ options:
   -l LOCUSTAG, --locustag LOCUSTAG
                         User specified locus tag for the gff/gbk files. This is not required. A random locus tag will be generated instead.
   -g GENE_PREDICTOR, --gene_predictor GENE_PREDICTOR
-                        User specified gene predictor. Use "-g phanotate" or "-g prodigal". 
+                        User specified gene predictor. Use "-g phanotate" or "-g prodigal" or "-g prodigal-gv" or "-g genbank". 
                         Defaults to phanotate (not required unless prodigal is desired).
   -m, --meta            meta mode for metavirome input samples
   -s, --split           split mode for metavirome samples. -m must also be specified. 
                         Will output separate split FASTA, gff and genbank files for each input contig.
   -c CODING_TABLE, --coding_table CODING_TABLE
-                        translation table for prodigal. Defaults to 11. Experimental only.
+                        translation table for prodigal. Defaults to 11.
   -e EVALUE, --evalue EVALUE
                         E-value threshold for MMseqs2 database PHROGs, VFDB and CARD and PyHMMER PHROGs database search. Defaults to 1E-05.
   --fast, --hmm_only    Runs PyHMMER (HMMs) with PHROGs only, not MMseqs2 with PHROGs, CARD or VFDB. 
@@ -307,13 +320,17 @@ options:
   --custom_hmm CUSTOM_HMM
                         Run pharokka with a custom HMM profile database suffixed .h3m. 
                         Please use create this with the create_custom_hmm.py script.
-  --genbank             Flag denoting that -i/--input is a genbank file instead of the usual FASTA file
+  --genbank             Flag denoting that -i/--input is a genbank file instead of the usual FASTA file. 
+                         The CDS calls in this file will be preserved and re-annotated.
   --terminase           Runs terminase large subunit re-orientation mode. 
                         Single genome input only and requires --terminase_strand and --terminase_start to be specified.
   --terminase_strand TERMINASE_STRAND
                         Strand of terminase large subunit. Must be "pos" or "neg".
   --terminase_start TERMINASE_START
                         Start coordinate of the terminase large subunit.
+  --skip_extra_annotations
+                        Skips tRNAscan-se, MINced and Aragorn.
+  --skip_mash           Skips running mash to find the closest match for each contig in INPHARED.
   -V, --version         Print pharokka Version
   --citation            Print pharokka Citation
   ```
@@ -331,6 +348,53 @@ A brief description of what is new in each update of `pharokka` can be found in 
 On a standard 16GB RAM laptop specifying 8 threads, `pharokka` should take between 3-10 minutes to run for a single phage, depending on the genome size. 
 
 In `--fast` mode, it should take 45-75 seconds.
+
+# Benchmarking v1.5.0 
+
+`pharokka v1.5.0` was run on the 673 crAss phage dataset to showcase the improved CDS prediction of `-g prodigal-gv` for metagenomic datasets where some phages likely have alternative genetic codes (i.e. not 11). 
+
+All benchmarking was conducted on a Intel® Core™ i7-10700K CPU @ 3.80GHz on a machine running Ubuntu 20.04.6 LTS with 8 threads (`-t 8`). `pyrodigal-gv v0.1.0` and `pyrodigal v3.0.0` were used respectively. 
+
+| 673 crAss-like genomes | `pharokka` v1.5.0 `-g prodigal-gv` | `pharokka` v1.5.0 `-g prodigal` | 
+|------------------------|------------------------------------|----------------------------------|
+| Total CDS              | **81730**                          | 91999                            | 
+| Annotated Function CDS | **20344**                          | 17458                            | 
+| Unknown Function CDS   | 61386                              | 74541                            |
+| Contigs with genetic code 15 | 229                          | NA                               | 
+| Contigs with genetic code 4 | 38                            | NA                               | 
+| Contigs with genetic code 11 | 406                          | 673                              | 
+
+Fewer (larger) CDS were predicted more accurately, leading to an increase in the number of coding sequences with annotated functions. Approximately 40% of contigs in this dataset were predicted to use non-standard genetic codes according to `pyrodigal-gv`.
+
+# Benchmarking v1.4.0 
+
+`pharokka` v1.4.0 has also been run on phage SAOMS1 and also the same 673 crAss phage dataset to showcase:
+
+1. The improved sensitivity of gene annotation with PyHMMER and a demonstration of how `--fast` is slower for metagenomes. 
+    * If you can deal with the compute cost (especially for large metagenomes), I highly recommend `--fast` or  `--meta_hmm` for metagenomes given how much more sensitive HMM search is.
+2. The large speed-up over v1.3.2 with `--fast` for phage isolates - with the proviso that no virulence factors or AMR genes will be detected. 
+3. The slight speed-up over v1.3.2 with `--mmseqs2_only`.
+
+All benchmarking was conducted on a Intel® Core™ i7-10700K CPU @ 3.80GHz on a machine running Ubuntu 20.04.6 LTS with 16 threads (`-t 16`). 
+
+SAOMS1 was run with Phanotate
+
+| Phage SAOMS1           | `pharokka` v1.4.0 `--fast`  | `pharokka` v1.4.0 | `pharokka` v1.3.2 |   
+|------------------------|-----------------------------|-------------------|-----------------|
+| Time (min)             | 0.70                        | 3.73              | 5.08            | 
+| CDS                    | 246                         | 246               | 246             | 
+| Annotated Function CDS | 93                          | 93                | 92              | 
+| Unknown Function CDS   | 153                         | 153               | 154             |  
+
+The 673 crAss-like genomes were run with `-m` (defaults to `--mmseqs2_only` in v 1.4.0) and with `-g prodigal` (pyrodigal v2.1.0).
+
+| 673 crAss-like genomes | `pharokka` v1.4.0 `--fast`  | `pharokka` v1.4.0 `--mmseqs2_only` | `pharokka` v1.3.2 |
+|------------------------|---------------------------|----------------------------------|-----------------|
+| Time (min)             | 35.62                     | 11.05                            | 13.27           |
+| CDS                    | 91999                     | 91999                            | 91999           |
+| Annotated Function CDS | **16713**                 | 9150                             | 9150            |
+| Unknown Function CDS   | 75286                     | 82849                            | 82849           |
+
 
 # Original Benchmarking (v1.1.0)
 
@@ -372,35 +436,6 @@ For the crAss-like phage genomes, `pharokka` meta mode `-m` was enabled.
 
 If you require  fast annotations of extremely large datasets (i.e. thousands of input contigs), running `pharokka` with Prodigal (`-g prodigal`) is recommended.
 
-# Benchmarking v1.4.0 
-
-`pharokka` v1.4.0 has also been run on phage SAOMS1 and also the same 673 crAss phage dataset to showcase:
-
-1. The improved sensitivity of gene annotation with PyHMMER and a demonstration of how `--fast` is slower for metagenomes. 
-    * If you can deal with the compute cost (especially for large metagenomes), I highly recommend `--fast` or  `--meta_hmm` for metagenomes given how much more sensitive HMM search is.
-2. The large speed-up over v1.3.2 with `--fast` for phage isolates - with the proviso that no virulence factors or AMR genes will be detected. 
-3. The slight speed-up over v1.3.2 with `--mmseqs2_only`.
-
-All benchmarking was conducted on a Intel® Core™ i7-10700K CPU @ 3.80GHz on a machine running Ubuntu 20.04.6 LTS with 16 threads (`-t 16`). 
-
-SAOMS1 was run with Phanotate
-
-| Phage SAOMS1           | `pharokka` v1.4.0 `--fast`  | `pharokka` v1.4.0 | `pharokka` v1.3.2 |   
-|------------------------|-----------------------------|-------------------|-----------------|
-| Time (min)             | 0.70                        | 3.73              | 5.08            | 
-| CDS                    | 246                         | 246               | 246             | 
-| Annotated Function CDS | 93                          | 93                | 92              | 
-| Unknown Function CDS   | 153                         | 153               | 154             |  
-
-The 673 crAss-like genomes were run with `-m` (defaults to `--mmseqs2_only` in v 1.4.0) and with `-g prodigal` (pyrodigal v2.1.0).
-
-| 673 crAss-like genomes | `pharokka` v1.4.0 `--fast`  | `pharokka` v1.4.0 `--mmseqs2_only` | `pharokka` v1.3.2 |
-|------------------------|---------------------------|----------------------------------|-----------------|
-| Time (min)             | 35.62                     | 11.05                            | 13.27           |
-| CDS                    | 91999                     | 91999                            | 91999           |
-| Annotated Function CDS | **16713**                 | 9150                             | 9150            |
-| Unknown Function CDS   | 75286                     | 82849                            | 82849           |
-
  
 # Bugs and Suggestions
 
@@ -414,7 +449,7 @@ If you use `pharokka`, I would recommend a citation in your manuscript along the
 
 * All phages were annotated with Pharokka v ___ (Bouras, et al. 2023). Specifically, coding sequences (CDS) were predicted with PHANOTATE (McNair, et al. 2019), tRNAs were predicted with tRNAscan-SE 2.0 (Chan, et al. 2021), tmRNAs were predicted with Aragorn (Laslett, et al. 2004) and CRISPRs were preducted with CRT (Bland, et al. 2007). Functional annotation was generated by matching each CDS to the PHROGs (Terzian, et al. 2021), VFDB (Chen, et al. 2005) and CARD (Alcock, et al. 2020) databases using MMseqs2 (Steinegger, et al. 2017) and PyHMMER (Larralde, et al. 2023). Contigs were matched to their closest hit in the INPHARED database (Cook, et al. 2021) using mash (Ondov, et al. 2016). Plots were created with pyCirclize (Shimoyama 2022).
 
-With the following full citations for the constituent tools below:
+With the following full citations for the constituent tools below where relevant:
 
 * Cook R, Brown N, Redgwell T, Rihtman B, Barnes M, Clokie M, Stekel DJ, Hobman JL, Jones MA, Millard A. INfrastructure for a PHAge REference Database: Identification of Large-Scale Biases in the Current Collection of Cultured Phage Genomes. PHAGE. 2021. Available from: http://doi.org/10.1089/phage.2021.0007.
 * McNair K., Zhou C., Dinsdale E.A., Souza B., Edwards R.A. (2019) "PHANOTATE: a novel approach to gene identification in phage genomes", Bioinformatics, https://doi.org/10.1093/bioinformatics/btz26.
@@ -428,4 +463,5 @@ With the following full citations for the constituent tools below:
 * Alcock et al, "CARD 2020: antibiotic resistome surveillance with the comprehensive antibiotic resistance database." Nucleic Acids Research (2020) https://doi.org/10.1093/nar/gkz935.
 * Larralde, M., (2022). Pyrodigal: Python bindings and interface to Prodigal, an efficient method for gene prediction in prokaryotes. Journal of Open Source Software, 7(72), 4296. doi:10.21105/joss.04296.
 * Larralde M., Zeller G., (2023). PyHMMER: a Python library binding to HMMER for efficient sequence analysis, Bioinformatics, Volume 39, Issue 5, May 2023, btad214, https://doi.org/10.1093/bioinformatics/btad214.
-* Shimoyama, Y. (2022). pyCirclize: Circular visualization in Python [Computer software]. https://github.com/moshi4/pyCirclize
+* Larradle M. and Camargo A., (2023) Pyrodigal-gv: A Pyrodigal extension to predict genes in giant viruses and viruses with alternative genetic code. https://github.com/althonos/pyrodigal-gv.
+* Shimoyama, Y. (2022). pyCirclize: Circular visualization in Python [Computer software]. https://github.com/moshi4/pyCirclize.

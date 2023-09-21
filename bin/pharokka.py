@@ -22,8 +22,8 @@ from processes import (concat_phanotate_meta, concat_trnascan_meta,
                        run_dnaapler, run_mash_dist, run_mash_sketch,
                        run_minced, run_mmseqs, run_phanotate,
                        run_phanotate_fasta_meta, run_phanotate_txt_meta,
-                       run_pyrodigal, run_trna_scan, run_trnascan_meta,
-                       split_input_fasta, translate_fastas)
+                       run_pyrodigal, run_pyrodigal_gv, run_trna_scan,
+                       run_trnascan_meta, split_input_fasta, translate_fastas)
 from util import count_contigs, get_version
 
 
@@ -106,7 +106,15 @@ def main():
 
     # dependencies
     logger.info("Checking dependencies.")
-    check_dependencies()
+    # output versions
+    (
+        phanotate_version,
+        pyrodigal_version,
+        pyrodigal_gv_version,
+        trna_version,
+        aragorn_version,
+        minced_version,
+    ) = check_dependencies(args.skip_mash)
 
     # instantiation/checking fasta and gene_predictor
     if args.genbank is True:
@@ -275,24 +283,30 @@ def main():
             run_phanotate(input_fasta, out_dir, logdir)
     elif gene_predictor == "prodigal":
         logger.info("Implementing Prodigal using Pyrodigal.")
-        run_pyrodigal(input_fasta, out_dir, args.meta, args.coding_table)
+        run_pyrodigal(
+            input_fasta, out_dir, args.meta, args.coding_table, int(args.threads)
+        )
     elif gene_predictor == "genbank":
         logger.info("Extracting CDS information from your genbank file.")
+    elif gene_predictor == "prodigal-gv":
+        logger.info("Implementing Prodigal-gv using Pyrodigal-gv.")
+        run_pyrodigal_gv(input_fasta, out_dir, int(args.threads))
 
     # translate fastas (parse genbank)
     translate_fastas(out_dir, gene_predictor, args.coding_table, args.infile)
 
     # run trna-scan meta mode if required
-    if args.meta == True:
-        logger.info("Starting tRNA-scanSE. Applying meta mode.")
-        run_trnascan_meta(input_fasta, out_dir, args.threads, num_fastas)
-        concat_trnascan_meta(out_dir, num_fastas)
-    else:
-        logger.info("Starting tRNA-scanSE.")
-        run_trna_scan(input_fasta, args.threads, out_dir, logdir)
-    # run minced and aragorn
-    run_minced(input_fasta, out_dir, prefix, logdir)
-    run_aragorn(input_fasta, out_dir, prefix, logdir)
+    if args.skip_extra_annotations is False:
+        if args.meta == True:
+            logger.info("Starting tRNA-scanSE. Applying meta mode.")
+            run_trnascan_meta(input_fasta, out_dir, args.threads, num_fastas)
+            concat_trnascan_meta(out_dir, num_fastas)
+        else:
+            logger.info("Starting tRNA-scanSE.")
+            run_trna_scan(input_fasta, args.threads, out_dir, logdir)
+        # run minced and aragorn
+        run_minced(input_fasta, out_dir, prefix, logdir)
+        run_aragorn(input_fasta, out_dir, prefix, logdir)
 
     # running mmseqs2 on the 3 databases
     if mmseqs_flag is True:
@@ -358,10 +372,25 @@ def main():
     pharok.mmseqs_flag = mmseqs_flag
     pharok.hmm_flag = hmm_flag
     pharok.custom_hmm_flag = custom_hmm_flag
+    pharok.phanotate_version = phanotate_version
+    pharok.pyrodigal_version = pyrodigal_version
+    pharok.pyrodigal_gv_version = pyrodigal_gv_version
+    pharok.trna_version = trna_version
+    pharok.aragorn_version = aragorn_version
+    pharok.minced_version = minced_version
+    pharok.skip_extra_annotations = args.skip_extra_annotations
+
     if pharok.hmm_flag is True:
         pharok.pyhmmer_results_dict = best_results_pyhmmer
     if pharok.custom_hmm_flag is True:
         pharok.custom_pyhmmer_results_dict = best_results_custom_pyhmmer
+
+    #####################################
+    # post processing
+    #####################################
+
+    # gets df of length and gc for each contig
+    pharok.get_contig_name_lengths()
 
     # post process results
     # includes vfdb and card
@@ -369,12 +398,10 @@ def main():
     # no need to specify params as they are in the class :)
     pharok.process_results()
 
-    # gets df of length and gc for each contig
-    pharok.get_contig_name_lengths()
-
     # parse the aragorn output
-    # get flag whether there is a tmrna from aragor
-    pharok.parse_aragorn()
+    # only if not skipping annots
+    if args.skip_extra_annotations is False:
+        pharok.parse_aragorn()
 
     # create gff and save locustag to class for table
     pharok.create_gff()
@@ -403,7 +430,7 @@ def main():
     # convert to genbank
     logger.info("Converting gff to genbank.")
     # not part of the class so from processes.py
-    convert_gff_to_gbk(input_fasta, out_dir, out_dir, prefix, args.coding_table)
+    convert_gff_to_gbk(input_fasta, out_dir, out_dir, prefix, pharok.prot_seq_df)
 
     # update fasta headers and final output tsv
     pharok.update_fasta_headers()
@@ -413,12 +440,16 @@ def main():
     pharok.extract_terl()
 
     # run mash
-    logger.info("Finding the closest match for each contig in INPHARED using mash.")
-    # in process.py
-    run_mash_sketch(input_fasta, out_dir, logdir)
-    run_mash_dist(out_dir, db_dir, logdir)
-    # part of the class
-    pharok.inphared_top_hits()
+    if args.skip_mash is False: # skips mash
+        logger.info("Finding the closest match for each contig in INPHARED using mash.")
+        # in process.py
+        run_mash_sketch(input_fasta, out_dir, logdir)
+        run_mash_dist(out_dir, db_dir, logdir)
+        # part of the class
+        pharok.inphared_top_hits()
+    else:
+        logger.info("You have chosen --skip_mash.")
+        logger.info("Skipping finding the closest match for each contig in INPHARED using mash.")
 
     # delete tmp files
     remove_post_processing_files(out_dir, gene_predictor, args.meta)

@@ -93,16 +93,16 @@ def test_overall_crispr(tmp_dir):
 
 
 def test_overall_vfdb(tmp_dir):
-    """test pharokka overall crispr"""
+    """test pharokka overall on a phage with vfdb hits. Also include --skip_extra_annotations"""
     input_fasta: Path = f"{VFDB_data}/NC_004617.fasta"
-    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --skip_extra_annotations"
     exec_command(cmd)
 
 
 def test_overall_amr(tmp_dir):
-    """test pharokka overall amr"""
+    """test pharokka overall amr also includes '--skip_mash"""
     input_fasta: Path = f"{AMR_data}/NC_007458.fasta"
-    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --skip_mash"
     exec_command(cmd)
 
 
@@ -117,6 +117,13 @@ def test_meta(tmp_dir):
     """test pharokka meta"""
     input_fasta: Path = f"{meta_data}/combined_meta.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m"
+    exec_command(cmd)
+
+
+def test_meta_prodigal_gv(tmp_dir):
+    """test pharokka meta with prodigal-gv"""
+    input_fasta: Path = f"{meta_data}/combined_meta.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m -g prodigal-gv"
     exec_command(cmd)
 
 
@@ -190,6 +197,11 @@ def test_meta_no_cds_contig(tmp_dir):
     exec_command(cmd)
 
 
+######
+# pharokka CI was timing out (>6 hours)
+# These are covered by other rules anyway
+# so just run as is
+
 # def test_meta_hmm(tmp_dir):
 #     """test pharokka meta hmm"""
 #     input_fasta: Path = f"{meta_data}/fake_meta.fa"
@@ -227,6 +239,13 @@ def test_overall_genbank_meta(tmp_dir):
 
 class testFails(unittest.TestCase):
     """Tests for fails"""
+
+    def test_dupe_header(self):
+        """tests that pharokka exits if a duplicate header is passed"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{standard_data}/dupe_header.fasta"
+            cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t 1 -f -m"
+            exec_command(cmd)
 
     def test_meta_with_single_contig(self):
         """tests that pharokka exits if single contig is passed to meta"""

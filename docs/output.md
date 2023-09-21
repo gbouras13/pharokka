@@ -18,7 +18,7 @@ Other Files
 
 * A `_cds_functions.tsv` file, which includes counts of CDSs, tRNAs, CRISPRs and tmRNAs and functions assigned to CDSs according to the PHROGs database.
 
-* A `_length_gc_cds_density.tsv` file, which outputs the phage's length, GC percentage and CDS coding density.
+* A `_length_gc_cds_density.tsv` file, which outputs the phage's length, GC percentage, translation table and CDS coding density.
 
 * `phanotate.ffn` or `prodigal.ffn` which will hold all nucleotide sequences of predicted CDSs.
 

@@ -30,7 +30,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="Pharokka",
-    version="1.4.1",
+    version="1.5.0",
     author="George Bouras",
     author_email="george.bouras@adelaide.edu.au",
     description="Fast phage annotation tool",
@@ -84,7 +84,6 @@ setup(
         "pyyaml>=6.0",
         "pandas>=1.4.2",
         "biopython>=1.76",
-        "pyrodigal>=2.0.0",
         "pyhmmer>=0.10.0",
         "black>=22.3.0",
         "isort>=5.10.1",
@@ -92,6 +91,8 @@ setup(
         "pytest-cov>=3.0.0",
         "alive-progress>=3.0.1",
         "requests>=2.25.1",
-        "bcbio-gff >=0.7.0",
+        "bcbio-gff>=0.7.0",
+        "pyrodigal>=3.0.0",
+        "pyrodigal_gv>=0.1.0"
     ],
 )
