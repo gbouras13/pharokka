@@ -80,7 +80,7 @@ def main():
 
     # dependencies
     logger.info("Checking dependencies.")
-    check_dependencies()
+    check_dependencies(False) # to check pharokka_proteins.py, don't need mash
 
     # instantiation/checking fasta and gene_predictor
     validate_fasta(args.infile)
