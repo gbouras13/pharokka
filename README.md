@@ -33,7 +33,7 @@ If you are looking for rapid standardised annotation of bacterial genomes, pleas
 - [Paper](#paper)
 - [Pharokka with Galaxy Europe Webserver](#pharokka-with-galaxy-europe-webserver)
 - [Brief Overview](#brief-overview)
-  - [Pharokka v 1.5.0 Update (27 August 2023)](#pharokka-v-150-update-27-august-2023)
+  - [Pharokka v 1.5.0 Update (20 September 2023)](#pharokka-v-150-update-20-september-2023)
   - [Pharokka v 1.4.0 Update (27 August 2023)](#pharokka-v-140-update-27-august-2023)
   - [Pharokka v 1.3.0 Update](#pharokka-v-130-update)
 - [Installation](#installation)
@@ -96,20 +96,20 @@ So if you can't get `pharokka` to install on your machine for whatever reason or
 
 `pharokka` uses [PHANOTATE](https://github.com/deprekate/PHANOTATE), the only gene prediction program tailored to bacteriophages, as the default program for gene prediction. [Prodigal](https://github.com/hyattpd/Prodigal) implemented with [pyrodigal](https://github.com/althonos/pyrodigal) and [Prodigal-gv](https://github.com/apcamargo/prodigal-gv) implemented with [pyrodigal-gv](https://github.com/althonos/pyrodigal-gv) are also available as alternatives. Following this, functional annotations are assigned by matching each predicted coding sequence (CDS) to the [PHROGs](https://phrogs.lmge.uca.fr), [CARD](https://card.mcmaster.ca) and [VFDB](http://www.mgc.ac.cn/VFs/main.htm) databases using [MMseqs2](https://github.com/soedinglab/MMseqs2). As of v1.4.0, `pharokka` will also match each CDS to the PHROGs database using more sensitive Hidden Markov Models using [PyHMMER](https://github.com/althonos/pyhmmer). Pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). `pharokka` also generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage) and check out the full [documentation](https://pharokka.readthedocs.io) for more details.  
 
-## Pharokka v 1.5.0 Update (27 August 2023)
+## Pharokka v 1.5.0 Update (20 September 2023)
 
 * Adds support for `pyrodigal-gv` implementing `prodigal-gv` as a gene predictor for alternate genetic codes ([pyrodigal-gv](https://github.com/althonos/pyrodigal-gv) and [prodigal-gv](https://github.com/apcamargo/prodigal-gv)). This can be specified with `-g prodigal-gv` and is recommended for metagenomic input datasets. Thanks to @[althonos](https://github.com/althonos) and @[apcamargo](https://github.com/apcamargo) for making this possible, and to @[asierFernandezP](https://github.com/asierFernandezP) for raising this as an issue in the first place [here](https://github.com/gbouras13/pharokka/issues/290).
-* `-g prodigal` and `-g prodigal-gv` should be much faster thanks to multithread support added by the inimitable @althonos.
+* `-g prodigal` and `-g prodigal-gv` should be much faster thanks to multithread support added by the inimitable @[althonos](https://github.com/althonos).
 * Adds checks to determine if your input FASTA has duplicated [contig headers](https://github.com/gbouras13/pharokka/issues/293). Thanks @[thauptfeld](https://github.com/thauptfeld) for raising this.
 * Genbank format output will be designated with PHG not VRL.
-* The `_length_gc_cds_density.tsv` and `_cds_final_merged_output.tsv` files now contain the translation table/genetic code for each contig (usually 11 but now not always if you use `pyrodigal-gv`). 
+* The `_length_gc_cds_density.tsv` and `_cds_final_merged_output.tsv` files now contain the translation table/genetic code for each contig.
 * `--skip_mash` flag added to skip finding the closest match for each contig in INPHARED using mash.
 * `--skip_extra_annotations` flag added to skip running tRNA-scanSE, MinCED and Aragorn in case you only want CDS predictions and functional annotations.
 
 
 ## Pharokka v 1.4.0 Update (27 August 2023)
 
-Pharokka v1.4.0 is a large update implementing:
+`pharokka` v1.4.0 is a large update implementing:
 
 * More sensitive search for PHROGs using Hidden Markov Models (HMMs) using the amazing [PyHMMER](https://github.com/althonos/pyhmmer).
 * By default, `pharokka` will now run searches using both MMseqs2 (PHROGs, CARD and VFDB) and HMMs (PHROGs). MMseqs2 was kept for PHROGs as it provides more information than the HMM results (e.g. sequence alignment identities & top hit PHROG protein) if it finds a hit. 
@@ -355,16 +355,16 @@ In `--fast` mode, it should take 45-75 seconds.
 
 All benchmarking was conducted on a Intel® Core™ i7-10700K CPU @ 3.80GHz on a machine running Ubuntu 20.04.6 LTS with 8 threads (`-t 8`). `pyrodigal-gv v0.1.0` and `pyrodigal v3.0.0` were used respectively. 
 
-| 673 crAss-like genomes | `pharokka` v1.5.0 `-g prodigal-gv`  | `pharokka` v1.5.0 `-g prodigal` | 
+| 673 crAss-like genomes | `pharokka` v1.5.0 `-g prodigal-gv` | `pharokka` v1.5.0 `-g prodigal` | 
 |------------------------|------------------------------------|----------------------------------|
-| Total CDS              | 81730                              | 91999                            | 
+| Total CDS              | **81730**                          | 91999                            | 
 | Annotated Function CDS | **20344**                          | 17458                            | 
 | Unknown Function CDS   | 61386                              | 74541                            |
 | Contigs with genetic code 15 | 229                          | NA                               | 
 | Contigs with genetic code 4 | 38                            | NA                               | 
 | Contigs with genetic code 11 | 406                          | 673                              | 
 
-Fewer larger CDS were predicted more accurately, leading to an increase in the number of coding sequences with annotated functions. Approximately 40% of contigs in this dataset were predicted to use non-standard genetic codes according to `pyrodigal-gv`.
+Fewer (larger) CDS were predicted more accurately, leading to an increase in the number of coding sequences with annotated functions. Approximately 40% of contigs in this dataset were predicted to use non-standard genetic codes according to `pyrodigal-gv`.
 
 # Benchmarking v1.4.0 
 
