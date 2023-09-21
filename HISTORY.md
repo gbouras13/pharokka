@@ -5,13 +5,13 @@ History
 ------------------
 
 * Adds support for `pyrodigal-gv` implementing `prodigal-gv` as a gene predictor ([pyrodigal-gv](https://github.com/althonos/pyrodigal-gv) and [prodigal-gv](https://github.com/apcamargo/prodigal-gv)). This can be specified with `-g prodigal-gv`.
-* Thanks to @[althonos](https://github.com/althonos) and @[apcamargo](https://github.com/apcamargo) for making this possible, and to @[asierFernandezP](https://github.com/gbouras13/pharokka/issues/290) for raising this as an issue in the first place [here](https://github.com/gbouras13/pharokka/issues/290) in #290.
+* Thanks to @[althonos](https://github.com/althonos) and @[apcamargo](https://github.com/apcamargo) for making this possible, and to @[asierFernandezP](https://github.com/asierFernandezP) for raising this as an issue in the first place [here](https://github.com/gbouras13/pharokka/issues/290) in #290.
 * Adds checks to determine if your input FASTA has duplicated contig headers from #293 [here](https://github.com/gbouras13/pharokka/issues/293). Thanks @[thauptfeld](https://github.com/thauptfeld) for raising this.
-* `-g prodigal` and `-g prodigal-gv` should be much faster thanks to multithread support added by @althonos.
-* Genbank format output will be designated with PHG not VRL (https://github.com/RyanCook94/inphared/issues/22).
+* `-g prodigal` and `-g prodigal-gv` should be much faster thanks to multithread support added by the inimitable @althonos.
+* Genbank format output will be designated with PHG not VRL (following this issue https://github.com/RyanCook94/inphared/issues/22).
 * The `_length_gc_cds_density.tsv` and `_cds_final_merged_output.tsv` files now contain the translation table/genetic code for each contig (usually 11 but now not always if you use `pyrodigal-gv`). 
 * `--skip_mash` flag added to skip finding the closest match for each contig in INPHARED using mash.
-* `--skip_extra_annotations` flag added to skip running tRNA-scanSE, MINced and Aragorn in case you only want CDS predictions and functional annotations.
+* `--skip_extra_annotations` flag added to skip running tRNA-scanSE, MinCED and Aragorn in case you only want CDS predictions and functional annotations.
 
 1.4.1 (2023-09-04)
 ------------------

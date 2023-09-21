@@ -114,7 +114,7 @@ def main():
         trna_version,
         aragorn_version,
         minced_version,
-    ) = check_dependencies()
+    ) = check_dependencies(args.skip_mash)
 
     # instantiation/checking fasta and gene_predictor
     if args.genbank is True:

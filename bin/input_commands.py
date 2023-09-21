@@ -344,8 +344,9 @@ def validate_threads(threads):
 #######
 
 
-def check_dependencies():
+def check_dependencies(skip_mash):
     """Checks the dependencies and versions
+    skip_mash flag from args, won't check mash is skip mash specified
     :return:
     """
     #############
@@ -515,25 +516,26 @@ def check_dependencies():
     #############
     # mash
     #############
-    try:
-        process = sp.Popen(["mash", "--version"], stdout=sp.PIPE, stderr=sp.STDOUT)
-    except:
-        logger.error("mash not found. Please reinstall pharokka.")
+    if skip_mash is False:
+        try:
+            process = sp.Popen(["mash", "--version"], stdout=sp.PIPE, stderr=sp.STDOUT)
+        except:
+            logger.error("mash not found. Please reinstall pharokka.")
 
-    mash_out, _ = process.communicate()
-    mash_out = mash_out.decode().strip()
+        mash_out, _ = process.communicate()
+        mash_out = mash_out.decode().strip()
 
-    mash_major_version = int(mash_out.split(".")[0])
-    mash_minor_version = int(mash_out.split(".")[1])
+        mash_major_version = int(mash_out.split(".")[0])
+        mash_minor_version = int(mash_out.split(".")[1])
 
-    logger.info(f"mash version found is v{mash_major_version}.{mash_minor_version}")
+        logger.info(f"mash version found is v{mash_major_version}.{mash_minor_version}")
 
-    if mash_major_version != 2:
-        logger.error("mash is the wrong version. Please re-install pharokka.")
-    if mash_minor_version < 2:
-        logger.error("mash is the wrong version. Please re-install pharokka.")
+        if mash_major_version != 2:
+            logger.error("mash is the wrong version. Please re-install pharokka.")
+        if mash_minor_version < 2:
+            logger.error("mash is the wrong version. Please re-install pharokka.")
 
-    logger.info("mash version is ok.")
+        logger.info("mash version is ok.")
 
     #############
     # dnaapler
