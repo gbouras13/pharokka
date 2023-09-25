@@ -62,17 +62,19 @@ def update_records(records):
 
                 new_id = f"{id}_{product}"
                 feature.qualifiers["id"] = [new_id]
+                
 
                 # Create a new feature with the updated 'gene' qualifier
                 new_feature = SeqFeature(
-                    location=FeatureLocation(
-                        feature.location.start, feature.location.end
+                        location=FeatureLocation(
+                        feature.location.start, 
+                        feature.location.end
                     ),
                     type=feature.type,
                     qualifiers={
                         "ID": [new_id],
                         "function": feature.qualifiers.get("function"),
-                        "locus_tag": feature.qualifiers.get("locus_tag"),
+                        "locus_tag": [new_id],
                         "phase": feature.qualifiers.get("phase"),
                         "phrog": feature.qualifiers.get("phrog"),
                         "product": feature.qualifiers.get("product"),
