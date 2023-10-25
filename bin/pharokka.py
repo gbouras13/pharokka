@@ -181,13 +181,8 @@ def main():
         )
 
         if dnaapler_success == True:
-            if contig_count == 1:
-                input_fasta = os.path.join(
+            input_fasta = os.path.join(
                     out_dir, "dnaapler/dnaapler_reoriented.fasta"
-                )
-            elif contig_count > 1:  # dnaapler all
-                input_fasta = os.path.join(
-                    out_dir, "dnaapler/dnaapler_all_reoriented.fasta"
                 )
             destination_file = os.path.join(
                 out_dir, f"{prefix}_dnaapler_reoriented.fasta"
