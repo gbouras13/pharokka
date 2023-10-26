@@ -17,6 +17,7 @@ def create_plot(
     plot_title,
     truncate,
     outfile,
+    svg_plot_file,
     dpi,
     label_size,
     label_hypotheticals,
@@ -581,4 +582,8 @@ def create_plot(
 
     dpi = int(dpi)
 
+    # save as png
     fig.savefig(outfile, dpi=dpi)
+
+    # Save the image as an SVG
+    fig.savefig(svg_plot_file, format='svg', dpi=dpi)
