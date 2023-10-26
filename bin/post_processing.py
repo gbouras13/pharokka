@@ -67,7 +67,7 @@ class Pharok:
         trna_version: str = "2.0.12",
         aragorn_version: str = "1.2.41",
         minced_version: str = "0.4.2",
-        skip_extra_annotations: bool = False
+        skip_extra_annotations: bool = False,
     ) -> None:
         """
         Parameters
@@ -832,7 +832,9 @@ class Pharok:
                         subset_df["count"] = subset_df["count"] + 1
                         # z fill to make the locus tag 4
                         subset_df["locus_tag"] = (
-                            contig + "_tRNA_" + subset_df["count"].astype(str).str.zfill(4)
+                            contig
+                            + "_tRNA_"
+                            + subset_df["count"].astype(str).str.zfill(4)
                         )
                         subset_df = subset_df.drop(columns=["count"])
                         subset_dfs.append(subset_df)
@@ -841,13 +843,16 @@ class Pharok:
                 else:
                     # keep only trnas
                     trna_df = trna_df[
-                        (trna_df["Region"] == "tRNA") | (trna_df["Region"] == "pseudogene")
+                        (trna_df["Region"] == "tRNA")
+                        | (trna_df["Region"] == "pseudogene")
                     ]
                     trna_df = trna_df.reset_index(drop=True)
                     trna_df["count"] = trna_df.index
                     trna_df["count"] = trna_df["count"] + 1
                     trna_df["locus_tag"] = (
-                        self.locustag + "_tRNA_" + trna_df["count"].astype(str).str.zfill(4)
+                        self.locustag
+                        + "_tRNA_"
+                        + trna_df["count"].astype(str).str.zfill(4)
                     )
                     trna_df = trna_df.drop(columns=["count"])
 
@@ -886,7 +891,13 @@ class Pharok:
                     + trna_df["locus_tag"]
                 )
                 trna_df = trna_df.drop(
-                    columns=["isotypes", "anticodon", "rest", "trna_product", "locus_tag"]
+                    columns=[
+                        "isotypes",
+                        "anticodon",
+                        "rest",
+                        "trna_product",
+                        "locus_tag",
+                    ]
                 )
 
             ### crisprs
@@ -905,18 +916,20 @@ class Pharok:
                 minced_df[["attributes", "rpt_unit_seq"]] = minced_df[
                     "attributes"
                 ].str.split(";rpt_unit_seq=", expand=True)
-                minced_df[["attributes", "rpt_family"]] = minced_df["attributes"].str.split(
-                    ";rpt_family=", expand=True
-                )
-                minced_df[["attributes", "rpt_type"]] = minced_df["attributes"].str.split(
-                    ";rpt_type=", expand=True
-                )
+                minced_df[["attributes", "rpt_family"]] = minced_df[
+                    "attributes"
+                ].str.split(";rpt_family=", expand=True)
+                minced_df[["attributes", "rpt_type"]] = minced_df[
+                    "attributes"
+                ].str.split(";rpt_type=", expand=True)
                 minced_df = minced_df.drop(columns=["attributes"])
                 # index hack if meta mode
                 subset_dfs = []
                 if self.meta_mode == True:
                     for contig in contigs:
-                        subset_df = minced_df[minced_df["contig"] == contig].reset_index()
+                        subset_df = minced_df[
+                            minced_df["contig"] == contig
+                        ].reset_index()
                         subset_df["count"] = subset_df.index
                         # so not 0 indexed
                         subset_df["count"] = subset_df["count"] + 1
@@ -987,7 +1000,9 @@ class Pharok:
                         # z fill to make the locus tag 4
                         subset_df["count"] = subset_df["count"].astype(str).str.zfill(4)
                         subset_df["locus_tag"] = (
-                            contig + "_tmRNA_" + subset_df["count"].astype(str).str.zfill(4)
+                            contig
+                            + "_tmRNA_"
+                            + subset_df["count"].astype(str).str.zfill(4)
                         )
                         subset_df = subset_df.drop(columns=["count"])
                         subset_dfs.append(subset_df)
@@ -1033,8 +1048,10 @@ class Pharok:
         # skip extra trna setc
         if self.skip_extra_annotations is True:
             df_list = [gff_df]
-        else:    
-            if trna_empty is True and self.tmrna_flag is False and crispr_count == 0:  # all
+        else:
+            if (
+                trna_empty is True and self.tmrna_flag is False and crispr_count == 0
+            ):  # all
                 df_list = [gff_df]
             elif trna_empty is False and self.tmrna_flag is False and crispr_count == 0:
                 df_list = [gff_df, trna_df]
@@ -1059,9 +1076,9 @@ class Pharok:
         total_gff.stop = total_gff.stop.astype(int)
 
         # sorts all features by start
-        total_gff = total_gff.groupby(["contig"], sort=False, as_index=False, group_keys=True).apply(
-            pd.DataFrame.sort_values, "start", ascending=True
-        )
+        total_gff = total_gff.groupby(
+            ["contig"], sort=False, as_index=False, group_keys=True
+        ).apply(pd.DataFrame.sort_values, "start", ascending=True)
 
         # write final gff to file
         with open(os.path.join(self.out_dir, self.prefix + ".gff"), "a") as f:
@@ -1086,7 +1103,7 @@ class Pharok:
         if self.skip_extra_annotations is False:
             self.trna_empty = trna_empty
             self.crispr_count = crispr_count
-        else: # skip annotations
+        else:  # skip annotations
             self.trna_empty = True
             self.crispr_count = 0
             self.tmrna_flag = False
@@ -1132,7 +1149,6 @@ class Pharok:
         cds_df[["locus_tag", "rest"]] = cds_df["locus_tag"].str.split(
             ";function=", expand=True
         )
-
 
         ### trnas
         # check if no trnas
@@ -1771,10 +1787,14 @@ class Pharok:
             )
 
             # only if not skipped
-            if self.skip_extra_annotations is False: 
+            if self.skip_extra_annotations is False:
                 # add other features
                 trna_row = pd.DataFrame(
-                    {"Description": ["tRNAs"], "Count": [trna_count], "contig": [contig]}
+                    {
+                        "Description": ["tRNAs"],
+                        "Count": [trna_count],
+                        "contig": [contig],
+                    }
                 )
                 crispr_row = pd.DataFrame(
                     {
@@ -1784,9 +1804,13 @@ class Pharok:
                     }
                 )
                 tmrna_row = pd.DataFrame(
-                    {"Description": ["tmRNAs"], "Count": [tmrna_count], "contig": [contig]}
+                    {
+                        "Description": ["tmRNAs"],
+                        "Count": [tmrna_count],
+                        "contig": [contig],
+                    }
                 )
-            
+
             vfdb_row = pd.DataFrame(
                 {
                     "Description": ["VFDB_Virulence_Factors"],
@@ -2122,19 +2146,22 @@ def create_mmseqs_tophits(out_dir):
 
     # optimise the tophits generation
     # Group by 'gene' and find the top hit for each group
-    tophits_df = mmseqs_df.groupby('gene', group_keys=True).apply(lambda group: group.nsmallest(1, 'mmseqs_eVal')).reset_index(drop=True)
-    
-    
+    tophits_df = (
+        mmseqs_df.groupby("gene", group_keys=True)
+        .apply(lambda group: group.nsmallest(1, "mmseqs_eVal"))
+        .reset_index(drop=True)
+    )
+
     # create tophits df
-    tophits_df = tophits_df[[
-        "mmseqs_phrog",
-        "gene",
-        "mmseqs_alnScore",
-        "mmseqs_seqIdentity",
-        "mmseqs_eVal",
-    ]]
-
-
+    tophits_df = tophits_df[
+        [
+            "mmseqs_phrog",
+            "gene",
+            "mmseqs_alnScore",
+            "mmseqs_seqIdentity",
+            "mmseqs_eVal",
+        ]
+    ]
 
     tophits_df.to_csv(
         os.path.join(out_dir, "top_hits_mmseqs.tsv"), sep="\t", index=False
@@ -2322,22 +2349,24 @@ def process_vfdb_results(out_dir, merged_df):
 
     vfdb_df = pd.read_csv(vfdb_file, delimiter="\t", index_col=False, names=col_list)
 
-
     # optimise the tophits generation
     # Group by 'gene' and find the top hit for each group
-    tophits_df = vfdb_df.groupby('gene', group_keys=True).apply(lambda group: group.nsmallest(1, 'vfdb_eVal')).reset_index(drop=True)
-
-   
+    tophits_df = (
+        vfdb_df.groupby("gene", group_keys=True)
+        .apply(lambda group: group.nsmallest(1, "vfdb_eVal"))
+        .reset_index(drop=True)
+    )
 
     # create tophits df
-    tophits_df = tophits_df[[
-        "vfdb_hit",
-        "gene",
-        "vfdb_alnScore",
-        "vfdb_seqIdentity",
-        "vfdb_eVal",
-    ]]
-
+    tophits_df = tophits_df[
+        [
+            "vfdb_hit",
+            "gene",
+            "vfdb_alnScore",
+            "vfdb_seqIdentity",
+            "vfdb_eVal",
+        ]
+    ]
 
     # left join vfdb to merged_df
     tophits_df["gene"] = tophits_df["gene"].astype(str)
@@ -2418,19 +2447,22 @@ def process_card_results(out_dir, merged_df, db_dir):
     card_df = pd.read_csv(card_file, delimiter="\t", index_col=False, names=col_list)
 
     #
-    tophits_df = card_df.groupby('gene', group_keys=True).apply(lambda group: group.nsmallest(1, 'CARD_eVal')).reset_index(drop=True)
-
-   
+    tophits_df = (
+        card_df.groupby("gene", group_keys=True)
+        .apply(lambda group: group.nsmallest(1, "CARD_eVal"))
+        .reset_index(drop=True)
+    )
 
     # create tophits df
-    tophits_df = tophits_df[[
-        "CARD_hit",
-        "gene",
-        "CARD_alnScore",
-        "CARD_seqIdentity",
-        "CARD_eVal",
-    ]]
-   
+    tophits_df = tophits_df[
+        [
+            "CARD_hit",
+            "gene",
+            "CARD_alnScore",
+            "CARD_seqIdentity",
+            "CARD_eVal",
+        ]
+    ]
 
     # left join tophits_df to merged_df
     tophits_df["gene"] = tophits_df["gene"].astype(str)

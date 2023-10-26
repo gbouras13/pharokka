@@ -402,6 +402,7 @@ The 673 crAss-like genomes were run with `-m` (defaults to `--mmseqs2_only` in v
 
 Benchmarking was conducted on Enterbacteria Phage Lambda (Genbank accession J02459) Staphylococcus Phage SAOMS1 (Genbank Accession MW460250) and 673 crAss-like phage genomes in one multiFASTA input taken from Yutin, N., Benler, S., Shmakov, S.A. et al. Analysis of metagenome-assembled viral genomes from the human gut reveals diverse putative CrAss-like phages with unique genomic features. Nat Commun 12, 1044 (2021) https://doi.org/10.1038/s41467-021-21350-w.
 
+
 For the crAss-like phage genomes, `pharokka` meta mode `-m` was enabled.
 
 | Phage Lambda            | `pharokka` PHANOTATE | `pharokka` Prodigal | Prokka with PHROGs | 

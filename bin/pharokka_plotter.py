@@ -158,8 +158,10 @@ if __name__ == "__main__":
     # check if plot already exists
     if args.outdir == "":
         plot_file = str(args.plot_name) + ".png"
+        svg_plot_file = str(args.plot_name) + ".svg"
     else:
         plot_file = os.path.join(args.outdir, f"{args.plot_name}.png")
+        svg_plot_file = os.path.join(args.outdir, f"{args.plot_name}.svg")
 
     if args.force == True:
         if os.path.isfile(plot_file) == True:
@@ -173,6 +175,20 @@ if __name__ == "__main__":
         if os.path.isfile(plot_file) == True:
             logger.error(
                 f"Output plot file {plot_file} already exists and force was not specified. Please specify -f or --force to overwrite the output plot file."
+            )
+
+    if args.force == True:
+        if os.path.isfile(svg_plot_file) == True:
+            os.remove(svg_plot_file)
+        else:
+            logger.warning(
+                "--force was specified even though the output plot file does not already exist."
+            )
+            logger.warning("Continuing")
+    else:
+        if os.path.isfile(svg_plot_file) == True:
+            logger.error(
+                f"Output plot file {svg_plot_file} already exists and force was not specified. Please specify -f or --force to overwrite the output plot file."
             )
 
     # flag to see if user provided gff and genbank or output directory
@@ -283,6 +299,7 @@ if __name__ == "__main__":
         args.plot_title,
         args.truncate,
         plot_file,
+        svg_plot_file,
         args.dpi,
         args.label_size,
         args.label_hypotheticals,

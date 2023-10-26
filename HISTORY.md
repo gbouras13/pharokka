@@ -1,6 +1,12 @@
 History
 =======
 
+1.5.1 (2023-10-26)
+------------------
+
+* Fixes `dnaapler` version to `>=0.4.0` with new changes to dnaapler
+* Adds `.svg` format output with `pharokka_plotter.py`
+
 1.5.0 (2023-09-20)
 ------------------
 

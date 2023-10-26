@@ -3,17 +3,6 @@ import os
 from setuptools import setup
 
 
-def get_version():
-    with open(
-        os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            "lib",
-            "VERSION",
-        )
-    ) as f:
-        return f.readline().strip()
-
-
 # recursively load package files
 def package_files(directory):
     paths = []
@@ -30,7 +19,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="Pharokka",
-    version="1.5.0",
+    version="1.5.1",
     author="George Bouras",
     author_email="george.bouras@adelaide.edu.au",
     description="Fast phage annotation tool",
@@ -93,6 +82,6 @@ setup(
         "requests>=2.25.1",
         "bcbio-gff>=0.7.0",
         "pyrodigal>=3.0.0",
-        "pyrodigal_gv>=0.1.0"
+        "pyrodigal_gv>=0.1.0",
     ],
 )
