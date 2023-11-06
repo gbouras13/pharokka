@@ -64,6 +64,20 @@ By default, all tRNAs, tmRNAs and CRISPRs will labelled. If you want to turn thi
 
 `pharokka_plotter.py -i input.fasta -n pharokka_plot -o pharokka_output_directory --remove_other_features_labels`
 
+If you want to specify specific labels, you can do this by including a list of locus_tags (from the .gff, .gbk or the summary output files) as a text file with one ID per line and specify this file with `--label_ids`:
+
+e.g. if you make a text file called `labels.txt`
+
+```
+EHOONAYF_CDS_0007
+EHOONAYF_CDS_0009
+EHOONAYF_CDS_0023
+```
+
+`pharokka_plotter.py -i input.fasta -n pharokka_plot -o pharokka_output_directory --label_ids labels.txt`
+
+
+
 ```
 usage: pharokka_plotter.py [-h] -i INFILE [-n PLOT_NAME] [-o OUTDIR] [--gff GFF] [--genbank GENBANK] [-p PREFIX] [-t PLOT_TITLE] [-f]
                            [--label_hypotheticals] [--remove_other_features_labels] [--title_size TITLE_SIZE] [--label_size LABEL_SIZE]
