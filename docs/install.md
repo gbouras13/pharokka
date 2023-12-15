@@ -63,7 +63,7 @@ If you would like to specify a different database directory (recommended), that 
 
 `install_databases.py -o <path/to/databse_dir>`
 
-If this does not work, you an alternatively download the databases from Zenodo at https://zenodo.org/record/8267900/files/pharokka_v1.4.0_databases.tar.gz and untar the directory in a location of your choice.
+If this does not work, you an alternatively download the databases from Zenodo at https://zenodo.org/record/8276347/files/pharokka_v1.4.0_databases.tar.gz and untar the directory in a location of your choice.
 
 If you prefer to use the command line:
 
