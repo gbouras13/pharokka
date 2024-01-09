@@ -1227,7 +1227,7 @@ class Pharok:
                         + "\t"
                         + "locus_tag"
                         + "\t"
-                        + row["locus_tag"]
+                        + str(row["locus_tag"])
                         + "\n"
                     )
                     f.write(
@@ -1243,7 +1243,7 @@ class Pharok:
                         + "\n"
                     )
                 if self.trna_empty == False:
-                    subset_trna_df = trna_df[trna_df["contig"] == contig]
+                    subset_trna_df = trna_df[str(trna_df["contig"]) == contig]
                     for index, row in subset_trna_df.iterrows():
                         start = str(row["start"])
                         stop = str(row["stop"])
@@ -1305,7 +1305,7 @@ class Pharok:
                             + "\t"
                             + "locus_tag"
                             + "\t"
-                            + row["locus_tag"]
+                            + str(row["locus_tag"])
                             + "\n"
                         )
                         f.write(
@@ -1350,7 +1350,7 @@ class Pharok:
                             + "\t"
                             + "locus_tag"
                             + "\t"
-                            + row["locus_tag"]
+                            + str(row["locus_tag"])
                             + "\n"
                         )
                         f.write(

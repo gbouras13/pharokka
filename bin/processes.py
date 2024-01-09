@@ -430,7 +430,7 @@ def tidy_prodigal_output(out_dir, gv_flag):
         prod_filt_df.loc[ixs, cols].reindex(columns=cols[::-1]).values
     )
     prod_filt_df["gene"] = (
-        prod_filt_df["contig"]
+        prod_filt_df["contig"].astype(str)
         + prod_filt_df.index.astype(str)
         + " "
         + prod_filt_df["start"].astype(str)
