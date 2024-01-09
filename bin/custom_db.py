@@ -55,7 +55,7 @@ def run_custom_pyhmmer(custom_hmm, out_dir, threads, gene_predictor, evalue):
                 best_results[result.protein] = result
                 keep_protein.add(result.protein)
             elif result.bitscore == previous_bitscore:
-                if best_results[result.protein].custom_hmm_id != hit.custom_hmm_id:
+                if best_results[result.protein].custom_hmm_id != hit.name.decode():
                     keep_protein.remove(result.protein)
         else:
             best_results[result.protein] = result

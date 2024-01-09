@@ -118,28 +118,32 @@ def main():
 
     # loop over each PHROG
     for file in file_list:
-        # check if MSA
-        if is_fasta_msa(f"{MSA_dir}/{file}"):
-            # read in each msa
-            with pyhmmer.easel.MSAFile(
-                f"{MSA_dir}/{file}", digital=True, alphabet=alphabet
-            ) as msa_file:
-                msa = msa_file.read()
-            # split the file into root and suffix
-            root, _ = os.path.splitext(file)
-            name = root
-            # convert to bytes
-            msa.name = name.encode("utf-8")
-            # build the HMM
-            builder = pyhmmer.plan7.Builder(alphabet)
-            background = pyhmmer.plan7.Background(alphabet)
-            hmm, _, _ = builder.build_msa(msa, background)
-            with open(f"{HMM_dir}/{name}.hmm", "wb") as output_file:
-                hmm.write(output_file)
+        # check if hidden - skip
+        if file.startswith('.'):
+            continue
         else:
-            logger.warning(
-                f"{MSA_dir}/{file} does not seem to be a FASTA formatted MSA. Skipping."
-            )
+            # check if MSA 
+            if is_fasta_msa(f"{MSA_dir}/{file}"):
+                # read in each msa
+                with pyhmmer.easel.MSAFile(
+                    f"{MSA_dir}/{file}", digital=True, alphabet=alphabet
+                ) as msa_file:
+                    msa = msa_file.read()
+                # split the file into root and suffix
+                root, _ = os.path.splitext(file)
+                name = root
+                # convert to bytes
+                msa.name = name.encode("utf-8")
+                # build the HMM
+                builder = pyhmmer.plan7.Builder(alphabet)
+                background = pyhmmer.plan7.Background(alphabet)
+                hmm, _, _ = builder.build_msa(msa, background)
+                with open(f"{HMM_dir}/{name}.hmm", "wb") as output_file:
+                    hmm.write(output_file)
+            else:
+                logger.warning(
+                    f"{MSA_dir}/{file} does not seem to be a FASTA formatted MSA. Skipping."
+                )
 
     # to concatenate all hmms
 

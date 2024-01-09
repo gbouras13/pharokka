@@ -438,7 +438,7 @@ class Pharok:
             contig_names.append(record.id)
             lengths.append(len(record.seq))
             gc.append(round(gc_fraction(record.seq), 2))
-            # pyrodigal-gv lookup from teh dict
+            # pyrodigal-gv lookup from the dict
             if self.gene_predictor == "prodigal-gv":
                 transl_table = transl_table_dict[record.id]
 
@@ -1272,7 +1272,7 @@ class Pharok:
                             + "\t"
                             + "locus_tag"
                             + "\t"
-                            + row["locus_tag"]
+                            + str(row["locus_tag"])
                             + "\n"
                         )
                         f.write(
