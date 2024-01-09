@@ -14,7 +14,6 @@ import numpy as np
 import pandas as pd
 import pyhmmer
 from Bio import SeqIO
-from Bio.SeqUtils import GC
 from external_tools import ExternalTool
 from loguru import logger
 from post_processing import (

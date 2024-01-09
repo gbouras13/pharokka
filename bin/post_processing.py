@@ -9,7 +9,7 @@ from re import T
 import numpy as np
 import pandas as pd
 from Bio import SeqIO
-from Bio.SeqUtils import GC
+from Bio.SeqUtils import gc_fraction
 from loguru import logger
 from processes import convert_gff_to_gbk
 from util import remove_directory, remove_file, touch_file
@@ -437,7 +437,7 @@ class Pharok:
         for record in fasta_sequences:
             contig_names.append(record.id)
             lengths.append(len(record.seq))
-            gc.append(round(GC(record.seq), 2))
+            gc.append(round(gc_fraction(record.seq), 2))
             # pyrodigal-gv lookup from teh dict
             if self.gene_predictor == "prodigal-gv":
                 transl_table = transl_table_dict[record.id]
