@@ -1248,11 +1248,12 @@ class Pharok:
                         + "\t"
                         + "transl_table"
                         + "\t"
-                        + str(subset_df["transl_table"])
+                        + str(row["transl_table"])
                         + "\n"
                     )
                 if self.trna_empty == False:
                     subset_trna_df = trna_df[trna_df["contig"] == contig]
+                    print(subset_trna_df)
                     for index, row in subset_trna_df.iterrows():
                         start = str(row["start"])
                         stop = str(row["stop"])
@@ -1284,20 +1285,9 @@ class Pharok:
                             + str(row["locus_tag"])
                             + "\n"
                         )
-                        f.write(
-                            ""
-                            + "\t"
-                            + ""
-                            + "\t"
-                            + ""
-                            + "\t"
-                            + "transl_table"
-                            + "\t"
-                            + str(subset_df["transl_table"])
-                            + "\n"
-                        )
                 if self.crispr_count > 0:
                     subset_crispr_df = crispr_df[crispr_df["contig"] == contig]
+                    print(subset_crispr_df)
                     for index, row in subset_crispr_df.iterrows():
                         start = str(row["start"])
                         stop = str(row["stop"])
@@ -1329,20 +1319,9 @@ class Pharok:
                             + str(row["rpt_unit_seq"])
                             + "\n"
                         )
-                        f.write(
-                            ""
-                            + "\t"
-                            + ""
-                            + "\t"
-                            + ""
-                            + "\t"
-                            + "transl_table"
-                            + "\t"
-                            + str(subset_df["transl_table"])
-                            + "\n"
-                        )
                 if self.tmrna_flag == True:
                     subset_tmrna_df = tmrna_df[tmrna_df["contig"] == contig]
+                    print(subset_tmrna_df)
                     for index, row in subset_tmrna_df.iterrows():
                         start = str(row["start"])
                         stop = str(row["stop"])
@@ -1372,18 +1351,6 @@ class Pharok:
                             + "product"
                             + "\t"
                             + "transfer-messenger RNA, SsrA"
-                            + "\n"
-                        )
-                        f.write(
-                            ""
-                            + "\t"
-                            + ""
-                            + "\t"
-                            + ""
-                            + "\t"
-                            + "transl_table"
-                            + "\t"
-                            + str(subset_df["transl_table"])
                             + "\n"
                         )
 
