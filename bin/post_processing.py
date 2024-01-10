@@ -646,10 +646,13 @@ class Pharok:
             )
 
         # get all contigs
-        contigs = self.length_df["contig"].astype("string")
+        contigs = self.length_df["contig"].astype(str)
+        self.merged_df["contig"] = self.merged_df["contig"].astype(str)
 
         # add the translation table
+        # typing
         transl_table_df = self.length_df.drop(columns=["length", "gc_perc"])
+        transl_table_df["contig"] = transl_table_df["contig"].astype(str)
         self.merged_df = self.merged_df.merge(transl_table_df, how="left", on="contig")
 
         ############ locus tag #########
@@ -1157,6 +1160,7 @@ class Pharok:
                 self.total_gff["Method"] == f"tRNAscan-SE_{self.trna_version}"
             ]
             # keep only trnas and pseudogenes
+            trna_df.contig = trna_df.start.astype(str)
             trna_df.start = trna_df.start.astype(int)
             trna_df.stop = trna_df.stop.astype(int)
             trna_df[["attributes", "locus_tag"]] = trna_df["attributes"].str.split(
@@ -1195,7 +1199,7 @@ class Pharok:
 
         with open(os.path.join(self.out_dir, self.prefix + ".tbl"), "w") as f:
             for index, row in self.length_df.iterrows():
-                contig = row["contig"]
+                contig = str(row["contig"])
                 f.write(">Feature " + contig + "\n")
 
                 subset_df = self.merged_df[self.merged_df["contig"] == contig]
@@ -1243,7 +1247,7 @@ class Pharok:
                         + "\n"
                     )
                 if self.trna_empty == False:
-                    subset_trna_df = trna_df[str(trna_df["contig"]) == contig]
+                    subset_trna_df = trna_df[trna_df["contig"] == contig]
                     for index, row in subset_trna_df.iterrows():
                         start = str(row["start"])
                         stop = str(row["stop"])
@@ -2003,13 +2007,15 @@ class Pharok:
         ]
 
         # get contigs - convert to string to make the match work for integer contigs
-        contigs = self.length_df["contig"].astype("string")
+        contigs = self.length_df["contig"].astype(str)
 
         # instantiate tophits list
         tophits_mash_df = []
 
         # read in the mash output
         mash_df = pd.read_csv(mash_tsv, delimiter="\t", index_col=False, names=col_list)
+        # as string to match the contigs
+        mash_df["contig"] = mash_df["contig"].astype(str)
 
         # instantiate tophits list
         tophits = []

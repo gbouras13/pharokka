@@ -113,6 +113,11 @@ def test_overall_tmrna(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
 
+def test_overall_unicycler_header_prodigal(tmp_dir):
+    """#317 test pharokka overall with unicycler header """
+    input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g prodigal"
+    exec_command(cmd)
 
 def test_meta(tmp_dir):
     """test pharokka meta"""

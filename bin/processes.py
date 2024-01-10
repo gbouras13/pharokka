@@ -739,10 +739,13 @@ def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, prot_seq_df):
     gff_file = os.path.join(input_dir, f"{prefix}.gff")
     gbk_file = os.path.join(out_dir, f"{prefix}.gbk")
 
+    prot_seq_df["contig"] = prot_seq_df["contig"].astype(str)
+
     with open(gbk_file, "wt") as gbk_handler:
         fasta_handler = SeqIO.to_dict(SeqIO.parse(filepath_in, "fasta"))
         for record in GFF.parse(gff_file, fasta_handler):
             # sequence in each contig (record)
+            record.id = str(record.id)
             subset_seqs_df = prot_seq_df.loc[prot_seq_df["contig"] == record.id]
             # get all the seqs in the contigs - and drop the index to reset for 0 indexed loop
             subset_seqs = subset_seqs_df["sequence"].reset_index(drop=True)
