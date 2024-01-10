@@ -85,11 +85,22 @@ def test_overall(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
 
+def test_overall_mash_distance(tmp_dir):
+    """test pharokka overall with stricter mash distance"""
+    input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --mash_distance 0.05"
+    exec_command(cmd)
 
 def test_overall_crispr(tmp_dir):
     """test pharokka overall crispr"""
     input_fasta: Path = f"{CRISPR_data}/Biggiephage_A_fullcontig_CasΦ1.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
+    exec_command(cmd)
+
+def test_overall_crispr_minced_args(tmp_dir):
+    """test pharokka crispr with minced args"""
+    input_fasta: Path = f"{CRISPR_data}/Biggiephage_A_fullcontig_CasΦ1.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g prodigal --minced_args \"minNR 2 -minRL 21\" "
     exec_command(cmd)
 
 
@@ -137,13 +148,11 @@ def test_meta_prodigal_gv(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m -g prodigal-gv"
     exec_command(cmd)
 
-
 def test_meta_dnaapler_all_bug(tmp_dir):
     """test pharokka meta dnaapler bug and split"""
     input_fasta: Path = f"{meta_data}/combined_meta.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m -s --dnaapler --meta_hmm"
     exec_command(cmd)
-
 
 def test_overall_locus(tmp_dir):
     """test pharokka overall locus tag prefix"""

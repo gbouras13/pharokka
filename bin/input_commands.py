@@ -150,6 +150,18 @@ def get_input():
         action="store_true",
     )
     parser.add_argument(
+        "--minced_args",
+        help="extra commands to pass to MINced (please omit the leading hyphen for the first argument). You will need to use quotation marks e.g. --minced_args \"minNR 2 -minRL 21\"",
+        default="",
+        type=str
+    )
+    parser.add_argument(
+        "--mash_distance",
+        help="mash distance for the search against INPHARED. Defaults to 0.2.",
+        default=0.2,
+        type=float
+    )
+    parser.add_argument(
         "-V",
         "--version",
         help="Print pharokka Version",

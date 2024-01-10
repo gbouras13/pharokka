@@ -321,7 +321,7 @@ def main():
             logger.info("Starting tRNA-scanSE.")
             run_trna_scan(input_fasta, args.threads, out_dir, logdir)
         # run minced and aragorn
-        run_minced(input_fasta, out_dir, prefix, logdir)
+        run_minced(input_fasta, out_dir, prefix, args.minced_args, logdir)
         run_aragorn(input_fasta, out_dir, prefix, logdir)
 
     # running mmseqs2 on the 3 databases
@@ -460,7 +460,7 @@ def main():
         logger.info("Finding the closest match for each contig in INPHARED using mash.")
         # in process.py
         run_mash_sketch(input_fasta, out_dir, logdir)
-        run_mash_dist(out_dir, db_dir, logdir)
+        run_mash_dist(out_dir, db_dir, args.mash_distance, logdir)
         # part of the class
         pharok.inphared_top_hits()
     else:
