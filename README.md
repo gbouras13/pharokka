@@ -33,6 +33,7 @@ If you are looking for rapid standardised annotation of bacterial genomes, pleas
 - [Paper](#paper)
 - [Pharokka with Galaxy Europe Webserver](#pharokka-with-galaxy-europe-webserver)
 - [Brief Overview](#brief-overview)
+  - [Pharokka v 1.6.0 Update (11 January 2024)](#pharokka-v-160-update-11-january-2024)
   - [Pharokka v 1.5.0 Update (20 September 2023)](#pharokka-v-150-update-20-september-2023)
   - [Pharokka v 1.4.0 Update (27 August 2023)](#pharokka-v-140-update-27-august-2023)
   - [Pharokka v 1.3.0 Update](#pharokka-v-130-update)
@@ -95,6 +96,11 @@ So if you can't get `pharokka` to install on your machine for whatever reason or
 </p>
 
 `pharokka` uses [PHANOTATE](https://github.com/deprekate/PHANOTATE), the only gene prediction program tailored to bacteriophages, as the default program for gene prediction. [Prodigal](https://github.com/hyattpd/Prodigal) implemented with [pyrodigal](https://github.com/althonos/pyrodigal) and [Prodigal-gv](https://github.com/apcamargo/prodigal-gv) implemented with [pyrodigal-gv](https://github.com/althonos/pyrodigal-gv) are also available as alternatives. Following this, functional annotations are assigned by matching each predicted coding sequence (CDS) to the [PHROGs](https://phrogs.lmge.uca.fr), [CARD](https://card.mcmaster.ca) and [VFDB](http://www.mgc.ac.cn/VFs/main.htm) databases using [MMseqs2](https://github.com/soedinglab/MMseqs2). As of v1.4.0, `pharokka` will also match each CDS to the PHROGs database using more sensitive Hidden Markov Models using [PyHMMER](https://github.com/althonos/pyhmmer). Pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). `pharokka` also generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage) and check out the full [documentation](https://pharokka.readthedocs.io) for more details.  
+
+## Pharokka v 1.6.0 Update (11 January 2024)
+
+* Fixes a variety of bugs (#300 `pharokka_proteins.py` crashing if it found VFDB hits, #303 errors in the `.tbl` format, #316 errors with types and where custom HMM dbs had identical scored hits, #317 types and #320 deprecated GC function)
+* Adds `--mash_distance` and `--minced_args` as parameters (#299 thanks @iferres).
 
 ## Pharokka v 1.5.0 Update (20 September 2023)
 
@@ -280,9 +286,10 @@ For a full explanation of all arguments, please see [usage](docs/run.md).
 pharokka defaults to 1 thread.
 
 ```
-usage: pharokka.py [-h] [-i INFILE] [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG] [-g GENE_PREDICTOR] [-m] [-s] [-c CODING_TABLE] [-e EVALUE] [--fast] [--mmseqs2_only]
-                   [--meta_hmm] [--dnaapler] [--custom_hmm CUSTOM_HMM] [--genbank] [--terminase] [--terminase_strand TERMINASE_STRAND] [--terminase_start TERMINASE_START]
-                   [--skip_extra_annotations] [--skip_mash] [-V] [--citation]
+usage: pharokka.py [-h] [-i INFILE] [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG] [-g GENE_PREDICTOR] [-m] [-s]
+                   [-c CODING_TABLE] [-e EVALUE] [--fast] [--mmseqs2_only] [--meta_hmm] [--dnaapler] [--custom_hmm CUSTOM_HMM] [--genbank]
+                   [--terminase] [--terminase_strand TERMINASE_STRAND] [--terminase_start TERMINASE_START] [--skip_extra_annotations]
+                   [--skip_mash] [--minced_args MINCED_ARGS] [--mash_distance MASH_DISTANCE] [-V] [--citation]
 
 pharokka: fast phage annotation program
 
@@ -331,6 +338,10 @@ options:
   --skip_extra_annotations
                         Skips tRNAscan-se, MINced and Aragorn.
   --skip_mash           Skips running mash to find the closest match for each contig in INPHARED.
+  --minced_args MINCED_ARGS
+                        extra commands to pass to MINced (please omit the leading hyphen for the first argument). You will need to use quotation marks e.g. --minced_args "minNR 2 -minRL 21"
+  --mash_distance MASH_DISTANCE
+                        mash distance for the search against INPHARED. Defaults to 0.2.
   -V, --version         Print pharokka Version
   --citation            Print pharokka Citation
   ```

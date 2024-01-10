@@ -8,7 +8,6 @@ Usage: pytest .
 # import
 import os
 import shutil
-
 # import functions
 import subprocess
 import sys
@@ -74,6 +73,13 @@ def test_download(tmp_dir):
 def test_proteins(tmp_dir):
     """test pharokka proteins"""
     input_fasta: Path = f"{proteins_data}/phanotate.faa"
+    cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
+    exec_command(cmd)
+
+
+def test_proteins_with_vfdb_card(tmp_dir):
+    """test pharokka proteins"""
+    input_fasta: Path = f"{proteins_data}/vfdb_card.faa"
     cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
 

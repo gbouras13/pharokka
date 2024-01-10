@@ -430,7 +430,7 @@ def tidy_prodigal_output(out_dir, gv_flag):
         prod_filt_df.loc[ixs, cols].reindex(columns=cols[::-1]).values
     )
     prod_filt_df["gene"] = (
-        prod_filt_df["contig"]
+        prod_filt_df["contig"].astype(str)
         + prod_filt_df.index.astype(str)
         + " "
         + prod_filt_df["start"].astype(str)
@@ -739,10 +739,13 @@ def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, prot_seq_df):
     gff_file = os.path.join(input_dir, f"{prefix}.gff")
     gbk_file = os.path.join(out_dir, f"{prefix}.gbk")
 
+    prot_seq_df["contig"] = prot_seq_df["contig"].astype(str)
+
     with open(gbk_file, "wt") as gbk_handler:
         fasta_handler = SeqIO.to_dict(SeqIO.parse(filepath_in, "fasta"))
         for record in GFF.parse(gff_file, fasta_handler):
             # sequence in each contig (record)
+            record.id = str(record.id)
             subset_seqs_df = prot_seq_df.loc[prot_seq_df["contig"] == record.id]
             # get all the seqs in the contigs - and drop the index to reset for 0 indexed loop
             subset_seqs = subset_seqs_df["sequence"].reset_index(drop=True)
@@ -773,12 +776,13 @@ def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, prot_seq_df):
             SeqIO.write(record, gbk_handler, "genbank")
 
 
-def run_minced(filepath_in, out_dir, prefix, logdir):
+def run_minced(filepath_in, out_dir, prefix, minced_args, logdir):
     """
     Runs MinCED
     :param filepath_in: input fasta file
     :param out_dir: output directory
     :param logger: logger
+    :param minced_args: str with extra arguments to pass to MINced
     :params prefix: prefix
     :return:
     """
@@ -788,11 +792,14 @@ def run_minced(filepath_in, out_dir, prefix, logdir):
     output_spacers = os.path.join(out_dir, prefix + "_minced_spacers.txt")
     output_gff = os.path.join(out_dir, prefix + "_minced.gff")
 
+    if minced_args != "":
+        minced_args = f"-{minced_args}"
+
     minced_fast = ExternalTool(
         tool="minced",
         input=f"",
-        output=f"{output_spacers} {output_gff}",
-        params=f" {filepath_in}",  # need strange order for minced params go first
+        output=f" {output_spacers} {output_gff}",
+        params=f" {minced_args} {filepath_in}",  # need strange order for minced params go first
         logdir=logdir,
         outfile="",
     )
@@ -907,11 +914,12 @@ def run_mash_sketch(filepath_in, out_dir, logdir):
         logger.error("Error with mash sketch\n")
 
 
-def run_mash_dist(out_dir, db_dir, logdir):
+def run_mash_dist(out_dir, db_dir, mash_distance, logdir):
     """
     Runs mash
     :param filepath_in: input filepath
     :param out_dir: output directory
+    :param mash_distance: mash distance - float
     :param logger logger
     :return:
     """
@@ -924,7 +932,7 @@ def run_mash_dist(out_dir, db_dir, logdir):
         tool="mash",
         input="",
         output="",
-        params=f" dist  {mash_sketch} {phrog_sketch} -d 0.2 -i ",
+        params=f" dist  {mash_sketch} {phrog_sketch} -d {mash_distance} -i ",
         logdir=logdir,
         outfile=mash_tsv,
     )

@@ -9,7 +9,7 @@ from re import T
 import numpy as np
 import pandas as pd
 from Bio import SeqIO
-from Bio.SeqUtils import GC
+from Bio.SeqUtils import gc_fraction
 from loguru import logger
 from processes import convert_gff_to_gbk
 from util import remove_directory, remove_file, touch_file
@@ -353,10 +353,12 @@ class Pharok:
 
         # process vfdb results
         # handles empty files without a problem
-        (merged_df, vfdb_results) = process_vfdb_results(self.out_dir, merged_df)
+        (merged_df, vfdb_results) = process_vfdb_results(
+            self.out_dir, merged_df, proteins_flag=False
+        )
         # process CARD results
         (merged_df, card_results) = process_card_results(
-            self.out_dir, merged_df, self.db_dir
+            self.out_dir, merged_df, self.db_dir, proteins_flag=False
         )
 
         self.merged_df = merged_df
@@ -437,8 +439,8 @@ class Pharok:
         for record in fasta_sequences:
             contig_names.append(record.id)
             lengths.append(len(record.seq))
-            gc.append(round(GC(record.seq), 2))
-            # pyrodigal-gv lookup from teh dict
+            gc.append(round(gc_fraction(record.seq), 2))
+            # pyrodigal-gv lookup from the dict
             if self.gene_predictor == "prodigal-gv":
                 transl_table = transl_table_dict[record.id]
 
@@ -646,10 +648,13 @@ class Pharok:
             )
 
         # get all contigs
-        contigs = self.length_df["contig"].astype("string")
+        contigs = self.length_df["contig"].astype(str)
+        self.merged_df["contig"] = self.merged_df["contig"].astype(str)
 
         # add the translation table
+        # typing
         transl_table_df = self.length_df.drop(columns=["length", "gc_perc"])
+        transl_table_df["contig"] = transl_table_df["contig"].astype(str)
         self.merged_df = self.merged_df.merge(transl_table_df, how="left", on="contig")
 
         ############ locus tag #########
@@ -812,6 +817,7 @@ class Pharok:
                     index_col=False,
                     names=col_list,
                 )
+                trna_df["contig"] = trna_df["contig"].astype(str)
 
                 # convert the method to update with version
                 trna_df["Method"] = f"tRNAscan-SE_{self.trna_version}"
@@ -911,6 +917,7 @@ class Pharok:
                     names=col_list,
                     comment="#",
                 )
+                minced_df["contig"] = minced_df["contig"].astype(str)
                 minced_df.start = minced_df.start.astype(int)
                 minced_df.stop = minced_df.stop.astype(int)
                 minced_df[["attributes", "rpt_unit_seq"]] = minced_df[
@@ -986,6 +993,7 @@ class Pharok:
                     index_col=False,
                     names=col_list,
                 )
+                tmrna_df["contig"] = tmrna_df["contig"].astype(str)
                 tmrna_df.start = tmrna_df.start.astype(int)
                 tmrna_df.stop = tmrna_df.stop.astype(int)
 
@@ -1157,6 +1165,7 @@ class Pharok:
                 self.total_gff["Method"] == f"tRNAscan-SE_{self.trna_version}"
             ]
             # keep only trnas and pseudogenes
+            trna_df.contig = trna_df.start.astype(str)
             trna_df.start = trna_df.start.astype(int)
             trna_df.stop = trna_df.stop.astype(int)
             trna_df[["attributes", "locus_tag"]] = trna_df["attributes"].str.split(
@@ -1175,6 +1184,7 @@ class Pharok:
         #### CRISPRs
         if self.crispr_count > 0:
             crispr_df = self.total_gff[self.total_gff["Region"] == "repeat_region"]
+            crispr_df.contig = crispr_df.contig.astype(str)
             crispr_df.start = crispr_df.start.astype(int)
             crispr_df.stop = crispr_df.stop.astype(int)
             crispr_df[["attributes", "locus_tag"]] = crispr_df["attributes"].str.split(
@@ -1187,6 +1197,7 @@ class Pharok:
         ### TMRNAs
         if self.tmrna_flag is True:
             tmrna_df = self.total_gff[self.total_gff["Region"] == "tmRNA"]
+            tmrna_df.contig = tmrna_df.contig.astype(str)
             tmrna_df.start = tmrna_df.start.astype(int)
             tmrna_df.stop = tmrna_df.stop.astype(int)
             tmrna_df[["attributes", "locus_tag"]] = tmrna_df["attributes"].str.split(
@@ -1195,9 +1206,8 @@ class Pharok:
 
         with open(os.path.join(self.out_dir, self.prefix + ".tbl"), "w") as f:
             for index, row in self.length_df.iterrows():
-                contig = row["contig"]
+                contig = str(row["contig"])
                 f.write(">Feature " + contig + "\n")
-
                 subset_df = self.merged_df[self.merged_df["contig"] == contig]
                 for index, row in subset_df.iterrows():
                     start = str(row["start"])
@@ -1227,7 +1237,7 @@ class Pharok:
                         + "\t"
                         + "locus_tag"
                         + "\t"
-                        + row["locus_tag"]
+                        + str(row["locus_tag"])
                         + "\n"
                     )
                     f.write(
@@ -1239,7 +1249,7 @@ class Pharok:
                         + "\t"
                         + "transl_table"
                         + "\t"
-                        + str(subset_df["transl_table"])
+                        + str(row["transl_table"])
                         + "\n"
                     )
                 if self.trna_empty == False:
@@ -1272,19 +1282,7 @@ class Pharok:
                             + "\t"
                             + "locus_tag"
                             + "\t"
-                            + row["locus_tag"]
-                            + "\n"
-                        )
-                        f.write(
-                            ""
-                            + "\t"
-                            + ""
-                            + "\t"
-                            + ""
-                            + "\t"
-                            + "transl_table"
-                            + "\t"
-                            + str(subset_df["transl_table"])
+                            + str(row["locus_tag"])
                             + "\n"
                         )
                 if self.crispr_count > 0:
@@ -1305,7 +1303,7 @@ class Pharok:
                             + "\t"
                             + "locus_tag"
                             + "\t"
-                            + row["locus_tag"]
+                            + str(row["locus_tag"])
                             + "\n"
                         )
                         f.write(
@@ -1318,18 +1316,6 @@ class Pharok:
                             + "product"
                             + "\t"
                             + str(row["rpt_unit_seq"])
-                            + "\n"
-                        )
-                        f.write(
-                            ""
-                            + "\t"
-                            + ""
-                            + "\t"
-                            + ""
-                            + "\t"
-                            + "transl_table"
-                            + "\t"
-                            + str(subset_df["transl_table"])
                             + "\n"
                         )
                 if self.tmrna_flag == True:
@@ -1350,7 +1336,7 @@ class Pharok:
                             + "\t"
                             + "locus_tag"
                             + "\t"
-                            + row["locus_tag"]
+                            + str(row["locus_tag"])
                             + "\n"
                         )
                         f.write(
@@ -1363,18 +1349,6 @@ class Pharok:
                             + "product"
                             + "\t"
                             + "transfer-messenger RNA, SsrA"
-                            + "\n"
-                        )
-                        f.write(
-                            ""
-                            + "\t"
-                            + ""
-                            + "\t"
-                            + ""
-                            + "\t"
-                            + "transl_table"
-                            + "\t"
-                            + str(subset_df["transl_table"])
                             + "\n"
                         )
 
@@ -2003,13 +1977,15 @@ class Pharok:
         ]
 
         # get contigs - convert to string to make the match work for integer contigs
-        contigs = self.length_df["contig"].astype("string")
+        contigs = self.length_df["contig"].astype(str)
 
         # instantiate tophits list
         tophits_mash_df = []
 
         # read in the mash output
         mash_df = pd.read_csv(mash_tsv, delimiter="\t", index_col=False, names=col_list)
+        # as string to match the contigs
+        mash_df["contig"] = mash_df["contig"].astype(str)
 
         # instantiate tophits list
         tophits = []
@@ -2320,11 +2296,12 @@ def process_custom_pyhmmer_results(merged_df, custom_pyhmmer_results_dict):
 
 
 #### process vfdb files
-def process_vfdb_results(out_dir, merged_df):
+def process_vfdb_results(out_dir, merged_df, proteins_flag=False):
     """
     Processes VFDB results
     :param out_dir: output directory path
     :param merged_df: merged_df in process_results
+    :proteins_flag bool, True if pharokka_proteins is run because we need to strip off everything before the first space
     :return: merged_df merged_df updated with VFDB results
     """
     ##vfdb
@@ -2370,6 +2347,9 @@ def process_vfdb_results(out_dir, merged_df):
 
     # left join vfdb to merged_df
     tophits_df["gene"] = tophits_df["gene"].astype(str)
+    # error #300 - bad merge on gene
+    if proteins_flag is True:
+        tophits_df["gene"] = tophits_df["gene"].str.split(" ").str.get(0)
 
     # merge top hits into the merged df
     merged_df = merged_df.merge(tophits_df, on="gene", how="left")
@@ -2420,11 +2400,12 @@ def process_vfdb_results(out_dir, merged_df):
 
 
 #### process CARD files
-def process_card_results(out_dir, merged_df, db_dir):
+def process_card_results(out_dir, merged_df, db_dir, proteins_flag=False):
     """
     Processes card results
     :param out_dir: output directory path
     :param merged_df: merged_df in process_results
+    :proteins_flag bool, True if pharokka_proteins is run because we need to strip off everything before the first space
     :return: merged_df merged_df updated with card results
     """
     ##card
@@ -2466,6 +2447,11 @@ def process_card_results(out_dir, merged_df, db_dir):
 
     # left join tophits_df to merged_df
     tophits_df["gene"] = tophits_df["gene"].astype(str)
+
+    # error #300 - bad merge on gene in proteins, as it takes the entire FASTA headers (which may include spaces)
+    # therefore take only everything before the space
+    if proteins_flag is True:
+        tophits_df["gene"] = tophits_df["gene"].str.split(" ").str.get(0)
 
     # merge top hits into the merged df
     merged_df = merged_df.merge(tophits_df, on="gene", how="left")
