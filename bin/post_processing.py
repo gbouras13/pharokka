@@ -353,10 +353,10 @@ class Pharok:
 
         # process vfdb results
         # handles empty files without a problem
-        (merged_df, vfdb_results) = process_vfdb_results(self.out_dir, merged_df)
+        (merged_df, vfdb_results) = process_vfdb_results(self.out_dir, merged_df, proteins_flag=False)
         # process CARD results
         (merged_df, card_results) = process_card_results(
-            self.out_dir, merged_df, self.db_dir
+            self.out_dir, merged_df, self.db_dir, proteins_flag=False
         )
 
         self.merged_df = merged_df
@@ -2294,11 +2294,12 @@ def process_custom_pyhmmer_results(merged_df, custom_pyhmmer_results_dict):
 
 
 #### process vfdb files
-def process_vfdb_results(out_dir, merged_df):
+def process_vfdb_results(out_dir, merged_df, proteins_flag=False):
     """
     Processes VFDB results
     :param out_dir: output directory path
     :param merged_df: merged_df in process_results
+    :proteins_flag bool, True if pharokka_proteins is run because we need to strip off everything before the first space
     :return: merged_df merged_df updated with VFDB results
     """
     ##vfdb
@@ -2344,6 +2345,13 @@ def process_vfdb_results(out_dir, merged_df):
 
     # left join vfdb to merged_df
     tophits_df["gene"] = tophits_df["gene"].astype(str)
+    # error #300 - bad merge on gene
+    if proteins_flag is True:
+        tophits_df["gene"] = tophits_df[
+                "gene"
+            ].str.split(' ').str.get(0)
+
+
 
     # merge top hits into the merged df
     merged_df = merged_df.merge(tophits_df, on="gene", how="left")
@@ -2394,11 +2402,12 @@ def process_vfdb_results(out_dir, merged_df):
 
 
 #### process CARD files
-def process_card_results(out_dir, merged_df, db_dir):
+def process_card_results(out_dir, merged_df, db_dir, proteins_flag=False):
     """
     Processes card results
     :param out_dir: output directory path
     :param merged_df: merged_df in process_results
+    :proteins_flag bool, True if pharokka_proteins is run because we need to strip off everything before the first space
     :return: merged_df merged_df updated with card results
     """
     ##card
@@ -2440,6 +2449,13 @@ def process_card_results(out_dir, merged_df, db_dir):
 
     # left join tophits_df to merged_df
     tophits_df["gene"] = tophits_df["gene"].astype(str)
+
+    # error #300 - bad merge on gene in proteins, as it takes the entire FASTA headers (which may include spaces)
+    # therefore take only everything before the space
+    if proteins_flag is True:
+        tophits_df["gene"] = tophits_df[
+                "gene"
+            ].str.split(' ').str.get(0)
 
     # merge top hits into the merged df
     merged_df = merged_df.merge(tophits_df, on="gene", how="left")

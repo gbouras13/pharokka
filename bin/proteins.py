@@ -524,10 +524,10 @@ class Pharok_Prot:
 
         # process vfdb results
         # handles empty files without a problem
-        (tophits_df, vfdb_results) = process_vfdb_results(self.out_dir, tophits_df)
+        (tophits_df, vfdb_results) = process_vfdb_results(self.out_dir, tophits_df, proteins_flag=True)
         # process CARD results
         (tophits_df, card_results) = process_card_results(
-            self.out_dir, tophits_df, self.db_dir
+            self.out_dir, tophits_df, self.db_dir, proteins_flag=True
         )
 
         # Rename the "gene" column to "id"
