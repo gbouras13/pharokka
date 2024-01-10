@@ -1,6 +1,13 @@
 History
 =======
 
+1.6.0 (2024-01-11)
+------------------
+
+* Fixes a variety of bugs (#300 `pharokka_proteins.py` crashing if it found VFDB hits, #303 errors in the `.tbl` format, #316 errors with types and where custom HMM dbs had identical scored hits, #317 types and #320 deprecated GC function)
+* Adds `--mash_distance` and `--minced_args` as parameters (#299 thanks @iferres).
+
+
 1.5.1 (2023-10-26)
 ------------------
 

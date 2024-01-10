@@ -143,14 +143,28 @@ pharokka.py \
   --terminase_strand neg
 ```
 
-
 Of course, you can also use this functionality to reorient your phage however you wish!
+
+As of v1.6.0 you can specify a custom mash distance threshold vs the INPHARED database with `--mash_distance` 
+
+```
+pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  --mash_distance 0.05
+```
+
+You can also specify custom arguments to be passed to [MINced](https://doi.org/10.1186/1471-2105-8-209) with `--minced_args`
+
+Note 2 things: (1) that you need to leave off the leading hyphen (i.e. `"minNR 2"` not `"-minNR 2"`) and (2) you will need to use quotation marks (as you extra arguments will contain spaces)
+
+```
+pharokka.py -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads>  --minced_args "minNR 2 -minRL 21"
+```
 
 
 ```
-usage: pharokka.py [-h] [-i INFILE] [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG] [-g GENE_PREDICTOR] [-m] [-s] [-c CODING_TABLE] [-e EVALUE] [--fast] [--mmseqs2_only]
-                   [--meta_hmm] [--dnaapler] [--custom_hmm CUSTOM_HMM] [--genbank] [--terminase] [--terminase_strand TERMINASE_STRAND] [--terminase_start TERMINASE_START]
-                   [--skip_extra_annotations] [--skip_mash] [-V] [--citation]
+usage: pharokka.py [-h] [-i INFILE] [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG] [-g GENE_PREDICTOR] [-m] [-s]
+                   [-c CODING_TABLE] [-e EVALUE] [--fast] [--mmseqs2_only] [--meta_hmm] [--dnaapler] [--custom_hmm CUSTOM_HMM] [--genbank]
+                   [--terminase] [--terminase_strand TERMINASE_STRAND] [--terminase_start TERMINASE_START] [--skip_extra_annotations]
+                   [--skip_mash] [--minced_args MINCED_ARGS] [--mash_distance MASH_DISTANCE] [-V] [--citation]
 
 pharokka: fast phage annotation program
 
@@ -199,6 +213,10 @@ options:
   --skip_extra_annotations
                         Skips tRNAscan-se, MINced and Aragorn.
   --skip_mash           Skips running mash to find the closest match for each contig in INPHARED.
+  --minced_args MINCED_ARGS
+                        extra commands to pass to MINced (please omit the leading hyphen for the first argument). You will need to use quotation marks e.g. --minced_args "minNR 2 -minRL 21"
+  --mash_distance MASH_DISTANCE
+                        mash distance for the search against INPHARED. Defaults to 0.2.
   -V, --version         Print pharokka Version
   --citation            Print pharokka Citation
   ```
