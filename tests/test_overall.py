@@ -125,6 +125,11 @@ def test_meta(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m"
     exec_command(cmd)
 
+def test_meta_unicycler_header_prodigal(tmp_dir):
+    """#317 test pharokka overall with unicycler header - with all trna, tmras crispr etc """
+    input_fasta: Path = f"{meta_data}/combined_meta_unicycler_headers.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g prodigal-gv -m"
+    exec_command(cmd)
 
 def test_meta_prodigal_gv(tmp_dir):
     """test pharokka meta with prodigal-gv"""
