@@ -92,7 +92,8 @@ class testGenePred(unittest.TestCase):
     def test_run_minced(self):
         fasta: Path = f"{standard_data}/SAOMS1.fasta"
         prefix = "pharokka"
-        run_minced(fasta, standard_data_output, prefix, logdir)
+        minced_args = "minNR 2 -minRL 21"
+        run_minced(fasta, standard_data_output, prefix, minced_args, logdir)
 
     def test_run_aragorn(self):
         fasta: Path = f"{standard_data}/SAOMS1.fasta"
