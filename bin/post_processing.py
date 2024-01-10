@@ -815,6 +815,7 @@ class Pharok:
                     index_col=False,
                     names=col_list,
                 )
+                trna_df["contig"] = trna_df["contig"].astype(str)
 
                 # convert the method to update with version
                 trna_df["Method"] = f"tRNAscan-SE_{self.trna_version}"
@@ -914,6 +915,7 @@ class Pharok:
                     names=col_list,
                     comment="#",
                 )
+                minced_df["contig"] = minced_df["contig"].astype(str)
                 minced_df.start = minced_df.start.astype(int)
                 minced_df.stop = minced_df.stop.astype(int)
                 minced_df[["attributes", "rpt_unit_seq"]] = minced_df[
@@ -989,6 +991,7 @@ class Pharok:
                     index_col=False,
                     names=col_list,
                 )
+                tmrna_df["contig"] = tmrna_df["contig"].astype(str)
                 tmrna_df.start = tmrna_df.start.astype(int)
                 tmrna_df.stop = tmrna_df.stop.astype(int)
 
@@ -1179,6 +1182,7 @@ class Pharok:
         #### CRISPRs
         if self.crispr_count > 0:
             crispr_df = self.total_gff[self.total_gff["Region"] == "repeat_region"]
+            crispr_df.contig = crispr_df.contig.astype(str)
             crispr_df.start = crispr_df.start.astype(int)
             crispr_df.stop = crispr_df.stop.astype(int)
             crispr_df[["attributes", "locus_tag"]] = crispr_df["attributes"].str.split(
@@ -1191,6 +1195,7 @@ class Pharok:
         ### TMRNAs
         if self.tmrna_flag is True:
             tmrna_df = self.total_gff[self.total_gff["Region"] == "tmRNA"]
+            tmrna_df.contig = tmrna_df.contig.astype(str)
             tmrna_df.start = tmrna_df.start.astype(int)
             tmrna_df.stop = tmrna_df.stop.astype(int)
             tmrna_df[["attributes", "locus_tag"]] = tmrna_df["attributes"].str.split(
