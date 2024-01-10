@@ -6,14 +6,14 @@ python3 convert_genbank.py -i pharokka.gbk -o snapgene.gbk
 
 """
 
-import os
-from loguru import logger
 import argparse
 import os
 import sys
 from argparse import RawTextHelpFormatter
+
 from Bio import SeqIO
-from Bio.SeqFeature import SeqFeature, FeatureLocation
+from Bio.SeqFeature import FeatureLocation, SeqFeature
+from loguru import logger
 
 
 def get_input():
@@ -55,20 +55,17 @@ def update_records(records):
 
         for feature in record.features:
             if feature.type == "CDS":
-
                 # Access specific qualifiers if needed
                 id = feature.qualifiers.get("ID", ["N/A"])[0]
                 product = feature.qualifiers.get("product", ["N/A"])[0]
 
                 new_id = f"{id}_{product}"
                 feature.qualifiers["id"] = [new_id]
-                
 
                 # Create a new feature with the updated 'gene' qualifier
                 new_feature = SeqFeature(
-                        location=FeatureLocation(
-                        feature.location.start, 
-                        feature.location.end
+                    location=FeatureLocation(
+                        feature.location.start, feature.location.end
                     ),
                     type=feature.type,
                     qualifiers={
@@ -82,7 +79,7 @@ def update_records(records):
                         "source": feature.qualifiers.get("source"),
                         "top_hit": feature.qualifiers.get("top_hit"),
                         "transl_table": feature.qualifiers.get("transl_table"),
-                        "translation": feature.qualifiers.get("translation")
+                        "translation": feature.qualifiers.get("translation"),
                     },
                 )
                 new_features.append(new_feature)

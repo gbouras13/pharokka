@@ -7,7 +7,6 @@ Usage: pytest .
 # import
 import os
 import shutil
-
 # import functions
 import subprocess
 import sys
@@ -85,11 +84,13 @@ def test_overall(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
 
+
 def test_overall_mash_distance(tmp_dir):
     """test pharokka overall with stricter mash distance"""
     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --mash_distance 0.05"
     exec_command(cmd)
+
 
 def test_overall_crispr(tmp_dir):
     """test pharokka overall crispr"""
@@ -97,10 +98,11 @@ def test_overall_crispr(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
 
+
 def test_overall_crispr_minced_args(tmp_dir):
     """test pharokka crispr with minced args"""
     input_fasta: Path = f"{CRISPR_data}/Biggiephage_A_fullcontig_CasΦ1.fasta"
-    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g prodigal --minced_args \"minNR 2 -minRL 21\" "
+    cmd = f'pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g prodigal --minced_args "minNR 2 -minRL 21" '
     exec_command(cmd)
 
 
@@ -124,11 +126,13 @@ def test_overall_tmrna(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
 
+
 def test_overall_unicycler_header_prodigal(tmp_dir):
-    """#317 test pharokka overall with unicycler header """
+    """#317 test pharokka overall with unicycler header"""
     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g prodigal"
     exec_command(cmd)
+
 
 def test_meta(tmp_dir):
     """test pharokka meta"""
@@ -136,11 +140,13 @@ def test_meta(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m"
     exec_command(cmd)
 
+
 def test_meta_unicycler_header_prodigal(tmp_dir):
-    """#317 test pharokka overall with unicycler header - with all trna, tmras crispr etc """
+    """#317 test pharokka overall with unicycler header - with all trna, tmras crispr etc"""
     input_fasta: Path = f"{meta_data}/combined_meta_unicycler_headers.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g prodigal-gv -m"
     exec_command(cmd)
+
 
 def test_meta_prodigal_gv(tmp_dir):
     """test pharokka meta with prodigal-gv"""
@@ -148,11 +154,13 @@ def test_meta_prodigal_gv(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m -g prodigal-gv"
     exec_command(cmd)
 
+
 def test_meta_dnaapler_all_bug(tmp_dir):
     """test pharokka meta dnaapler bug and split"""
     input_fasta: Path = f"{meta_data}/combined_meta.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m -s --dnaapler --meta_hmm"
     exec_command(cmd)
+
 
 def test_overall_locus(tmp_dir):
     """test pharokka overall locus tag prefix"""

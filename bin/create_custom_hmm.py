@@ -119,10 +119,10 @@ def main():
     # loop over each PHROG
     for file in file_list:
         # check if hidden - skip
-        if file.startswith('.'):
+        if file.startswith("."):
             continue
         else:
-            # check if MSA 
+            # check if MSA
             if is_fasta_msa(f"{MSA_dir}/{file}"):
                 # read in each msa
                 with pyhmmer.easel.MSAFile(

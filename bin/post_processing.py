@@ -353,7 +353,9 @@ class Pharok:
 
         # process vfdb results
         # handles empty files without a problem
-        (merged_df, vfdb_results) = process_vfdb_results(self.out_dir, merged_df, proteins_flag=False)
+        (merged_df, vfdb_results) = process_vfdb_results(
+            self.out_dir, merged_df, proteins_flag=False
+        )
         # process CARD results
         (merged_df, card_results) = process_card_results(
             self.out_dir, merged_df, self.db_dir, proteins_flag=False
@@ -2347,11 +2349,7 @@ def process_vfdb_results(out_dir, merged_df, proteins_flag=False):
     tophits_df["gene"] = tophits_df["gene"].astype(str)
     # error #300 - bad merge on gene
     if proteins_flag is True:
-        tophits_df["gene"] = tophits_df[
-                "gene"
-            ].str.split(' ').str.get(0)
-
-
+        tophits_df["gene"] = tophits_df["gene"].str.split(" ").str.get(0)
 
     # merge top hits into the merged df
     merged_df = merged_df.merge(tophits_df, on="gene", how="left")
@@ -2453,9 +2451,7 @@ def process_card_results(out_dir, merged_df, db_dir, proteins_flag=False):
     # error #300 - bad merge on gene in proteins, as it takes the entire FASTA headers (which may include spaces)
     # therefore take only everything before the space
     if proteins_flag is True:
-        tophits_df["gene"] = tophits_df[
-                "gene"
-            ].str.split(' ').str.get(0)
+        tophits_df["gene"] = tophits_df["gene"].str.split(" ").str.get(0)
 
     # merge top hits into the merged df
     merged_df = merged_df.merge(tophits_df, on="gene", how="left")

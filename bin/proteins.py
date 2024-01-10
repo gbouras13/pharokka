@@ -16,14 +16,12 @@ import pyhmmer
 from Bio import SeqIO
 from external_tools import ExternalTool
 from loguru import logger
-from post_processing import (
-    process_card_results,
-    process_pyhmmer_results,
-    process_vfdb_results,
-)
+from post_processing import (process_card_results, process_pyhmmer_results,
+                             process_vfdb_results)
 from pyhmmer.easel import SequenceFile
 from pyhmmer.plan7 import HMM, HMMFile
-from util import count_contigs, get_contig_headers, get_version, remove_directory
+from util import (count_contigs, get_contig_headers, get_version,
+                  remove_directory)
 
 Result = collections.namedtuple("Result", ["protein", "phrog", "bitscore", "evalue"])
 
@@ -524,7 +522,9 @@ class Pharok_Prot:
 
         # process vfdb results
         # handles empty files without a problem
-        (tophits_df, vfdb_results) = process_vfdb_results(self.out_dir, tophits_df, proteins_flag=True)
+        (tophits_df, vfdb_results) = process_vfdb_results(
+            self.out_dir, tophits_df, proteins_flag=True
+        )
         # process CARD results
         (tophits_df, card_results) = process_card_results(
             self.out_dir, tophits_df, self.db_dir, proteins_flag=True
