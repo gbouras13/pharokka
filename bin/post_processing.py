@@ -1206,7 +1206,6 @@ class Pharok:
             for index, row in self.length_df.iterrows():
                 contig = str(row["contig"])
                 f.write(">Feature " + contig + "\n")
-
                 subset_df = self.merged_df[self.merged_df["contig"] == contig]
                 for index, row in subset_df.iterrows():
                     start = str(row["start"])
@@ -1253,7 +1252,6 @@ class Pharok:
                     )
                 if self.trna_empty == False:
                     subset_trna_df = trna_df[trna_df["contig"] == contig]
-                    print(subset_trna_df)
                     for index, row in subset_trna_df.iterrows():
                         start = str(row["start"])
                         stop = str(row["stop"])
@@ -1287,7 +1285,6 @@ class Pharok:
                         )
                 if self.crispr_count > 0:
                     subset_crispr_df = crispr_df[crispr_df["contig"] == contig]
-                    print(subset_crispr_df)
                     for index, row in subset_crispr_df.iterrows():
                         start = str(row["start"])
                         stop = str(row["stop"])
@@ -1321,7 +1318,6 @@ class Pharok:
                         )
                 if self.tmrna_flag == True:
                     subset_tmrna_df = tmrna_df[tmrna_df["contig"] == contig]
-                    print(subset_tmrna_df)
                     for index, row in subset_tmrna_df.iterrows():
                         start = str(row["start"])
                         stop = str(row["stop"])
