@@ -4,27 +4,53 @@ import os
 import shutil
 import sys
 import time
+import warnings
 from pathlib import Path
 
+from Bio import BiopythonDeprecationWarning
 from custom_db import run_custom_pyhmmer
 from databases import check_db_installation
 from hmm import run_pyhmmer
-from input_commands import (check_dependencies, get_input, instantiate_dirs,
-                            instantiate_split_output,
-                            validate_and_extract_genbank, validate_custom_hmm,
-                            validate_fasta, validate_gene_predictor,
-                            validate_meta, validate_terminase,
-                            validate_threads)
+from input_commands import (
+    check_dependencies,
+    get_input,
+    instantiate_dirs,
+    instantiate_split_output,
+    validate_and_extract_genbank,
+    validate_custom_hmm,
+    validate_fasta,
+    validate_gene_predictor,
+    validate_meta,
+    validate_terminase,
+    validate_threads,
+)
 from loguru import logger
 from post_processing import Pharok, remove_post_processing_files
-from processes import (concat_phanotate_meta, concat_trnascan_meta,
-                       convert_gff_to_gbk, reorient_terminase, run_aragorn,
-                       run_dnaapler, run_mash_dist, run_mash_sketch,
-                       run_minced, run_mmseqs, run_phanotate,
-                       run_phanotate_fasta_meta, run_phanotate_txt_meta,
-                       run_pyrodigal, run_pyrodigal_gv, run_trna_scan,
-                       run_trnascan_meta, split_input_fasta, translate_fastas)
+from processes import (
+    concat_phanotate_meta,
+    concat_trnascan_meta,
+    convert_gff_to_gbk,
+    reorient_terminase,
+    run_aragorn,
+    run_dnaapler,
+    run_mash_dist,
+    run_mash_sketch,
+    run_minced,
+    run_mmseqs,
+    run_phanotate,
+    run_phanotate_fasta_meta,
+    run_phanotate_txt_meta,
+    run_pyrodigal,
+    run_pyrodigal_gv,
+    run_trna_scan,
+    run_trnascan_meta,
+    split_input_fasta,
+    translate_fastas,
+)
 from util import count_contigs, get_version
+
+# add this to make sure of deprecation warning with biopython
+warnings.simplefilter("default", BiopythonDeprecationWarning)
 
 
 def main():
