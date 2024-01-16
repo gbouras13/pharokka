@@ -1,6 +1,11 @@
 History
 =======
 
+1.6.1 (2024-01-17)
+------------------
+
+* Fixes a bug that was removing tRNAs from the `.tbl` output format #323.
+
 1.6.0 (2024-01-11)
 ------------------
 
