@@ -1181,6 +1181,8 @@ class Pharok:
                 "tRNA-" + trna_df["isotypes"] + "(" + trna_df["anticodon"] + ")"
             )
 
+            print(trna_df)
+
         #### CRISPRs
         if self.crispr_count > 0:
             crispr_df = self.total_gff[self.total_gff["Region"] == "repeat_region"]
