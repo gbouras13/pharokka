@@ -1165,7 +1165,7 @@ class Pharok:
                 self.total_gff["Method"] == f"tRNAscan-SE_{self.trna_version}"
             ]
             # keep only trnas and pseudogenes
-            trna_df.contig = trna_df.start.astype(str)
+            trna_df.contig = trna_df.contig.astype(str)
             trna_df.start = trna_df.start.astype(int)
             trna_df.stop = trna_df.stop.astype(int)
             trna_df[["attributes", "locus_tag"]] = trna_df["attributes"].str.split(
