@@ -244,7 +244,7 @@ def run_pyhmmer_proteins(input_fasta, db_dir, threads, evalue):
                 best_results[result.protein] = result
                 keep_protein.add(result.protein)
             elif result.bitscore == previous_bitscore:
-                if best_results[result.protein].phrog != hit.phrog:
+                if best_results[result.protein].phrog != hit.name.decode():
                     keep_protein.remove(result.protein)
         else:
             best_results[result.protein] = result

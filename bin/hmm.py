@@ -55,7 +55,7 @@ def run_pyhmmer(db_dir, out_dir, threads, gene_predictor, evalue):
                 best_results[result.protein] = result
                 keep_protein.add(result.protein)
             elif result.bitscore == previous_bitscore:
-                if best_results[result.protein].phrog != hit.phrog:
+                if best_results[result.protein].phrog != hit.name.decode():
                     keep_protein.remove(result.protein)
         else:
             best_results[result.protein] = result
