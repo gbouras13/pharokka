@@ -994,3 +994,42 @@ def run_dnaapler(filepath_in, contig_count, out_dir, threads, logdir):
         dnaapler_success = False
 
     return dnaapler_success
+
+
+# #### skani
+
+# # no need to sketch
+# # takes like 10 secs to run this 
+
+# # pharokka_v1.4.0_databases % skani dist -q ../pharokka/tests/test_data/overall/Meta_example/combined_meta.fasta -r 1Jan2024_genomes.fa  --qi --ri --slow -m 200 -n 1  > out
+
+
+# def run_skani(input_fasta, out_dir, db_dir, logdir):
+#     """
+#     Runs mash
+#     :param filepath_in: input filepath
+#     :param out_dir: output directory
+#     :param mash_distance: mash distance - float
+#     :param logger logger
+#     :return:
+#     """
+
+#     inphared_fasta = os.path.join(db_dir, "1Jan2024_genomes.fa.gz")
+#     skani_tsv = os.path.join(out_dir, "skani_out.tsv")
+
+#     mash_dist = ExternalTool(
+#         tool="skani",
+#         input="",
+#         output="",
+#         params=f" dist  -q {input_fasta} -r {inphared_fasta} --qi --ri --slow -m 200 -n 1 ",
+#         logdir=logdir,
+#         outfile=skani_tsv,
+#     )
+
+#     # need to write to stdout
+
+#     try:
+#         ExternalTool.run_tool(mash_dist, to_stdout=True)
+
+#     except:
+#         logger.error("Error with mash dist\n")
