@@ -442,7 +442,11 @@ class Pharok:
             gc.append(round(gc_fraction(record.seq), 2))
             # pyrodigal-gv lookup from the dict
             if self.gene_predictor == "prodigal-gv":
-                transl_table = transl_table_dict[record.id]
+                # try catch clause if contig too small to have a gene
+                try:
+                    transl_table = transl_table_dict[record.id]
+                except:
+                    transl_table = "No_CDS_called"
 
             transl_tables.append(transl_table)
 
