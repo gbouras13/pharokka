@@ -455,7 +455,6 @@ def main():
     pharok.update_fasta_headers()
     pharok.update_final_output()
 
-
     # output single gffs in meta mode
     if args.split == True and args.meta == True:
         # splits the faa into single .faa

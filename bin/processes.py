@@ -999,7 +999,7 @@ def run_dnaapler(filepath_in, contig_count, out_dir, threads, logdir):
 # #### skani
 
 # # no need to sketch
-# # takes like 10 secs to run this 
+# # takes like 10 secs to run this
 
 # # pharokka_v1.4.0_databases % skani dist -q ../pharokka/tests/test_data/overall/Meta_example/combined_meta.fasta -r 1Jan2024_genomes.fa  --qi --ri --slow -m 200 -n 1  > out
 

@@ -1437,23 +1437,23 @@ class Pharok:
                 SeqIO.write(dna_record, f, "fasta")
 
     def split_faas_singles(self):
-            """Splits the .faa fasta into separate single fasta files for output based on contig names
+        """Splits the .faa fasta into separate single fasta files for output based on contig names
 
-            :param input_fasta: input multifasta file
-            :param out_dir: output directory
-            """
+        :param input_fasta: input multifasta file
+        :param out_dir: output directory
+        """
 
-            single_faas = os.path.join(self.out_dir, "single_faas")
-            check_and_create_directory(single_faas)
-            faa_file = os.path.join( self.out_dir, f"{self.gene_predictor}.faa" )
-            faa_sequences = SeqIO.parse(open(faa_file), "fasta")
+        single_faas = os.path.join(self.out_dir, "single_faas")
+        check_and_create_directory(single_faas)
+        faa_file = os.path.join(self.out_dir, f"{self.gene_predictor}.faa")
+        faa_sequences = SeqIO.parse(open(faa_file), "fasta")
 
-            for record in faa_sequences:
-                # remove the last 9 chars e.g. _CDS_0001
-                protein_id = record.id[:-9]
-                # needs to be append
-                with open(os.path.join(single_faas, f"{protein_id}.faa"), "a") as f:
-                    SeqIO.write(record, f, "fasta")
+        for record in faa_sequences:
+            # remove the last 9 chars e.g. _CDS_0001
+            protein_id = record.id[:-9]
+            # needs to be append
+            with open(os.path.join(single_faas, f"{protein_id}.faa"), "a") as f:
+                SeqIO.write(record, f, "fasta")
 
     def write_tophits_vfdb_card(self):
         """
