@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 import argparse
 import os
+import shutil
 import sys
 from argparse import RawTextHelpFormatter
 from pathlib import Path
-import shutil
-from pycirclize.parser import Genbank
-
 
 from loguru import logger
 from plot import create_single_plot
+from pycirclize.parser import Genbank
 from util import get_version
 
 
@@ -29,7 +28,11 @@ def get_input():
         help="Input genbank file from Pharokka.",
     )
     parser.add_argument(
-        "-o", "--outdir", action="store", help="Pharokka output directory.",required=True
+        "-o",
+        "--outdir",
+        action="store",
+        help="Pharokka output directory.",
+        required=True,
     )
     parser.add_argument(
         "-f", "--force", help="Overwrites the output plot file.", action="store_true"
@@ -139,12 +142,9 @@ if __name__ == "__main__":
             f"--annotations {args.annotations} specified is not a float. Please check your input and try again."
         )
 
-
     if args.force == True:
         if os.path.exists(args.outdir) == True:
-            logger.info(
-                f"Removing {args.outdir} as --force was specified."
-            )
+            logger.info(f"Removing {args.outdir} as --force was specified.")
             shutil.rmtree(args.outdir)
         else:
             logger.warning(
@@ -160,7 +160,6 @@ if __name__ == "__main__":
     # instantiate outdir
     if Path(args.outdir).exists() is False:
         Path(args.outdir).mkdir(parents=True, exist_ok=True)
-
 
     # check label_ids
 
@@ -237,15 +236,11 @@ if __name__ == "__main__":
                 label_force_list = list(ignore_dict)
 
         except FileNotFoundError:
-            logger.warning(
-                f"{label_ids} contains no text. No contigs will be ignored"
-            )
-    
+            logger.warning(f"{label_ids} contains no text. No contigs will be ignored")
 
     # if there is 1 contig, then all the parameters will apply
-    
-    for contig_id, contig_sequence in gb_seq_dict.items():
 
+    for contig_id, contig_sequence in gb_seq_dict.items():
         logger.info(f"Plotting {contig_id}")
 
         create_single_plot(

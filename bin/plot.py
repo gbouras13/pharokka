@@ -1,14 +1,15 @@
+from pathlib import Path
+from typing import Dict, List
+
 import numpy as np
+from Bio import SeqUtils
+from Bio.Seq import Seq
+from Bio.SeqFeature import SeqFeature
 from loguru import logger
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 from pycirclize import Circos
 from pycirclize.parser import Genbank, Gff
-from Bio.Seq import Seq
-from Bio.SeqFeature import SeqFeature
-from Bio import SeqUtils
-from typing import List, Dict
-from pathlib import Path
 
 # Load GFF file
 
@@ -596,6 +597,7 @@ def create_plot(
 
 ### for multiplotter
 
+
 def create_single_plot(
     contig_id: str,
     contig_sequence: Seq,
@@ -1099,7 +1101,10 @@ def create_single_plot(
         Patch(color=data_dict["head"]["col"], label="Head & packaging"),
         Patch(color=data_dict["con"]["col"], label="Connector"),
         Patch(color=data_dict["tail"]["col"], label="Tail"),
-        Patch(color=data_dict["acr_defense_vfdb_card"]["col"], label="Virulence Factor/AMR"),
+        Patch(
+            color=data_dict["acr_defense_vfdb_card"]["col"],
+            label="Virulence Factor/AMR",
+        ),
     ]
 
     fig = circos.plotfig()
