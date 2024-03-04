@@ -1,5 +1,7 @@
 # Plotting
 
+## `pharokka_plotter.py`
+
 Pharokka v1.3.0 implements `pharokka_plotter.py`, which creates a simple circular genome plot using [pyCirclize](https://github.com/moshi4/pyCirclize) with output in PNG format. All CDS are coloured according to their PHROG functional group. 
 
 It is reasonably customisable and is designed for single input phage contigs. If an input FASTA with multiple contigs is entered, it will only plot the first contig. It requires the input FASTA, Pharokka output directory, and the `-p` or `--prefix` value used with Pharokka if specified. 
@@ -68,7 +70,7 @@ If you want to specify specific labels, you can do this by including a list of l
 
 e.g. if you make a text file called `labels.txt`
 
-```
+```bash
 EHOONAYF_CDS_0007
 EHOONAYF_CDS_0009
 EHOONAYF_CDS_0023
@@ -78,7 +80,7 @@ EHOONAYF_CDS_0023
 
 
 
-```
+```bash
 usage: pharokka_plotter.py [-h] -i INFILE [-n PLOT_NAME] [-o OUTDIR] [--gff GFF] [--genbank GENBANK] [-p PREFIX] [-t PLOT_TITLE] [-f]
                            [--label_hypotheticals] [--remove_other_features_labels] [--title_size TITLE_SIZE] [--label_size LABEL_SIZE]
                            [--interval INTERVAL] [--truncate TRUNCATE] [--dpi DPI] [--annotations ANNOTATIONS] [--label_ids LABEL_IDS]
@@ -125,3 +127,54 @@ options:
 ![Image](SAOMS1_plot.png)
 
 SAOMS1 phage (GenBank: MW460250.1) was isolated and sequenced by: Yerushalmy, O., Alkalay-Oren, S., Coppenhagen-Glazer, S. and Hazan, R. from the Institute of Dental Sciences and School of Dental Medicine, Hebrew University, Israel.
+
+## `pharokka_multiplotter.py`
+
+After receiving a number of requests, `pharokka` v1.7.0 implements `pharokka_multiplotter.py` that can be used to plot multiple contigs.
+
+It requires the `pharokka` output Genbank file (here, `pharokka.gbk`). It will save plots for each contig in the output directory (here `pharokka_plots_output_directory`). 
+
+e.g.
+
+```
+pharokka_multiplotter.py -g pharokka.gbk  -o pharokka_plots_output_directory 
+```
+
+The rest of the parameters are the same as `pharokka_plotter.py`
+
+```bash
+usage: pharokka_multiplotter.py [-h] -g GENBANK -o OUTDIR [-f] [--label_hypotheticals] [--remove_other_features_labels]
+                                [--title_size TITLE_SIZE] [--label_size LABEL_SIZE] [--interval INTERVAL] [--truncate TRUNCATE] [--dpi DPI]
+                                [--annotations ANNOTATIONS] [-t PLOT_TITLE] [--label_ids LABEL_IDS]
+
+pharokka_multiplotter.py: pharokka plotting function for muliple phages
+
+options:
+  -h, --help            show this help message and exit
+  -g GENBANK, --genbank GENBANK
+                        Input genbank file from Pharokka.
+  -o OUTDIR, --outdir OUTDIR
+                        Pharokka output directory.
+  -f, --force           Overwrites the output plot file.
+  --label_hypotheticals
+                        Flag to label  hypothetical or unknown proteins. By default these are not labelled.
+  --remove_other_features_labels
+                        Flag to remove labels for tRNA/tmRNA/CRISPRs. By default these are labelled. 
+                        They will still be plotted in black.
+  --title_size TITLE_SIZE
+                        Controls title size. Must be an integer. Defaults to 20.
+  --label_size LABEL_SIZE
+                        Controls annotation label size. Must be an integer. Defaults to 8.
+  --interval INTERVAL   Axis tick interval. Must be an integer. Must be an integer. Defaults to 5000.
+  --truncate TRUNCATE   Number of characters to include in annoation labels before truncation with ellipsis. 
+                        Must be an integer. Defaults to 20.
+  --dpi DPI             Resultion (dots per inch). Must be an integer. Defaults to 600.
+  --annotations ANNOTATIONS
+                        Controls the proporition of annotations labelled. Must be a number between 0 and 1 inclusive. 
+                        0 = no annotations, 0.5 = half of the annotations, 1 = all annotations. 
+                        Defaults to 1. Chosen in order of CDS size.
+  -t PLOT_TITLE, --plot_title PLOT_TITLE
+                        Plot name.
+  --label_ids LABEL_IDS
+                        Text file with list of CDS IDs (from gff file) that are guaranteed to be labelled.
+```

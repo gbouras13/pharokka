@@ -4,7 +4,7 @@
 
 The easiest way to install `pharokka` is via conda. For inexperienced command line users, this method is highly recommended.
 
-```
+```bash
 conda install -c bioconda pharokka
 ```
 
@@ -12,7 +12,7 @@ This will install all the dependencies along with `pharokka`. The dependencies a
 
 If conda is taking a long time to solve the environment, try using mamba:
 
-```
+```bash
 conda install mamba
 mamba install -c bioconda pharokka
 ```
@@ -21,7 +21,7 @@ mamba install -c bioconda pharokka
 
 As of v1.4.0, you can also install the python components of `pharokka` with pip.
 
-```
+```bash
 pip install pharokka
 ```
 
@@ -31,7 +31,7 @@ You will still need to install the non-python dependencies manually.
 
 Alternatively, the development version of `pharokka` (which may include new, untested features) can be installed manually via github. 
 
-```
+```bash
 git clone https://github.com/gbouras13/pharokka.git
 cd pharokka
 pip install -e .
@@ -42,7 +42,7 @@ The dependencies found in environment.yml will then need to be installed manuall
 
 For example using conda to install the required dependencies:
 
-```
+```bash
 conda env create -f environment.yml
 conda activate pharokka_env
 # assuming you are in the pharokka directory 
@@ -67,7 +67,7 @@ If this does not work, you an alternatively download the databases from Zenodo a
 
 If you prefer to use the command line:
 
-```
+```bash
 wget "https://zenodo.org/record/8267900/files/pharokka_v1.4.0_databases.tar.gz"
 tar -xzf pharokka_v1.4.0_databases.tar.gz
 ```
@@ -93,7 +93,7 @@ For Mac (Intel, will also work with M1):
 
 4. After installation is complete, you should add the following channels to your conda configuration:
 
-```
+```bash
 conda config --add channels defaults
 conda config --add channels bioconda
 conda config --add channels conda-forge
@@ -105,7 +105,7 @@ conda config --add channels conda-forge
 
  6. Finally, I would recommend installing pharokka into a fresh environment. For example to create an environment called pharokkaENV with pharokka installed:
 
-```
+```bash
 mamba create -n pharokkaENV pharokka
 conda activate pharokkaENV
 install_databases.py -h

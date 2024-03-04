@@ -32,7 +32,7 @@ e.g.
 | protein_2 | 243    | 315   | endolysin              | lysis              |
 
 
-```
+```bash
 usage: pharokka_proteins.py [-h] [-i INFILE] [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-e EVALUE] [--hmm_only] [--mmseqs2_only] [-V] [--citation]
 
 pharokka_proteins.py: fast phage protein annotation script
