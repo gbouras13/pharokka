@@ -6,20 +6,12 @@ import time
 from pathlib import Path
 
 from databases import check_db_installation
-from input_commands import (
-    check_dependencies,
-    instantiate_dirs,
-    validate_fasta,
-    validate_threads,
-)
+from input_commands import (check_dependencies, instantiate_dirs,
+                            validate_fasta, validate_threads)
 from loguru import logger
 from post_processing import remove_directory, remove_file
-from proteins import (
-    Pharok_Prot,
-    get_input_proteins,
-    run_mmseqs_proteins,
-    run_pyhmmer_proteins,
-)
+from proteins import (Pharok_Prot, get_input_proteins, run_mmseqs_proteins,
+                      run_pyhmmer_proteins)
 from util import get_version
 
 

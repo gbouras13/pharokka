@@ -1,6 +1,12 @@
 History
 =======
 
+1.7.0 (2024-01-17)
+------------------
+
+* Adds `pharokka_multiplotter.py` to plot multiple phage contigs at once
+* Adds separate contig FASTA files if `-s -m` is run (in `single_fastas`)
+
 1.6.1 (2024-01-17)
 ------------------
 

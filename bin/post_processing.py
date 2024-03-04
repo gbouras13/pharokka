@@ -442,7 +442,11 @@ class Pharok:
             gc.append(round(gc_fraction(record.seq), 2))
             # pyrodigal-gv lookup from the dict
             if self.gene_predictor == "prodigal-gv":
-                transl_table = transl_table_dict[record.id]
+                # try catch clause if contig too small to have a gene
+                try:
+                    transl_table = transl_table_dict[record.id]
+                except:
+                    transl_table = "No_CDS_called"
 
             transl_tables.append(transl_table)
 
@@ -1431,6 +1435,25 @@ class Pharok:
             contig = dna_record.id
             with open(os.path.join(single_fastas, contig + ".fasta"), "w") as f:
                 SeqIO.write(dna_record, f, "fasta")
+
+    def split_faas_singles(self):
+        """Splits the .faa fasta into separate single fasta files for output based on contig names
+
+        :param input_fasta: input multifasta file
+        :param out_dir: output directory
+        """
+
+        single_faas = os.path.join(self.out_dir, "single_faas")
+        check_and_create_directory(single_faas)
+        faa_file = os.path.join(self.out_dir, f"{self.gene_predictor}.faa")
+        faa_sequences = SeqIO.parse(open(faa_file), "fasta")
+
+        for record in faa_sequences:
+            # remove the last 9 chars e.g. _CDS_0001
+            protein_id = record.id[:-9]
+            # needs to be append
+            with open(os.path.join(single_faas, f"{protein_id}.faa"), "a") as f:
+                SeqIO.write(record, f, "fasta")
 
     def write_tophits_vfdb_card(self):
         """

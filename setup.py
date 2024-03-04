@@ -19,7 +19,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="Pharokka",
-    version="1.6.1",
+    version="1.7.0",
     author="George Bouras",
     author_email="george.bouras@adelaide.edu.au",
     description="Fast phage annotation tool",
@@ -28,6 +28,7 @@ setup(
     url="https://github.com/gbouras13/pharokka",
     scripts=[
         "bin/pharokka.py",
+        "bin/pharokka_multiplotter.py",
         "bin/pharokka_plotter.py",
         "bin/install_databases.py",
         "bin/pharokka_proteins.py",
@@ -72,7 +73,7 @@ setup(
         "loguru>=0.5.4",
         "pyyaml>=6.0",
         "pandas>=1.4.2",
-        "biopython>=1.76",
+        "biopython>=1.80",
         "pyhmmer>=0.10.0",
         "black>=22.3.0",
         "isort>=5.10.1",

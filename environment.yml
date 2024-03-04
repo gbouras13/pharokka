@@ -5,8 +5,8 @@ channels:
   - defaults
 dependencies:
   - bcbio-gff >=0.7.0
-  - biopython >=1.78,<1.82
-  - phanotate >=1.5.0
+  - biopython >=1.80
+  - phanotate >=1.5.0,<1.6.4
   - mmseqs2 ==13.45111
   - trnascan-se >=2.0.9
   - minced >=0.4.2

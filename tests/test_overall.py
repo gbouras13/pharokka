@@ -7,7 +7,6 @@ Usage: pytest .
 # import
 import os
 import shutil
-
 # import functions
 import subprocess
 import sys
