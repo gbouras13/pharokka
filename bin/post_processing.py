@@ -175,7 +175,26 @@ class Pharok:
         # left join mmseqs top hits to cds df
         # read in the cds cdf
         cds_file = os.path.join(self.out_dir, "cleaned_" + self.gene_predictor + ".tsv")
-        cds_df = pd.read_csv(cds_file, sep="\t", index_col=False)
+
+        col_list = ["start", "stop", "frame", "contig", "score", "gene"]
+        dtype_dict = {
+            "start": int,
+            "stop": int,
+            "frame": str,
+            "contig": str,
+            "score": float,
+            "gene": str,
+        }
+
+        cds_df = pd.read_csv(
+            cds_file,
+            sep="\t",
+            index_col=False,
+            names=col_list,
+            dtype=dtype_dict,
+            skiprows=1,
+        )
+        cds_df["contig"] = cds_df["contig"].astype(str)
 
         ###########################################
         # add the sequence to the df for the genbank conversion later on

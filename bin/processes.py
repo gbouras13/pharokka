@@ -364,8 +364,21 @@ def tidy_phanotate_output(out_dir):
     """
     phan_file = os.path.join(out_dir, "phanotate_out.txt")
     col_list = ["start", "stop", "frame", "contig", "score"]
+    dtype_dict = {
+        "start": int,
+        "stop": int,
+        "frame": str,
+        "contig": str,
+        "score": float,
+    }
+
     phan_df = pd.read_csv(
-        phan_file, delimiter="\t", index_col=False, names=col_list, skiprows=2
+        phan_file,
+        delimiter="\t",
+        index_col=False,
+        names=col_list,
+        skiprows=2,
+        dtype=dtype_dict,
     )
     # get rid of the headers and reset the index
     phan_df = phan_df[phan_df["start"] != "#id:"]
@@ -408,8 +421,25 @@ def tidy_prodigal_output(out_dir, gv_flag):
         "phase",
         "description",
     ]
+    dtype_dict = {
+        "contig": str,
+        "prod": str,
+        "orf": str,
+        "start": int,
+        "stop": int,
+        "score": float,
+        "frame": str,
+        "phase": str,
+        "description": str,
+    }
+
     prod_df = pd.read_csv(
-        prod_file, delimiter="\t", index_col=False, names=col_list, skiprows=3
+        prod_file,
+        delimiter="\t",
+        index_col=False,
+        names=col_list,
+        skiprows=3,
+        dtype=dtype_dict,
     )
 
     # meta mode brings in some Nas so remove them

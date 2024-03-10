@@ -1,7 +1,12 @@
 History
 =======
 
-1.7.0 (2024-01-17)
+1.7.1 (2024-03-11)
+------------------
+
+* Fixes #334 issues with contig ids if they were in scientific notation or lead with 0s.
+
+1.7.0 (2024-03-04)
 ------------------
 
 * Adds `pharokka_multiplotter.py` to plot multiple phage contigs at once
