@@ -457,8 +457,10 @@ class Pharok_Prot:
         phrog_annot_df["phrog"] = phrog_annot_df["phrog"].astype(str)
 
         # merge phrog
+        # get only the contig id not the full description from mmseqs2 output
+        tophits_df['gene'] = tophits_df['gene'].str.split(' ').str[0]
+
         tophits_df = tophits_df.merge(phrog_annot_df, on="phrog", how="left")
-        tophits_df = tophits_df.replace(np.nan, "No_PHROG", regex=True)
         # convert no phrog to hyp protein
         tophits_df["annot"] = tophits_df["annot"].str.replace(
             "No_PHROG", "hypothetical protein"
@@ -468,6 +470,14 @@ class Pharok_Prot:
         )
 
         # # replace with No_PHROG if nothing found
+        # cast columns to str
+        tophits_df["mmseqs_phrog"] = tophits_df['mmseqs_phrog'].astype(str)
+        tophits_df["mmseqs_alnScore"] = tophits_df['mmseqs_alnScore'].astype(str)
+        tophits_df["mmseqs_seqIdentity"] = tophits_df['mmseqs_seqIdentity'].astype(str)
+        tophits_df["mmseqs_eVal"] = tophits_df['mmseqs_eVal'].astype(str)
+        tophits_df["mmseqs_top_hit"] = tophits_df['mmseqs_top_hit'].astype(str)
+        tophits_df["color"] = tophits_df['color'].astype(str)
+        tophits_df = tophits_df.replace(np.nan, "No_PHROG", regex=True)
         tophits_df.loc[
             tophits_df["mmseqs_phrog"] == "No_PHROG", "mmseqs_phrog"
         ] = "No_PHROG"
@@ -487,15 +497,16 @@ class Pharok_Prot:
 
         # get phrog
         tophits_df["phrog"] = tophits_df["phrog"].astype(str)
+        phrog_annot_df["phrog"] = phrog_annot_df["phrog"].astype(str)
 
         # drop existing color annot category cols and
         tophits_df = tophits_df.drop(columns=["color", "annot", "category"])
         tophits_df = tophits_df.merge(phrog_annot_df, on="phrog", how="left")
         tophits_df["annot"] = tophits_df["annot"].replace(
-            nan, "hypothetical protein", regex=True
+            np.nan, "hypothetical protein", regex=True
         )
         tophits_df["category"] = tophits_df["category"].replace(
-            nan, "unknown function", regex=True
+            np.nan, "unknown function", regex=True
         )
         tophits_df["color"] = tophits_df["color"].replace(nan, "None", regex=True)
 
@@ -517,7 +528,8 @@ class Pharok_Prot:
         )
         self.length_df = length_df
 
-        # merge the length df into the tophits
+        # convert nas to things
+  
         tophits_df = length_df.merge(tophits_df, on="gene", how="left")
 
         # process vfdb results
@@ -546,6 +558,22 @@ class Pharok_Prot:
         tophits_df = tophits_df[desired_order]
 
         # save
+
+        tophits_df['phrog'].fillna('No_PHROG', inplace=True)
+        tophits_df['annot'].fillna('hypothetical protein', inplace=True)
+        tophits_df['category'].fillna('unknown function', inplace=True)
+        tophits_df['mmseqs_phrog'].fillna('No_MMseqs', inplace=True)
+        tophits_df['mmseqs_alnScore'].fillna('No_MMseqs', inplace=True)
+        tophits_df['mmseqs_seqIdentity'].fillna('No_MMseqs', inplace=True)
+        tophits_df['mmseqs_eVal'].fillna('No_MMseqs', inplace=True)
+        tophits_df['mmseqs_top_hit'].fillna('No_MMseqs_PHROG_hit', inplace=True)
+        tophits_df['pyhmmer_phrog'].fillna('No_PHROGs_HMM', inplace=True)
+        tophits_df['pyhmmer_bitscore'].fillna('No_PHROGs_HMM', inplace=True)
+        tophits_df['pyhmmer_evalue'].fillna('No_PHROGs_HMM', inplace=True)
+        tophits_df['color'].fillna('None', inplace=True)
+    
+        # merge the length df into the tophits
+        print(tophits_df.tail())
 
         tophits_df.to_csv(
             os.path.join(self.out_dir, f"{self.prefix}_full_merged_output.tsv"),

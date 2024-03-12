@@ -1,7 +1,7 @@
 History
 =======
 
-1.7.1 (2024-03-11)
+1.7.1 (2024-03-13)
 ------------------
 
 * Adds Google Colab notebook that can run pharokka and [phold](https://github.com/gbouras13/phold). 

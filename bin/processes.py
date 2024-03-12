@@ -516,6 +516,7 @@ def tidy_genbank_output(out_dir, genbank_file, coding_table):
     data = {"start": starts, "stop": stops, "frame": frames, "contig": contigs}
 
     gen_df = pd.DataFrame(data)
+    # add fake score
     gen_df["score"] = "No_score"
 
     # get the gene

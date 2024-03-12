@@ -182,7 +182,7 @@ class Pharok:
             "stop": int,
             "frame": str,
             "contig": str,
-            "score": float,
+            "score": str,
             "gene": str,
         }
 
