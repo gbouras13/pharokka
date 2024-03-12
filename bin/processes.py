@@ -379,7 +379,7 @@ def tidy_phanotate_output(out_dir):
         names=col_list,
         skiprows=2,
         dtype=dtype_dict,
-        comment='#'  # to skip the headers
+        comment="#",  # to skip the headers
     )
     # get rid of the headers and reset the index
     phan_df = phan_df[phan_df["start"] != "#id:"]
@@ -440,7 +440,7 @@ def tidy_prodigal_output(out_dir, gv_flag):
         index_col=False,
         names=col_list,
         dtype=dtype_dict,
-        comment='#'  # to skip the headers
+        comment="#",  # to skip the headers
     )
 
     # meta mode brings in some Nas so remove them

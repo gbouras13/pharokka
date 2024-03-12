@@ -127,10 +127,24 @@ def test_overall_tmrna(tmp_dir):
     exec_command(cmd)
 
 
-def test_overall_unicycler_header_prodigal(tmp_dir):
-    """#317 test pharokka overall with unicycler header"""
-    input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
-    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g prodigal"
+def test_overall_numeric_header_prodigal(tmp_dir):
+    """#317 test pharokka prodigal with  numeric header #334"""
+    input_fasta: Path = f"{standard_data}/SAOMS1_numeric_header.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g prodigal --fast -m"
+    exec_command(cmd)
+
+
+def test_overall_numeric_header_phanotate(tmp_dir):
+    """#317 test pharokka phanotate  with numeric header #334"""
+    input_fasta: Path = f"{standard_data}/SAOMS1_numeric_header.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --fast "
+    exec_command(cmd)
+
+
+def test_overall_numeric_header_prodigal_gv(tmp_dir):
+    """#317 test pharokka prodigal-gv with numeric header #334"""
+    input_fasta: Path = f"{standard_data}/SAOMS1_numeric_header.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m --fast"
     exec_command(cmd)
 
 
