@@ -65,6 +65,12 @@ def main():
 
     # set the gene_predictor
     gene_predictor = args.gene_predictor
+    # set to phanotate by default and prodigal-gv in meta mode
+    if gene_predictor == "default":
+        if args.meta is True:
+            gene_predictor = "prodigal-gv"
+        else:
+            gene_predictor = "phanotate"
 
     # instantiate outdir
     out_dir = instantiate_dirs(args.outdir, args.meta, args.force)

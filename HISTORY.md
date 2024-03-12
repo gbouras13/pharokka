@@ -1,7 +1,16 @@
 History
 =======
 
-1.7.0 (2024-01-17)
+1.7.1 (2024-03-13)
+------------------
+
+* Adds Google Colab notebook that can run pharokka and [phold](https://github.com/gbouras13/phold). 
+* The notebook is  [https://colab.research.google.com/github/gbouras13/pharokka/blob/master/run_pharokka_and_phold.ipynb](https://colab.research.google.com/github/gbouras13/pharokka/blob/master/run_pharokka_and_phold.ipynb)
+* Fixes #334 issues with contig ids if they were in scientific notation or lead with 0s.
+* Fixes issues with `pharokka_proteins.py` not outputting PHROG annotations.
+
+
+1.7.0 (2024-03-04)
 ------------------
 
 * Adds `pharokka_multiplotter.py` to plot multiple phage contigs at once
