@@ -14,7 +14,7 @@ If you like `pharokka`, you will probably love [phold](https://github.com/gboura
 
 # Google Colab Notebooks
 
-If you don't want to install `pharokka` or `phold` locally, you can run `pharokka` and `phold`, or only `pharokka` it without any code using the Google Colab notebook [https://colab.research.google.com/github/gbouras13/phold/blob/main/run_pharokka_and_phold.ipynb](https://colab.research.google.com/github/gbouras13/phold/blob/main/run_pharokka_and_phold.ipynb)
+If you don't want to install `pharokka` or `phold` locally, you can run `pharokka` and `phold`, or only `pharokka`, without any code using the Google Colab notebook [https://colab.research.google.com/github/gbouras13/phold/blob/main/run_pharokka_and_phold.ipynb](https://colab.research.google.com/github/gbouras13/phold/blob/main/run_pharokka_and_phold.ipynb)
 
 ## Overview
 

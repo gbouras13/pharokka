@@ -33,10 +33,9 @@ If you like `pharokka`, you will probably love [phold](https://github.com/gboura
 
 `phold` takes the Genbank output of Pharokka as input. Therefore, if you have already annotated your phage(s) with Pharokka, you can easily update the annotation with more functional predictions with [phold](https://github.com/gbouras13/phold).
 
-
 # Google Colab Notebooks
 
-If you don't want to install `pharokka` or `phold` locally, you can run `pharokka` and `phold`, or only `pharokka` it without any code using the Google Colab notebook [https://colab.research.google.com/github/gbouras13/phold/blob/main/run_pharokka_and_phold.ipynb](https://colab.research.google.com/github/gbouras13/phold/blob/main/run_pharokka_and_phold.ipynb)
+If you don't want to install `pharokka` or `phold` locally, you can run `pharokka` and `phold`, or only `pharokka`, without any code using the Google Colab notebook [https://colab.research.google.com/github/gbouras13/phold/blob/main/run_pharokka_and_phold.ipynb](https://colab.research.google.com/github/gbouras13/phold/blob/main/run_pharokka_and_phold.ipynb)
 
 
 # Table of Contents
