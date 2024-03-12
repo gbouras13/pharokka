@@ -1,4 +1,4 @@
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/gbouras13/pharokka/blob/main/run_pharokka_and_phold.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/gbouras13/pharokka/blob/master/run_pharokka_and_phold.ipynb)
 
 [![Paper](https://img.shields.io/badge/paper-Bioinformatics-teal.svg?style=flat-square&maxAge=3600)](https://doi.org/10.1093/bioinformatics/btac776)
 [![CI](https://github.com/gbouras13/pharokka/actions/workflows/ci.yaml/badge.svg)](https://github.com/gbouras13/pharokka/actions/workflows/ci.yaml)
