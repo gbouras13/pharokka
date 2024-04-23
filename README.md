@@ -1,4 +1,4 @@
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/gbouras13/pharokka/blob/master/run_pharokka_and_phold.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/gbouras13/pharokka/blob/master/run_pharokka_and_phold_and_phynteny.ipynb)
 
 [![Paper](https://img.shields.io/badge/paper-Bioinformatics-teal.svg?style=flat-square&maxAge=3600)](https://doi.org/10.1093/bioinformatics/btac776)
 [![CI](https://github.com/gbouras13/pharokka/actions/workflows/ci.yaml/badge.svg)](https://github.com/gbouras13/pharokka/actions/workflows/ci.yaml)
@@ -29,14 +29,18 @@ If you are looking for rapid standardised annotation of bacterial genomes, pleas
 
 If you like `pharokka`, you will probably love [phold](https://github.com/gbouras13/phold). `phold` uses structural homology to improve phage annotation. Benchmarking is ongoing but `phold` strongly outperforms `pharokka` in terms of annotation, particularly for less characterised phages such as those from metagenomic datasets.
 
-`pharokka` still has features `phold` lacks for now (identifying tRNA, tmRNA, CRISPR repeats, and INPHARED taxonomy search), so it it recommended to run `phold` after running `pharokka`. 
+`pharokka` still has features `phold` lacks for now (identifying tRNA, tmRNA, CRISPR repeats, and INPHARED taxonomy search), so it is recommended to run `phold` after running `pharokka`. 
 
 `phold` takes the Genbank output of Pharokka as input. Therefore, if you have already annotated your phage(s) with Pharokka, you can easily update the annotation with more functional predictions with [phold](https://github.com/gbouras13/phold).
 
 # Google Colab Notebooks
 
-If you don't want to install `pharokka` or `phold` locally, you can run `pharokka` and `phold`, or only `pharokka`, without any code using the Google Colab notebook [https://colab.research.google.com/github/gbouras13/pharokka/blob/master/run_pharokka_and_phold.ipynb](https://colab.research.google.com/github/gbouras13/pharokka/blob/master/run_pharokka_and_phold.ipynb)
+If you don't want to install `pharokka` or `phold` locally, you can run `pharokka` and `phold` (and [`phynteny`](https://github.com/susiegriggo/Phynteny)), or only `pharokka`, without any code using the [Google Colab notebook](https://colab.research.google.com/github/gbouras13/pharokka/blob/master/run_pharokka_and_phold_and_phynteny.ipynb).
 
+* [`phynteny`](https://github.com/susiegriggo/Phynteny) uses a long-short term memory model trained on phage synteny (the conserved gene order across phages) to assign hypothetical phage proteins to a PHROG category - it might help you add extra PHROG category annotations to hypothetical genes remaining after you run `phold`. 
+* Note: Phynteny will work only if your phage has fewer than 120 predicted proteins
+* You can still use this notebook to run `pharokka` and/or `phold` if your phage(s) are too big - just don't run the Phynteny step!
+  
 
 # Table of Contents
 
