@@ -84,6 +84,11 @@ def test_overall(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
 
+def test_overall_hash_header(tmp_dir):
+    """test pharokka overall with # in header"""
+    input_fasta: Path = f"{standard_data}/SAOMS1_hash_header.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
+    exec_command(cmd)
 
 def test_overall_mash_distance(tmp_dir):
     """test pharokka overall with stricter mash distance"""
