@@ -84,12 +84,6 @@ def test_overall(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
 
-def test_overall_hash_header(tmp_dir):
-    """test pharokka overall with # in header"""
-    input_fasta: Path = f"{standard_data}/SAOMS1_hash_header.fasta"
-    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
-    exec_command(cmd)
-
 def test_overall_mash_distance(tmp_dir):
     """test pharokka overall with stricter mash distance"""
     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
@@ -292,6 +286,13 @@ class testFails(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             input_fasta: Path = f"{standard_data}/dupe_header.fasta"
             cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t 1 -f -m"
+            exec_command(cmd)
+
+    def test_overall_hash_header(self):
+        """test pharokka overall with # in header - should error out"""
+        with self.assertRaises(RuntimeError):
+            input_fasta: Path = f"{standard_data}/SAOMS1_hash_header.fasta"
+            cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t {threads} -f"
             exec_command(cmd)
 
     def test_meta_with_single_contig(self):
