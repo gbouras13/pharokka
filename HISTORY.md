@@ -1,6 +1,11 @@
 History
 =======
 
+1.7.2 (2024-05-27)
+------------------
+
+* Identifies issue if `#` is input contig header - Pharokka will error if your contig headers contain this character and prompt you to remove them
+
 1.7.1 (2024-03-13)
 ------------------
 
