@@ -252,8 +252,12 @@ def check_duplicate_headers(fasta_file):
         header = record.description
         if header in header_set:
             logger.error(
-                f"Duplicate header found: {header}"
+                f"Duplicate contig header found: {header}"
             )  # errors if duplicate header found
+        if "#" in header:
+            logger.error(
+                f"# character found in contig: {header} - please remove all '#' from your contig headers"
+            )  # errors if duplicate header found   
         else:
             header_set.add(header)
     # if it finished it will be fine

@@ -377,9 +377,9 @@ def tidy_phanotate_output(out_dir):
         delimiter="\t",
         index_col=False,
         names=col_list,
-        skiprows=2,
+        skiprows=2, # to skip the headers
         dtype=dtype_dict,
-        comment="#",  # to skip the headers
+        comment="#"
     )
     # get rid of the headers and reset the index
     phan_df = phan_df[phan_df["start"] != "#id:"]
