@@ -68,7 +68,7 @@ If this does not work, you an alternatively download the databases from Zenodo a
 If you prefer to use the command line:
 
 ```bash
-wget "https://zenodo.org/record/8267900/files/pharokka_v1.4.0_databases.tar.gz"
+wget "https://zenodo.org/record/8276347/files/pharokka_v1.4.0_databases.tar.gz"
 tar -xzf pharokka_v1.4.0_databases.tar.gz
 ```
 
