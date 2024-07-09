@@ -1,6 +1,13 @@
 History
 =======
 
+1.7.3 (2024-07-10)
+------------------
+
+* Fixes issue with genbank creation if certain CARD hits are found [issue #339](https://github.com/gbouras13/pharokka/issues/339)).
+    * Due to some semi-colons in the CARD metadata, new qualifier keys were being made in error.
+    * Solved by removing semicolons in the updated CARD metadata sheet
+
 1.7.2 (2024-05-27)
 ------------------
 
