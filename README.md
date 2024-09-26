@@ -62,6 +62,7 @@ If you don't want to install `pharokka` or `phold` locally, you can run `pharokk
 - [Installation](#installation)
   - [Conda Installation](#conda-installation)
   - [Pip](#pip)
+  - [Container](#container)
   - [Source](#source)
 - [Database Installation](#database-installation)
 - [Beginner Conda Installation](#beginner-conda-installation)
@@ -220,6 +221,29 @@ pip install pharokka
 ```
 
 You will still need to install the non-python dependencies manually.
+
+## Container
+
+If you have Docker/Singularity/Apptainer installed, you can use the [biocontainers container](https://quay.io/repository/biocontainers/pharokka?tab=tags) (yes, every bioconda package has one!)
+
+You might find this useful if you have trouble with conda environments.
+
+For example to install `pharokka v1.7.3` with Singularity:
+
+```
+IMAGE_DIR="<the directory you want the .sif file to be in >"
+# e.g. to pull into the working directory
+IMAGE_DIR=$PWD
+singularity pull --dir $IMAGE_DIR docker://quay.io/biocontainers/pharokka:1.7.3--pyhdfd78af_0
+```
+
+* Then to run, you use the same commands but prepended with `singularity exec <.sif file>` e.g.:
+
+```
+containerImage="$IMAGE_DIR/pharokka_1.7.3--pyhdfd78af_0.sif"
+singularity exec $containerImage pharokka.py -h
+```
+
 
 ## Source
 
