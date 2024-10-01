@@ -12,13 +12,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: conda-incubator/setup-miniconda@v2
+    - uses: conda-incubator/setup-miniconda@v3
       with:
         python-version: 3.9
         activate-environment: pharokka_env
         environment-file: environment.yml
         auto-activate-base: false
-        miniforge-variant: Mambaforge
         channels: conda-forge,bioconda,defaults
         channel-priority: strict
         auto-update-conda: true

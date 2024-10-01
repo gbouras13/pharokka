@@ -22,13 +22,12 @@ jobs:
           fetch-depth: 0
 
       # Setup env
-      - uses: "conda-incubator/setup-miniconda@v2"
+      - uses: "conda-incubator/setup-miniconda@v3"
         with:
           activate-environment: pharokka_env
           environment-file: environment.yml
           python-version: ${{ matrix.python-version }}
           auto-activate-base: false
-          miniforge-variant: Mambaforge
           channels: conda-forge,bioconda,defaults
           channel-priority: strict
           auto-update-conda: true
