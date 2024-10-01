@@ -657,7 +657,7 @@ def run_trna_scan(filepath_in, threads, out_dir, logdir, trna_scan_model):
         tool="tRNAscan-SE",
         input=f"{filepath_in}",
         output=f"{out_gff}",
-        params=f"--thread {threads} -G -{model} -j",
+        params=f"--thread {threads} -{model} -Q -j",
         logdir=logdir,
         outfile="",
     )
