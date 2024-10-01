@@ -162,6 +162,13 @@ def get_input():
         type=float,
     )
     parser.add_argument(
+        "--trna_scan_model",
+        help="tRNAscan-SE model",
+        choices=["general", "bacterial"],
+        default="general",
+        type=str,
+    )
+    parser.add_argument(
         "-V",
         "--version",
         help="Print pharokka Version",
