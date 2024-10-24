@@ -401,15 +401,15 @@ def check_dependencies(skip_mash):
     mmseqs_out, _ = process.communicate()
     mmseqs_out = mmseqs_out.decode()
 
-    version_line = []
-
     for line in mmseqs_out.split("\n"):
         if "Version" in line:
-            version_line.append(line)
-
-    mmseqs_version = version_line[0].split(" ")[2]
+            mmseqs_version = line.split(" ")[2]
+            break
+    else:
+        raise ValueError("MMseqs2 version not found")
+    
     mmseqs_major_version = int(mmseqs_version.split(".")[0])
-    mmseqs_minor_version = int(mmseqs_version.split(".")[1])
+    mmseqs_minor_version = mmseqs_version.split(".")[1]
 
     logger.info(
         f"MMseqs2 version found is v{mmseqs_major_version}.{mmseqs_minor_version}"
@@ -417,7 +417,7 @@ def check_dependencies(skip_mash):
 
     if mmseqs_major_version != 13:
         logger.error("MMseqs2 is the wrong version. Please install v13.45111")
-    if mmseqs_minor_version != 45111:
+    if mmseqs_minor_version != '45111':
         logger.error("MMseqs2 is the wrong version. Please install v13.45111")
 
     logger.info("MMseqs2 version is ok.")
