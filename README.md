@@ -399,6 +399,8 @@ options:
                         extra commands to pass to MINced (please omit the leading hyphen for the first argument). You will need to use quotation marks e.g. --minced_args "minNR 2 -minRL 21"
   --mash_distance MASH_DISTANCE
                         mash distance for the search against INPHARED. Defaults to 0.2.
+  --trna_scan_model {general,bacterial}
+                        tRNAscan-SE model
   -V, --version         Print pharokka Version
   --citation            Print pharokka Citation
   ```
