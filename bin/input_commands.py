@@ -162,6 +162,13 @@ def get_input():
         type=float,
     )
     parser.add_argument(
+        "--trna_scan_model",
+        help="tRNAscan-SE model",
+        choices=["general", "bacterial"],
+        default="general",
+        type=str,
+    )
+    parser.add_argument(
         "-V",
         "--version",
         help="Print pharokka Version",
@@ -408,17 +415,22 @@ def check_dependencies(skip_mash):
     else:
         raise ValueError("MMseqs2 version not found")
     
-    mmseqs_major_version = int(mmseqs_version.split(".")[0])
-    mmseqs_minor_version = mmseqs_version.split(".")[1]
+    # Ryan Wick's code from Dnaapler - for prebuilt binary on github
+    if mmseqs_version.startswith("45111b6"):
+        logger.info(f"MMseqs2 version found is {mmseqs_version}")
+    else:
 
-    logger.info(
-        f"MMseqs2 version found is v{mmseqs_major_version}.{mmseqs_minor_version}"
-    )
+        mmseqs_major_version = int(mmseqs_version.split(".")[0])
+        mmseqs_minor_version = mmseqs_version.split(".")[1]
 
-    if mmseqs_major_version != 13:
-        logger.error("MMseqs2 is the wrong version. Please install v13.45111")
-    if mmseqs_minor_version != '45111':
-        logger.error("MMseqs2 is the wrong version. Please install v13.45111")
+        logger.info(
+            f"MMseqs2 version found is v{mmseqs_major_version}.{mmseqs_minor_version}"
+        )
+
+        if mmseqs_major_version != 13:
+            logger.error("MMseqs2 is the wrong version. Please install v13.45111")
+        if mmseqs_minor_version != '45111':
+            logger.error("MMseqs2 is the wrong version. Please install v13.45111")
 
     logger.info("MMseqs2 version is ok.")
 
@@ -574,8 +586,8 @@ def check_dependencies(skip_mash):
         f"Dnaapler version found is v{dnaapler_major_version}.{dnaapler_minor_version}.{dnaapler_minorest_version}"
     )
 
-    if dnaapler_minor_version < 2:
-        logger.error("Dnaapler is the wrong version. Please re-install pharokka.")
+    if dnaapler_major_version < 1:
+        logger.error("Dnaapler is the wrong version. Please install Dnaapler v1.0.1 or higher.")
 
     logger.info("Dnaapler version is ok.")
 

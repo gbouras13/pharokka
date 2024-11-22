@@ -303,11 +303,11 @@ def main():
     if args.skip_extra_annotations is False:
         if args.meta == True:
             logger.info("Starting tRNA-scanSE. Applying meta mode.")
-            run_trnascan_meta(input_fasta, out_dir, args.threads, num_fastas)
+            run_trnascan_meta(input_fasta, out_dir, args.threads, num_fastas, args.trna_scan_model)
             concat_trnascan_meta(out_dir, num_fastas)
         else:
             logger.info("Starting tRNA-scanSE.")
-            run_trna_scan(input_fasta, args.threads, out_dir, logdir)
+            run_trna_scan(input_fasta, args.threads, out_dir, logdir, args.trna_scan_model)
         # run minced and aragorn
         run_minced(input_fasta, out_dir, prefix, args.minced_args, logdir)
         run_aragorn(input_fasta, out_dir, prefix, logdir)

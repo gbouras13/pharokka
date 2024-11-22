@@ -66,6 +66,7 @@ If you don't want to install `pharokka` or `phold` locally, you can run `pharokk
   - [Source](#source)
 - [Database Installation](#database-installation)
 - [Beginner Conda Installation](#beginner-conda-installation)
+- [Beginner Conda Installation](#beginner-conda-installation-1)
 - [Usage](#usage)
 - [Version Log](#version-log)
 - [System](#system)
@@ -294,35 +295,49 @@ which will create a directory called "pharokka_v1.4.0_databases" containing the 
 
 If you are new to using the command-line, please install conda using the following instructions.
 
-1. Install [Anaconda](https://www.anaconda.com/products/distribution). I would recommend [miniconda](https://docs.conda.io/en/latest/miniconda.html).
-2. Assuming you are using a Linux x86_64 machine (for other architectures, please replace the URL with the appropriate one on the [miniconda](https://docs.conda.io/en/latest/miniconda.html) website).
 
-`curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh`
+# Beginner Conda Installation
 
-For Mac (Intel, will also work with M1):
+If you are new to using the command-line, please install conda using the following instructions.
 
-`curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh`
+1. Install Conda - I would recommend [miniforge](https://github.com/conda-forge/miniforge).
+2. Assuming you are using a Linux x86_64 machine (for other architectures, please replace the URL with the appropriate one on the [miniforge](https://github.com/conda-forge/miniforge) repository).
 
-3. Install miniconda and follow the prompts.
+`wget https://github.com/conda-forge/miniforge/releases/download/24.9.2-0/Miniforge3-24.9.2-0-Linux-x86_64.sh`
 
-`sh Miniconda3-latest-Linux-x86_64.sh`
+For Mac Intel:
+
+`wget https://github.com/conda-forge/miniforge/releases/download/24.9.2-0/Miniforge3-24.9.2-0-MacOSX-x86_64.sh`
+
+For Mac M1/M2/M3/M4
+
+`wget https://github.com/conda-forge/miniforge/releases/download/24.9.2-0/Miniforge3-24.9.2-0-MacOSX-arm64.sh`
+
+3. Install miniforge and follow the prompts.
+
+`sh Miniforge3-24.9.2-0-Linux-x86_64.sh`
 
 4. After installation is complete, you should add the following channels to your conda configuration:
 
-```
+```bash
 conda config --add channels defaults
 conda config --add channels bioconda
 conda config --add channels conda-forge
 ```
 
-5. After this, conda should be installed (you may need to restart your terminal). It is recommended that mamba is also installed, as it will solve the enviroment quicker than conda:
+ 5. Finally, I would recommend installing pharokka into a fresh environment. For example to create an environment called pharokkaENV with pharokka installed:
 
-`conda install mamba`
-
- 6. Finally, I would recommend installing `pharokka` into a fresh environment. For example to create an environment called pharokkaENV with `pharokka` installed:
-
+```bash
+conda create -n pharokkaENV pharokka
+conda activate pharokkaENV
+install_databases.py -h
+pharokka.py -h
 ```
-mamba create -n pharokkaENV pharokka
+
+If you have a Mac with Apple Silicon (M1-M4), try
+
+```bash
+conda create --platform osx-64 -n pharokkaENV pharokka
 conda activate pharokkaENV
 install_databases.py -h
 pharokka.py -h
@@ -399,6 +414,8 @@ options:
                         extra commands to pass to MINced (please omit the leading hyphen for the first argument). You will need to use quotation marks e.g. --minced_args "minNR 2 -minRL 21"
   --mash_distance MASH_DISTANCE
                         mash distance for the search against INPHARED. Defaults to 0.2.
+  --trna_scan_model {general,bacterial}
+                        tRNAscan-SE model
   -V, --version         Print pharokka Version
   --citation            Print pharokka Citation
   ```

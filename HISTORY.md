@@ -1,6 +1,13 @@
 History
 =======
 
+1.7.4 (2024-11-23)
+------------------
+
+* Adds `--trna_scan_model`  parameter with two accepted options: `--trna_scan_model general` (this will be run by default - what Pharokka has always been running) and `--trna_scan_model bacterial`. See the [tRNAscan-SE paper](https://doi.org/10.1093/nar/gkab688) for more information.
+* Bumps the `dnaapler` dependency to v1.0.1 due to a breaking dependency change in `dnaapler`.
+
+
 1.7.3 (2024-07-10)
 ------------------
 

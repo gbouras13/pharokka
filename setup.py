@@ -18,8 +18,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name="Pharokka",
-    version="1.7.3",
+    name="pharokka",
+    version="1.7.4",
     author="George Bouras",
     author_email="george.bouras@adelaide.edu.au",
     description="Fast phage annotation tool",
