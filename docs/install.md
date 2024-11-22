@@ -10,11 +10,11 @@ conda install -c bioconda pharokka
 
 This will install all the dependencies along with `pharokka`. The dependencies are listed in environment.yml.
 
-If conda is taking a long time to solve the environment, try using mamba:
+If you have a MacOS system with M1/M2/M3 Apple Silicon, try this 
 
 ```bash
-conda install mamba
-mamba install -c bioconda pharokka
+conda create --platform osx-64 --name pharokkaENV -c bioconda pharokka
+conda activate pharokkaENV
 ```
 
 ## Pip
@@ -100,18 +100,22 @@ which will create a directory called "pharokka_v1.4.0_databases" containing the 
 
 If you are new to using the command-line, please install conda using the following instructions.
 
-1. Install [Anaconda](https://www.anaconda.com/products/distribution). I would recommend [miniconda](https://docs.conda.io/en/latest/miniconda.html).
-2. Assuming you are using a Linux x86_64 machine (for other architectures, please replace the URL with the appropriate one on the [miniconda](https://docs.conda.io/en/latest/miniconda.html) website).
+1. Install Conda - I would recommend [miniforge](https://github.com/conda-forge/miniforge).
+2. Assuming you are using a Linux x86_64 machine (for other architectures, please replace the URL with the appropriate one on the [miniforge](https://github.com/conda-forge/miniforge) repository).
 
-`curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh`
+`wget https://github.com/conda-forge/miniforge/releases/download/24.9.2-0/Miniforge3-24.9.2-0-Linux-x86_64.sh`
 
-For Mac (Intel, will also work with M1):
+For Mac Intel:
 
-`curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh`
+`wget https://github.com/conda-forge/miniforge/releases/download/24.9.2-0/Miniforge3-24.9.2-0-MacOSX-x86_64.sh`
 
-3. Install miniconda and follow the prompts.
+For Mac M1/M2/M3/M4
 
-`sh Miniconda3-latest-Linux-x86_64.sh`
+`wget https://github.com/conda-forge/miniforge/releases/download/24.9.2-0/Miniforge3-24.9.2-0-MacOSX-arm64.sh`
+
+3. Install miniforge and follow the prompts.
+
+`sh Miniforge3-24.9.2-0-Linux-x86_64.sh`
 
 4. After installation is complete, you should add the following channels to your conda configuration:
 
@@ -121,14 +125,19 @@ conda config --add channels bioconda
 conda config --add channels conda-forge
 ```
 
-5. After this, conda should be installed (you may need to restart your terminal). It is recommended that mamba is also installed, as it will solve the enviroment quicker than conda:
-
-`conda install mamba`
-
- 6. Finally, I would recommend installing pharokka into a fresh environment. For example to create an environment called pharokkaENV with pharokka installed:
+ 5. Finally, I would recommend installing pharokka into a fresh environment. For example to create an environment called pharokkaENV with pharokka installed:
 
 ```bash
-mamba create -n pharokkaENV pharokka
+conda create -n pharokkaENV pharokka
+conda activate pharokkaENV
+install_databases.py -h
+pharokka.py -h
+```
+
+If you have a Mac with Apple Silicon (M1-M4), try
+
+```bash
+conda create --platform osx-64 -n pharokkaENV pharokka
 conda activate pharokkaENV
 install_databases.py -h
 pharokka.py -h
