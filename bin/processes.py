@@ -806,13 +806,8 @@ def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, prot_seq_df):
                 # add translation only if CDS
                 if feature.type == "CDS":
                     # aa = prot_records[i].seq
-                    if feature.strand == 1:
-                        feature.qualifiers.update(
-                            {"translation": subset_seqs[i]}  # from the aa seq
-                        )
-                    else:  # reverse strand -1 needs reverse compliment
-                        feature.qualifiers.update(
-                            {"translation": subset_seqs[i]}  # from the aa seq
+                    feature.qualifiers.update(
+                        {"translation": subset_seqs[i]}  # from the aa seq
                         )
                     i += 1
             SeqIO.write(record, gbk_handler, "genbank")
