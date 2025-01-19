@@ -481,7 +481,7 @@ def tidy_prodigal_output(out_dir, gv_flag):
 
 def tidy_genbank_output(out_dir, genbank_file, coding_table):
     """
-    Tidies phanotate output
+    Tidies --genbank input output
     :param out_dir: output directory
     :return: phan_df pandas dataframe
     """
@@ -504,12 +504,12 @@ def tidy_genbank_output(out_dir, genbank_file, coding_table):
                 frame = feature.location.strand
                 if frame == 1:  # pos
                     frame = "+"
-                    start = feature.location.start
+                    start = feature.location.start + 1 # this needs to added by 1 - the parser is 0 indexed issue #353
                     stop = feature.location.end
                 else:  # neg
                     frame = "-"
                     start = feature.location.end
-                    stop = feature.location.start
+                    stop = feature.location.start + 1 # this needs to added by 1 - the parser is 0 indexed issue #353
 
                 contig = record.id
                 starts.append(start)
