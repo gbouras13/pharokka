@@ -30,9 +30,10 @@ def run_pyhmmer(db_dir, out_dir, threads, gene_predictor, evalue):
 
     # run hmmscan and get all results
     results = []
+    alphabet = pyhmmer.easel.Alphabet.amino() # https://github.com/althonos/pyhmmer/issues/80 to solve #357 #331 need to specify the alphabet explicitly
     with pyhmmer.plan7.HMMFile(os.path.join(db_dir, "all_phrogs.h3m")) as hmms:  # hmms
         with pyhmmer.easel.SequenceFile(
-            amino_acid_fasta_file, digital=True
+            amino_acid_fasta_file, digital=True, alphabet=alphabet
         ) as seqs:  # amino acid sequences
             for hits in pyhmmer.hmmer.hmmscan(
                 seqs, hmms, cpus=int(threads), E=float(evalue)
