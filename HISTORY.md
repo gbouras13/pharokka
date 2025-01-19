@@ -1,6 +1,13 @@
 History
 =======
 
+1.7.5 (2025-01-20)
+------------------
+
+* Fixes bug introduced by Pyhmmer's upgrade to v0.11.0 (https://github.com/gbouras13/pharokka/issues/375).
+* Fixes bug where Pyhmmer could not infer the amino acid alphabet by explictly inferring it (https://github.com/gbouras13/pharokka/issues/331) (https://github.com/gbouras13/pharokka/issues/357)
+* Fixed one-off start CDS coordinate bug where using `--genbank`  (https://github.com/gbouras13/pharokka/issues/353)
+
 1.7.4 (2024-11-23)
 ------------------
 
