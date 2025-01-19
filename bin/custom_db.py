@@ -30,14 +30,15 @@ def run_custom_pyhmmer(custom_hmm, out_dir, threads, gene_predictor, evalue):
 
     # run hmmscan and get all results
     results = []
+    alphabet = pyhmmer.easel.Alphabet.amino() # https://github.com/althonos/pyhmmer/issues/80 to solve #357 #331 need to specify the alphabet explicitly
     with pyhmmer.plan7.HMMFile(custom_hmm) as hmms:  # hmms
         with pyhmmer.easel.SequenceFile(
-            amino_acid_fasta_file, digital=True
+            amino_acid_fasta_file, digital=True, alphabet=alphabet
         ) as seqs:  # amino acid sequences
             for hits in pyhmmer.hmmer.hmmscan(
                 seqs, hmms, cpus=int(threads), E=float(evalue)
             ):  # run hmmscan
-                protein = hits.query_name.decode()  # get protein from the hit
+                protein = hits.query.name.decode()   # get protein from the hit query.name - this changed in pyhmmer v 0.11.0 from hits.query_name.decode() which was removed. So need pyhmmer >=0.11.0 
                 for hit in hits:
                     if hit.included:
                         # include the hit to the result collection

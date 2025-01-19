@@ -296,7 +296,7 @@ def main():
         logger.info("Implementing Prodigal-gv using Pyrodigal-gv.")
         run_pyrodigal_gv(input_fasta, out_dir, int(args.threads))
 
-    # translate fastas (parse genbank)
+    # translate fastas (parse genbank) - gets the required CDS if --genbank is used too
     translate_fastas(out_dir, gene_predictor, args.coding_table, args.infile)
 
     # run trna-scan meta mode if required

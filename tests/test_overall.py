@@ -28,6 +28,7 @@ functions_data = Path(f"{test_data}/functions_files")
 database_dir = Path(f"{test_data}/database")
 overall_data = Path(f"{test_data}/overall")
 meta_data = Path(f"{overall_data}/Meta_example")
+bug_data = Path(f"{overall_data}/bug_examples")
 standard_data = Path(f"{overall_data}/Standard_examples")
 standard_data_output = Path(f"{standard_data}/SAOMS1_Output")
 stop_recoding_data = Path(f"{overall_data}/stop_recoding")
@@ -84,12 +85,17 @@ def test_overall(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
 
+def test_overall_pyhmmer_alphabet(tmp_dir):
+    """test for #331 #357 pyhmmer alphabet must be explictly specifyied as amino acid"""
+    input_fasta: Path = f"{bug_data}/pyhmmer_alphabet_issue357.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --fast"
+    exec_command(cmd)
+
 def test_overall_mash_distance(tmp_dir):
     """test pharokka overall with stricter mash distance"""
     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --mash_distance 0.05"
     exec_command(cmd)
-
 
 def test_overall_crispr(tmp_dir):
     """test pharokka overall crispr"""
