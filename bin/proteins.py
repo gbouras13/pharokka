@@ -217,7 +217,9 @@ def run_pyhmmer_proteins(input_fasta, db_dir, threads, evalue):
 
     # run hmmscan and get all results
     results = []
-    alphabet = pyhmmer.easel.Alphabet.amino() # https://github.com/althonos/pyhmmer/issues/80 to solve #357 #331 need to specify the alphabet explicitly
+    alphabet = (
+        pyhmmer.easel.Alphabet.amino()
+    )  # https://github.com/althonos/pyhmmer/issues/80 to solve #357 #331 need to specify the alphabet explicitly
     with pyhmmer.plan7.HMMFile(os.path.join(db_dir, "all_phrogs.h3m")) as hmms:  # hmms
         with pyhmmer.easel.SequenceFile(
             input_fasta, digital=True, alphabet=alphabet
@@ -225,7 +227,9 @@ def run_pyhmmer_proteins(input_fasta, db_dir, threads, evalue):
             for hits in pyhmmer.hmmer.hmmscan(
                 seqs, hmms, cpus=int(threads), E=float(evalue)
             ):  # run hmmscan
-                protein = hits.query.name.decode()   # get protein from the hit query.name - this changed in pyhmmer v 0.11.0 from hits.query_name.decode() which was removed. So need pyhmmer >=0.11.0 
+                protein = (
+                    hits.query.name.decode()
+                )  # get protein from the hit query.name - this changed in pyhmmer v 0.11.0 from hits.query_name.decode() which was removed. So need pyhmmer >=0.11.0
                 for hit in hits:
                     if hit.included:
                         # include the hit to the result collection
@@ -479,21 +483,21 @@ class Pharok_Prot:
         tophits_df["mmseqs_top_hit"] = tophits_df["mmseqs_top_hit"].astype(str)
         tophits_df["color"] = tophits_df["color"].astype(str)
         tophits_df = tophits_df.replace(np.nan, "No_PHROG", regex=True)
-        tophits_df.loc[
-            tophits_df["mmseqs_phrog"] == "No_PHROG", "mmseqs_phrog"
-        ] = "No_PHROG"
+        tophits_df.loc[tophits_df["mmseqs_phrog"] == "No_PHROG", "mmseqs_phrog"] = (
+            "No_PHROG"
+        )
         tophits_df.loc[
             tophits_df["mmseqs_alnScore"] == "No_PHROG", "mmseqs_alnScore"
         ] = "No_PHROG"
         tophits_df.loc[
             tophits_df["mmseqs_seqIdentity"] == "No_PHROG", "mmseqs_seqIdentity"
         ] = "No_PHROG"
-        tophits_df.loc[
-            tophits_df["mmseqs_eVal"] == "No_PHROG", "mmseqs_eVal"
-        ] = "No_PHROG"
-        tophits_df.loc[
-            tophits_df["mmseqs_top_hit"] == "No_PHROG", "mmseqs_top_hit"
-        ] = "No_PHROG"
+        tophits_df.loc[tophits_df["mmseqs_eVal"] == "No_PHROG", "mmseqs_eVal"] = (
+            "No_PHROG"
+        )
+        tophits_df.loc[tophits_df["mmseqs_top_hit"] == "No_PHROG", "mmseqs_top_hit"] = (
+            "No_PHROG"
+        )
         tophits_df.loc[tophits_df["color"] == "No_PHROG", "color"] = "No_PHROG"
 
         # get phrog

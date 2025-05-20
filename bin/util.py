@@ -67,3 +67,24 @@ def get_contig_headers(fasta_file) -> pd.Series:
 def touch_file(path):
     with open(path, "a"):
         os.utime(path, None)
+
+
+def rename_file(old_path, new_path):
+    """
+    Rename a file from old_path to new_path.
+
+    Parameters:
+    - old_path (str): The current path to the file.
+    - new_path (str): The new desired path and filename.
+
+    Raises:
+    - FileNotFoundError: If the file at old_path does not exist.
+    - FileExistsError: If a file already exists at new_path.
+    - OSError: For other OS-related errors.
+    """
+    if not os.path.exists(old_path):
+        logger.error(f"File '{old_path}' does not exist.")
+    if os.path.exists(new_path):
+        logger.error(f"A file already exists at '{new_path}'.")
+
+    os.rename(old_path, new_path)

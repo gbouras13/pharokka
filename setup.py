@@ -19,7 +19,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="pharokka",
-    version="1.7.5", # change bin/version.py as well
+    version="1.8.0",  # change bin/version.py as well
     author="George Bouras",
     author_email="george.bouras@adelaide.edu.au",
     description="Fast phage annotation tool",
