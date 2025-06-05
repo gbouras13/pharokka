@@ -377,7 +377,7 @@ def check_dependencies(skip_mash):
     #############
     try:
         process = sp.Popen(
-            ["phanotate.py", "--version"], stdout=sp.PIPE, stderr=sp.STDOUT
+            ["phanotate.py", "--version"], stdout=sp.PIPE, stderr=sp.DEVNULL
         )
     except:
         logger.error("Phanotate not found. Please reinstall pharokka.")
