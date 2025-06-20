@@ -2365,7 +2365,6 @@ def process_vfdb_results(out_dir, merged_df, proteins_flag=False):
     """
     ##vfdb
     vfdb_file = os.path.join(out_dir, "vfdb_results.tsv")
-    vfdb_df['vfdb_eVal'] = vfdb_df['vfdb_eVal'].astype(float) #Issue #390 
     logger.info("Processing VFDB output.")
     col_list = [
         "vfdb_hit",
@@ -2385,7 +2384,7 @@ def process_vfdb_results(out_dir, merged_df, proteins_flag=False):
     touch_file(vfdb_file)
 
     vfdb_df = pd.read_csv(vfdb_file, delimiter="\t", index_col=False, names=col_list)
-
+    vfdb_df['vfdb_eVal'] = vfdb_df['vfdb_eVal'].astype(float) #Issue #390
     # optimise the tophits generation
     # Group by 'gene' and find the top hit for each group
     tophits_df = (
@@ -2470,7 +2469,6 @@ def process_card_results(out_dir, merged_df, db_dir, proteins_flag=False):
     """
     ##card
     card_file = os.path.join(out_dir, "CARD_results.tsv")
-    card_df['CARD_eVal'] = card_df['CARD_eVal'].astype(float)  # issue 390 https://stackoverflow.com/questions/70484024/column-has-dtype-object-cannot-use-method-nlargest-with-this-dtype
     logger.info("Processing CARD output.")
     col_list = [
         "CARD_hit",
@@ -2487,7 +2485,7 @@ def process_card_results(out_dir, merged_df, db_dir, proteins_flag=False):
     ]
     touch_file(card_file)
     card_df = pd.read_csv(card_file, delimiter="\t", index_col=False, names=col_list)
-
+    card_df['CARD_eVal'] = card_df['CARD_eVal'].astype(float)  # issue 390 https://stackoverflow.com/questions/70484024/column-has-dtype-object-cannot-use-method-nlargest-with-this-dtype
     #
     tophits_df = (
         card_df.groupby("gene", group_keys=True)
