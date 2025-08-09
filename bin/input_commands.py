@@ -167,6 +167,11 @@ def get_input():
         choices=["general", "bacterial"],
         default="general",
         type=str,
+    ),
+    parser.add_argument(
+        "--keep_raw_prodigal",
+        help="Keeps raw prodigal header information.",
+        action="store_true",
     )
     parser.add_argument(
         "-V",
@@ -383,6 +388,15 @@ def check_dependencies(skip_mash):
         logger.error("Phanotate not found. Please reinstall pharokka.")
     phan_out, _ = process.communicate()
     phanotate_version = phan_out.decode().strip()
+
+    # this handles the warning for setuptools https://github.com/gbouras13/pharokka/issues/395
+    if "\n" in phanotate_version.strip():
+        logger.warning("pkg_resources in phanotate is throwing a warning")
+        logger.warning("this should not affect pharokka but please make an issue at https://github.com/gbouras13/pharokka/issues if pharokka crashes")
+        logger.warning("printing the full warning for debugging if required")
+        logger.warning(phanotate_version)
+        phanotate_version=phanotate_version.strip().split("\n")[-1]
+
     phanotate_major_version = int(phanotate_version.split(".")[0])
     phanotate_minor_version = int(phanotate_version.split(".")[1])
     phanotate_minorest_version = phanotate_version.split(".")[2]
@@ -429,7 +443,7 @@ def check_dependencies(skip_mash):
 
         if mmseqs_major_version != 13:
             logger.error("MMseqs2 is the wrong version. Please install v13.45111")
-        if mmseqs_minor_version != '45111':
+        if mmseqs_minor_version != "45111":
             logger.error("MMseqs2 is the wrong version. Please install v13.45111")
 
     logger.info("MMseqs2 version is ok.")
@@ -587,7 +601,9 @@ def check_dependencies(skip_mash):
     )
 
     if dnaapler_major_version < 1:
-        logger.error("Dnaapler is the wrong version. Please install Dnaapler v1.0.1 or higher.")
+        logger.error(
+            "Dnaapler is the wrong version. Please install Dnaapler v1.0.1 or higher."
+        )
 
     logger.info("Dnaapler version is ok.")
 
