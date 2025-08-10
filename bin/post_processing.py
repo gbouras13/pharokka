@@ -329,31 +329,37 @@ class Pharok:
 
         # add columns
         if self.gene_predictor == "phanotate":
-            merged_df["Method"] = f"PHANOTATE_{self.phanotate_version}"
+            merged_df["Method"] = (
+                f"ab initio prediction:PHANOTATE:{self.phanotate_version}"
+            )
         elif self.gene_predictor == "prodigal":
-            merged_df["Method"] = f"Pyrodigal_{self.pyrodigal_version}"
+            merged_df["Method"] = (
+                f"ab initio prediction:Pyrodigal:{self.pyrodigal_version}"
+            )
         elif self.gene_predictor == "genbank":
             merged_df["Method"] = "CUSTOM"
         elif self.gene_predictor == "prodigal-gv":
-            merged_df["Method"] = f"Pyrodigal-gv_{self.pyrodigal_gv_version}"
+            merged_df["Method"] = (
+                f"ab initio prediction:Pyrodigal-gv:{self.pyrodigal_gv_version}"
+            )
         merged_df["Region"] = "CDS"
 
         # # replace with No_PHROG if nothing found
-        merged_df.loc[
-            merged_df["mmseqs_phrog"] == "No_PHROG", "mmseqs_phrog"
-        ] = "No_PHROG"
-        merged_df.loc[
-            merged_df["mmseqs_alnScore"] == "No_PHROG", "mmseqs_alnScore"
-        ] = "No_PHROG"
+        merged_df.loc[merged_df["mmseqs_phrog"] == "No_PHROG", "mmseqs_phrog"] = (
+            "No_PHROG"
+        )
+        merged_df.loc[merged_df["mmseqs_alnScore"] == "No_PHROG", "mmseqs_alnScore"] = (
+            "No_PHROG"
+        )
         merged_df.loc[
             merged_df["mmseqs_seqIdentity"] == "No_PHROG", "mmseqs_seqIdentity"
         ] = "No_PHROG"
-        merged_df.loc[
-            merged_df["mmseqs_eVal"] == "No_PHROG", "mmseqs_eVal"
-        ] = "No_PHROG"
-        merged_df.loc[
-            merged_df["mmseqs_top_hit"] == "No_PHROG", "mmseqs_top_hit"
-        ] = "No_PHROG"
+        merged_df.loc[merged_df["mmseqs_eVal"] == "No_PHROG", "mmseqs_eVal"] = (
+            "No_PHROG"
+        )
+        merged_df.loc[merged_df["mmseqs_top_hit"] == "No_PHROG", "mmseqs_top_hit"] = (
+            "No_PHROG"
+        )
         merged_df.loc[merged_df["color"] == "No_PHROG", "color"] = "No_PHROG"
 
         # get phrog
@@ -527,7 +533,7 @@ class Pharok:
                     split = line.split()
                     start_stops = split[2].replace("[", "").replace("]", "").split(",")
                     contig = self.length_df["contig"][0]
-                    method = f"Aragorn_{self.aragorn_version}"
+                    method = f"Aragorn:{self.aragorn_version}"
                     region = "tmRNA"
                     start = start_stops[0].replace(
                         "c", ""
@@ -843,7 +849,8 @@ class Pharok:
                 trna_df["contig"] = trna_df["contig"].astype(str)
 
                 # convert the method to update with version
-                trna_df["Method"] = f"tRNAscan-SE_{self.trna_version}"
+                trna_df["Method"] = f"profile:tRNAscan-SE:{self.trna_version}"
+                # inference="COORDINATES:profile:tRNAscan:2.1"
 
                 # index hack if meta mode
                 if self.meta_mode == True:
@@ -899,22 +906,31 @@ class Pharok:
                 trna_df["trna_product"] = (
                     "tRNA-" + trna_df["isotypes"] + "(" + trna_df["anticodon"] + ")"
                 )
+                for index, row in trna_df.iterrows():
+                    trna_df.at[index, "anticodon_gb"] = (
+                        f"(pos:{row['start']}..{row['stop']},aa:{row['isotypes']},seq:{row['anticodon']})"
+                    )
+                # Genbank example
+                # /gene="tRNA-Leu(UUR)"
+                # /anticodon=(pos:678..680,aa:Leu,seq:taa)
+                # /product="transfer RNA-Leu(UUR)"
+
                 trna_df = trna_df.drop(columns=["attributes"])
                 trna_df["attributes"] = (
                     "ID="
                     + trna_df["locus_tag"]
                     + ";"
-                    + "transl_table="
-                    + locus_df["transl_table"].astype(str)
-                    + ";"
-                    + "trna="
+                    # + "transl_table="
+                    # + locus_df["transl_table"].astype(str)
+                    # + ";"
+                    + "gene="
                     + trna_df["trna_product"].astype(str)
                     + ";"
-                    + "isotype="
-                    + trna_df["isotypes"].astype(str)
-                    + ";"
+                    # + "isotype="
+                    # + trna_df["isotypes"].astype(str)
+                    # + ";"
                     + "anticodon="
-                    + trna_df["anticodon"].astype(str)
+                    + trna_df["anticodon_gb"].astype(str)
                     + ";"
                     + "locus_tag="
                     + trna_df["locus_tag"]
@@ -923,6 +939,7 @@ class Pharok:
                     columns=[
                         "isotypes",
                         "anticodon",
+                        "anticodon_gb",
                         "rest",
                         "trna_product",
                         "locus_tag",
@@ -988,9 +1005,9 @@ class Pharok:
                     "ID="
                     + minced_df["locus_tag"]
                     + ";"
-                    + "transl_table="
-                    + locus_df["transl_table"].astype(str)
-                    + ";"
+                    # + "transl_table="
+                    # + locus_df["transl_table"].astype(str)
+                    # + ";"
                     + "rpt_type="
                     + minced_df["rpt_type"].astype(str)
                     + ";"
@@ -1053,9 +1070,9 @@ class Pharok:
                     "ID="
                     + tmrna_df["locus_tag"]
                     + ";"
-                    + "transl_table="
-                    + locus_df["transl_table"].astype(str)
-                    + ";"
+                    # + "transl_table="
+                    # + locus_df["transl_table"].astype(str)
+                    # + ";"
                     + tmrna_df["attributes"].astype(str)
                     + ";locus_tag="
                     + tmrna_df["locus_tag"]
@@ -1161,15 +1178,18 @@ class Pharok:
 
         if self.gene_predictor == "phanotate":
             cds_df = self.total_gff[
-                self.total_gff["Method"] == f"PHANOTATE_{self.phanotate_version}"
+                self.total_gff["Method"]
+                == f"ab initio prediction:PHANOTATE{self.phanotate_version}"
             ]
         elif self.gene_predictor == "prodigal":
             cds_df = self.total_gff[
-                self.total_gff["Method"] == f"Pyrodigal_{self.pyrodigal_version}"
+                self.total_gff["Method"]
+                == f"ab initio prediction:Pyrodigal:{self.pyrodigal_version}"
             ]
         elif self.gene_predictor == "prodigal-gv":
             cds_df = self.total_gff[
-                self.total_gff["Method"] == f"Pyrodigal-gv_{self.pyrodigal_gv_version}"
+                self.total_gff["Method"]
+                == f"ab initio prediction:Pyrodigal-gv:{self.pyrodigal_gv_version}"
             ]
         elif self.gene_predictor == "genbank":
             cds_df = self.total_gff[self.total_gff["Method"] == "CUSTOM"]
@@ -1185,7 +1205,7 @@ class Pharok:
         # check if no trnas
         if self.trna_empty is False:
             trna_df = self.total_gff[
-                self.total_gff["Method"] == f"tRNAscan-SE_{self.trna_version}"
+                self.total_gff["Method"] == f"profile:tRNAscan-SE:{self.trna_version}"
             ]
             # keep only trnas and pseudogenes
             trna_df.contig = trna_df.contig.astype(str)
@@ -1194,15 +1214,15 @@ class Pharok:
             trna_df[["attributes", "locus_tag"]] = trna_df["attributes"].str.split(
                 ";locus_tag=", expand=True
             )
-            trna_df[["attributes", "isotypes"]] = trna_df["attributes"].str.split(
-                ";isotype=", expand=True
-            )
-            trna_df[["isotypes", "anticodon"]] = trna_df["isotypes"].str.split(
+            trna_df[["attributes", "anticodon"]] = trna_df["attributes"].str.split(
                 ";anticodon=", expand=True
             )
-            trna_df["trna_product"] = (
-                "tRNA-" + trna_df["isotypes"] + "(" + trna_df["anticodon"] + ")"
-            )
+            # trna_df[["isotypes", "anticodon"]] = trna_df["isotypes"].str.split(
+            #    ";anticodon=", expand=True
+            # )
+            # trna_df["trna_product"] = (
+            #    "tRNA-" + trna_df["isotypes"] + "(" + trna_df["anticodon"] + ")"
+            # )
 
         #### CRISPRs
         if self.crispr_count > 0:
@@ -1293,7 +1313,7 @@ class Pharok:
                             + "\t"
                             + "product"
                             + "\t"
-                            + str(row["trna_product"])
+                            + str(row["anticodon"])
                             + "\n"
                         )
                         f.write(
@@ -1674,18 +1694,18 @@ class Pharok:
                 cds_mmseqs_merge_cont_df[["attributes2"]] = cds_mmseqs_merge_cont_df[
                     ["attributes"]
                 ]
-                cds_mmseqs_merge_cont_df[
-                    ["attributes2", "function"]
-                ] = cds_mmseqs_merge_cont_df["attributes2"].str.split(
-                    ";function=", expand=True
+                cds_mmseqs_merge_cont_df[["attributes2", "function"]] = (
+                    cds_mmseqs_merge_cont_df["attributes2"].str.split(
+                        ";function=", expand=True
+                    )
                 )
                 cds_mmseqs_merge_cont_df = cds_mmseqs_merge_cont_df.drop(
                     columns=["attributes2"]
                 )
-                cds_mmseqs_merge_cont_df[
-                    ["function", "product"]
-                ] = cds_mmseqs_merge_cont_df["function"].str.split(
-                    ";product=", expand=True
+                cds_mmseqs_merge_cont_df[["function", "product"]] = (
+                    cds_mmseqs_merge_cont_df["function"].str.split(
+                        ";product=", expand=True
+                    )
                 )
                 cds_mmseqs_merge_cont_df = cds_mmseqs_merge_cont_df.drop(
                     columns=["product"]

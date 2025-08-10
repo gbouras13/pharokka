@@ -212,7 +212,7 @@ def run_trnascan_meta(filepath_in, out_dir, threads, num_fastas, trna_scan_model
 
     if trna_scan_model == "general":
         model = "G"
-    else: # bacterial
+    else:  # bacterial
         model = "B"
 
     for i in range(1, num_fastas + 1):
@@ -382,9 +382,9 @@ def tidy_phanotate_output(out_dir):
         delimiter="\t",
         index_col=False,
         names=col_list,
-        skiprows=2, # to skip the headers
+        skiprows=2,  # to skip the headers
         dtype=dtype_dict,
-        comment="#"
+        comment="#",
     )
     # get rid of the headers and reset the index
     phan_df = phan_df[phan_df["start"] != "#id:"]
@@ -504,12 +504,16 @@ def tidy_genbank_output(out_dir, genbank_file, coding_table):
                 frame = feature.location.strand
                 if frame == 1:  # pos
                     frame = "+"
-                    start = feature.location.start + 1 # this needs to added by 1 - the parser is 0 indexed issue #353
+                    start = (
+                        feature.location.start + 1
+                    )  # this needs to added by 1 - the parser is 0 indexed issue #353
                     stop = feature.location.end
                 else:  # neg
                     frame = "-"
                     start = feature.location.end
-                    stop = feature.location.start + 1 # this needs to added by 1 - the parser is 0 indexed issue #353
+                    stop = (
+                        feature.location.start + 1
+                    )  # this needs to added by 1 - the parser is 0 indexed issue #353
 
                 contig = record.id
                 starts.append(start)
@@ -650,7 +654,7 @@ def run_trna_scan(filepath_in, threads, out_dir, logdir, trna_scan_model):
 
     if trna_scan_model == "general":
         model = "G"
-    else: # bacterial
+    else:  # bacterial
         model = "B"
 
     trna = ExternalTool(
@@ -798,17 +802,21 @@ def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, prot_seq_df):
             record.annotations["molecule_type"] = "DNA"
             record.annotations["date"] = datetime.today()
             record.annotations["topology"] = "linear"
-            record.annotations[
-                "data_file_division"
-            ] = "PHG"  # https://github.com/RyanCook94/inphared/issues/22
+            record.annotations["data_file_division"] = (
+                "PHG"  # https://github.com/RyanCook94/inphared/issues/22
+            )
             # add features to the record
             for feature in record.features:
+                # Move 'source' qualifier to 'inference', then remove 'source'
+                if "source" in feature.qualifiers:
+                    feature.qualifiers["inference"] = feature.qualifiers["source"]
+                    del feature.qualifiers["source"]
                 # add translation only if CDS
                 if feature.type == "CDS":
                     # aa = prot_records[i].seq
                     feature.qualifiers.update(
                         {"translation": subset_seqs[i]}  # from the aa seq
-                        )
+                    )
                     i += 1
             SeqIO.write(record, gbk_handler, "genbank")
 
