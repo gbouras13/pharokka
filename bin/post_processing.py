@@ -906,6 +906,7 @@ class Pharok:
                 trna_df["trna_product"] = (
                     "tRNA-" + trna_df["isotypes"] + "(" + trna_df["anticodon"] + ")"
                 )
+                # Combine anticodon, start and stop into a single string for genbank
                 for index, row in trna_df.iterrows():
                     trna_df.at[index, "anticodon_gb"] = (
                         f"(pos:{row['start']}..{row['stop']},aa:{row['isotypes']},seq:{row['anticodon']})"

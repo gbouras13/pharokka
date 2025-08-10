@@ -812,6 +812,7 @@ def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, prot_seq_df):
                     feature.qualifiers["inference"] = feature.qualifiers["source"]
                     del feature.qualifiers["source"]
 
+                # If 'anticodon' is present, join multiple parts into one comma-separated string
                 if "anticodon" in feature.qualifiers:
                     # Join multiple parts into one comma-separated string
                     if isinstance(feature.qualifiers["anticodon"], list):
