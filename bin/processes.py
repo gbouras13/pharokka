@@ -811,6 +811,13 @@ def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, prot_seq_df):
                 if "source" in feature.qualifiers:
                     feature.qualifiers["inference"] = feature.qualifiers["source"]
                     del feature.qualifiers["source"]
+
+                if "anticodon" in feature.qualifiers:
+                    # Join multiple parts into one comma-separated string
+                    if isinstance(feature.qualifiers["anticodon"], list):
+                        feature.qualifiers["anticodon"] = [
+                            ",".join(feature.qualifiers["anticodon"])
+                        ]
                 # add translation only if CDS
                 if feature.type == "CDS":
                     # aa = prot_records[i].seq
