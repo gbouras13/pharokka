@@ -428,10 +428,10 @@ def check_dependencies(skip_mash):
             f"MMseqs2 version found is v{mmseqs_major_version}.{mmseqs_minor_version}"
         )
 
-        # if mmseqs_major_version != 13:
-        #    logger.error("MMseqs2 is the wrong version. Please install v13.45111")
-        # if mmseqs_minor_version != "45111":
-        #    logger.error("MMseqs2 is the wrong version. Please install v13.45111")
+        if mmseqs_major_version != 13:
+            logger.error("MMseqs2 is the wrong version. Please install v13.45111")
+        if mmseqs_minor_version != "45111":
+            logger.error("MMseqs2 is the wrong version. Please install v13.45111")
 
     logger.info("MMseqs2 version is ok.")
 
