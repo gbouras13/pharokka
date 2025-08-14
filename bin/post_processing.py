@@ -533,7 +533,7 @@ class Pharok:
                     split = line.split()
                     start_stops = split[2].replace("[", "").replace("]", "").split(",")
                     contig = self.length_df["contig"][0]
-                    method = f"Aragorn:{self.aragorn_version}"
+                    method = f"profile:Aragorn:{self.aragorn_version}"
                     region = "tmRNA"
                     start = start_stops[0].replace(
                         "c", ""
@@ -921,15 +921,9 @@ class Pharok:
                     "ID="
                     + trna_df["locus_tag"]
                     + ";"
-                    # + "transl_table="
-                    # + locus_df["transl_table"].astype(str)
-                    # + ";"
                     + "gene="
                     + trna_df["trna_product"].astype(str)
                     + ";"
-                    # + "isotype="
-                    # + trna_df["isotypes"].astype(str)
-                    # + ";"
                     + "anticodon="
                     + trna_df["anticodon_gb"].astype(str)
                     + ";"
@@ -959,6 +953,7 @@ class Pharok:
                     comment="#",
                 )
                 minced_df["contig"] = minced_df["contig"].astype(str)
+                minced_df["Method"] = f"nucleotide motif:MinCED:{self.minced_version}"
                 minced_df.start = minced_df.start.astype(int)
                 minced_df.stop = minced_df.stop.astype(int)
                 minced_df[["attributes", "rpt_unit_seq"]] = minced_df[
@@ -1006,9 +1001,6 @@ class Pharok:
                     "ID="
                     + minced_df["locus_tag"]
                     + ";"
-                    # + "transl_table="
-                    # + locus_df["transl_table"].astype(str)
-                    # + ";"
                     + "rpt_type="
                     + minced_df["rpt_type"].astype(str)
                     + ";"
@@ -1071,9 +1063,6 @@ class Pharok:
                     "ID="
                     + tmrna_df["locus_tag"]
                     + ";"
-                    # + "transl_table="
-                    # + locus_df["transl_table"].astype(str)
-                    # + ";"
                     + tmrna_df["attributes"].astype(str)
                     + ";locus_tag="
                     + tmrna_df["locus_tag"]
