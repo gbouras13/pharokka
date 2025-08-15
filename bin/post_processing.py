@@ -542,7 +542,7 @@ class Pharok:
                     score = "."
                     frame = "."
                     phase = "."
-                    tag_peptide = split[3]
+                    tag_peptide = split[3].replace(",", "..")
                     tag_peptide_seq = split[4]
                     attribute = (
                         "product=transfer-messenger RNA SsrA;tag_peptide="
@@ -593,7 +593,7 @@ class Pharok:
                                 split[2].replace("[", "").replace("]", "").split(",")
                             )
                             contig = self.length_df["contig"][j]
-                            method = f"Aragorn_{self.aragorn_version}"
+                            method = f"profile:Aragorn:{self.aragorn_version}"
                             region = "tmRNA"
                             start = start_stops[0].replace(
                                 "c", ""
@@ -602,7 +602,7 @@ class Pharok:
                             score = "."
                             frame = "."
                             phase = "."
-                            tag_peptide = split[3]
+                            tag_peptide = split[3].replace(",", "..")
                             tag_peptide_seq = split[4]
                             attribute = (
                                 "product=transfer-messenger RNA SsrA;tag_peptide="
