@@ -1010,6 +1010,11 @@ class Pharok:
                     + "rpt_unit_seq="
                     + minced_df["rpt_unit_seq"].astype(str)
                     + ";"
+                    + "rpt_unit_range="
+                    + minced_df["start"].astype(str)
+                    + ".."
+                    + minced_df["stop"].astype(str)
+                    + ";"
                     + "locus_tag="
                     + minced_df["locus_tag"]
                 )
