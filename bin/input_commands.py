@@ -8,8 +8,7 @@ import pyrodigal
 import pyrodigal_gv
 from Bio import SeqIO
 from loguru import logger
-
-from bin.util import get_version
+from util import get_version
 
 
 def get_input():
