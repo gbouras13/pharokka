@@ -218,9 +218,11 @@ def run_trnascan_meta(filepath_in, out_dir, threads, num_fastas, trna_scan_model
     for i in range(1, num_fastas + 1):
         in_file = "input_subprocess" + str(i) + ".fasta"
         out_file = "trnascan_tmp" + str(i) + ".gff"
+        sec_struc_file = "trnascan_tmp" + str(i) + ".sec"
         filepath_in = os.path.join(input_tmp_dir, in_file)
         filepath_out = os.path.join(input_tmp_dir, out_file)
-        cmd = f"tRNAscan-SE {filepath_in} --thread 1 -{model} -Q -j {filepath_out}"
+        sec_out = os.path.join(input_tmp_dir, sec_struc_file)
+        cmd = f"tRNAscan-SE {filepath_in} --thread 1 -{model} -Q -j {filepath_out} -f {sec_out}"
         commands.append(cmd)
 
     n = int(threads)  # the number of parallel processes you want
@@ -251,6 +253,16 @@ def concat_trnascan_meta(out_dir, num_fastas):
 
     with open(os.path.join(out_dir, "trnascan_out.gff"), "w") as outfile:
         for fname in gffs:
+            with open(fname) as infile:
+                outfile.write(infile.read())
+
+    sec_strucs = []
+    for i in range(1, int(num_fastas) + 1):
+        sec_struc_file = "trnascan_tmp" + str(i) + ".sec"
+        sec_strucs.append(os.path.join(input_tmp_dir, sec_struc_file))
+
+    with open(os.path.join(out_dir, "trnascan_out.sec"), "w") as outfile:
+        for fname in sec_strucs:
             with open(fname) as infile:
                 outfile.write(infile.read())
 
@@ -651,6 +663,7 @@ def run_trna_scan(filepath_in, threads, out_dir, logdir, trna_scan_model):
     """
 
     out_gff = os.path.join(out_dir, "trnascan_out.gff")
+    out_sec = os.path.join(out_dir, "trnascan_out.sec")
 
     if trna_scan_model == "general":
         model = "G"
@@ -661,7 +674,7 @@ def run_trna_scan(filepath_in, threads, out_dir, logdir, trna_scan_model):
         tool="tRNAscan-SE",
         input=f"{filepath_in}",
         output=f"{out_gff}",
-        params=f"--thread {threads} -{model} -Q -j",
+        params=f"--thread {threads} -{model} -f {out_sec} -Q -j",
         logdir=logdir,
         outfile="",
     )

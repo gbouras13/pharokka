@@ -903,14 +903,40 @@ class Pharok:
                 trna_df[["anticodon", "rest"]] = trna_df["anticodon"].str.split(
                     ";gene_biotype", expand=True
                 )
-                trna_df["trna_product"] = (
-                    "tRNA-" + trna_df["isotypes"] + "(" + trna_df["anticodon"] + ")"
-                )
+
                 # Combine anticodon, start and stop into a single string for genbank
-                for index, row in trna_df.iterrows():
-                    trna_df.at[index, "anticodon_gb"] = (
-                        f"(pos:{row['start']}..{row['stop']},aa:{row['isotypes']},seq:{row['anticodon']})"
-                    )
+                # Extract anticodon positions once, before the loop
+                anticodon_positions = extract_anticodon_positions(self.out_dir)
+
+                if "note" not in trna_df.columns:
+                    trna_df["note"] = ""
+
+                # When building trna_df, assign the correct anticodon position directly
+                for idx, row in trna_df.iterrows():
+                    if row["isotypes"] == "Undet":
+                        trna_df.at[idx, "isotypes"] = "OTHER"
+                        trna_df.at[idx, "note"] = "Undetermined tRNA"
+                        continue
+                    elif row["isotypes"] == "Sup":
+                        trna_df.at[idx, "isotypes"] = "OTHER"
+                        row["isotypes"] = "OTHER"
+                        trna_df.at[idx, "note"] = "Suppressor tRNA"
+
+                    # Use the anticodon position from the extracted list if available
+                    if idx < len(anticodon_positions):
+                        start, end = anticodon_positions[idx]
+                        trna_df.at[idx, "anticodon_gb"] = (
+                            f"(pos:{start}..{end},aa:{row['isotypes']},seq:{row['anticodon']})"
+                        )
+                    else:
+                        # fallback if not enough positions found
+                        trna_df.at[idx, "anticodon_gb"] = (
+                            f"(pos:{row['start']}..{row['stop']},aa:{row['isotypes']},seq:{row['anticodon']})"
+                        )
+
+                trna_df["trna_gene"] = "tRNA-" + trna_df["isotypes"]
+                trna_df["trna_product"] = "transfer RNA-" + trna_df["isotypes"]
+
                 # Genbank example
                 # /gene="tRNA-Leu(UUR)"
                 # /anticodon=(pos:678..680,aa:Leu,seq:taa)
@@ -921,15 +947,29 @@ class Pharok:
                     "ID="
                     + trna_df["locus_tag"]
                     + ";"
-                    + "gene="
-                    + trna_df["trna_product"].astype(str)
-                    + ";"
-                    + "anticodon="
-                    + trna_df["anticodon_gb"].astype(str)
-                    + ";"
                     + "locus_tag="
                     + trna_df["locus_tag"]
+                    + ";"
+                    + "gene="
+                    + trna_df["trna_gene"].astype(str)
+                    + ";"
+                    + "product="
+                    + trna_df["trna_product"].astype(str)
+                    + ";"
+                    + trna_df["anticodon_gb"].apply(
+                        lambda x: (
+                            f"anticodon={x};"
+                            if isinstance(x, str) and x.strip()
+                            else ""
+                        )
+                    )
+                    + trna_df["note"].apply(
+                        lambda x: (
+                            f"note={x}" if isinstance(x, str) and x.strip() else ""
+                        )
+                    )
                 )
+
                 trna_df = trna_df.drop(
                     columns=[
                         "isotypes",
@@ -937,7 +977,9 @@ class Pharok:
                         "anticodon_gb",
                         "rest",
                         "trna_product",
+                        "trna_gene",
                         "locus_tag",
+                        "note",
                     ]
                 )
 
@@ -1209,9 +1251,17 @@ class Pharok:
             trna_df[["attributes", "locus_tag"]] = trna_df["attributes"].str.split(
                 ";locus_tag=", expand=True
             )
-            trna_df[["attributes", "anticodon"]] = trna_df["attributes"].str.split(
-                ";anticodon=", expand=True
+
+            # split attributes into separate columns
+            split_cols = trna_df["attributes"].str.split(
+                ";anticodon=", n=1, expand=True
             )
+            trna_df["attributes"] = split_cols[0]
+            trna_df["anticodon"] = split_cols[1] if split_cols.shape[1] > 1 else ""
+
+            # trna_df[["attributes", "anticodon"]] = trna_df["attributes"].str.split(
+            #    ";anticodon=", expand=True
+            # )
             # trna_df[["isotypes", "anticodon"]] = trna_df["isotypes"].str.split(
             #    ";anticodon=", expand=True
             # )
@@ -2277,6 +2327,31 @@ def is_trna_empty(out_dir):
     if os.stat(os.path.join(out_dir, "trnascan_out.gff")).st_size == 0:
         trna_empty = True
     return trna_empty
+
+
+# Extract exact anticodon positions from tRNAscan-SE secondary structure output
+# TODO: also extract contig name for merging on name instead of index?
+def extract_anticodon_positions(out_dir):
+    """
+    Extracts anticodon positions from a tRNAscan-SE -f output file.
+    Returns a list of tuples: (trna_name, anticodon_start, anticodon_end)
+    """
+    trna_ss_path = os.path.join(out_dir, "trnascan_out.sec")
+    positions = []
+    with open(trna_ss_path) as f:
+        for line in f:
+            if line.startswith("Type:"):
+                # Example: Type: Lys	Anticodon: TTT at 35-37 (27749-27751)	Score: 49.1
+                parts = line.split("Anticodon:")
+                if len(parts) > 1:
+                    after_anticodon = parts[1]
+                    # Find the part in brackets
+                    if "(" in after_anticodon and ")" in after_anticodon:
+                        pos_str = after_anticodon.split("(")[1].split(")")[0]
+                        # pos_str is e.g. 27749-27751
+                        start, end = pos_str.split("-")
+                        positions.append((int(start), int(end)))
+    return positions
 
 
 #### process pyhmmer hits
