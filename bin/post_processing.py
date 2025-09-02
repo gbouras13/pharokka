@@ -1250,27 +1250,6 @@ class Pharok:
             trna_df.start = trna_df.start.astype(int)
             trna_df.stop = trna_df.stop.astype(int)
 
-            # trna_df[["attributes", "locus_tag"]] = trna_df["attributes"].str.split(
-            #    ";locus_tag=", expand=True
-            # )
-
-            # split attributes into separate columns
-            # split_cols = trna_df["attributes"].str.split(
-            #    ";anticodon=", n=1, expand=True
-            # )
-            # trna_df["attributes"] = split_cols[0]
-            # trna_df["anticodon"] = split_cols[1] if split_cols.shape[1] > 1 else ""
-
-            # trna_df[["attributes", "anticodon"]] = trna_df["attributes"].str.split(
-            #    ";anticodon=", expand=True
-            # )
-            # trna_df[["isotypes", "anticodon"]] = trna_df["isotypes"].str.split(
-            #    ";anticodon=", expand=True
-            # )
-            # trna_df["trna_product"] = (
-            #    "tRNA-" + trna_df["isotypes"] + "(" + trna_df["anticodon"] + ")"
-            # )
-
         #### CRISPRs
         if self.crispr_count > 0:
             crispr_df = self.total_gff[self.total_gff["Region"] == "repeat_region"]
@@ -1278,12 +1257,6 @@ class Pharok:
             crispr_df.contig = crispr_df.contig.astype(str)
             crispr_df.start = crispr_df.start.astype(int)
             crispr_df.stop = crispr_df.stop.astype(int)
-            # crispr_df[["attributes", "locus_tag"]] = crispr_df["attributes"].str.split(
-            #    ";locus_tag=", expand=True
-            # )
-            # crispr_df[["attributes", "rpt_unit_seq"]] = crispr_df[
-            #    "attributes"
-            # ].str.split(";rpt_unit_seq=", expand=True)
 
         ### TMRNAs
         if self.tmrna_flag is True:
@@ -1292,9 +1265,6 @@ class Pharok:
             tmrna_df.contig = tmrna_df.contig.astype(str)
             tmrna_df.start = tmrna_df.start.astype(int)
             tmrna_df.stop = tmrna_df.stop.astype(int)
-            # tmrna_df[["attributes", "locus_tag"]] = tmrna_df["attributes"].str.split(
-            #    ";locus_tag=", expand=True
-            # )
 
         with open(os.path.join(self.out_dir, self.prefix + ".tbl"), "w") as f:
             for index, row in self.length_df.iterrows():
