@@ -1274,31 +1274,35 @@ class Pharok:
         #### CRISPRs
         if self.crispr_count > 0:
             crispr_df = self.total_gff[self.total_gff["Region"] == "repeat_region"]
+            crispr_df = parse_attributes_column(crispr_df)
             crispr_df.contig = crispr_df.contig.astype(str)
             crispr_df.start = crispr_df.start.astype(int)
             crispr_df.stop = crispr_df.stop.astype(int)
-            crispr_df[["attributes", "locus_tag"]] = crispr_df["attributes"].str.split(
-                ";locus_tag=", expand=True
-            )
-            crispr_df[["attributes", "rpt_unit_seq"]] = crispr_df[
-                "attributes"
-            ].str.split(";rpt_unit_seq=", expand=True)
+            # crispr_df[["attributes", "locus_tag"]] = crispr_df["attributes"].str.split(
+            #    ";locus_tag=", expand=True
+            # )
+            # crispr_df[["attributes", "rpt_unit_seq"]] = crispr_df[
+            #    "attributes"
+            # ].str.split(";rpt_unit_seq=", expand=True)
 
         ### TMRNAs
         if self.tmrna_flag is True:
             tmrna_df = self.total_gff[self.total_gff["Region"] == "tmRNA"]
+            tmrna_df = parse_attributes_column(tmrna_df)
             tmrna_df.contig = tmrna_df.contig.astype(str)
             tmrna_df.start = tmrna_df.start.astype(int)
             tmrna_df.stop = tmrna_df.stop.astype(int)
-            tmrna_df[["attributes", "locus_tag"]] = tmrna_df["attributes"].str.split(
-                ";locus_tag=", expand=True
-            )
+            # tmrna_df[["attributes", "locus_tag"]] = tmrna_df["attributes"].str.split(
+            #    ";locus_tag=", expand=True
+            # )
 
         with open(os.path.join(self.out_dir, self.prefix + ".tbl"), "w") as f:
             for index, row in self.length_df.iterrows():
                 contig = str(row["contig"])
                 f.write(">Feature " + contig + "\n")
                 subset_df = self.merged_df[self.merged_df["contig"] == contig]
+                subset_df.drop(columns=["transl_table"], inplace=True)
+                subset_df = parse_attributes_column(subset_df)
                 for index, row in subset_df.iterrows():
                     start = str(row["start"])
                     stop = str(row["stop"])
@@ -1325,9 +1329,21 @@ class Pharok:
                         + "\t"
                         + ""
                         + "\t"
-                        + "locus_tag"
+                        + "function"
                         + "\t"
-                        + str(row["locus_tag"])
+                        + str(row["function"])
+                        + "\n"
+                    )
+                    f.write(
+                        ""
+                        + "\t"
+                        + ""
+                        + "\t"
+                        + ""
+                        + "\t"
+                        + "inference"
+                        + "\t"
+                        + str(row["Method"])
                         + "\n"
                     )
                     f.write(
@@ -1382,6 +1398,18 @@ class Pharok:
                             + "\t"
                             + ""
                             + "\t"
+                            + "inference"
+                            + "\t"
+                            + str(row["Method"])
+                            + "\n"
+                        )
+                        f.write(
+                            ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + ""
+                            + "\t"
                             + "anticodon"
                             + "\t"
                             + str(row["anticodon"])
@@ -1416,9 +1444,9 @@ class Pharok:
                             + "\t"
                             + ""
                             + "\t"
-                            + "locus_tag"
+                            + "inference"
                             + "\t"
-                            + str(row["locus_tag"])
+                            + str(row["Method"])
                             + "\n"
                         )
                         f.write(
@@ -1428,7 +1456,43 @@ class Pharok:
                             + "\t"
                             + ""
                             + "\t"
-                            + "product"
+                            + "rpt_family"
+                            + "\t"
+                            + str(row["rpt_family"])
+                            + "\n"
+                        )
+                        f.write(
+                            ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + "rpt_type"
+                            + "\t"
+                            + str(row["rpt_type"])
+                            + "\n"
+                        )
+                        f.write(
+                            ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + "rpt_unit_range"
+                            + "\t"
+                            + str(row["rpt_unit_range"])
+                            + "\n"
+                        )
+                        f.write(
+                            ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + "rpt_unit_seq"
                             + "\t"
                             + str(row["rpt_unit_seq"])
                             + "\n"
@@ -1449,9 +1513,9 @@ class Pharok:
                             + "\t"
                             + ""
                             + "\t"
-                            + "locus_tag"
+                            + "inference"
                             + "\t"
-                            + str(row["locus_tag"])
+                            + str(row["Method"])
                             + "\n"
                         )
                         f.write(
@@ -1463,7 +1527,31 @@ class Pharok:
                             + "\t"
                             + "product"
                             + "\t"
-                            + "transfer-messenger RNA, SsrA"
+                            + str(row["product"])
+                            + "\n"
+                        )
+                        f.write(
+                            ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + "tag_peptide"
+                            + "\t"
+                            + str(row["tag_peptide"])
+                            + "\n"
+                        )
+                        f.write(
+                            ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + "tag_peptide_sequence"
+                            + "\t"
+                            + str(row["tag_peptide_sequence"])
                             + "\n"
                         )
 
