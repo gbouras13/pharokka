@@ -955,17 +955,16 @@ class Pharok:
                     + ";"
                     + "product="
                     + trna_df["trna_product"].astype(str)
-                    + ";"
                     + trna_df["anticodon_gb"].apply(
                         lambda x: (
-                            f"anticodon={x};"
+                            f";anticodon={x}"
                             if isinstance(x, str) and x.strip()
                             else ""
                         )
                     )
                     + trna_df["note"].apply(
                         lambda x: (
-                            f"note={x}" if isinstance(x, str) and x.strip() else ""
+                            f";note={x}" if isinstance(x, str) and x.strip() else ""
                         )
                     )
                 )
@@ -1245,19 +1244,22 @@ class Pharok:
                 self.total_gff["Method"] == f"profile:tRNAscan-SE:{self.trna_version}"
             ]
             # keep only trnas and pseudogenes
+
+            trna_df = parse_attributes_column(trna_df)
             trna_df.contig = trna_df.contig.astype(str)
             trna_df.start = trna_df.start.astype(int)
             trna_df.stop = trna_df.stop.astype(int)
-            trna_df[["attributes", "locus_tag"]] = trna_df["attributes"].str.split(
-                ";locus_tag=", expand=True
-            )
+
+            # trna_df[["attributes", "locus_tag"]] = trna_df["attributes"].str.split(
+            #    ";locus_tag=", expand=True
+            # )
 
             # split attributes into separate columns
-            split_cols = trna_df["attributes"].str.split(
-                ";anticodon=", n=1, expand=True
-            )
-            trna_df["attributes"] = split_cols[0]
-            trna_df["anticodon"] = split_cols[1] if split_cols.shape[1] > 1 else ""
+            # split_cols = trna_df["attributes"].str.split(
+            #    ";anticodon=", n=1, expand=True
+            # )
+            # trna_df["attributes"] = split_cols[0]
+            # trna_df["anticodon"] = split_cols[1] if split_cols.shape[1] > 1 else ""
 
             # trna_df[["attributes", "anticodon"]] = trna_df["attributes"].str.split(
             #    ";anticodon=", expand=True
@@ -1356,9 +1358,9 @@ class Pharok:
                             + "\t"
                             + ""
                             + "\t"
-                            + "product"
+                            + "gene"
                             + "\t"
-                            + str(row["anticodon"])
+                            + str(row["gene"])
                             + "\n"
                         )
                         f.write(
@@ -1368,11 +1370,36 @@ class Pharok:
                             + "\t"
                             + ""
                             + "\t"
-                            + "locus_tag"
+                            + "product"
                             + "\t"
-                            + str(row["locus_tag"])
+                            + str(row["product"])
                             + "\n"
                         )
+                        f.write(
+                            ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + "anticodon"
+                            + "\t"
+                            + str(row["anticodon"])
+                            + "\n"
+                        )
+                        if pd.notna(row["note"]):
+                            f.write(
+                                ""
+                                + "\t"
+                                + ""
+                                + "\t"
+                                + ""
+                                + "\t"
+                                + "note"
+                                + "\t"
+                                + str(row["note"])
+                                + "\n"
+                            )
                 if self.crispr_count > 0:
                     subset_crispr_df = crispr_df[crispr_df["contig"] == contig]
                     for index, row in subset_crispr_df.iterrows():
@@ -2697,3 +2724,22 @@ def check_and_create_directory(directory):
     """
     if os.path.isdir(directory) == False:
         os.mkdir(directory)
+
+
+def parse_attributes_column(df):
+    # Split the attributes column into key-value pairs
+    def parse_attributes(attr_str):
+        if not attr_str:
+            return {}
+        pairs = attr_str.split(";")
+        return dict(pair.split("=", 1) for pair in pairs if "=" in pair)
+
+    # Apply the parsing function to each row
+    parsed = df["attributes"].apply(parse_attributes)
+
+    # Convert the list of dicts into a DataFrame
+    attributes_df = pd.DataFrame(parsed.tolist())
+
+    # Concatenate with the original DataFrame (if you want to keep other columns)
+    result_df = pd.concat([df.reset_index(drop=True), attributes_df], axis=1)
+    return result_df
