@@ -1160,9 +1160,7 @@ class Pharok:
         total_gff.stop = total_gff.stop.astype(int)
 
         # sorts all features by start
-        total_gff = total_gff.groupby(
-            ["contig"], sort=False, as_index=False, group_keys=True
-        ).apply(pd.DataFrame.sort_values, "start", ascending=True)
+        total_gff = total_gff.sort_values(by=["contig", "start"]).reset_index(drop=True)
 
         # write final gff to file
         with open(os.path.join(self.out_dir, self.prefix + ".gff"), "a") as f:
@@ -2315,9 +2313,9 @@ def create_mmseqs_tophits(out_dir):
     # optimise the tophits generation
     # Group by 'gene' and find the top hit for each group
     tophits_df = (
-        mmseqs_df.groupby("gene", group_keys=True)
-        .apply(lambda group: group.nsmallest(1, "mmseqs_eVal"))
-        .reset_index(drop=True)
+       mmseqs_df.sort_values("mmseqs_eVal")
+       .drop_duplicates(subset="gene", keep="first")
+       .reset_index(drop=True)
     )
 
     # create tophits df
@@ -2546,10 +2544,11 @@ def process_vfdb_results(out_dir, merged_df, proteins_flag=False):
     # optimise the tophits generation
     # Group by 'gene' and find the top hit for each group
     tophits_df = (
-        vfdb_df.groupby("gene", group_keys=True)
-        .apply(lambda group: group.nsmallest(1, "vfdb_eVal"))
-        .reset_index(drop=True)
+       vfdb_df.sort_values("vfdb_eVal")
+       .drop_duplicates(subset="gene", keep="first")
+       .reset_index(drop=True)
     )
+
 
     # create tophits df
     tophits_df = tophits_df[
@@ -2644,11 +2643,11 @@ def process_card_results(out_dir, merged_df, db_dir, proteins_flag=False):
     touch_file(card_file)
     card_df = pd.read_csv(card_file, delimiter="\t", index_col=False, names=col_list)
 
-    #
+    # Group by 'gene' and find the top hit for each group
     tophits_df = (
-        card_df.groupby("gene", group_keys=True)
-        .apply(lambda group: group.nsmallest(1, "CARD_eVal"))
-        .reset_index(drop=True)
+       card_df.sort_values("CARD_eVal")
+       .drop_duplicates(subset="gene", keep="first")
+       .reset_index(drop=True)
     )
 
     # create tophits df
