@@ -1228,12 +1228,8 @@ class Pharok:
         elif self.gene_predictor == "genbank":
             cds_df = self.total_gff[self.total_gff["Method"] == "CUSTOM"]
 
-        cds_df[["attributes", "locus_tag"]] = cds_df["attributes"].str.split(
-            ";locus_tag=", expand=True
-        )
-        cds_df[["locus_tag", "rest"]] = cds_df["locus_tag"].str.split(
-            ";function=", expand=True
-        )
+        # Why is cds_df in this function? It does not seem to be used later.
+        cds_df = parse_attributes_column(cds_df)
 
         ### trnas
         # check if no trnas
@@ -1269,6 +1265,8 @@ class Pharok:
                 contig = str(row["contig"])
                 f.write(">Feature " + contig + "\n")
                 subset_df = self.merged_df[self.merged_df["contig"] == contig]
+                # drop transl_table column because it is also present in the attributes column
+                # and will be parsed into its own column by parse_attributes_column
                 subset_df.drop(columns=["transl_table"], inplace=True)
                 subset_df = parse_attributes_column(subset_df)
                 for index, row in subset_df.iterrows():
@@ -1383,7 +1381,7 @@ class Pharok:
                             + str(row["anticodon"])
                             + "\n"
                         )
-                        if pd.notna(row["note"]):
+                        if pd.notna(row.get("note", None)):
                             f.write(
                                 ""
                                 + "\t"
