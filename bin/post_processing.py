@@ -1228,9 +1228,6 @@ class Pharok:
         elif self.gene_predictor == "genbank":
             cds_df = self.total_gff[self.total_gff["Method"] == "CUSTOM"]
 
-        # Why is cds_df in this function? It does not seem to be used later.
-        cds_df = parse_attributes_column(cds_df)
-
         ### trnas
         # check if no trnas
         if self.trna_empty is False:
