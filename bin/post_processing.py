@@ -329,13 +329,19 @@ class Pharok:
 
         # add columns
         if self.gene_predictor == "phanotate":
-            merged_df["Method"] = f"PHANOTATE_{self.phanotate_version}"
+            merged_df["Method"] = (
+                f"ab initio prediction:PHANOTATE:{self.phanotate_version}"
+            )
         elif self.gene_predictor == "prodigal":
-            merged_df["Method"] = f"Pyrodigal_{self.pyrodigal_version}"
+            merged_df["Method"] = (
+                f"ab initio prediction:Pyrodigal:{self.pyrodigal_version}"
+            )
         elif self.gene_predictor == "genbank":
             merged_df["Method"] = "CUSTOM"
         elif self.gene_predictor == "prodigal-gv":
-            merged_df["Method"] = f"Pyrodigal-gv_{self.pyrodigal_gv_version}"
+            merged_df["Method"] = (
+                f"ab initio prediction:Pyrodigal-gv:{self.pyrodigal_gv_version}"
+            )
         merged_df["Region"] = "CDS"
 
         # # replace with No_PHROG if nothing found
@@ -527,7 +533,7 @@ class Pharok:
                     split = line.split()
                     start_stops = split[2].replace("[", "").replace("]", "").split(",")
                     contig = self.length_df["contig"][0]
-                    method = f"Aragorn_{self.aragorn_version}"
+                    method = f"profile:Aragorn:{self.aragorn_version}"
                     region = "tmRNA"
                     start = start_stops[0].replace(
                         "c", ""
@@ -536,7 +542,7 @@ class Pharok:
                     score = "."
                     frame = "."
                     phase = "."
-                    tag_peptide = split[3]
+                    tag_peptide = split[3].replace(",", "..")
                     tag_peptide_seq = split[4]
                     attribute = (
                         "product=transfer-messenger RNA SsrA;tag_peptide="
@@ -587,7 +593,7 @@ class Pharok:
                                 split[2].replace("[", "").replace("]", "").split(",")
                             )
                             contig = self.length_df["contig"][j]
-                            method = f"Aragorn_{self.aragorn_version}"
+                            method = f"profile:Aragorn:{self.aragorn_version}"
                             region = "tmRNA"
                             start = start_stops[0].replace(
                                 "c", ""
@@ -596,7 +602,7 @@ class Pharok:
                             score = "."
                             frame = "."
                             phase = "."
-                            tag_peptide = split[3]
+                            tag_peptide = split[3].replace(",", "..")
                             tag_peptide_seq = split[4]
                             attribute = (
                                 "product=transfer-messenger RNA SsrA;tag_peptide="
@@ -843,7 +849,8 @@ class Pharok:
                 trna_df["contig"] = trna_df["contig"].astype(str)
 
                 # convert the method to update with version
-                trna_df["Method"] = f"tRNAscan-SE_{self.trna_version}"
+                trna_df["Method"] = f"profile:tRNAscan-SE:{self.trna_version}"
+                # inference="COORDINATES:profile:tRNAscan:2.1"
 
                 # index hack if meta mode
                 if self.meta_mode == True:
@@ -896,36 +903,82 @@ class Pharok:
                 trna_df[["anticodon", "rest"]] = trna_df["anticodon"].str.split(
                     ";gene_biotype", expand=True
                 )
-                trna_df["trna_product"] = (
-                    "tRNA-" + trna_df["isotypes"] + "(" + trna_df["anticodon"] + ")"
-                )
+
+                # Combine anticodon, start and stop into a single string for genbank
+                # Extract anticodon positions once, before the loop
+                anticodon_positions = extract_anticodon_positions(self.out_dir)
+
+                if "note" not in trna_df.columns:
+                    trna_df["note"] = ""
+
+                # When building trna_df, assign the correct anticodon position directly
+                for idx, row in trna_df.iterrows():
+                    if row["isotypes"] == "Undet":
+                        trna_df.at[idx, "isotypes"] = "OTHER"
+                        trna_df.at[idx, "note"] = "Undetermined tRNA"
+                        continue
+                    elif row["isotypes"] == "Sup":
+                        trna_df.at[idx, "isotypes"] = "OTHER"
+                        row["isotypes"] = "OTHER"
+                        trna_df.at[idx, "note"] = "Suppressor tRNA"
+
+                    # Use the anticodon position from the extracted list if available
+                    if idx < len(anticodon_positions):
+                        start, end = anticodon_positions[idx]
+                        trna_df.at[idx, "anticodon_gb"] = (
+                            f"(pos:{start}..{end},aa:{row['isotypes']},seq:{row['anticodon']})"
+                        )
+                    else:
+                        # fallback if not enough positions found
+                        trna_df.at[idx, "anticodon_gb"] = (
+                            f"(pos:{row['start']}..{row['stop']},aa:{row['isotypes']},seq:{row['anticodon']})"
+                        )
+
+                trna_df["trna_gene"] = "tRNA-" + trna_df["isotypes"]
+                trna_df["trna_product"] = "transfer RNA-" + trna_df["isotypes"]
+
+                # Genbank example
+                # /gene="tRNA-Leu(UUR)"
+                # /anticodon=(pos:678..680,aa:Leu,seq:taa)
+                # /product="transfer RNA-Leu(UUR)"
+
                 trna_df = trna_df.drop(columns=["attributes"])
                 trna_df["attributes"] = (
                     "ID="
                     + trna_df["locus_tag"]
                     + ";"
-                    + "transl_table="
-                    + locus_df["transl_table"].astype(str)
-                    + ";"
-                    + "trna="
-                    + trna_df["trna_product"].astype(str)
-                    + ";"
-                    + "isotype="
-                    + trna_df["isotypes"].astype(str)
-                    + ";"
-                    + "anticodon="
-                    + trna_df["anticodon"].astype(str)
-                    + ";"
                     + "locus_tag="
                     + trna_df["locus_tag"]
+                    + ";"
+                    + "gene="
+                    + trna_df["trna_gene"].astype(str)
+                    + ";"
+                    + "product="
+                    + trna_df["trna_product"].astype(str)
+                    + trna_df["anticodon_gb"].apply(
+                        lambda x: (
+                            f";anticodon={x}"
+                            if isinstance(x, str) and x.strip()
+                            else ""
+                        )
+                    )
+                    + trna_df["note"].apply(
+                        lambda x: (
+                            f";note={x}" if isinstance(x, str) and x.strip() else ""
+                        )
+                    )
                 )
+
                 trna_df = trna_df.drop(
                     columns=[
                         "isotypes",
                         "anticodon",
+                        "anticodon_gb",
                         "rest",
                         "trna_product",
+                        "trna_gene",
                         "locus_tag",
+                        "note",
                     ]
                 )
 
@@ -941,6 +994,7 @@ class Pharok:
                     comment="#",
                 )
                 minced_df["contig"] = minced_df["contig"].astype(str)
+                minced_df["Method"] = f"nucleotide motif:MinCED:{self.minced_version}"
                 minced_df.start = minced_df.start.astype(int)
                 minced_df.stop = minced_df.stop.astype(int)
                 minced_df[["attributes", "rpt_unit_seq"]] = minced_df[
@@ -988,9 +1042,6 @@ class Pharok:
                     "ID="
                     + minced_df["locus_tag"]
                     + ";"
-                    + "transl_table="
-                    + locus_df["transl_table"].astype(str)
-                    + ";"
                     + "rpt_type="
                     + minced_df["rpt_type"].astype(str)
                     + ";"
@@ -999,6 +1050,11 @@ class Pharok:
                     + ";"
                     + "rpt_unit_seq="
                     + minced_df["rpt_unit_seq"].astype(str)
+                    + ";"
+                    + "rpt_unit_range="
+                    + minced_df["start"].astype(str)
+                    + ".."
+                    + minced_df["stop"].astype(str)
                     + ";"
                     + "locus_tag="
                     + minced_df["locus_tag"]
@@ -1053,9 +1109,6 @@ class Pharok:
                     "ID="
                     + tmrna_df["locus_tag"]
                     + ";"
-                    + "transl_table="
-                    + locus_df["transl_table"].astype(str)
-                    + ";"
                     + tmrna_df["attributes"].astype(str)
                     + ";locus_tag="
                     + tmrna_df["locus_tag"]
@@ -1107,9 +1160,7 @@ class Pharok:
         total_gff.stop = total_gff.stop.astype(int)
 
         # sorts all features by start
-        total_gff = total_gff.groupby(
-            ["contig"], sort=False, as_index=False, group_keys=True
-        ).apply(pd.DataFrame.sort_values, "start", ascending=True)
+        total_gff = total_gff.sort_values(by=["contig", "start"]).reset_index(drop=True)
 
         # write final gff to file
         with open(os.path.join(self.out_dir, self.prefix + ".gff"), "a") as f:
@@ -1161,77 +1212,63 @@ class Pharok:
 
         if self.gene_predictor == "phanotate":
             cds_df = self.total_gff[
-                self.total_gff["Method"] == f"PHANOTATE_{self.phanotate_version}"
+                self.total_gff["Method"]
+                == f"ab initio prediction:PHANOTATE{self.phanotate_version}"
             ]
         elif self.gene_predictor == "prodigal":
             cds_df = self.total_gff[
-                self.total_gff["Method"] == f"Pyrodigal_{self.pyrodigal_version}"
+                self.total_gff["Method"]
+                == f"ab initio prediction:Pyrodigal:{self.pyrodigal_version}"
             ]
         elif self.gene_predictor == "prodigal-gv":
             cds_df = self.total_gff[
-                self.total_gff["Method"] == f"Pyrodigal-gv_{self.pyrodigal_gv_version}"
+                self.total_gff["Method"]
+                == f"ab initio prediction:Pyrodigal-gv:{self.pyrodigal_gv_version}"
             ]
         elif self.gene_predictor == "genbank":
             cds_df = self.total_gff[self.total_gff["Method"] == "CUSTOM"]
 
-        cds_df[["attributes", "locus_tag"]] = cds_df["attributes"].str.split(
-            ";locus_tag=", expand=True
-        )
-        cds_df[["locus_tag", "rest"]] = cds_df["locus_tag"].str.split(
-            ";function=", expand=True
-        )
+        # Why is cds_df in this function? It does not seem to be used later.
+        cds_df = parse_attributes_column(cds_df)
 
         ### trnas
         # check if no trnas
         if self.trna_empty is False:
             trna_df = self.total_gff[
-                self.total_gff["Method"] == f"tRNAscan-SE_{self.trna_version}"
+                self.total_gff["Method"] == f"profile:tRNAscan-SE:{self.trna_version}"
             ]
             # keep only trnas and pseudogenes
+
+            trna_df = parse_attributes_column(trna_df)
             trna_df.contig = trna_df.contig.astype(str)
             trna_df.start = trna_df.start.astype(int)
             trna_df.stop = trna_df.stop.astype(int)
-            trna_df[["attributes", "locus_tag"]] = trna_df["attributes"].str.split(
-                ";locus_tag=", expand=True
-            )
-            trna_df[["attributes", "isotypes"]] = trna_df["attributes"].str.split(
-                ";isotype=", expand=True
-            )
-            trna_df[["isotypes", "anticodon"]] = trna_df["isotypes"].str.split(
-                ";anticodon=", expand=True
-            )
-            trna_df["trna_product"] = (
-                "tRNA-" + trna_df["isotypes"] + "(" + trna_df["anticodon"] + ")"
-            )
 
         #### CRISPRs
         if self.crispr_count > 0:
             crispr_df = self.total_gff[self.total_gff["Region"] == "repeat_region"]
+            crispr_df = parse_attributes_column(crispr_df)
             crispr_df.contig = crispr_df.contig.astype(str)
             crispr_df.start = crispr_df.start.astype(int)
             crispr_df.stop = crispr_df.stop.astype(int)
-            crispr_df[["attributes", "locus_tag"]] = crispr_df["attributes"].str.split(
-                ";locus_tag=", expand=True
-            )
-            crispr_df[["attributes", "rpt_unit_seq"]] = crispr_df[
-                "attributes"
-            ].str.split(";rpt_unit_seq=", expand=True)
 
         ### TMRNAs
         if self.tmrna_flag is True:
             tmrna_df = self.total_gff[self.total_gff["Region"] == "tmRNA"]
+            tmrna_df = parse_attributes_column(tmrna_df)
             tmrna_df.contig = tmrna_df.contig.astype(str)
             tmrna_df.start = tmrna_df.start.astype(int)
             tmrna_df.stop = tmrna_df.stop.astype(int)
-            tmrna_df[["attributes", "locus_tag"]] = tmrna_df["attributes"].str.split(
-                ";locus_tag=", expand=True
-            )
 
         with open(os.path.join(self.out_dir, self.prefix + ".tbl"), "w") as f:
             for index, row in self.length_df.iterrows():
                 contig = str(row["contig"])
                 f.write(">Feature " + contig + "\n")
                 subset_df = self.merged_df[self.merged_df["contig"] == contig]
+                # drop transl_table column because it is also present in the attributes column
+                # and will be parsed into its own column by parse_attributes_column
+                subset_df.drop(columns=["transl_table"], inplace=True)
+                subset_df = parse_attributes_column(subset_df)
                 for index, row in subset_df.iterrows():
                     start = str(row["start"])
                     stop = str(row["stop"])
@@ -1258,9 +1295,21 @@ class Pharok:
                         + "\t"
                         + ""
                         + "\t"
-                        + "locus_tag"
+                        + "function"
                         + "\t"
-                        + str(row["locus_tag"])
+                        + str(row["function"])
+                        + "\n"
+                    )
+                    f.write(
+                        ""
+                        + "\t"
+                        + ""
+                        + "\t"
+                        + ""
+                        + "\t"
+                        + "inference"
+                        + "\t"
+                        + str(row["Method"])
                         + "\n"
                     )
                     f.write(
@@ -1291,9 +1340,9 @@ class Pharok:
                             + "\t"
                             + ""
                             + "\t"
-                            + "product"
+                            + "gene"
                             + "\t"
-                            + str(row["trna_product"])
+                            + str(row["gene"])
                             + "\n"
                         )
                         f.write(
@@ -1303,11 +1352,48 @@ class Pharok:
                             + "\t"
                             + ""
                             + "\t"
-                            + "locus_tag"
+                            + "product"
                             + "\t"
-                            + str(row["locus_tag"])
+                            + str(row["product"])
                             + "\n"
                         )
+                        f.write(
+                            ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + "inference"
+                            + "\t"
+                            + str(row["Method"])
+                            + "\n"
+                        )
+                        f.write(
+                            ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + "anticodon"
+                            + "\t"
+                            + str(row["anticodon"])
+                            + "\n"
+                        )
+                        if pd.notna(row.get("note", None)):
+                            f.write(
+                                ""
+                                + "\t"
+                                + ""
+                                + "\t"
+                                + ""
+                                + "\t"
+                                + "note"
+                                + "\t"
+                                + str(row["note"])
+                                + "\n"
+                            )
                 if self.crispr_count > 0:
                     subset_crispr_df = crispr_df[crispr_df["contig"] == contig]
                     for index, row in subset_crispr_df.iterrows():
@@ -1324,9 +1410,9 @@ class Pharok:
                             + "\t"
                             + ""
                             + "\t"
-                            + "locus_tag"
+                            + "inference"
                             + "\t"
-                            + str(row["locus_tag"])
+                            + str(row["Method"])
                             + "\n"
                         )
                         f.write(
@@ -1336,7 +1422,43 @@ class Pharok:
                             + "\t"
                             + ""
                             + "\t"
-                            + "product"
+                            + "rpt_family"
+                            + "\t"
+                            + str(row["rpt_family"])
+                            + "\n"
+                        )
+                        f.write(
+                            ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + "rpt_type"
+                            + "\t"
+                            + str(row["rpt_type"])
+                            + "\n"
+                        )
+                        f.write(
+                            ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + "rpt_unit_range"
+                            + "\t"
+                            + str(row["rpt_unit_range"])
+                            + "\n"
+                        )
+                        f.write(
+                            ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + "rpt_unit_seq"
                             + "\t"
                             + str(row["rpt_unit_seq"])
                             + "\n"
@@ -1357,9 +1479,9 @@ class Pharok:
                             + "\t"
                             + ""
                             + "\t"
-                            + "locus_tag"
+                            + "inference"
                             + "\t"
-                            + str(row["locus_tag"])
+                            + str(row["Method"])
                             + "\n"
                         )
                         f.write(
@@ -1371,7 +1493,31 @@ class Pharok:
                             + "\t"
                             + "product"
                             + "\t"
-                            + "transfer-messenger RNA, SsrA"
+                            + str(row["product"])
+                            + "\n"
+                        )
+                        f.write(
+                            ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + "tag_peptide"
+                            + "\t"
+                            + str(row["tag_peptide"])
+                            + "\n"
+                        )
+                        f.write(
+                            ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + "tag_peptide_sequence"
+                            + "\t"
+                            + str(row["tag_peptide_sequence"])
                             + "\n"
                         )
 
@@ -2165,9 +2311,9 @@ def create_mmseqs_tophits(out_dir):
     # optimise the tophits generation
     # Group by 'gene' and find the top hit for each group
     tophits_df = (
-        mmseqs_df.groupby("gene", group_keys=True)
-        .apply(lambda group: group.nsmallest(1, "mmseqs_eVal"))
-        .reset_index(drop=True)
+       mmseqs_df.sort_values("mmseqs_eVal")
+       .drop_duplicates(subset="gene", keep="first")
+       .reset_index(drop=True)
     )
 
     # create tophits df
@@ -2281,6 +2427,31 @@ def is_trna_empty(out_dir):
     return trna_empty
 
 
+# Extract exact anticodon positions from tRNAscan-SE secondary structure output
+# TODO: also extract contig name for merging on name instead of index?
+def extract_anticodon_positions(out_dir):
+    """
+    Extracts anticodon positions from a tRNAscan-SE -f output file.
+    Returns a list of tuples: (trna_name, anticodon_start, anticodon_end)
+    """
+    trna_ss_path = os.path.join(out_dir, "trnascan_out.sec")
+    positions = []
+    with open(trna_ss_path) as f:
+        for line in f:
+            if line.startswith("Type:"):
+                # Example: Type: Lys	Anticodon: TTT at 35-37 (27749-27751)	Score: 49.1
+                parts = line.split("Anticodon:")
+                if len(parts) > 1:
+                    after_anticodon = parts[1]
+                    # Find the part in brackets
+                    if "(" in after_anticodon and ")" in after_anticodon:
+                        pos_str = after_anticodon.split("(")[1].split(")")[0]
+                        # pos_str is e.g. 27749-27751
+                        start, end = pos_str.split("-")
+                        positions.append((int(start), int(end)))
+    return positions
+
+
 #### process pyhmmer hits
 def process_pyhmmer_results(merged_df, pyhmmer_results_dict):
     """
@@ -2388,10 +2559,11 @@ def process_vfdb_results(out_dir, merged_df, proteins_flag=False):
     # optimise the tophits generation
     # Group by 'gene' and find the top hit for each group
     tophits_df = (
-        vfdb_df.groupby("gene", group_keys=True)
-        .apply(lambda group: group.nsmallest(1, "vfdb_eVal"))
-        .reset_index(drop=True)
+       vfdb_df.sort_values("vfdb_eVal")
+       .drop_duplicates(subset="gene", keep="first")
+       .reset_index(drop=True)
     )
+
 
     # create tophits df
     tophits_df = tophits_df[
@@ -2487,10 +2659,12 @@ def process_card_results(out_dir, merged_df, db_dir, proteins_flag=False):
     card_df = pd.read_csv(card_file, delimiter="\t", index_col=False, names=col_list)
     card_df['CARD_eVal'] = card_df['CARD_eVal'].astype(float)  # issue 390 https://stackoverflow.com/questions/70484024/column-has-dtype-object-cannot-use-method-nlargest-with-this-dtype
     #
+    # Group by 'gene' and find the top hit for each group
+
     tophits_df = (
-        card_df.groupby("gene", group_keys=True)
-        .apply(lambda group: group.nsmallest(1, "CARD_eVal"))
-        .reset_index(drop=True)
+       card_df.sort_values("CARD_eVal")
+       .drop_duplicates(subset="gene", keep="first")
+       .reset_index(drop=True)
     )
 
     # create tophits df
@@ -2624,3 +2798,22 @@ def check_and_create_directory(directory):
     """
     if os.path.isdir(directory) == False:
         os.mkdir(directory)
+
+
+def parse_attributes_column(df):
+    # Split the attributes column into key-value pairs
+    def parse_attributes(attr_str):
+        if not attr_str:
+            return {}
+        pairs = attr_str.split(";")
+        return dict(pair.split("=", 1) for pair in pairs if "=" in pair)
+
+    # Apply the parsing function to each row
+    parsed = df["attributes"].apply(parse_attributes)
+
+    # Convert the list of dicts into a DataFrame
+    attributes_df = pd.DataFrame(parsed.tolist())
+
+    # Concatenate with the original DataFrame (if you want to keep other columns)
+    result_df = pd.concat([df.reset_index(drop=True), attributes_df], axis=1)
+    return result_df
