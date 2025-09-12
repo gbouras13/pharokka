@@ -58,6 +58,20 @@ VERSION_DICTIONARY = {
     }
 }
 
+VERSION_DICTIONARY = {
+    "1.8.0": {
+        "md5": "ABC",
+        "major": 1,
+        "minor": 8,
+        "minorest": 0,
+        "db_url": "https://zenodo.org/record/ABC/files/pharokka_v1.8.0_databases.tar.gz",
+        "dir_name": "pharokka_v1.8.0_databases",
+        "inphared_mash": "9Aug2025_genomes.fa.msh",
+        "inphared_annot": "9Aug2025_data.tsv",
+    }
+}
+
+
 
 PHROG_DB_NAMES = [
     #"phrogs_db",

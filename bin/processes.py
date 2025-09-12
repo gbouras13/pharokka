@@ -991,7 +991,7 @@ def run_mash_dist(out_dir, db_dir, mash_distance, logdir):
     """
 
     mash_sketch = os.path.join(out_dir, "input_mash_sketch.msh")
-    phrog_sketch = os.path.join(db_dir, "1Aug2023_genomes.fa.msh")
+    phrog_sketch = os.path.join(db_dir, "9Aug2025_genomes.fa.msh")
     mash_tsv = os.path.join(out_dir, "mash_out.tsv")
 
     mash_dist = ExternalTool(
