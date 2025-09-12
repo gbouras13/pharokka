@@ -1210,24 +1210,6 @@ class Pharok:
 
         self.total_gff = self.total_gff.reset_index(drop=True)
 
-        if self.gene_predictor == "phanotate":
-            cds_df = self.total_gff[
-                self.total_gff["Method"]
-                == f"ab initio prediction:PHANOTATE{self.phanotate_version}"
-            ]
-        elif self.gene_predictor == "prodigal":
-            cds_df = self.total_gff[
-                self.total_gff["Method"]
-                == f"ab initio prediction:Pyrodigal:{self.pyrodigal_version}"
-            ]
-        elif self.gene_predictor == "prodigal-gv":
-            cds_df = self.total_gff[
-                self.total_gff["Method"]
-                == f"ab initio prediction:Pyrodigal-gv:{self.pyrodigal_gv_version}"
-            ]
-        elif self.gene_predictor == "genbank":
-            cds_df = self.total_gff[self.total_gff["Method"] == "CUSTOM"]
-
         ### trnas
         # check if no trnas
         if self.trna_empty is False:
