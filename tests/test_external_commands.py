@@ -100,7 +100,7 @@ class testGenePred(unittest.TestCase):
         prefix = "pharokka"
         run_aragorn(fasta, standard_data_output, prefix, logdir)
 
-    def test_run_aragorn(self):
+    def test_run_mash_sketch(self):
         fasta: Path = f"{standard_data}/SAOMS1.fasta"
         run_mash_sketch(fasta, standard_data_output, logdir)
 

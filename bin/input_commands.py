@@ -429,7 +429,7 @@ def check_dependencies(skip_mash):
 
         if mmseqs_major_version != 13:
             logger.error("MMseqs2 is the wrong version. Please install v13.45111")
-        if mmseqs_minor_version != '45111':
+        if mmseqs_minor_version != "45111":
             logger.error("MMseqs2 is the wrong version. Please install v13.45111")
 
     logger.info("MMseqs2 version is ok.")
@@ -587,7 +587,9 @@ def check_dependencies(skip_mash):
     )
 
     if dnaapler_major_version < 1:
-        logger.error("Dnaapler is the wrong version. Please install Dnaapler v1.0.1 or higher.")
+        logger.error(
+            "Dnaapler is the wrong version. Please install Dnaapler v1.0.1 or higher."
+        )
 
     logger.info("Dnaapler version is ok.")
 
