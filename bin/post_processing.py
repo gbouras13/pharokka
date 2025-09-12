@@ -251,18 +251,30 @@ class Pharok:
         # merge top hits into the cds df
         merged_df = cds_df.merge(tophits_df, on="gene", how="left")
 
-        # get best protein from top mmseqs2 hit
-        # add test if empty - crashes if no gene call hits
+        
+        # v1.8.0 remove "mmseqs_top_hit" as it is not really true (these are profiles after all, the protein top hit is just legacy in the name from PHROGs profiles, not actually the tophit protein)
+        # the headers in the original PHROG profiles were of the form 
+        # phrog_28887 ## p11764 VI_06587
+        # phrog_14808 ## KY593455_p107
+        # For v1.8.0 I rebuilt the profiles with newer MMSeqs2 versions now using
+        # wget https://phrogs.lmge.uca.fr/downloads_from_website/MSA_phrogs.tar.gz
+        # tar -xzf MSA_phrogs.tar.gz
+        # for f in MSA_Phrogs_M50_FASTA/*.fma; do     mv "$f" "${f%.fma}"; done
+        # tar -czf MSA_phrogs_renamed.tar.gz MSA_Phrogs_M50_FASTA
+        # with mmseqs2 v 18.8cc5c
+        # mmseqs tar2db  MSA_phrogs_renamed.tar.gz  msa --output-dbtype 11
+        # mmseqs msa2profile msa phrogs_profile_db_h
 
-        if len(tophits_df["mmseqs_phrog"]) == 0:
-            merged_df["mmseqs_top_hit"] = "No_PHROG"
-        else:
-            if self.mmseqs_flag is True:  # trim the rubbish if mmseqs2 is on
-                merged_df[["mmseqs_phrog", "mmseqs_top_hit"]] = merged_df[
-                    "mmseqs_phrog"
-                ].str.split(" ## ", expand=True)
-            else:  # no mmseqs2 hits
-                merged_df["mmseqs_top_hit"] = "No_MMseqs_PHROG_hit"
+
+        # if len(tophits_df["mmseqs_phrog"]) == 0:
+        #     merged_df["mmseqs_top_hit"] = "No_PHROG"
+        # else:
+        #     if self.mmseqs_flag is True:  # trim the rubbish if mmseqs2 is on
+        #         merged_df[["mmseqs_phrog", "mmseqs_top_hit"]] = merged_df[
+        #             "mmseqs_phrog"
+        #         ].str.split(" ## ", expand=True)
+        #     else:  # no mmseqs2 hits
+        #         merged_df["mmseqs_top_hit"] = "No_MMseqs_PHROG_hit"
 
         ####################
         # combine phrogs
@@ -344,6 +356,20 @@ class Pharok:
             )
         merged_df["Region"] = "CDS"
 
+
+        # cast all these columns to string to prevent warning
+        # FutureWarning: Setting an item of incompatible dtype is deprecated and will raise an error in a future version of pandas. Value 'No_PHROG' has dtype incompatible with float64, please explicitly cast to a compatible dtype first.
+        cols_to_force_string = [
+        "mmseqs_phrog",
+        "mmseqs_alnScore",
+        "mmseqs_seqIdentity",
+        "mmseqs_eVal",
+        "color",
+    ]
+
+        for col in cols_to_force_string:
+            merged_df[col] = merged_df[col].astype("string")
+
         # # replace with No_PHROG if nothing found
         merged_df.loc[merged_df["mmseqs_phrog"] == "No_PHROG", "mmseqs_phrog"] = (
             "No_PHROG"
@@ -355,9 +381,6 @@ class Pharok:
             merged_df["mmseqs_seqIdentity"] == "No_PHROG", "mmseqs_seqIdentity"
         ] = "No_PHROG"
         merged_df.loc[merged_df["mmseqs_eVal"] == "No_PHROG", "mmseqs_eVal"] = (
-            "No_PHROG"
-        )
-        merged_df.loc[merged_df["mmseqs_top_hit"] == "No_PHROG", "mmseqs_top_hit"] = (
             "No_PHROG"
         )
         merged_df.loc[merged_df["color"] == "No_PHROG", "color"] = "No_PHROG"
@@ -749,9 +772,6 @@ class Pharok:
             + ";"
             + "phrog="
             + self.merged_df["phrog"].astype(str)
-            + ";"
-            + "top_hit="
-            + self.merged_df["mmseqs_top_hit"].astype(str)
             + ";"
             + "locus_tag="
             + locus_df["locus_tag"].astype(str)

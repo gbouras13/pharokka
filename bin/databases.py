@@ -60,22 +60,22 @@ VERSION_DICTIONARY = {
 
 
 PHROG_DB_NAMES = [
-    "phrogs_db",
-    "phrogs_db.dbtype",
-    "phrogs_db.index",
+    #"phrogs_db",
+    #"phrogs_db.dbtype",
+    #"phrogs_db.index",
     "phrogs_profile_db",
     "phrogs_profile_db.dbtype",
     "phrogs_profile_db.index",
-    "phrogs_profile_db_consensus",
-    "phrogs_profile_db_consensus.dbtype",
-    "phrogs_profile_db_consensus.index",
+    #"phrogs_profile_db_consensus",
+    #"phrogs_profile_db_consensus.dbtype",
+    #"phrogs_profile_db_consensus.index",
     "phrogs_profile_db_h",
     "phrogs_profile_db_h.index",
-    "phrogs_profile_db_seq",
-    "phrogs_profile_db_seq.dbtype",
-    "phrogs_profile_db_seq.index",
-    "phrogs_profile_db_seq_h",
-    "phrogs_profile_db_seq_h.index",
+    #"phrogs_profile_db_seq",
+    #"phrogs_profile_db_seq.dbtype",
+    #"phrogs_profile_db_seq.index",
+    #"phrogs_profile_db_seq_h",
+    #"phrogs_profile_db_seq_h.index",
 ]
 
 PHROG_HMM_NAMES = ["all_phrogs.h3m"]
@@ -232,7 +232,7 @@ def check_db_installation(db_dir):
     for file_name in PHROG_DB_NAMES:
         path = os.path.join(db_dir, file_name)
         if os.path.isfile(path) == False:
-            logger.info("PHROGs Databases are missing.")
+            logger.info(f"PHROGs Database file {file_name} is missing.")
             downloaded_flag = False
             break
     # VFDB
