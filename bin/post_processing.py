@@ -2225,7 +2225,7 @@ class Pharok:
         )
 
         # read in the plasdb tsv
-        inphared_tsv_file = os.path.join(self.db_dir, "1Aug2023_data.tsv")
+        inphared_tsv_file = os.path.join(self.db_dir, "9Aug2025_data.tsv")
 
         cols = [
             "Accession",
