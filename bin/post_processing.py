@@ -2660,6 +2660,7 @@ def process_card_results(out_dir, merged_df, db_dir, proteins_flag=False):
 
     card_df['CARD_eVal'] = card_df['CARD_eVal'].astype(float)  # issue 390 https://stackoverflow.com/questions/70484024/column-has-dtype-object-cannot-use-method-nlargest-with-this-dtype
 
+
     # Group by 'gene' and find the top hit for each group
 
     tophits_df = (
