@@ -1,10 +1,10 @@
 """
 to tar DBs
 export GZIP=-9
-tar cvzf pharokka_v1.4.0_databases.tar.gz pharokka_v1.4.0_databases
+tar cvzf pharokka_v1.8.0_databases.tar.gz pharokka_v1.8.0_databases
 
 to create the mmseqs2 databases (CARD)
-with the latest download v 3.2.7 on August 21
+with the latest download v 3.2.7 on August 21 2023
 mmseqs createdb protein_fasta_protein_homolog_model.fasta CARD
 
 # also need aro.tsv for this one
@@ -31,6 +31,8 @@ from alive_progress import alive_bar
 from loguru import logger
 from post_processing import remove_directory
 
+VERSION = "1.8.0"
+
 # to hold information about the different DBs
 VERSION_DICTIONARY = {
     "1.2.0": {
@@ -42,10 +44,7 @@ VERSION_DICTIONARY = {
         "dir_name": "pharokka_v1.2.0_databases",
         "inphared_mash": "5Jan2023_genomes.fa.msh",
         "inphared_annot": "5Jan2023_data.tsv",
-    }
-}
-
-VERSION_DICTIONARY = {
+    },
     "1.4.0": {
         "md5": "c21144209b993c06fae2dac906d73b96",
         "major": 1,
@@ -55,27 +54,30 @@ VERSION_DICTIONARY = {
         "dir_name": "pharokka_v1.4.0_databases",
         "inphared_mash": "1Aug2023_genomes.fa.msh",
         "inphared_annot": "1Aug2023_data.tsv",
+    },
+    "1.8.0": {
+        "md5": "a63c485241b900a11989bd1821bfbb09",
+        "major": 1,
+        "minor": 8,
+        "minorest": 0,
+        "db_url": "https://zenodo.org/record/17110353/files/pharokka_v1.8.0_databases.tar.gz",
+        "dir_name": "pharokka_v1.8.0_databases",
+        "inphared_mash": "9Aug2025_genomes.fa.msh",
+        "inphared_annot": "9Aug2025_data.tsv",
     }
 }
 
 
 PHROG_DB_NAMES = [
-    "phrogs_db",
-    "phrogs_db.dbtype",
-    "phrogs_db.index",
+    "VERSION_1_8_0",
     "phrogs_profile_db",
     "phrogs_profile_db.dbtype",
     "phrogs_profile_db.index",
-    "phrogs_profile_db_consensus",
-    "phrogs_profile_db_consensus.dbtype",
-    "phrogs_profile_db_consensus.index",
+    "phrogs_profile_db.lookup",
+    "phrogs_profile_db.source",
     "phrogs_profile_db_h",
+    "phrogs_profile_db_h.dbtype",
     "phrogs_profile_db_h.index",
-    "phrogs_profile_db_seq",
-    "phrogs_profile_db_seq.dbtype",
-    "phrogs_profile_db_seq.index",
-    "phrogs_profile_db_seq_h",
-    "phrogs_profile_db_seq_h.index",
 ]
 
 PHROG_HMM_NAMES = ["all_phrogs.h3m"]
@@ -115,12 +117,12 @@ def instantiate_install(db_dir):
     else:
         logger.info("Some Databases are missing.")
 
-        db_url = VERSION_DICTIONARY["1.4.0"]["db_url"]
-        requiredmd5 = VERSION_DICTIONARY["1.4.0"]["md5"]
+        db_url = VERSION_DICTIONARY[VERSION]["db_url"]
+        requiredmd5 = VERSION_DICTIONARY[VERSION]["md5"]
 
         logger.info(f"Downloading Pharokka Databases from {db_url}.")
 
-        tarball_path = Path(f"{db_dir}/pharokka_v1.4.0_databases.tar.gz")
+        tarball_path = Path(f"{db_dir}/pharokka_v1.8.0_databases.tar.gz")
 
         download(db_url, tarball_path)
 
@@ -143,20 +145,20 @@ def instantiate_install(db_dir):
         # fixing issue #339
         # https://raw.github.com/gbouras13/pharokka/master/aro_index.tsv
 
-        logger.info(f"Downloading Updated CARD metadata")
-        requiredmd5_card = "d999d71b21bf13c21e57ec7591bd8a47"
-        aro_url = "https://raw.github.com/gbouras13/pharokka/master/aro_index.tsv"
-        aro_path =  Path(f"{db_dir}/aro_index.tsv")
+        # logger.info(f"Downloading Updated CARD metadata")
+        # requiredmd5_card = "d999d71b21bf13c21e57ec7591bd8a47"
+        # aro_url = "https://raw.github.com/gbouras13/pharokka/master/aro_index.tsv"
+        # aro_path =  Path(f"{db_dir}/aro_index.tsv")
 
-        download(aro_url, aro_path)
+        # download(aro_url, aro_path)
 
-        md5_sum_card = calc_md5_sum(aro_path)
-        if md5_sum_card == requiredmd5_card:
-            logger.info(f"CARD metadata file download OK: {md5_sum_card}")
-        else:
-            logger.error(
-                f"Error: corrupt database file! MD5 should be '{requiredmd5_card}' but is '{md5_sum_card}'"
-            )
+        # md5_sum_card = calc_md5_sum(aro_path)
+        # if md5_sum_card == requiredmd5_card:
+        #     logger.info(f"CARD metadata file download OK: {md5_sum_card}")
+        # else:
+        #     logger.error(
+        #         f"Error: corrupt database file! MD5 should be '{requiredmd5_card}' but is '{md5_sum_card}'"
+        #     )
 
 
 
@@ -202,7 +204,7 @@ def untar(tarball_path: Path, output_path: Path):
         ) as tar_file:
             tar_file.extractall(path=str(output_path))
 
-        tarpath = os.path.join(output_path, VERSION_DICTIONARY["1.4.0"]["dir_name"])
+        tarpath = os.path.join(output_path, VERSION_DICTIONARY[VERSION]["dir_name"])
 
         # Get a list of all files in the source directory
         files_to_move = [
@@ -232,7 +234,7 @@ def check_db_installation(db_dir):
     for file_name in PHROG_DB_NAMES:
         path = os.path.join(db_dir, file_name)
         if os.path.isfile(path) == False:
-            logger.info("PHROGs Databases are missing.")
+            logger.info(f"PHROGs Database file {file_name} is missing.")
             downloaded_flag = False
             break
     # VFDB
@@ -256,13 +258,13 @@ def check_db_installation(db_dir):
         downloaded_flag = False
 
     # mash files
-    path = os.path.join(db_dir, VERSION_DICTIONARY["1.4.0"]["inphared_annot"])
+    path = os.path.join(db_dir, VERSION_DICTIONARY[VERSION]["inphared_annot"])
     if os.path.isfile(path) == False:
         logger.info("INPHARED Mash Annotation File is missing.")
         downloaded_flag = False
 
     # mash files
-    path = os.path.join(db_dir, VERSION_DICTIONARY["1.4.0"]["inphared_mash"])
+    path = os.path.join(db_dir, VERSION_DICTIONARY[VERSION]["inphared_mash"])
     if os.path.isfile(path) == False:
         logger.info("INPHARED Mash Sketch File is missing.")
         downloaded_flag = False
