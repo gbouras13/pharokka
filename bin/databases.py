@@ -145,20 +145,20 @@ def instantiate_install(db_dir):
         # fixing issue #339
         # https://raw.github.com/gbouras13/pharokka/master/aro_index.tsv
 
-        logger.info(f"Downloading Updated CARD metadata")
-        requiredmd5_card = "d999d71b21bf13c21e57ec7591bd8a47"
-        aro_url = "https://raw.github.com/gbouras13/pharokka/master/aro_index.tsv"
-        aro_path =  Path(f"{db_dir}/aro_index.tsv")
+        # logger.info(f"Downloading Updated CARD metadata")
+        # requiredmd5_card = "d999d71b21bf13c21e57ec7591bd8a47"
+        # aro_url = "https://raw.github.com/gbouras13/pharokka/master/aro_index.tsv"
+        # aro_path =  Path(f"{db_dir}/aro_index.tsv")
 
-        download(aro_url, aro_path)
+        # download(aro_url, aro_path)
 
-        md5_sum_card = calc_md5_sum(aro_path)
-        if md5_sum_card == requiredmd5_card:
-            logger.info(f"CARD metadata file download OK: {md5_sum_card}")
-        else:
-            logger.error(
-                f"Error: corrupt database file! MD5 should be '{requiredmd5_card}' but is '{md5_sum_card}'"
-            )
+        # md5_sum_card = calc_md5_sum(aro_path)
+        # if md5_sum_card == requiredmd5_card:
+        #     logger.info(f"CARD metadata file download OK: {md5_sum_card}")
+        # else:
+        #     logger.error(
+        #         f"Error: corrupt database file! MD5 should be '{requiredmd5_card}' but is '{md5_sum_card}'"
+        #     )
 
 
 
