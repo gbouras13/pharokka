@@ -407,15 +407,6 @@ class Pharok_Prot:
             # Create a DataFrame from the dictionary
             tophits_df = pd.DataFrame(data)
 
-        if len(tophits_df["mmseqs_phrog"]) == 0:
-            tophits_df["mmseqs_top_hit"] = "No_PHROG"
-        else:
-            if self.mmseqs_flag is True:  # trim the rubbish if mmseqs2 is on
-                tophits_df[["mmseqs_phrog", "mmseqs_top_hit"]] = tophits_df[
-                    "mmseqs_phrog"
-                ].str.split(" ## ", expand=True)
-            else:  # no mmseqs2 hits
-                tophits_df["mmseqs_top_hit"] = "No_MMseqs_PHROG_hit"
 
         ####################
         # combine phrogs
@@ -480,7 +471,6 @@ class Pharok_Prot:
         tophits_df["mmseqs_alnScore"] = tophits_df["mmseqs_alnScore"].astype(str)
         tophits_df["mmseqs_seqIdentity"] = tophits_df["mmseqs_seqIdentity"].astype(str)
         tophits_df["mmseqs_eVal"] = tophits_df["mmseqs_eVal"].astype(str)
-        tophits_df["mmseqs_top_hit"] = tophits_df["mmseqs_top_hit"].astype(str)
         tophits_df["color"] = tophits_df["color"].astype(str)
         tophits_df = tophits_df.replace(np.nan, "No_PHROG", regex=True)
         tophits_df.loc[tophits_df["mmseqs_phrog"] == "No_PHROG", "mmseqs_phrog"] = (
@@ -492,12 +482,11 @@ class Pharok_Prot:
         tophits_df.loc[
             tophits_df["mmseqs_seqIdentity"] == "No_PHROG", "mmseqs_seqIdentity"
         ] = "No_PHROG"
-        tophits_df.loc[tophits_df["mmseqs_eVal"] == "No_PHROG", "mmseqs_eVal"] = (
-            "No_PHROG"
-        )
-        tophits_df.loc[tophits_df["mmseqs_top_hit"] == "No_PHROG", "mmseqs_top_hit"] = (
-            "No_PHROG"
-        )
+
+        tophits_df.loc[
+            tophits_df["mmseqs_eVal"] == "No_PHROG", "mmseqs_eVal"
+        ] = "No_PHROG"
+
         tophits_df.loc[tophits_df["color"] == "No_PHROG", "color"] = "No_PHROG"
 
         # get phrog
@@ -571,7 +560,6 @@ class Pharok_Prot:
         tophits_df["mmseqs_alnScore"].fillna("No_MMseqs", inplace=True)
         tophits_df["mmseqs_seqIdentity"].fillna("No_MMseqs", inplace=True)
         tophits_df["mmseqs_eVal"].fillna("No_MMseqs", inplace=True)
-        tophits_df["mmseqs_top_hit"].fillna("No_MMseqs_PHROG_hit", inplace=True)
         tophits_df["pyhmmer_phrog"].fillna("No_PHROGs_HMM", inplace=True)
         tophits_df["pyhmmer_bitscore"].fillna("No_PHROGs_HMM", inplace=True)
         tophits_df["pyhmmer_evalue"].fillna("No_PHROGs_HMM", inplace=True)

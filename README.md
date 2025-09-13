@@ -54,7 +54,8 @@ If you don't want to install `pharokka` or `phold` locally, you can run `pharokk
 - [Paper](#paper)
 - [Pharokka with Galaxy Europe Webserver](#pharokka-with-galaxy-europe-webserver)
 - [Brief Overview](#brief-overview)
-  - [Pharokka v 1.7.0 Update](#pharokka-v-170-update)
+  - [Pharokka v 1.8.0 Update (14 September 2028)](#pharokka-v-180-update-14-september-2028)
+  - [Pharokka v 1.7.0 Update (4 March 2024)](#pharokka-v-170-update-4-march-2024)
   - [Pharokka v 1.6.0 Update (11 January 2024)](#pharokka-v-160-update-11-january-2024)
   - [Pharokka v 1.5.0 Update (20 September 2023)](#pharokka-v-150-update-20-september-2023)
   - [Pharokka v 1.4.0 Update (27 August 2023)](#pharokka-v-140-update-27-august-2023)
@@ -121,7 +122,23 @@ So if you can't get `pharokka` to install on your machine for whatever reason or
 
 `pharokka` uses [PHANOTATE](https://github.com/deprekate/PHANOTATE), the only gene prediction program tailored to bacteriophages, as the default program for gene prediction. [Prodigal](https://github.com/hyattpd/Prodigal) implemented with [pyrodigal](https://github.com/althonos/pyrodigal) and [Prodigal-gv](https://github.com/apcamargo/prodigal-gv) implemented with [pyrodigal-gv](https://github.com/althonos/pyrodigal-gv) are also available as alternatives. Following this, functional annotations are assigned by matching each predicted coding sequence (CDS) to the [PHROGs](https://phrogs.lmge.uca.fr), [CARD](https://card.mcmaster.ca) and [VFDB](http://www.mgc.ac.cn/VFs/main.htm) databases using [MMseqs2](https://github.com/soedinglab/MMseqs2). As of v1.4.0, `pharokka` will also match each CDS to the PHROGs database using more sensitive Hidden Markov Models using [PyHMMER](https://github.com/althonos/pyhmmer). Pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). `pharokka` also generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage) and check out the full [documentation](https://pharokka.readthedocs.io) for more details.  
 
-## Pharokka v 1.7.0 Update
+## Pharokka v 1.8.0 Update (14 September 2028)
+
+`pharokka` v1.8.0 is a large update with a couple of dependency version changes. **You will need to reinstall the Pharokka database for compatibility with v1.8.0 and upwards
+
+* Rebuilt MMseqs2 PHROG profile database for compatibility with MMseqs v14 and later (the MMseqs2 profile format changed in MMseqs2 v14 from v13). 
+    * There is no backwards compatibility with MMseqs2 profile formats, so you must use MMseqs2 versions from v14 or later with Pharokka v1.8.0 onwards
+    * This should provide more flexibility for installing Pharokka in modern environments
+    * Should also provide improved performance due to efficiency improvements in MMseqs2 (no exhaustive benchmarks but annotating `tests/test_data/overall/Standard_examples/SAOMS1.fasta` was 50 seconds faster on my MacBook Pro M1 with the updated MMseqs2 v18.8cc5c compared to v13.45111)
+* Updates Phanotate version to v1.6.7 - this should allow for Python 3.13 support and prevent Phantotate version warning crashes
+* Updates INPHARED Mash sketch database to 9 Aug 2025 release
+* Removes "mmseqs2_tophit" from `pharokka_cds_final_merged_output.tsv` 
+* Removed various special characters in the PHROG category and functional descriptions (e.g. ';') that broke GenBank parsing - see e.g. https://github.com/gbouras13/pharokka/issues/388
+* Changes to `.gff`, `.gbk` and `.tbl` outputs to make them suitable for use with `sutvk` and easier uploading to NCBI - thanks @LanderDC
+* Add `transcan_out.sec` output fule with tRNAscan secondary structures (thanks @LanderDC)
+
+
+## Pharokka v 1.7.0 Update (4 March 2024)
 
 You can run `pharokka_multiplotter.py` to plot as many phage(s) as you want.
 

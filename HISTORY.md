@@ -1,6 +1,24 @@
 History
 =======
 
+1.8.0 (2025-09-12)
+------------------
+
+**You will need to reinstall the new updated Pharokka database using `install_databases.py`**
+
+* Large suite of changes
+* Rebuilt MMseqs2 PHROG profile database for compatibility with MMseqs v14 and later (the MMseqs2 profile format changed in MMseqs2 v14 from v13). 
+    * There is no backwards compatibility with MMseqs2 profile formats, so you must use MMseqs2 versions from v14 or later with Pharokka v1.8.0 onwards
+    * This should provide more flexibility for installing Pharokka in modern environment
+    * Should also provide improved performance due to efficiency improvements in MMseqs2 (no exhaustive benchmarks but annotating `tests/test_data/overall/Standard_examples/SAOMS1.fasta` was 50 seconds faster on my MacBook Pro M1 with the updated MMseqs2 v18.8cc5c compared to v13.45111)
+* Updates Phanotate version to v1.6.7 - this should allow for Python 3.13 support
+* Update INPHARED Mash sketch database to 9 Aug 2025 release
+* Removes "mmseqs2_tophit" from `pharokka_cds_final_merged_output.tsv` 
+* Removed various special characters in the PHROG category and functional descriptions (e.g. ';') that broke GenBank parsing - see e.g. https://github.com/gbouras13/pharokka/issues/388
+* Changes to `.gff`, `.gbk` and `.tbl` outputs to make them suitable for use with `sutvk` and easier uploading to NCBI - thanks @LanderDC
+* Add `transcan_out.sec` output fule with tRNAscan secondary structures (thanks @LanderDC)
+
+
 1.7.5 (2025-01-20)
 ------------------
 

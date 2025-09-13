@@ -7,7 +7,7 @@ dependencies:
   - bcbio-gff >=0.7.0
   - biopython >=1.80
   - phanotate >=1.6.7,<2
-  - mmseqs2 ==13.45111
+  - mmseqs2 >=14.7e284
   - trnascan-se >=2.0.9
   - minced >=0.4.2
   - aragorn >=1.2.41

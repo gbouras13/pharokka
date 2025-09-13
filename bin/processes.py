@@ -218,9 +218,11 @@ def run_trnascan_meta(filepath_in, out_dir, threads, num_fastas, trna_scan_model
     for i in range(1, num_fastas + 1):
         in_file = "input_subprocess" + str(i) + ".fasta"
         out_file = "trnascan_tmp" + str(i) + ".gff"
+        sec_struc_file = "trnascan_tmp" + str(i) + ".sec"
         filepath_in = os.path.join(input_tmp_dir, in_file)
         filepath_out = os.path.join(input_tmp_dir, out_file)
-        cmd = f"tRNAscan-SE {filepath_in} --thread 1 -{model} -Q -j {filepath_out}"
+        sec_out = os.path.join(input_tmp_dir, sec_struc_file)
+        cmd = f"tRNAscan-SE {filepath_in} --thread 1 -{model} -Q -j {filepath_out} -f {sec_out}"
         commands.append(cmd)
 
     n = int(threads)  # the number of parallel processes you want
@@ -251,6 +253,16 @@ def concat_trnascan_meta(out_dir, num_fastas):
 
     with open(os.path.join(out_dir, "trnascan_out.gff"), "w") as outfile:
         for fname in gffs:
+            with open(fname) as infile:
+                outfile.write(infile.read())
+
+    sec_strucs = []
+    for i in range(1, int(num_fastas) + 1):
+        sec_struc_file = "trnascan_tmp" + str(i) + ".sec"
+        sec_strucs.append(os.path.join(input_tmp_dir, sec_struc_file))
+
+    with open(os.path.join(out_dir, "trnascan_out.sec"), "w") as outfile:
+        for fname in sec_strucs:
             with open(fname) as infile:
                 outfile.write(infile.read())
 
@@ -651,6 +663,7 @@ def run_trna_scan(filepath_in, threads, out_dir, logdir, trna_scan_model):
     """
 
     out_gff = os.path.join(out_dir, "trnascan_out.gff")
+    out_sec = os.path.join(out_dir, "trnascan_out.sec")
 
     if trna_scan_model == "general":
         model = "G"
@@ -661,7 +674,7 @@ def run_trna_scan(filepath_in, threads, out_dir, logdir, trna_scan_model):
         tool="tRNAscan-SE",
         input=f"{filepath_in}",
         output=f"{out_gff}",
-        params=f"--thread {threads} -{model} -Q -j",
+        params=f"--thread {threads} -{model} -f {out_sec} -Q -j",
         logdir=logdir,
         outfile="",
     )
@@ -807,17 +820,26 @@ def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, prot_seq_df):
             )
             # add features to the record
             for feature in record.features:
+                # Move 'source' qualifier to 'inference', then remove 'source'
+                if "source" in feature.qualifiers:
+                    feature.qualifiers["inference"] = feature.qualifiers["source"]
+                    del feature.qualifiers["source"]
+
+                # If 'anticodon' is present, join multiple parts into one comma-separated string
+                if "anticodon" in feature.qualifiers:
+                    # Join multiple parts into one comma-separated string
+                    if isinstance(feature.qualifiers["anticodon"], list):
+                        feature.qualifiers["anticodon"] = [
+                            ",".join(feature.qualifiers["anticodon"])
+                        ]
                 # add translation only if CDS
                 if feature.type == "CDS":
                     # aa = prot_records[i].seq
-                    if feature.strand == 1:
-                        feature.qualifiers.update(
-                            {"translation": subset_seqs[i]}  # from the aa seq
-                        )
-                    else:  # reverse strand -1 needs reverse compliment
-                        feature.qualifiers.update(
-                            {"translation": subset_seqs[i]}  # from the aa seq
-                        )
+
+                    feature.qualifiers.update(
+                        {"translation": subset_seqs[i]}  # from the aa seq
+                    )
+
                     i += 1
             SeqIO.write(record, gbk_handler, "genbank")
 
@@ -971,7 +993,7 @@ def run_mash_dist(out_dir, db_dir, mash_distance, logdir):
     """
 
     mash_sketch = os.path.join(out_dir, "input_mash_sketch.msh")
-    phrog_sketch = os.path.join(db_dir, "1Aug2023_genomes.fa.msh")
+    phrog_sketch = os.path.join(db_dir, "9Aug2025_genomes.fa.msh")
     mash_tsv = os.path.join(out_dir, "mash_out.tsv")
 
     mash_dist = ExternalTool(
