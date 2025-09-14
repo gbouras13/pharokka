@@ -16,7 +16,7 @@ History
 * Removes "mmseqs2_tophit" from `pharokka_cds_final_merged_output.tsv` 
 * Removed various special characters in the PHROG category and functional descriptions (e.g. ';') that broke GenBank parsing - see e.g. https://github.com/gbouras13/pharokka/issues/388
 * Changes to `.gff`, `.gbk` and `.tbl` outputs to make them suitable for use with `sutvk` and easier uploading to NCBI - thanks @LanderDC
-* Add `transcan_out.sec` output fule with tRNAscan secondary structures (thanks @LanderDC)
+* Add `transcan_out.sec` output file with tRNAscan secondary structures (thanks @LanderDC)
 
 
 1.7.5 (2025-01-20)
