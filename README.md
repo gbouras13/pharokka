@@ -54,7 +54,7 @@ If you don't want to install `pharokka` or `phold` locally, you can run `pharokk
 - [Paper](#paper)
 - [Pharokka with Galaxy Europe Webserver](#pharokka-with-galaxy-europe-webserver)
 - [Brief Overview](#brief-overview)
-  - [Pharokka v 1.8.0 Update (14 September 2028)](#pharokka-v-180-update-14-september-2028)
+  - [Pharokka v 1.8.0 Update (14 September 2025)](#pharokka-v-180-update-14-september-2025)
   - [Pharokka v 1.7.0 Update (4 March 2024)](#pharokka-v-170-update-4-march-2024)
   - [Pharokka v 1.6.0 Update (11 January 2024)](#pharokka-v-160-update-11-january-2024)
   - [Pharokka v 1.5.0 Update (20 September 2023)](#pharokka-v-150-update-20-september-2023)
@@ -122,7 +122,7 @@ So if you can't get `pharokka` to install on your machine for whatever reason or
 
 `pharokka` uses [PHANOTATE](https://github.com/deprekate/PHANOTATE), the only gene prediction program tailored to bacteriophages, as the default program for gene prediction. [Prodigal](https://github.com/hyattpd/Prodigal) implemented with [pyrodigal](https://github.com/althonos/pyrodigal) and [Prodigal-gv](https://github.com/apcamargo/prodigal-gv) implemented with [pyrodigal-gv](https://github.com/althonos/pyrodigal-gv) are also available as alternatives. Following this, functional annotations are assigned by matching each predicted coding sequence (CDS) to the [PHROGs](https://phrogs.lmge.uca.fr), [CARD](https://card.mcmaster.ca) and [VFDB](http://www.mgc.ac.cn/VFs/main.htm) databases using [MMseqs2](https://github.com/soedinglab/MMseqs2). As of v1.4.0, `pharokka` will also match each CDS to the PHROGs database using more sensitive Hidden Markov Models using [PyHMMER](https://github.com/althonos/pyhmmer). Pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). `pharokka` also generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage) and check out the full [documentation](https://pharokka.readthedocs.io) for more details.  
 
-## Pharokka v 1.8.0 Update (14 September 2028)
+## Pharokka v 1.8.0 Update (14 September 2025)
 
 `pharokka` v1.8.0 is a large update with a couple of dependency version changes. **You will need to reinstall the Pharokka database for compatibility with v1.8.0 and upwards
 
