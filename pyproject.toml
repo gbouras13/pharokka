@@ -1,0 +1,55 @@
+[project]
+name = "pharokka"
+version = "1.8.0"
+description = "Fast phage annotation tool"
+authors = [{ name = "George Bouras", email = "george.bouras@adelaide.edu.au" }]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.5"
+dependencies = [
+    "setuptools>=67.7.2",
+    "loguru>=0.5.4",
+    "pyyaml>=6.0",
+    "pandas>=1.4.2",
+    "biopython>=1.80",
+    "pyhmmer>=0.10.0",
+    "black>=22.3.0",
+    "isort>=5.10.1",
+    "pytest>=6.2.5",
+    "pytest-cov>=3.0.0",
+    "alive-progress>=3.0.1",
+    "requests>=2.25.1",
+    "bcbio-gff>=0.7.0",
+    "pyrodigal>=3.0.0",
+    "pyrodigal_gv>=0.1.0",
+]
+
+[tool.setuptools]
+packages = ["pharokka_runner"]
+package-dir = { pharokka_runner = "bin" }
+include-package-data = true
+script-files = [
+    "bin/pharokka.py",
+    "bin/pharokka_plotter.py",
+    "bin/pharokka_multiplotter.py",
+    "bin/install_databases.py",
+    "bin/pharokka_proteins.py",
+    "bin/citation.py",
+    "bin/databases.py",
+    "bin/external_tools.py",
+    "bin/input_commands.py",
+    "bin/hmm.py",
+    "bin/plot.py",
+    "bin/post_processing.py",
+    "bin/processes.py",
+    "bin/proteins.py",
+    "bin/util.py",
+    "bin/version.py",
+    "bin/create_custom_hmm.py",
+    "bin/custom_db.py"
+]
+
+[build-system]
+requires = ["setuptools>=67.7.2", "wheel"]
+build-backend = "setuptools.build_meta"
+

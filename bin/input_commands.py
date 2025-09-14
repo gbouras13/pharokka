@@ -167,6 +167,11 @@ def get_input():
         choices=["general", "bacterial"],
         default="general",
         type=str,
+    ),
+    parser.add_argument(
+        "--keep_raw_prodigal",
+        help="Keeps raw prodigal header information.",
+        action="store_true",
     )
     parser.add_argument(
         "-V",
@@ -383,6 +388,15 @@ def check_dependencies(skip_mash):
         logger.error("Phanotate not found. Please reinstall pharokka.")
     phan_out, _ = process.communicate()
     phanotate_version = phan_out.decode().strip()
+
+    # this handles the warning for setuptools https://github.com/gbouras13/pharokka/issues/395
+    if "\n" in phanotate_version.strip():
+        logger.warning("pkg_resources in phanotate is throwing a warning")
+        logger.warning("this should not affect pharokka but please make an issue at https://github.com/gbouras13/pharokka/issues if pharokka crashes")
+        logger.warning("printing the full warning for debugging if required")
+        logger.warning(phanotate_version)
+        phanotate_version=phanotate_version.strip().split("\n")[-1]
+
     phanotate_major_version = int(phanotate_version.split(".")[0])
     phanotate_minor_version = int(phanotate_version.split(".")[1])
     phanotate_minorest_version = phanotate_version.split(".")[2]
@@ -441,7 +455,6 @@ def check_dependencies(skip_mash):
         logger.warning(f"Using an MMseqs2 version before v14-7e284 (October 13 2022) will not work with Pharokka from v1.8.0 onwards.")
         logger.warning(f"If that is the case, please install a newer version of MMseqs2s.")
         
-
     logger.info(
         f"MMseqs2 version found is v{mmseqs_major_version}.{mmseqs_minor_version}"
     )

@@ -36,7 +36,6 @@ def main():
     # get the args
     args = get_input()
 
-    logger.add(lambda _: sys.exit(1), level="ERROR")
 
     if args.citation == True:
         logger.info("If you use Pharokka in your research, please cite:")
@@ -90,7 +89,7 @@ def main():
     log_file = os.path.join(args.outdir, f"pharokka_{start_time}.log")
     # adds log file
     logger.add(log_file)
-
+    logger.add(lambda _: sys.exit(1), level="ERROR") # https://github.com/gbouras13/plassembler/pull/69
     # preamble
     logger.info(f"Starting Pharokka v{get_version()}")
     logger.info("Command executed: {}", args)
@@ -303,11 +302,15 @@ def main():
     if args.skip_extra_annotations is False:
         if args.meta == True:
             logger.info("Starting tRNA-scanSE. Applying meta mode.")
-            run_trnascan_meta(input_fasta, out_dir, args.threads, num_fastas, args.trna_scan_model)
+            run_trnascan_meta(
+                input_fasta, out_dir, args.threads, num_fastas, args.trna_scan_model
+            )
             concat_trnascan_meta(out_dir, num_fastas)
         else:
             logger.info("Starting tRNA-scanSE.")
-            run_trna_scan(input_fasta, args.threads, out_dir, logdir, args.trna_scan_model)
+            run_trna_scan(
+                input_fasta, args.threads, out_dir, logdir, args.trna_scan_model
+            )
         # run minced and aragorn
         run_minced(input_fasta, out_dir, prefix, args.minced_args, logdir)
         run_aragorn(input_fasta, out_dir, prefix, logdir)
@@ -463,7 +466,9 @@ def main():
         )
 
     # delete tmp files
-    remove_post_processing_files(out_dir, gene_predictor, args.meta)
+    remove_post_processing_files(
+        out_dir, gene_predictor, args.meta, args.keep_raw_prodigal
+    )
 
     # Determine elapsed time
     elapsed_time = time.time() - start_time

@@ -12,7 +12,7 @@ from Bio import SeqIO
 from Bio.SeqUtils import gc_fraction
 from loguru import logger
 from processes import convert_gff_to_gbk
-from util import remove_directory, remove_file, touch_file
+from util import remove_directory, remove_file, rename_file, touch_file
 
 pd.options.mode.chained_assignment = None
 
@@ -383,6 +383,7 @@ class Pharok:
         merged_df.loc[merged_df["mmseqs_eVal"] == "No_PHROG", "mmseqs_eVal"] = (
             "No_PHROG"
         )
+
         merged_df.loc[merged_df["color"] == "No_PHROG", "color"] = "No_PHROG"
 
         # get phrog
@@ -2332,11 +2333,12 @@ def create_mmseqs_tophits(out_dir):
     return tophits_df
 
 
-def remove_post_processing_files(out_dir, gene_predictor, meta):
+def remove_post_processing_files(out_dir, gene_predictor, meta, keep_raw_prodigal):
     """
     Cleans temporary files up
     :param out_dir: output directory path
     :param gene_predictor: phanotate or prodigal
+    :param keep_raw_prodigal: keep the raw prodigal outputs
     :return:
     """
     remove_directory(os.path.join(out_dir, "target_dir"))
@@ -2357,26 +2359,42 @@ def remove_post_processing_files(out_dir, gene_predictor, meta):
     remove_file(os.path.join(out_dir, "top_hits_mmseqs.tsv"))
 
     # leave in tophits
-    remove_file(os.path.join(out_dir, gene_predictor + "_aas_tmp.fasta"))
-    remove_file(os.path.join(out_dir, gene_predictor + "_out_tmp.fasta"))
     remove_file(os.path.join(out_dir, "pharokka_tmp.gff"))
     remove_file(os.path.join(out_dir, "mash_out.tsv"))
     remove_file(os.path.join(out_dir, "input_mash_sketch.msh"))
 
+    # has the reformat to match phanotate, can always delete regardless of phanotate or prodigal
+    remove_file(os.path.join(out_dir, gene_predictor + "_aas_tmp.fasta"))
+
     if gene_predictor == "phanotate":
         remove_file(os.path.join(out_dir, "phanotate_out.txt"))
-    if gene_predictor == "prodigal":
-        remove_file(os.path.join(out_dir, "prodigal_out.gff"))
-        remove_file(os.path.join(out_dir, "prodigal_out_aas_tmp.fasta"))
-    elif gene_predictor == "prodigal-gv":
-        remove_file(os.path.join(out_dir, "prodigal-gv_out.gff"))
-        remove_file(os.path.join(out_dir, "prodigal-gv_out_aas_tmp.fasta"))
+        remove_file(
+            os.path.join(out_dir, gene_predictor + "_out_tmp.fasta")
+        )  # raw phanotate fnn
+    elif gene_predictor == "genbank":
+        remove_file(os.path.join(out_dir, "genbank.fasta"))
+    else:  # prodigal or prodigal-gv
+        remove_file(os.path.join(out_dir, gene_predictor + "_out.gff"))
+        if keep_raw_prodigal:
+            rename_file(
+                os.path.join(out_dir, gene_predictor + "_out_tmp.fasta"),
+                os.path.join(out_dir, gene_predictor + "_raw.ffn"),
+            )
+            rename_file(
+                os.path.join(out_dir, gene_predictor + "_out_aas_tmp.fasta"),
+                os.path.join(out_dir, gene_predictor + "_raw.faa"),
+            )
+        else:
+            remove_file(
+                os.path.join(out_dir, gene_predictor + "_out_tmp.fasta")
+            )  # raw prodigal ffn
+            remove_file(
+                os.path.join(out_dir, gene_predictor + "_out_aas_tmp.fasta")
+            )  # raw prodigal faa
+
     # delete the tmp meta files
     if meta == True:
         remove_directory(os.path.join(out_dir, "input_split_tmp/"))
-
-    # if genbank input
-    remove_file(os.path.join(out_dir, "genbank.fasta"))
 
 
 def get_crispr_count(out_dir, prefix):
@@ -2537,7 +2555,7 @@ def process_vfdb_results(out_dir, merged_df, proteins_flag=False):
     touch_file(vfdb_file)
 
     vfdb_df = pd.read_csv(vfdb_file, delimiter="\t", index_col=False, names=col_list)
-
+    vfdb_df['vfdb_eVal'] = vfdb_df['vfdb_eVal'].astype(float) #Issue #390
     # optimise the tophits generation
     # Group by 'gene' and find the top hit for each group
     tophits_df = (
@@ -2640,7 +2658,11 @@ def process_card_results(out_dir, merged_df, db_dir, proteins_flag=False):
     touch_file(card_file)
     card_df = pd.read_csv(card_file, delimiter="\t", index_col=False, names=col_list)
 
+    card_df['CARD_eVal'] = card_df['CARD_eVal'].astype(float)  # issue 390 https://stackoverflow.com/questions/70484024/column-has-dtype-object-cannot-use-method-nlargest-with-this-dtype
+
+
     # Group by 'gene' and find the top hit for each group
+
     tophits_df = (
        card_df.sort_values("CARD_eVal")
        .drop_duplicates(subset="gene", keep="first")

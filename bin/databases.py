@@ -12,7 +12,7 @@ mmseqs createdb protein_fasta_protein_homolog_model.fasta CARD
 # for VFDB, only need the FASTA
 
 # VFDB update as of August 18 2023 (not versioned)
-# clustered 
+# clustered
 
 mmseqs easy-cluster VFDB_setB_pro_form.fas VFDBclusterRes tmp --min-seq-id 0.5 -c 0.8 --cov-mode 1
 mmseqs createdb VFDBclusterRes_rep_seq.fasta vfdb
@@ -145,10 +145,12 @@ def instantiate_install(db_dir):
         # fixing issue #339
         # https://raw.github.com/gbouras13/pharokka/master/aro_index.tsv
 
+
         # logger.info(f"Downloading Updated CARD metadata")
         # requiredmd5_card = "d999d71b21bf13c21e57ec7591bd8a47"
         # aro_url = "https://raw.github.com/gbouras13/pharokka/master/aro_index.tsv"
         # aro_path =  Path(f"{db_dir}/aro_index.tsv")
+
 
         # download(aro_url, aro_path)
 
@@ -159,9 +161,6 @@ def instantiate_install(db_dir):
         #     logger.error(
         #         f"Error: corrupt database file! MD5 should be '{requiredmd5_card}' but is '{md5_sum_card}'"
         #     )
-
-
-
 
 
 """
