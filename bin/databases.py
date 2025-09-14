@@ -1,6 +1,17 @@
 """
 to tar DBs
 export GZIP=-9
+
+To remake the MMseqs2 PHROG profile DB ith MMseqs2 v18
+wget https://phrogs.lmge.uca.fr/downloads_from_website/MSA_phrogs.tar.gz
+tar -xzf MSA_phrogs.tar.gz
+# to rename for the headers
+for f in MSA_Phrogs_M50_FASTA/*.fma; do     mv "$f" "${f%.fma}"; done
+tar -czf MSA_phrogs_renamed.tar.gz MSA_Phrogs_M50_FASTA/
+mmseqs tar2db  MSA_phrogs_renamed.tar.gz  msa --output-dbtype 11
+mmseqs msa2profile msa phrogs_profile_db
+
+
 tar cvzf pharokka_v1.8.0_databases.tar.gz pharokka_v1.8.0_databases
 
 to create the mmseqs2 databases (CARD)
