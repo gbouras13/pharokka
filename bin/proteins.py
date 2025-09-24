@@ -8,7 +8,7 @@ import os
 from argparse import RawTextHelpFormatter
 from cmath import nan
 from pathlib import Path
-from re import T
+
 
 import numpy as np
 import pandas as pd
