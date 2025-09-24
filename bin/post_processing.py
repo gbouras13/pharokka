@@ -4,7 +4,6 @@ import random
 import string
 from cmath import nan
 from pathlib import Path
-from re import T
 
 import numpy as np
 import pandas as pd
