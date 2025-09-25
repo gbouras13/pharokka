@@ -1,6 +1,6 @@
 [project]
 name = "pharokka"
-version = "1.8.0"
+version = "1.8.1" # change version.py also
 description = "Fast phage annotation tool"
 authors = [{ name = "George Bouras", email = "george.bouras@adelaide.edu.au" }]
 readme = "README.md"
@@ -51,6 +51,6 @@ script-files = [
 ]
 
 [build-system]
-requires = ["setuptools>=67.7.2", "wheel"]
+requires = ["setuptools>=67.7.2,<81", "wheel"]
 build-backend = "setuptools.build_meta"
 

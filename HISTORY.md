@@ -1,6 +1,11 @@
 History
 =======
 
+1.8.1 (2025-09-25)
+------------------
+
+* Removes redundant and incorrect import causing issues with Pharokka and Python v3.13 https://github.com/gbouras13/pharokka/issues/397
+
 1.8.0 (2025-09-12)
 ------------------
 
