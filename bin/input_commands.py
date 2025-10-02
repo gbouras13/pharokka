@@ -420,7 +420,7 @@ def check_dependencies(skip_mash):
     try:
         process = sp.Popen(["mmseqs", "version"], stdout=sp.PIPE, stderr=sp.STDOUT)
     except:
-        logger.error("Foldseek not found. Please reinstall pharokka.")
+        logger.error("MMseqs2 not found. Please reinstall pharokka.")
 
     mmseqs_out, _ = process.communicate()
     mmseqs_out = mmseqs_out.decode()
