@@ -956,7 +956,7 @@ class Pharok:
 
                 trna_df["trna_gene"] = "tRNA-" + trna_df["isotypes"]
                 trna_df["trna_product"] = "transfer RNA-" + trna_df["isotypes"]
-                if "anticodon_gb" is not in trna_df.columns:
+                if "anticodon_gb" not in trna_df.columns:
                     trna_df['anticodon_gb'] = np.nan
 
                 # Genbank example
