@@ -85,6 +85,11 @@ def test_overall(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
 
+def test_overall_trna_anticodon(tmp_dir):
+    """test for #405 trna anticodon bug"""
+    input_fasta: Path = f"{bug_data}/AJ251789_trna_anticodon.fa"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --fast"
+    exec_command(cmd)
 
 def test_overall_pyhmmer_alphabet(tmp_dir):
     """test for #331 #357 pyhmmer alphabet must be explictly specifyied as amino acid"""

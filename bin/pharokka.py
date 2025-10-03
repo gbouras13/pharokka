@@ -36,6 +36,8 @@ def main():
     # get the args
     args = get_input()
 
+    logger.add(lambda _: sys.exit(1), level="ERROR") # https://github.com/gbouras13/plassembler/pull/69
+
 
     if args.citation == True:
         logger.info("If you use Pharokka in your research, please cite:")
@@ -89,7 +91,6 @@ def main():
     log_file = os.path.join(args.outdir, f"pharokka_{start_time}.log")
     # adds log file
     logger.add(log_file)
-    logger.add(lambda _: sys.exit(1), level="ERROR") # https://github.com/gbouras13/plassembler/pull/69
     # preamble
     logger.info(f"Starting Pharokka v{get_version()}")
     logger.info("Command executed: {}", args)
