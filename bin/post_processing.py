@@ -956,6 +956,8 @@ class Pharok:
 
                 trna_df["trna_gene"] = "tRNA-" + trna_df["isotypes"]
                 trna_df["trna_product"] = "transfer RNA-" + trna_df["isotypes"]
+                if "anticodon_gb" not in trna_df.columns:
+                    trna_df['anticodon_gb'] = np.nan
 
                 # Genbank example
                 # /gene="tRNA-Leu(UUR)"
@@ -1242,6 +1244,8 @@ class Pharok:
             trna_df.contig = trna_df.contig.astype(str)
             trna_df.start = trna_df.start.astype(int)
             trna_df.stop = trna_df.stop.astype(int)
+            if 'anticodon' not in trna_df.columns:
+                trna_df['anticodon'] = np.nan
 
         #### CRISPRs
         if self.crispr_count > 0:
