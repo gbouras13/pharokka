@@ -1,6 +1,6 @@
 [project]
 name = "pharokka"
-version = "1.8.1" # change version.py also
+version = "1.8.2" # change version.py also
 description = "Fast phage annotation tool"
 authors = [{ name = "George Bouras", email = "george.bouras@adelaide.edu.au" }]
 readme = "README.md"
