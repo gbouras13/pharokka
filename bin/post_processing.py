@@ -250,9 +250,8 @@ class Pharok:
         # merge top hits into the cds df
         merged_df = cds_df.merge(tophits_df, on="gene", how="left")
 
-        
         # v1.8.0 remove "mmseqs_top_hit" as it is not really true (these are profiles after all, the protein top hit is just legacy in the name from PHROGs profiles, not actually the tophit protein)
-        # the headers in the original PHROG profiles were of the form 
+        # the headers in the original PHROG profiles were of the form
         # phrog_28887 ## p11764 VI_06587
         # phrog_14808 ## KY593455_p107
         # For v1.8.0 I rebuilt the profiles with newer MMSeqs2 versions now using
@@ -263,7 +262,6 @@ class Pharok:
         # with mmseqs2 v 18.8cc5c
         # mmseqs tar2db  MSA_phrogs_renamed.tar.gz  msa --output-dbtype 11
         # mmseqs msa2profile msa phrogs_profile_db_h
-
 
         # if len(tophits_df["mmseqs_phrog"]) == 0:
         #     merged_df["mmseqs_top_hit"] = "No_PHROG"
@@ -355,16 +353,15 @@ class Pharok:
             )
         merged_df["Region"] = "CDS"
 
-
         # cast all these columns to string to prevent warning
         # FutureWarning: Setting an item of incompatible dtype is deprecated and will raise an error in a future version of pandas. Value 'No_PHROG' has dtype incompatible with float64, please explicitly cast to a compatible dtype first.
         cols_to_force_string = [
-        "mmseqs_phrog",
-        "mmseqs_alnScore",
-        "mmseqs_seqIdentity",
-        "mmseqs_eVal",
-        "color",
-    ]
+            "mmseqs_phrog",
+            "mmseqs_alnScore",
+            "mmseqs_seqIdentity",
+            "mmseqs_eVal",
+            "color",
+        ]
 
         for col in cols_to_force_string:
             merged_df[col] = merged_df[col].astype("string")
@@ -957,7 +954,7 @@ class Pharok:
                 trna_df["trna_gene"] = "tRNA-" + trna_df["isotypes"]
                 trna_df["trna_product"] = "transfer RNA-" + trna_df["isotypes"]
                 if "anticodon_gb" not in trna_df.columns:
-                    trna_df['anticodon_gb'] = np.nan
+                    trna_df["anticodon_gb"] = np.nan
 
                 # Genbank example
                 # /gene="tRNA-Leu(UUR)"
@@ -1244,8 +1241,8 @@ class Pharok:
             trna_df.contig = trna_df.contig.astype(str)
             trna_df.start = trna_df.start.astype(int)
             trna_df.stop = trna_df.stop.astype(int)
-            if 'anticodon' not in trna_df.columns:
-                trna_df['anticodon'] = np.nan
+            if "anticodon" not in trna_df.columns:
+                trna_df["anticodon"] = np.nan
 
         #### CRISPRs
         if self.crispr_count > 0:
@@ -1372,18 +1369,19 @@ class Pharok:
                             + str(row["Method"])
                             + "\n"
                         )
-                        f.write(
-                            ""
-                            + "\t"
-                            + ""
-                            + "\t"
-                            + ""
-                            + "\t"
-                            + "anticodon"
-                            + "\t"
-                            + str(row["anticodon"])
-                            + "\n"
-                        )
+                        if pd.notna(row.get("anticodon", None)):
+                            f.write(
+                                ""
+                                + "\t"
+                                + ""
+                                + "\t"
+                                + ""
+                                + "\t"
+                                + "anticodon"
+                                + "\t"
+                                + str(row["anticodon"])
+                                + "\n"
+                            )
                         if pd.notna(row.get("note", None)):
                             f.write(
                                 ""
@@ -2314,9 +2312,9 @@ def create_mmseqs_tophits(out_dir):
     # optimise the tophits generation
     # Group by 'gene' and find the top hit for each group
     tophits_df = (
-       mmseqs_df.sort_values("mmseqs_eVal")
-       .drop_duplicates(subset="gene", keep="first")
-       .reset_index(drop=True)
+        mmseqs_df.sort_values("mmseqs_eVal")
+        .drop_duplicates(subset="gene", keep="first")
+        .reset_index(drop=True)
     )
 
     # create tophits df
@@ -2558,15 +2556,14 @@ def process_vfdb_results(out_dir, merged_df, proteins_flag=False):
     touch_file(vfdb_file)
 
     vfdb_df = pd.read_csv(vfdb_file, delimiter="\t", index_col=False, names=col_list)
-    vfdb_df['vfdb_eVal'] = vfdb_df['vfdb_eVal'].astype(float) #Issue #390
+    vfdb_df["vfdb_eVal"] = vfdb_df["vfdb_eVal"].astype(float)  # Issue #390
     # optimise the tophits generation
     # Group by 'gene' and find the top hit for each group
     tophits_df = (
-       vfdb_df.sort_values("vfdb_eVal")
-       .drop_duplicates(subset="gene", keep="first")
-       .reset_index(drop=True)
+        vfdb_df.sort_values("vfdb_eVal")
+        .drop_duplicates(subset="gene", keep="first")
+        .reset_index(drop=True)
     )
-
 
     # create tophits df
     tophits_df = tophits_df[
@@ -2661,15 +2658,16 @@ def process_card_results(out_dir, merged_df, db_dir, proteins_flag=False):
     touch_file(card_file)
     card_df = pd.read_csv(card_file, delimiter="\t", index_col=False, names=col_list)
 
-    card_df['CARD_eVal'] = card_df['CARD_eVal'].astype(float)  # issue 390 https://stackoverflow.com/questions/70484024/column-has-dtype-object-cannot-use-method-nlargest-with-this-dtype
-
+    card_df["CARD_eVal"] = card_df["CARD_eVal"].astype(
+        float
+    )  # issue 390 https://stackoverflow.com/questions/70484024/column-has-dtype-object-cannot-use-method-nlargest-with-this-dtype
 
     # Group by 'gene' and find the top hit for each group
 
     tophits_df = (
-       card_df.sort_values("CARD_eVal")
-       .drop_duplicates(subset="gene", keep="first")
-       .reset_index(drop=True)
+        card_df.sort_values("CARD_eVal")
+        .drop_duplicates(subset="gene", keep="first")
+        .reset_index(drop=True)
     )
 
     # create tophits df
