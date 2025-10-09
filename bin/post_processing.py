@@ -11,7 +11,13 @@ from Bio import SeqIO
 from Bio.SeqUtils import gc_fraction
 from loguru import logger
 from processes import convert_gff_to_gbk
-from util import remove_directory, remove_file, rename_file, touch_file
+from util import (
+    parse_attributes,
+    remove_directory,
+    remove_file,
+    rename_file,
+    touch_file,
+)
 
 pd.options.mode.chained_assignment = None
 
@@ -175,13 +181,14 @@ class Pharok:
         # read in the cds cdf
         cds_file = os.path.join(self.out_dir, "cleaned_" + self.gene_predictor + ".tsv")
 
-        col_list = ["start", "stop", "frame", "contig", "score", "gene"]
+        col_list = ["start", "stop", "strand", "contig", "score", "partial", "gene"]
         dtype_dict = {
             "start": int,
             "stop": int,
-            "frame": str,
+            "strand": str,
             "contig": str,
             "score": str,
+            "partial": str,
             "gene": str,
         }
 
@@ -429,8 +436,8 @@ class Pharok:
                 "start",
                 "stop",
                 "score",
+                "strand",
                 "frame",
-                "phase",
                 "attributes",
             ]
             # read gff (no fasta output)
@@ -456,8 +463,8 @@ class Pharok:
                     "start",
                     "stop",
                     "score",
+                    "strand",
                     "frame",
-                    "phase",
                     "attributes",
                 ]
             )
@@ -524,8 +531,8 @@ class Pharok:
         starts = []
         stops = []
         scores = []
+        strands = []
         frames = []
-        phases = []
         attributes = []
         # if there is only one contig
         if contig_count == 1:
@@ -539,8 +546,8 @@ class Pharok:
                         "start": "",
                         "stop": "",
                         "score": "",
+                        "strand": "",
                         "frame": "",
-                        "phase": "",
                         "attributes": "",
                     },
                     index=[0],
@@ -560,8 +567,8 @@ class Pharok:
                     )  # tmrna output is [start,stop] or c[start, stop] so need to remove c also for some phages
                     stop = start_stops[1]
                     score = "."
+                    strand = "."
                     frame = "."
-                    phase = "."
                     tag_peptide = split[3].replace(",", "..")
                     tag_peptide_seq = split[4]
                     attribute = (
@@ -576,8 +583,8 @@ class Pharok:
                     starts.append(start)
                     stops.append(stop)
                     scores.append(score)
+                    strands.append(strand)
                     frames.append(frame)
-                    phases.append(phase)
                     attributes.append(attribute)
                 tmrna_df = pd.DataFrame(
                     {
@@ -587,8 +594,8 @@ class Pharok:
                         "start": starts,
                         "stop": stops,
                         "score": scores,
+                        "strand": strands,
                         "frame": frames,
-                        "phase": phases,
                         "attributes": attributes,
                     }
                 )
@@ -620,8 +627,8 @@ class Pharok:
                             )  # tmrna output is [start,stop] or c[start, stop] so need to remove c also for some phages
                             stop = start_stops[1]
                             score = "."
+                            strand = "."
                             frame = "."
-                            phase = "."
                             tag_peptide = split[3].replace(",", "..")
                             tag_peptide_seq = split[4]
                             attribute = (
@@ -636,8 +643,8 @@ class Pharok:
                             starts.append(start)
                             stops.append(stop)
                             scores.append(score)
+                            strands.append(strand)
                             frames.append(frame)
-                            phases.append(phase)
                             attributes.append(attribute)
                     j += 1  # iterate contig
                 # iterate line
@@ -651,8 +658,8 @@ class Pharok:
                     "start": starts,
                     "stop": stops,
                     "score": scores,
+                    "strand": strands,
                     "frame": frames,
-                    "phase": phases,
                     "attributes": attributes,
                 }
             )
@@ -749,14 +756,14 @@ class Pharok:
 
         cols = ["start", "stop"]
         # indices where start is greater than stop
-        ixs = self.merged_df["frame"] == "-"
+        ixs = self.merged_df["strand"] == "-"
         # Where ixs is True, values are swapped
         self.merged_df.loc[ixs, cols] = (
             self.merged_df.loc[ixs, cols].reindex(columns=cols[::-1]).values
         )
 
-        # set phase to be 0
-        self.merged_df["phase"] = 0
+        # set frame to be 0
+        self.merged_df["frame"] = 0
         # create attributes
         # no custom
 
@@ -778,6 +785,9 @@ class Pharok:
             + ";"
             + "product="
             + self.merged_df["annot"].astype(str)
+            + ";"
+            + "partial="
+            + self.merged_df["partial"].astype(str)
         )
         # adds custom hmm database annotations
         self.merged_df.loc[
@@ -829,8 +839,8 @@ class Pharok:
                 "start",
                 "stop",
                 "score",
+                "strand",
                 "frame",
-                "phase",
                 "attributes",
             ]
         ]
@@ -851,8 +861,8 @@ class Pharok:
                 "start",
                 "stop",
                 "score",
+                "strand",
                 "frame",
-                "phase",
                 "attributes",
             ]
             trna_empty = is_trna_empty(self.out_dir)
@@ -1272,7 +1282,7 @@ class Pharok:
                 for index, row in subset_df.iterrows():
                     start = str(row["start"])
                     stop = str(row["stop"])
-                    if row["frame"] == "-":
+                    if row["strand"] == "-":
                         start = str(row["stop"])
                         stop = str(row["start"])
                     f.write(start + "\t" + stop + "\t" + row["Region"] + "\n")
@@ -1329,7 +1339,7 @@ class Pharok:
                     for index, row in subset_trna_df.iterrows():
                         start = str(row["start"])
                         stop = str(row["stop"])
-                        if row["frame"] == "-":
+                        if row["strand"] == "-":
                             start = str(row["stop"])
                             stop = str(row["start"])
                         f.write(start + "\t" + stop + "\t" + row["Region"] + "\n")
@@ -1400,7 +1410,7 @@ class Pharok:
                     for index, row in subset_crispr_df.iterrows():
                         start = str(row["start"])
                         stop = str(row["stop"])
-                        if row["frame"] == "-":
+                        if row["strand"] == "-":
                             start = str(row["stop"])
                             stop = str(row["start"])
                         f.write(start + "\t" + stop + "\t" + row["Region"] + "\n")
@@ -1469,7 +1479,7 @@ class Pharok:
                     for index, row in subset_tmrna_df.iterrows():
                         start = str(row["start"])
                         stop = str(row["stop"])
-                        if row["frame"] == "-":
+                        if row["strand"] == "-":
                             start = str(row["stop"])
                             stop = str(row["start"])
                         f.write(start + "\t" + stop + "\t" + "tmRNA" + "\n")
@@ -1659,7 +1669,7 @@ class Pharok:
                 "vfdb_seqIdentity_x",
                 "start",
                 "stop",
-                "frame",
+                "strand",
             ]
         ]
 
@@ -1671,7 +1681,7 @@ class Pharok:
             "vfdb_seqIdentity",
             "start",
             "stop",
-            "frame",
+            "strand",
         ]
 
         if self.mmseqs_flag is True:
@@ -1703,7 +1713,7 @@ class Pharok:
                 "CARD_seqIdentity_x",
                 "start",
                 "stop",
-                "frame",
+                "strand",
             ]
         ]
         self.card_results.columns = [
@@ -1714,7 +1724,7 @@ class Pharok:
             "card_seqIdentity",
             "start",
             "stop",
-            "frame",
+            "strand",
         ]
         if self.mmseqs_flag is True:
             self.card_results = self.card_results.sort_values(by=["start"])
@@ -1750,8 +1760,8 @@ class Pharok:
                 "start",
                 "stop",
                 "score",
+                "strand",
                 "frame",
-                "phase",
                 "attributes",
             ]
             trna_df = pd.read_csv(
@@ -1813,7 +1823,23 @@ class Pharok:
             # get the total length of the contig
             contig_length = self.length_df[self.length_df["contig"] == contig]["length"]
             if cds_count > 0:
-                # gets the total cds coding length
+                # cds_mmseqs_merge_cont_df["start_clean"] = (
+                #    cds_mmseqs_merge_cont_df["start"]
+                #    .str.replace(r"[<>]", "", regex=True)
+                #    .astype(int)
+                # )
+                # cds_mmseqs_merge_cont_df["stop_clean"] = (
+                #    cds_mmseqs_merge_cont_df["stop"]
+                #    .str.replace(r"[<>]", "", regex=True)
+                #    .astype(int)
+                # )
+                #
+                # cds_lengths = abs(
+                #    cds_mmseqs_merge_cont_df["start_clean"]
+                #    - cds_mmseqs_merge_cont_df["stop_clean"]
+                # ).sum()
+
+                ## gets the total cds coding length
                 cds_lengths = abs(
                     cds_mmseqs_merge_cont_df["start"] - cds_mmseqs_merge_cont_df["stop"]
                 ).sum()
@@ -2076,7 +2102,7 @@ class Pharok:
 
         st_cols = ["start", "stop"]
         # indices where start is greater than stop
-        ixs = self.merged_df["frame"] == "-"
+        ixs = self.merged_df["strand"] == "-"
         # Where ixs is True, values are swapped
         self.merged_df.loc[ixs, st_cols] = (
             self.merged_df.loc[ixs, st_cols].reindex(columns=st_cols[::-1]).values
@@ -2089,7 +2115,7 @@ class Pharok:
         self.merged_df = self.merged_df.loc[:, cols]
         # drop cols
         self.merged_df = self.merged_df.drop(
-            columns=["phase", "attributes", "count", "locus_tag"]
+            columns=["frame", "attributes", "count", "locus_tag"]
         )
 
         # write output
@@ -2354,7 +2380,7 @@ def remove_post_processing_files(out_dir, gene_predictor, meta, keep_raw_prodiga
     remove_directory(os.path.join(out_dir, "CARD"))
     remove_directory(os.path.join(out_dir, "CARD_dir"))
     remove_file(os.path.join(out_dir, "CARD_results.tsv"))
-    remove_file(os.path.join(out_dir, "cleaned_" + gene_predictor + ".tsv"))
+    # remove_file(os.path.join(out_dir, "cleaned_" + gene_predictor + ".tsv"))
     remove_file(os.path.join(out_dir, "input_fasta_delim.fasta"))
     remove_file(os.path.join(out_dir, "mmseqs_results.tsv"))
     remove_file(os.path.join(out_dir, "top_hits_mmseqs.tsv"))
@@ -2375,7 +2401,7 @@ def remove_post_processing_files(out_dir, gene_predictor, meta, keep_raw_prodiga
     elif gene_predictor == "genbank":
         remove_file(os.path.join(out_dir, "genbank.fasta"))
     else:  # prodigal or prodigal-gv
-        remove_file(os.path.join(out_dir, gene_predictor + "_out.gff"))
+        # remove_file(os.path.join(out_dir, gene_predictor + "_out.gff"))
         if keep_raw_prodigal:
             rename_file(
                 os.path.join(out_dir, gene_predictor + "_out_tmp.fasta"),
@@ -2804,13 +2830,6 @@ def check_and_create_directory(directory):
 
 
 def parse_attributes_column(df):
-    # Split the attributes column into key-value pairs
-    def parse_attributes(attr_str):
-        if not attr_str:
-            return {}
-        pairs = attr_str.split(";")
-        return dict(pair.split("=", 1) for pair in pairs if "=" in pair)
-
     # Apply the parsing function to each row
     parsed = df["attributes"].apply(parse_attributes)
 

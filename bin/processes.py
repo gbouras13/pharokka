@@ -12,7 +12,7 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from external_tools import ExternalTool
 from loguru import logger
-from util import remove_directory
+from util import parse_attributes, remove_directory
 
 
 def run_pyrodigal_gv(filepath_in, out_dir, threads):
@@ -380,11 +380,11 @@ def tidy_phanotate_output(out_dir):
     :return: phan_df pandas dataframe
     """
     phan_file = os.path.join(out_dir, "phanotate_out.txt")
-    col_list = ["start", "stop", "frame", "contig", "score"]
+    col_list = ["start", "stop", "strand", "contig", "score"]
     dtype_dict = {
         "start": int,
         "stop": int,
-        "frame": str,
+        "strand": str,
         "contig": str,
         "score": float,
     }
@@ -435,8 +435,8 @@ def tidy_prodigal_output(out_dir, gv_flag):
         "start",
         "stop",
         "score",
+        "strand",
         "frame",
-        "phase",
         "description",
     ]
     dtype_dict = {
@@ -446,8 +446,8 @@ def tidy_prodigal_output(out_dir, gv_flag):
         "start": int,
         "stop": int,
         "score": float,
+        "strand": str,
         "frame": str,
-        "phase": str,
         "description": str,
     }
 
@@ -464,19 +464,51 @@ def tidy_prodigal_output(out_dir, gv_flag):
     # need to reset index!!!! and drop, or else will cause rubbish results for metagenomics
     prod_df = prod_df.dropna().reset_index(drop=True)
 
-    prod_filt_df = prod_df[["start", "stop", "frame", "contig", "score"]]
+    # keep description column and parse it to access "partial" info
+    prod_filt_df = prod_df[
+        ["start", "stop", "strand", "contig", "score", "description"]
+    ]
 
-    # convert start stop to int
-    prod_filt_df["start"] = prod_filt_df["start"].astype("int")
-    prod_filt_df["stop"] = prod_filt_df["stop"].astype("int")
+    parsed = prod_filt_df["description"].apply(parse_attributes)
+
+    # Convert the list of dicts into a DataFrame
+    attributes_df = pd.DataFrame(parsed.tolist())
+
+    # Drop score column to avoid double score columns
+    attributes_df = attributes_df.drop(columns=["score"])
+
+    # Concatenate with the original DataFrame (if you want to keep other columns)
+    prod_filt_df = pd.concat(
+        [prod_filt_df.reset_index(drop=True), attributes_df], axis=1
+    )
+
+    prod_filt_df = prod_filt_df[
+        ["start", "stop", "strand", "contig", "score", "partial"]
+    ]
+
+    # convert start stop to string
+    prod_filt_df["start"] = prod_filt_df["start"].astype(int)
+    prod_filt_df["stop"] = prod_filt_df["stop"].astype(int)
+
+    # for _, row in prod_filt_df.iterrows():
+    #    if row["strand"] == "+" and row["partial"] == "10":
+    #        prod_filt_df.at[_, "start"] = "<" + str(row["start"])
+    #    elif row["strand"] == "+" and row["partial"] == "01":
+    #        prod_filt_df.at[_, "stop"] = ">" + str(row["stop"])
+    #    elif row["strand"] == "-" and row["partial"] == "10":
+    #        prod_filt_df.at[_, "stop"] = "<" + str(row["stop"])
+    #    elif row["strand"] == "-" and row["partial"] == "01":
+    #        prod_filt_df.at[_, "start"] = ">" + str(row["start"])
+
     # rearrange start and stop so that for negative strand, the stop is before start (like phanotate_out)
     cols = ["start", "stop"]
     # indices where start is greater than stop
-    ixs = prod_filt_df["frame"] == "-"
+    ixs = prod_filt_df["strand"] == "-"
     # Where ixs is True, values are swapped
     prod_filt_df.loc[ixs, cols] = (
         prod_filt_df.loc[ixs, cols].reindex(columns=cols[::-1]).values
     )
+
     prod_filt_df["gene"] = (
         prod_filt_df["contig"].astype(str)
         + prod_filt_df.index.astype(str)
@@ -501,7 +533,7 @@ def tidy_genbank_output(out_dir, genbank_file, coding_table):
     # Create lists to store CDS information
     starts = []
     stops = []
-    frames = []
+    strands = []
     contigs = []
 
     # output nuc
@@ -513,15 +545,15 @@ def tidy_genbank_output(out_dir, genbank_file, coding_table):
     for record in SeqIO.parse(genbank_file, "genbank"):
         for feature in record.features:
             if feature.type == "CDS":
-                frame = feature.location.strand
-                if frame == 1:  # pos
-                    frame = "+"
+                strand = feature.location.strand
+                if strand == 1:  # pos
+                    strand = "+"
                     start = (
                         feature.location.start + 1
                     )  # this needs to added by 1 - the parser is 0 indexed issue #353
                     stop = feature.location.end
                 else:  # neg
-                    frame = "-"
+                    strand = "-"
                     start = feature.location.end
                     stop = (
                         feature.location.start + 1
@@ -530,11 +562,11 @@ def tidy_genbank_output(out_dir, genbank_file, coding_table):
                 contig = record.id
                 starts.append(start)
                 stops.append(stop)
-                frames.append(frame)
+                strands.append(strand)
                 contigs.append(contig)
 
     # Create a pandas DataFrame
-    data = {"start": starts, "stop": stops, "frame": frames, "contig": contigs}
+    data = {"start": starts, "stop": stops, "strand": strands, "contig": contigs}
 
     gen_df = pd.DataFrame(data)
     # add fake score
