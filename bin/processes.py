@@ -490,16 +490,7 @@ def tidy_prodigal_output(out_dir, gv_flag):
     prod_filt_df["start"] = prod_filt_df["start"].astype(int)
     prod_filt_df["stop"] = prod_filt_df["stop"].astype(int)
 
-    # for _, row in prod_filt_df.iterrows():
-    #    if row["strand"] == "+" and row["partial"] == "10":
-    #        prod_filt_df.at[_, "start"] = "<" + str(row["start"])
-    #    elif row["strand"] == "+" and row["partial"] == "01":
-    #        prod_filt_df.at[_, "stop"] = ">" + str(row["stop"])
-    #    elif row["strand"] == "-" and row["partial"] == "10":
-    #        prod_filt_df.at[_, "stop"] = "<" + str(row["stop"])
-    #    elif row["strand"] == "-" and row["partial"] == "01":
-    #        prod_filt_df.at[_, "start"] = ">" + str(row["start"])
-
+    # TODO: In create_gff this is reversed again, so technically I don't think it is necessary
     # rearrange start and stop so that for negative strand, the stop is before start (like phanotate_out)
     cols = ["start", "stop"]
     # indices where start is greater than stop
@@ -834,6 +825,7 @@ def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, prot_seq_df):
 
     with open(gbk_file, "wt") as gbk_handler:
         fasta_handler = SeqIO.to_dict(SeqIO.parse(filepath_in, "fasta"))
+
         for record in GFF.parse(gff_file, fasta_handler):
             # sequence in each contig (record)
             record.id = str(record.id)
@@ -850,6 +842,7 @@ def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, prot_seq_df):
             record.annotations["data_file_division"] = (
                 "PHG"  # https://github.com/RyanCook94/inphared/issues/22
             )
+
             # add features to the record
             for feature in record.features:
                 # Move 'source' qualifier to 'inference', then remove 'source'
@@ -866,8 +859,6 @@ def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, prot_seq_df):
                         ]
                 # add translation only if CDS
                 if feature.type == "CDS":
-                    # aa = prot_records[i].seq
-
                     feature.qualifiers.update(
                         {"translation": subset_seqs[i]}  # from the aa seq
                     )

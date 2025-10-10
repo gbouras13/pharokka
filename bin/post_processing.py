@@ -181,7 +181,10 @@ class Pharok:
         # read in the cds cdf
         cds_file = os.path.join(self.out_dir, "cleaned_" + self.gene_predictor + ".tsv")
 
-        col_list = ["start", "stop", "strand", "contig", "score", "partial", "gene"]
+        if self.meta_mode:
+            col_list = ["start", "stop", "strand", "contig", "score", "partial", "gene"]
+        else:
+            col_list = ["start", "stop", "strand", "contig", "score", "gene"]
         dtype_dict = {
             "start": int,
             "stop": int,
@@ -199,6 +202,8 @@ class Pharok:
             names=col_list,
             dtype=dtype_dict,
             skiprows=1,
+            usecols=lambda column: column
+            in col_list,  # only use these columns (handles missing partial column for phanotate)
         )
         cds_df["contig"] = cds_df["contig"].astype(str)
 
@@ -785,10 +790,13 @@ class Pharok:
             + ";"
             + "product="
             + self.merged_df["annot"].astype(str)
-            + ";"
-            + "partial="
-            + self.merged_df["partial"].astype(str)
         )
+
+        if "partial" in self.merged_df.columns:
+            self.merged_df["attributes"] += (
+                ";" + "partial=" + self.merged_df["partial"].astype(str)
+            )
+
         # adds custom hmm database annotations
         self.merged_df.loc[
             self.merged_df["custom_hmm_id"] != "No_custom_HMM", "attributes"
@@ -1275,9 +1283,11 @@ class Pharok:
                 contig = str(row["contig"])
                 f.write(">Feature " + contig + "\n")
                 subset_df = self.merged_df[self.merged_df["contig"] == contig]
-                # drop transl_table column because it is also present in the attributes column
-                # and will be parsed into its own column by parse_attributes_column
+                # drop transl_table and partial column because they are also present in the attributes column
+                # and will be parsed into their own column by parse_attributes_column
                 subset_df.drop(columns=["transl_table"], inplace=True)
+                if "partial" in subset_df.columns:
+                    subset_df.drop(columns=["partial"], inplace=True)
                 subset_df = parse_attributes_column(subset_df)
                 for index, row in subset_df.iterrows():
                     start = str(row["start"])
@@ -1285,6 +1295,17 @@ class Pharok:
                     if row["strand"] == "-":
                         start = str(row["stop"])
                         stop = str(row["start"])
+
+                    if "partial" in row and pd.notna(row["partial"]):
+                        if row["strand"] == "+" and row["partial"] == "10":
+                            start = "<" + str(row["start"])
+                        elif row["strand"] == "+" and row["partial"] == "01":
+                            stop = ">" + str(row["stop"])
+                        elif row["strand"] == "-" and row["partial"] == "10":
+                            start = "<" + str(row["stop"])
+                        elif row["strand"] == "-" and row["partial"] == "01":
+                            stop = ">" + str(row["start"])
+
                     f.write(start + "\t" + stop + "\t" + row["Region"] + "\n")
                     f.write(
                         ""
@@ -1823,22 +1844,6 @@ class Pharok:
             # get the total length of the contig
             contig_length = self.length_df[self.length_df["contig"] == contig]["length"]
             if cds_count > 0:
-                # cds_mmseqs_merge_cont_df["start_clean"] = (
-                #    cds_mmseqs_merge_cont_df["start"]
-                #    .str.replace(r"[<>]", "", regex=True)
-                #    .astype(int)
-                # )
-                # cds_mmseqs_merge_cont_df["stop_clean"] = (
-                #    cds_mmseqs_merge_cont_df["stop"]
-                #    .str.replace(r"[<>]", "", regex=True)
-                #    .astype(int)
-                # )
-                #
-                # cds_lengths = abs(
-                #    cds_mmseqs_merge_cont_df["start_clean"]
-                #    - cds_mmseqs_merge_cont_df["stop_clean"]
-                # ).sum()
-
                 ## gets the total cds coding length
                 cds_lengths = abs(
                     cds_mmseqs_merge_cont_df["start"] - cds_mmseqs_merge_cont_df["stop"]
@@ -2380,6 +2385,7 @@ def remove_post_processing_files(out_dir, gene_predictor, meta, keep_raw_prodiga
     remove_directory(os.path.join(out_dir, "CARD"))
     remove_directory(os.path.join(out_dir, "CARD_dir"))
     remove_file(os.path.join(out_dir, "CARD_results.tsv"))
+    # TODO: uncomment
     # remove_file(os.path.join(out_dir, "cleaned_" + gene_predictor + ".tsv"))
     remove_file(os.path.join(out_dir, "input_fasta_delim.fasta"))
     remove_file(os.path.join(out_dir, "mmseqs_results.tsv"))
@@ -2401,6 +2407,7 @@ def remove_post_processing_files(out_dir, gene_predictor, meta, keep_raw_prodiga
     elif gene_predictor == "genbank":
         remove_file(os.path.join(out_dir, "genbank.fasta"))
     else:  # prodigal or prodigal-gv
+        # TODO: uncomment
         # remove_file(os.path.join(out_dir, gene_predictor + "_out.gff"))
         if keep_raw_prodigal:
             rename_file(
