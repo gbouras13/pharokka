@@ -88,3 +88,11 @@ def rename_file(old_path, new_path):
         logger.error(f"A file already exists at '{new_path}'.")
 
     os.rename(old_path, new_path)
+
+
+# Split attributes/description column from pyrodigal gff into key-value pairs
+def parse_attributes(attr_str):
+    if not attr_str:
+        return {}
+    pairs = attr_str.split(";")
+    return dict(pair.split("=", 1) for pair in pairs if "=" in pair)

@@ -72,7 +72,7 @@ def update_records(records):
                         "ID": [new_id],
                         "function": feature.qualifiers.get("function"),
                         "locus_tag": [new_id],
-                        "phase": feature.qualifiers.get("phase"),
+                        "frame": feature.qualifiers.get("frame"),
                         "phrog": feature.qualifiers.get("phrog"),
                         "product": feature.qualifiers.get("product"),
                         "score": feature.qualifiers.get("score"),
