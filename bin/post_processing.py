@@ -2385,8 +2385,7 @@ def remove_post_processing_files(out_dir, gene_predictor, meta, keep_raw_prodiga
     remove_directory(os.path.join(out_dir, "CARD"))
     remove_directory(os.path.join(out_dir, "CARD_dir"))
     remove_file(os.path.join(out_dir, "CARD_results.tsv"))
-    # TODO: uncomment
-    # remove_file(os.path.join(out_dir, "cleaned_" + gene_predictor + ".tsv"))
+    remove_file(os.path.join(out_dir, "cleaned_" + gene_predictor + ".tsv"))
     remove_file(os.path.join(out_dir, "input_fasta_delim.fasta"))
     remove_file(os.path.join(out_dir, "mmseqs_results.tsv"))
     remove_file(os.path.join(out_dir, "top_hits_mmseqs.tsv"))
@@ -2407,8 +2406,7 @@ def remove_post_processing_files(out_dir, gene_predictor, meta, keep_raw_prodiga
     elif gene_predictor == "genbank":
         remove_file(os.path.join(out_dir, "genbank.fasta"))
     else:  # prodigal or prodigal-gv
-        # TODO: uncomment
-        # remove_file(os.path.join(out_dir, gene_predictor + "_out.gff"))
+        remove_file(os.path.join(out_dir, gene_predictor + "_out.gff"))
         if keep_raw_prodigal:
             rename_file(
                 os.path.join(out_dir, gene_predictor + "_out_tmp.fasta"),

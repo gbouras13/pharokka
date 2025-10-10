@@ -490,7 +490,6 @@ def tidy_prodigal_output(out_dir, gv_flag):
     prod_filt_df["start"] = prod_filt_df["start"].astype(int)
     prod_filt_df["stop"] = prod_filt_df["stop"].astype(int)
 
-    # TODO: In create_gff this is reversed again, so technically I don't think it is necessary
     # rearrange start and stop so that for negative strand, the stop is before start (like phanotate_out)
     cols = ["start", "stop"]
     # indices where start is greater than stop
