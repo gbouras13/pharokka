@@ -861,8 +861,9 @@ def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, prot_seq_df):
                 if feature.type == "CDS":
                     # fix frame for partial CDS
                     if "phase" in feature.qualifiers:
-                        feature.qualifiers["frame"] = feature.qualifiers["phase"]
                         del feature.qualifiers["phase"]
+
+                    if "partial" in feature.qualifiers:
                         if (
                             feature.qualifiers["partial"] == ["10"]
                             and feature.location.strand == 1
