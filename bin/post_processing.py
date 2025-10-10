@@ -181,7 +181,7 @@ class Pharok:
         # read in the cds cdf
         cds_file = os.path.join(self.out_dir, "cleaned_" + self.gene_predictor + ".tsv")
 
-        if self.gene_predictor == "prodigal":
+        if self.gene_predictor == "prodigal" or self.meta_mode == True:
             col_list = ["start", "stop", "strand", "contig", "score", "partial", "gene"]
         else:
             col_list = ["start", "stop", "strand", "contig", "score", "gene"]
