@@ -828,6 +828,7 @@ def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, prot_seq_df):
         for record in GFF.parse(gff_file, fasta_handler):
             # sequence in each contig (record)
             record.id = str(record.id)
+            sequence_length = len(record.seq)
             subset_seqs_df = prot_seq_df.loc[prot_seq_df["contig"] == record.id]
             # get all the seqs in the contigs - and drop the index to reset for 0 indexed loop
             subset_seqs = subset_seqs_df["sequence"].reset_index(drop=True)
@@ -858,11 +859,28 @@ def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, prot_seq_df):
                         ]
                 # add translation only if CDS
                 if feature.type == "CDS":
+                    # fix frame for partial CDS
+                    if "phase" in feature.qualifiers:
+                        feature.qualifiers["frame"] = feature.qualifiers["phase"]
+                        del feature.qualifiers["phase"]
+                        if (
+                            feature.qualifiers["partial"] == ["10"]
+                            and feature.location.strand == 1
+                        ):
+                            feature.qualifiers["codon_start"] = feature.location.start
+                        elif (
+                            feature.qualifiers["partial"] == ["01"]
+                            and feature.location.strand == -1
+                        ):
+                            feature.qualifiers["codon_start"] = (
+                                sequence_length - feature.location.end + 1
+                            )
+
                     feature.qualifiers.update(
                         {"translation": subset_seqs[i]}  # from the aa seq
                     )
-
                     i += 1
+
             SeqIO.write(record, gbk_handler, "genbank")
 
 

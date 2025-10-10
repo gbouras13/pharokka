@@ -181,7 +181,7 @@ class Pharok:
         # read in the cds cdf
         cds_file = os.path.join(self.out_dir, "cleaned_" + self.gene_predictor + ".tsv")
 
-        if self.gene_predictor == "prodigal" or self.meta_mode == True:
+        if self.gene_predictor in ["prodigal", "prodigal-gv"]:
             col_list = ["start", "stop", "strand", "contig", "score", "partial", "gene"]
         else:
             col_list = ["start", "stop", "strand", "contig", "score", "gene"]
@@ -1282,6 +1282,7 @@ class Pharok:
         with open(os.path.join(self.out_dir, self.prefix + ".tbl"), "w") as f:
             for index, row in self.length_df.iterrows():
                 contig = str(row["contig"])
+                contig_length = int(row["length"])
                 f.write(">Feature " + contig + "\n")
                 subset_df = self.merged_df[self.merged_df["contig"] == contig]
                 # drop transl_table and partial column because they are also present in the attributes column
@@ -1293,6 +1294,8 @@ class Pharok:
                 for index, row in subset_df.iterrows():
                     start = str(row["start"])
                     stop = str(row["stop"])
+                    codon_start = None
+
                     if row["strand"] == "-":
                         start = str(row["stop"])
                         stop = str(row["start"])
@@ -1300,11 +1303,25 @@ class Pharok:
                     if "partial" in row and pd.notna(row["partial"]):
                         if row["strand"] == "+" and row["partial"] == "10":
                             start = "<" + str(row["start"])
+                            if row["start"] > 1:
+                                codon_start = str(row["start"])
+                                start = "<1"
                         elif row["strand"] == "+" and row["partial"] == "01":
                             stop = ">" + str(row["stop"])
-                        elif row["strand"] == "-" and row["partial"] == "10":
-                            start = "<" + str(row["stop"])
+                            if row["stop"] < contig_length:
+                                stop = ">" + str(contig_length)
                         elif row["strand"] == "-" and row["partial"] == "01":
+                            start = "<" + str(row["stop"])
+                            if contig_length - row["stop"] > 0:
+                                codon_start = (
+                                    contig_length - row["stop"] + 1
+                                )  # need +1 to get the codon start correct
+                                start = "<" + str(contig_length)
+                            if codon_start > 3:
+                                logger.error(
+                                    "Error: codon_start can not be greater than 3. Please raise an issue on GitHub with your genome. \n"
+                                )
+                        elif row["strand"] == "-" and row["partial"] == "10":
                             stop = ">" + str(row["start"])
 
                     f.write(start + "\t" + stop + "\t" + row["Region"] + "\n")
@@ -1356,6 +1373,19 @@ class Pharok:
                         + str(row["transl_table"])
                         + "\n"
                     )
+                    if codon_start is not None:
+                        f.write(
+                            ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + "codon_start"
+                            + "\t"
+                            + str(codon_start)
+                            + "\n"
+                        )
                 if self.trna_empty == False:
                     subset_trna_df = trna_df[trna_df["contig"] == contig]
                     for index, row in subset_trna_df.iterrows():
