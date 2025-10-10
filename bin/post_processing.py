@@ -181,10 +181,11 @@ class Pharok:
         # read in the cds cdf
         cds_file = os.path.join(self.out_dir, "cleaned_" + self.gene_predictor + ".tsv")
 
-        if self.meta_mode:
+        if self.gene_predictor == "prodigal":
             col_list = ["start", "stop", "strand", "contig", "score", "partial", "gene"]
         else:
             col_list = ["start", "stop", "strand", "contig", "score", "gene"]
+
         dtype_dict = {
             "start": int,
             "stop": int,
@@ -202,8 +203,8 @@ class Pharok:
             names=col_list,
             dtype=dtype_dict,
             skiprows=1,
-            usecols=lambda column: column
-            in col_list,  # only use these columns (handles missing partial column for phanotate)
+            # only use these columns (handles missing partial column for phanotate)
+            usecols=lambda column: column in col_list,
         )
         cds_df["contig"] = cds_df["contig"].astype(str)
 
