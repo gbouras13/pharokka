@@ -1317,10 +1317,10 @@ class Pharok:
                                     contig_length - row["stop"] + 1
                                 )  # need +1 to get the codon start correct
                                 start = "<" + str(contig_length)
-                            if codon_start > 3:
-                                logger.error(
-                                    "Error: codon_start can not be greater than 3. Please raise an issue on GitHub with your genome. \n"
-                                )
+                                if codon_start > 3:
+                                    logger.error(
+                                        "Error: codon_start can not be greater than 3. Please raise an issue on GitHub with your genome. \n"
+                                    )
                         elif row["strand"] == "-" and row["partial"] == "10":
                             stop = ">" + str(row["start"])
 
