@@ -1308,8 +1308,6 @@ class Pharok:
                                 start = "<1"
                         elif row["strand"] == "+" and row["partial"] == "01":
                             stop = ">" + str(row["stop"])
-                            if row["stop"] < contig_length:
-                                stop = ">" + str(contig_length)
                         elif row["strand"] == "-" and row["partial"] == "01":
                             start = "<" + str(row["stop"])
                             if contig_length - row["stop"] > 0:
