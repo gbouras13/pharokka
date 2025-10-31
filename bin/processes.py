@@ -867,8 +867,12 @@ def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, prot_seq_df):
                         if (
                             feature.qualifiers["partial"] == ["10"]
                             and feature.location.strand == 1
+                            and feature.location.start
+                            != 0  # codon_start of 1 is default, so not necessary to add
                         ):
-                            feature.qualifiers["codon_start"] = feature.location.start
+                            feature.qualifiers["codon_start"] = (
+                                feature.location.start + 1
+                            )
                         elif (
                             feature.qualifiers["partial"] == ["01"]
                             and feature.location.strand == -1
