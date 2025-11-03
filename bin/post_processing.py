@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from Bio import SeqIO
+from Bio.Seq import Seq
 from Bio.SeqUtils import gc_fraction
 from loguru import logger
 from processes import convert_gff_to_gbk
@@ -580,7 +581,7 @@ class Pharok:
                     attribute = (
                         "product=transfer-messenger RNA SsrA;tag_peptide="
                         + tag_peptide
-                        + ";tag_peptide_sequence="
+                        + ";note=tag peptide sequence: "
                         + tag_peptide_seq
                     )
                     contig_names.append(contig)
@@ -640,7 +641,7 @@ class Pharok:
                             attribute = (
                                 "product=transfer-messenger RNA SsrA;tag_peptide="
                                 + tag_peptide
-                                + ";tag_peptide_sequence="
+                                + ";note=tag peptide sequence: "
                                 + tag_peptide_seq
                             )
                             contig_names.append(contig)
@@ -952,11 +953,19 @@ class Pharok:
                     if row["isotypes"] == "Undet":
                         trna_df.at[idx, "isotypes"] = "OTHER"
                         trna_df.at[idx, "note"] = "Undetermined tRNA"
+                        trna_df.at[idx, "codon"] = ""
                         continue
                     elif row["isotypes"] == "Sup":
                         trna_df.at[idx, "isotypes"] = "OTHER"
                         row["isotypes"] = "OTHER"
+                        trna_df.at[idx, "codon"] = get_codon_from_anticodon(
+                            row["anticodon"]
+                        )
                         trna_df.at[idx, "note"] = "Suppressor tRNA"
+                    else:
+                        trna_df.at[idx, "codon"] = get_codon_from_anticodon(
+                            row["anticodon"]
+                        )
 
                     # Use the anticodon position from the extracted list if available
                     if idx < len(anticodon_positions):
@@ -970,8 +979,18 @@ class Pharok:
                             f"(pos:{row['start']}..{row['stop']},aa:{row['isotypes']},seq:{row['anticodon']})"
                         )
 
-                trna_df["trna_gene"] = "tRNA-" + trna_df["isotypes"]
-                trna_df["trna_product"] = "transfer RNA-" + trna_df["isotypes"]
+                trna_df["trna_gene"] = (
+                    "tRNA-"
+                    + trna_df["isotypes"]
+                    + np.where(trna_df["codon"] != "", "(" + trna_df["codon"] + ")", "")
+                )
+
+                trna_df["trna_product"] = (
+                    "transfer RNA-"
+                    + trna_df["isotypes"]
+                    + np.where(trna_df["codon"] != "", "(" + trna_df["codon"] + ")", "")
+                )
+
                 if "anticodon_gb" not in trna_df.columns:
                     trna_df["anticodon_gb"] = np.nan
 
@@ -1576,9 +1595,9 @@ class Pharok:
                             + "\t"
                             + ""
                             + "\t"
-                            + "tag_peptide_sequence"
+                            + "note"
                             + "\t"
-                            + str(row["tag_peptide_sequence"])
+                            + str(row["note"])
                             + "\n"
                         )
 
@@ -2873,3 +2892,25 @@ def parse_attributes_column(df):
     # Concatenate with the original DataFrame (if you want to keep other columns)
     result_df = pd.concat([df.reset_index(drop=True), attributes_df], axis=1)
     return result_df
+
+
+def get_codon_from_anticodon(anticodon):
+    """
+    Given a DNA sequence (string), return:
+    - its reverse complement in RNA format
+
+    Example:
+        >>> get_codon_from_anticodon("ATG")
+        'rna_from_revcomp': 'CAU'
+    """
+    if not isinstance(anticodon, str):
+        raise TypeError("Input must be a string.")
+    if not anticodon.strip():
+        raise ValueError("Input DNA sequence is empty.")
+
+    seq = Seq(anticodon.upper())  # normalize to uppercase
+
+    revcomp = seq.reverse_complement()
+    rna_from_revcomp = revcomp.transcribe()
+
+    return str(rna_from_revcomp)
