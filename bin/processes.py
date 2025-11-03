@@ -222,7 +222,7 @@ def run_trnascan_meta(filepath_in, out_dir, threads, num_fastas, trna_scan_model
         filepath_in = os.path.join(input_tmp_dir, in_file)
         filepath_out = os.path.join(input_tmp_dir, out_file)
         sec_out = os.path.join(input_tmp_dir, sec_struc_file)
-        cmd = f"tRNAscan-SE {filepath_in} --thread 1 -{model} -Q -j {filepath_out} -f {sec_out}"
+        cmd = f"tRNAscan-SE {filepath_in} --thread 1 -{model} -D -Q -j {filepath_out} -f {sec_out}"
         commands.append(cmd)
 
     n = int(threads)  # the number of parallel processes you want
