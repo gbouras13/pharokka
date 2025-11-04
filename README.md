@@ -72,6 +72,7 @@ If you don't want to install `pharokka` or `phold` locally, you can run `pharokk
 - [Version Log](#version-log)
 - [System](#system)
 - [Time](#time)
+- [GenBank submission](#genbank-submission)
 - [Benchmarking v1.5.0](#benchmarking-v150)
 - [Benchmarking v1.4.0](#benchmarking-v140)
 - [Original Benchmarking (v1.1.0)](#original-benchmarking-v110)
@@ -135,7 +136,7 @@ So if you can't get `pharokka` to install on your machine for whatever reason or
 * Removes "mmseqs2_tophit" from `pharokka_cds_final_merged_output.tsv` 
 * Removed various special characters in the PHROG category and functional descriptions (e.g. ';') that broke GenBank parsing - see e.g. https://github.com/gbouras13/pharokka/issues/388
 * Changes to `.gff`, `.gbk` and `.tbl` outputs to make them suitable for use with `sutvk` and easier uploading to NCBI - thanks @LanderDC
-* Add `transcan_out.sec` output fule with tRNAscan secondary structures (thanks @LanderDC)
+* Add `transcan_out.sec` output file with tRNAscan secondary structures (thanks @LanderDC)
 
 
 ## Pharokka v 1.7.0 Update (4 March 2024)
@@ -312,11 +313,6 @@ which will create a directory called "pharokka_v1.4.0_databases" containing the 
 
 If you are new to using the command-line, please install conda using the following instructions.
 
-
-# Beginner Conda Installation
-
-If you are new to using the command-line, please install conda using the following instructions.
-
 1. Install Conda - I would recommend [miniforge](https://github.com/conda-forge/miniforge).
 2. Assuming you are using a Linux x86_64 machine (for other architectures, please replace the URL with the appropriate one on the [miniforge](https://github.com/conda-forge/miniforge) repository).
 
@@ -450,6 +446,12 @@ A brief description of what is new in each update of `pharokka` can be found in 
 On a standard 16GB RAM laptop specifying 8 threads, `pharokka` should take between 3-10 minutes to run for a single phage, depending on the genome size. 
 
 In `--fast` mode, it should take 45-75 seconds.
+
+# GenBank submission
+
+From `pharokka` v1.8.2, the `pharokka` genbank file (.gbk) or feature table (.tbl) can both be used in combination with [`suvtk`](https://github.com/LanderDC/suvtk) to submit your phage genomes to GenBank. `suvtk` ensures that viral genomes are submitted to GenBank compliant with NCBI, ICTV and MIUViG guidelines.
+
+It is recommended to further improve annotations from `pharokka` with [`phold`](#phold) before submission. The `phold` gbk file can be converted by `suvtk gbk2tbl` to a feature table necessary for submission. 
 
 # Benchmarking v1.5.0 
 
