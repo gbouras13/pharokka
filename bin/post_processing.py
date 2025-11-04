@@ -956,8 +956,8 @@ class Pharok:
                         trna_df.at[idx, "codon"] = ""
                         continue
                     elif row["isotypes"] == "Sup":
-                        trna_df.at[idx, "isotypes"] = "OTHER"
-                        row["isotypes"] = "OTHER"
+                        trna_df.at[idx, "isotypes"] = "TERM"
+                        row["isotypes"] = "TERM"
                         trna_df.at[idx, "codon"] = get_codon_from_anticodon(
                             row["anticodon"]
                         )
@@ -986,7 +986,7 @@ class Pharok:
                 )
 
                 trna_df["trna_product"] = (
-                    "transfer RNA-"
+                    "tRNA-"
                     + trna_df["isotypes"]
                     + np.where(trna_df["codon"] != "", "(" + trna_df["codon"] + ")", "")
                 )
