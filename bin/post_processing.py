@@ -8,10 +8,17 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from Bio import SeqIO
+from Bio.Seq import Seq
 from Bio.SeqUtils import gc_fraction
 from loguru import logger
 from processes import convert_gff_to_gbk
-from util import remove_directory, remove_file, rename_file, touch_file
+from util import (
+    parse_attributes,
+    remove_directory,
+    remove_file,
+    rename_file,
+    touch_file,
+)
 
 pd.options.mode.chained_assignment = None
 
@@ -175,13 +182,18 @@ class Pharok:
         # read in the cds cdf
         cds_file = os.path.join(self.out_dir, "cleaned_" + self.gene_predictor + ".tsv")
 
-        col_list = ["start", "stop", "frame", "contig", "score", "gene"]
+        if self.gene_predictor in ["prodigal", "prodigal-gv"]:
+            col_list = ["start", "stop", "strand", "contig", "score", "partial", "gene"]
+        else:
+            col_list = ["start", "stop", "strand", "contig", "score", "gene"]
+
         dtype_dict = {
             "start": int,
             "stop": int,
-            "frame": str,
+            "strand": str,
             "contig": str,
             "score": str,
+            "partial": str,
             "gene": str,
         }
 
@@ -192,6 +204,8 @@ class Pharok:
             names=col_list,
             dtype=dtype_dict,
             skiprows=1,
+            # only use these columns (handles missing partial column for phanotate)
+            usecols=lambda column: column in col_list,
         )
         cds_df["contig"] = cds_df["contig"].astype(str)
 
@@ -250,9 +264,8 @@ class Pharok:
         # merge top hits into the cds df
         merged_df = cds_df.merge(tophits_df, on="gene", how="left")
 
-        
         # v1.8.0 remove "mmseqs_top_hit" as it is not really true (these are profiles after all, the protein top hit is just legacy in the name from PHROGs profiles, not actually the tophit protein)
-        # the headers in the original PHROG profiles were of the form 
+        # the headers in the original PHROG profiles were of the form
         # phrog_28887 ## p11764 VI_06587
         # phrog_14808 ## KY593455_p107
         # For v1.8.0 I rebuilt the profiles with newer MMSeqs2 versions now using
@@ -263,7 +276,6 @@ class Pharok:
         # with mmseqs2 v 18.8cc5c
         # mmseqs tar2db  MSA_phrogs_renamed.tar.gz  msa --output-dbtype 11
         # mmseqs msa2profile msa phrogs_profile_db_h
-
 
         # if len(tophits_df["mmseqs_phrog"]) == 0:
         #     merged_df["mmseqs_top_hit"] = "No_PHROG"
@@ -355,16 +367,15 @@ class Pharok:
             )
         merged_df["Region"] = "CDS"
 
-
         # cast all these columns to string to prevent warning
         # FutureWarning: Setting an item of incompatible dtype is deprecated and will raise an error in a future version of pandas. Value 'No_PHROG' has dtype incompatible with float64, please explicitly cast to a compatible dtype first.
         cols_to_force_string = [
-        "mmseqs_phrog",
-        "mmseqs_alnScore",
-        "mmseqs_seqIdentity",
-        "mmseqs_eVal",
-        "color",
-    ]
+            "mmseqs_phrog",
+            "mmseqs_alnScore",
+            "mmseqs_seqIdentity",
+            "mmseqs_eVal",
+            "color",
+        ]
 
         for col in cols_to_force_string:
             merged_df[col] = merged_df[col].astype("string")
@@ -432,8 +443,8 @@ class Pharok:
                 "start",
                 "stop",
                 "score",
+                "strand",
                 "frame",
-                "phase",
                 "attributes",
             ]
             # read gff (no fasta output)
@@ -459,8 +470,8 @@ class Pharok:
                     "start",
                     "stop",
                     "score",
+                    "strand",
                     "frame",
-                    "phase",
                     "attributes",
                 ]
             )
@@ -527,8 +538,8 @@ class Pharok:
         starts = []
         stops = []
         scores = []
+        strands = []
         frames = []
-        phases = []
         attributes = []
         # if there is only one contig
         if contig_count == 1:
@@ -542,8 +553,8 @@ class Pharok:
                         "start": "",
                         "stop": "",
                         "score": "",
+                        "strand": "",
                         "frame": "",
-                        "phase": "",
                         "attributes": "",
                     },
                     index=[0],
@@ -563,14 +574,14 @@ class Pharok:
                     )  # tmrna output is [start,stop] or c[start, stop] so need to remove c also for some phages
                     stop = start_stops[1]
                     score = "."
+                    strand = "."
                     frame = "."
-                    phase = "."
                     tag_peptide = split[3].replace(",", "..")
                     tag_peptide_seq = split[4]
                     attribute = (
                         "product=transfer-messenger RNA SsrA;tag_peptide="
                         + tag_peptide
-                        + ";tag_peptide_sequence="
+                        + ";note=tag peptide sequence: "
                         + tag_peptide_seq
                     )
                     contig_names.append(contig)
@@ -579,8 +590,8 @@ class Pharok:
                     starts.append(start)
                     stops.append(stop)
                     scores.append(score)
+                    strands.append(strand)
                     frames.append(frame)
-                    phases.append(phase)
                     attributes.append(attribute)
                 tmrna_df = pd.DataFrame(
                     {
@@ -590,8 +601,8 @@ class Pharok:
                         "start": starts,
                         "stop": stops,
                         "score": scores,
+                        "strand": strands,
                         "frame": frames,
-                        "phase": phases,
                         "attributes": attributes,
                     }
                 )
@@ -623,14 +634,14 @@ class Pharok:
                             )  # tmrna output is [start,stop] or c[start, stop] so need to remove c also for some phages
                             stop = start_stops[1]
                             score = "."
+                            strand = "."
                             frame = "."
-                            phase = "."
                             tag_peptide = split[3].replace(",", "..")
                             tag_peptide_seq = split[4]
                             attribute = (
                                 "product=transfer-messenger RNA SsrA;tag_peptide="
                                 + tag_peptide
-                                + ";tag_peptide_sequence="
+                                + ";note=tag peptide sequence: "
                                 + tag_peptide_seq
                             )
                             contig_names.append(contig)
@@ -639,8 +650,8 @@ class Pharok:
                             starts.append(start)
                             stops.append(stop)
                             scores.append(score)
+                            strands.append(strand)
                             frames.append(frame)
-                            phases.append(phase)
                             attributes.append(attribute)
                     j += 1  # iterate contig
                 # iterate line
@@ -654,8 +665,8 @@ class Pharok:
                     "start": starts,
                     "stop": stops,
                     "score": scores,
+                    "strand": strands,
                     "frame": frames,
-                    "phase": phases,
                     "attributes": attributes,
                 }
             )
@@ -752,14 +763,14 @@ class Pharok:
 
         cols = ["start", "stop"]
         # indices where start is greater than stop
-        ixs = self.merged_df["frame"] == "-"
+        ixs = self.merged_df["strand"] == "-"
         # Where ixs is True, values are swapped
         self.merged_df.loc[ixs, cols] = (
             self.merged_df.loc[ixs, cols].reindex(columns=cols[::-1]).values
         )
 
-        # set phase to be 0
-        self.merged_df["phase"] = 0
+        # set frame to be 0
+        self.merged_df["frame"] = 0
         # create attributes
         # no custom
 
@@ -782,6 +793,12 @@ class Pharok:
             + "product="
             + self.merged_df["annot"].astype(str)
         )
+
+        if "partial" in self.merged_df.columns:
+            self.merged_df["attributes"] += (
+                ";" + "partial=" + self.merged_df["partial"].astype(str)
+            )
+
         # adds custom hmm database annotations
         self.merged_df.loc[
             self.merged_df["custom_hmm_id"] != "No_custom_HMM", "attributes"
@@ -832,8 +849,8 @@ class Pharok:
                 "start",
                 "stop",
                 "score",
+                "strand",
                 "frame",
-                "phase",
                 "attributes",
             ]
         ]
@@ -854,8 +871,8 @@ class Pharok:
                 "start",
                 "stop",
                 "score",
+                "strand",
                 "frame",
-                "phase",
                 "attributes",
             ]
             trna_empty = is_trna_empty(self.out_dir)
@@ -936,11 +953,19 @@ class Pharok:
                     if row["isotypes"] == "Undet":
                         trna_df.at[idx, "isotypes"] = "OTHER"
                         trna_df.at[idx, "note"] = "Undetermined tRNA"
+                        trna_df.at[idx, "codon"] = ""
                         continue
                     elif row["isotypes"] == "Sup":
-                        trna_df.at[idx, "isotypes"] = "OTHER"
-                        row["isotypes"] = "OTHER"
+                        trna_df.at[idx, "isotypes"] = "TERM"
+                        row["isotypes"] = "TERM"
+                        trna_df.at[idx, "codon"] = get_codon_from_anticodon(
+                            row["anticodon"]
+                        )
                         trna_df.at[idx, "note"] = "Suppressor tRNA"
+                    else:
+                        trna_df.at[idx, "codon"] = get_codon_from_anticodon(
+                            row["anticodon"]
+                        )
 
                     # Use the anticodon position from the extracted list if available
                     if idx < len(anticodon_positions):
@@ -954,10 +979,20 @@ class Pharok:
                             f"(pos:{row['start']}..{row['stop']},aa:{row['isotypes']},seq:{row['anticodon']})"
                         )
 
-                trna_df["trna_gene"] = "tRNA-" + trna_df["isotypes"]
-                trna_df["trna_product"] = "transfer RNA-" + trna_df["isotypes"]
+                trna_df["trna_gene"] = (
+                    "tRNA-"
+                    + trna_df["isotypes"]
+                    + np.where(trna_df["codon"] != "", "(" + trna_df["codon"] + ")", "")
+                )
+
+                trna_df["trna_product"] = (
+                    "tRNA-"
+                    + trna_df["isotypes"]
+                    + np.where(trna_df["codon"] != "", "(" + trna_df["codon"] + ")", "")
+                )
+
                 if "anticodon_gb" not in trna_df.columns:
-                    trna_df['anticodon_gb'] = np.nan
+                    trna_df["anticodon_gb"] = np.nan
 
                 # Genbank example
                 # /gene="tRNA-Leu(UUR)"
@@ -1244,8 +1279,8 @@ class Pharok:
             trna_df.contig = trna_df.contig.astype(str)
             trna_df.start = trna_df.start.astype(int)
             trna_df.stop = trna_df.stop.astype(int)
-            if 'anticodon' not in trna_df.columns:
-                trna_df['anticodon'] = np.nan
+            if "anticodon" not in trna_df.columns:
+                trna_df["anticodon"] = np.nan
 
         #### CRISPRs
         if self.crispr_count > 0:
@@ -1266,18 +1301,46 @@ class Pharok:
         with open(os.path.join(self.out_dir, self.prefix + ".tbl"), "w") as f:
             for index, row in self.length_df.iterrows():
                 contig = str(row["contig"])
+                contig_length = int(row["length"])
                 f.write(">Feature " + contig + "\n")
                 subset_df = self.merged_df[self.merged_df["contig"] == contig]
-                # drop transl_table column because it is also present in the attributes column
-                # and will be parsed into its own column by parse_attributes_column
+                # drop transl_table and partial column because they are also present in the attributes column
+                # and will be parsed into their own column by parse_attributes_column
                 subset_df.drop(columns=["transl_table"], inplace=True)
+                if "partial" in subset_df.columns:
+                    subset_df.drop(columns=["partial"], inplace=True)
                 subset_df = parse_attributes_column(subset_df)
                 for index, row in subset_df.iterrows():
                     start = str(row["start"])
                     stop = str(row["stop"])
-                    if row["frame"] == "-":
+                    codon_start = None
+
+                    if row["strand"] == "-":
                         start = str(row["stop"])
                         stop = str(row["start"])
+
+                    if "partial" in row and pd.notna(row["partial"]):
+                        if row["strand"] == "+" and row["partial"] == "10":
+                            start = "<" + str(row["start"])
+                            if row["start"] > 1:
+                                codon_start = str(row["start"])
+                                start = "<1"
+                        elif row["strand"] == "+" and row["partial"] == "01":
+                            stop = ">" + str(row["stop"])
+                        elif row["strand"] == "-" and row["partial"] == "01":
+                            start = "<" + str(row["stop"])
+                            if contig_length - row["stop"] > 0:
+                                codon_start = (
+                                    contig_length - row["stop"] + 1
+                                )  # need +1 to get the codon start correct
+                                start = "<" + str(contig_length)
+                                if codon_start > 3:
+                                    logger.error(
+                                        "Error: codon_start can not be greater than 3. Please raise an issue on GitHub with your genome. \n"
+                                    )
+                        elif row["strand"] == "-" and row["partial"] == "10":
+                            stop = ">" + str(row["start"])
+
                     f.write(start + "\t" + stop + "\t" + row["Region"] + "\n")
                     f.write(
                         ""
@@ -1327,12 +1390,25 @@ class Pharok:
                         + str(row["transl_table"])
                         + "\n"
                     )
+                    if codon_start is not None:
+                        f.write(
+                            ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + ""
+                            + "\t"
+                            + "codon_start"
+                            + "\t"
+                            + str(codon_start)
+                            + "\n"
+                        )
                 if self.trna_empty == False:
                     subset_trna_df = trna_df[trna_df["contig"] == contig]
                     for index, row in subset_trna_df.iterrows():
                         start = str(row["start"])
                         stop = str(row["stop"])
-                        if row["frame"] == "-":
+                        if row["strand"] == "-":
                             start = str(row["stop"])
                             stop = str(row["start"])
                         f.write(start + "\t" + stop + "\t" + row["Region"] + "\n")
@@ -1372,18 +1448,19 @@ class Pharok:
                             + str(row["Method"])
                             + "\n"
                         )
-                        f.write(
-                            ""
-                            + "\t"
-                            + ""
-                            + "\t"
-                            + ""
-                            + "\t"
-                            + "anticodon"
-                            + "\t"
-                            + str(row["anticodon"])
-                            + "\n"
-                        )
+                        if pd.notna(row.get("anticodon", None)):
+                            f.write(
+                                ""
+                                + "\t"
+                                + ""
+                                + "\t"
+                                + ""
+                                + "\t"
+                                + "anticodon"
+                                + "\t"
+                                + str(row["anticodon"])
+                                + "\n"
+                            )
                         if pd.notna(row.get("note", None)):
                             f.write(
                                 ""
@@ -1402,7 +1479,7 @@ class Pharok:
                     for index, row in subset_crispr_df.iterrows():
                         start = str(row["start"])
                         stop = str(row["stop"])
-                        if row["frame"] == "-":
+                        if row["strand"] == "-":
                             start = str(row["stop"])
                             stop = str(row["start"])
                         f.write(start + "\t" + stop + "\t" + row["Region"] + "\n")
@@ -1471,7 +1548,7 @@ class Pharok:
                     for index, row in subset_tmrna_df.iterrows():
                         start = str(row["start"])
                         stop = str(row["stop"])
-                        if row["frame"] == "-":
+                        if row["strand"] == "-":
                             start = str(row["stop"])
                             stop = str(row["start"])
                         f.write(start + "\t" + stop + "\t" + "tmRNA" + "\n")
@@ -1518,9 +1595,9 @@ class Pharok:
                             + "\t"
                             + ""
                             + "\t"
-                            + "tag_peptide_sequence"
+                            + "note"
                             + "\t"
-                            + str(row["tag_peptide_sequence"])
+                            + str(row["note"])
                             + "\n"
                         )
 
@@ -1661,7 +1738,7 @@ class Pharok:
                 "vfdb_seqIdentity_x",
                 "start",
                 "stop",
-                "frame",
+                "strand",
             ]
         ]
 
@@ -1673,7 +1750,7 @@ class Pharok:
             "vfdb_seqIdentity",
             "start",
             "stop",
-            "frame",
+            "strand",
         ]
 
         if self.mmseqs_flag is True:
@@ -1705,7 +1782,7 @@ class Pharok:
                 "CARD_seqIdentity_x",
                 "start",
                 "stop",
-                "frame",
+                "strand",
             ]
         ]
         self.card_results.columns = [
@@ -1716,7 +1793,7 @@ class Pharok:
             "card_seqIdentity",
             "start",
             "stop",
-            "frame",
+            "strand",
         ]
         if self.mmseqs_flag is True:
             self.card_results = self.card_results.sort_values(by=["start"])
@@ -1752,8 +1829,8 @@ class Pharok:
                 "start",
                 "stop",
                 "score",
+                "strand",
                 "frame",
-                "phase",
                 "attributes",
             ]
             trna_df = pd.read_csv(
@@ -1815,7 +1892,7 @@ class Pharok:
             # get the total length of the contig
             contig_length = self.length_df[self.length_df["contig"] == contig]["length"]
             if cds_count > 0:
-                # gets the total cds coding length
+                ## gets the total cds coding length
                 cds_lengths = abs(
                     cds_mmseqs_merge_cont_df["start"] - cds_mmseqs_merge_cont_df["stop"]
                 ).sum()
@@ -2078,7 +2155,7 @@ class Pharok:
 
         st_cols = ["start", "stop"]
         # indices where start is greater than stop
-        ixs = self.merged_df["frame"] == "-"
+        ixs = self.merged_df["strand"] == "-"
         # Where ixs is True, values are swapped
         self.merged_df.loc[ixs, st_cols] = (
             self.merged_df.loc[ixs, st_cols].reindex(columns=st_cols[::-1]).values
@@ -2091,7 +2168,7 @@ class Pharok:
         self.merged_df = self.merged_df.loc[:, cols]
         # drop cols
         self.merged_df = self.merged_df.drop(
-            columns=["phase", "attributes", "count", "locus_tag"]
+            columns=["frame", "attributes", "count", "locus_tag"]
         )
 
         # write output
@@ -2314,9 +2391,9 @@ def create_mmseqs_tophits(out_dir):
     # optimise the tophits generation
     # Group by 'gene' and find the top hit for each group
     tophits_df = (
-       mmseqs_df.sort_values("mmseqs_eVal")
-       .drop_duplicates(subset="gene", keep="first")
-       .reset_index(drop=True)
+        mmseqs_df.sort_values("mmseqs_eVal")
+        .drop_duplicates(subset="gene", keep="first")
+        .reset_index(drop=True)
     )
 
     # create tophits df
@@ -2558,15 +2635,14 @@ def process_vfdb_results(out_dir, merged_df, proteins_flag=False):
     touch_file(vfdb_file)
 
     vfdb_df = pd.read_csv(vfdb_file, delimiter="\t", index_col=False, names=col_list)
-    vfdb_df['vfdb_eVal'] = vfdb_df['vfdb_eVal'].astype(float) #Issue #390
+    vfdb_df["vfdb_eVal"] = vfdb_df["vfdb_eVal"].astype(float)  # Issue #390
     # optimise the tophits generation
     # Group by 'gene' and find the top hit for each group
     tophits_df = (
-       vfdb_df.sort_values("vfdb_eVal")
-       .drop_duplicates(subset="gene", keep="first")
-       .reset_index(drop=True)
+        vfdb_df.sort_values("vfdb_eVal")
+        .drop_duplicates(subset="gene", keep="first")
+        .reset_index(drop=True)
     )
-
 
     # create tophits df
     tophits_df = tophits_df[
@@ -2661,15 +2737,16 @@ def process_card_results(out_dir, merged_df, db_dir, proteins_flag=False):
     touch_file(card_file)
     card_df = pd.read_csv(card_file, delimiter="\t", index_col=False, names=col_list)
 
-    card_df['CARD_eVal'] = card_df['CARD_eVal'].astype(float)  # issue 390 https://stackoverflow.com/questions/70484024/column-has-dtype-object-cannot-use-method-nlargest-with-this-dtype
-
+    card_df["CARD_eVal"] = card_df["CARD_eVal"].astype(
+        float
+    )  # issue 390 https://stackoverflow.com/questions/70484024/column-has-dtype-object-cannot-use-method-nlargest-with-this-dtype
 
     # Group by 'gene' and find the top hit for each group
 
     tophits_df = (
-       card_df.sort_values("CARD_eVal")
-       .drop_duplicates(subset="gene", keep="first")
-       .reset_index(drop=True)
+        card_df.sort_values("CARD_eVal")
+        .drop_duplicates(subset="gene", keep="first")
+        .reset_index(drop=True)
     )
 
     # create tophits df
@@ -2806,13 +2883,6 @@ def check_and_create_directory(directory):
 
 
 def parse_attributes_column(df):
-    # Split the attributes column into key-value pairs
-    def parse_attributes(attr_str):
-        if not attr_str:
-            return {}
-        pairs = attr_str.split(";")
-        return dict(pair.split("=", 1) for pair in pairs if "=" in pair)
-
     # Apply the parsing function to each row
     parsed = df["attributes"].apply(parse_attributes)
 
@@ -2822,3 +2892,25 @@ def parse_attributes_column(df):
     # Concatenate with the original DataFrame (if you want to keep other columns)
     result_df = pd.concat([df.reset_index(drop=True), attributes_df], axis=1)
     return result_df
+
+
+def get_codon_from_anticodon(anticodon):
+    """
+    Given a DNA sequence (string), return:
+    - its reverse complement in RNA format
+
+    Example:
+        >>> get_codon_from_anticodon("ATG")
+        'rna_from_revcomp': 'CAU'
+    """
+    if not isinstance(anticodon, str):
+        raise TypeError("Input must be a string.")
+    if not anticodon.strip():
+        raise ValueError("Input DNA sequence is empty.")
+
+    seq = Seq(anticodon.upper())  # normalize to uppercase
+
+    revcomp = seq.reverse_complement()
+    rna_from_revcomp = revcomp.transcribe()
+
+    return str(rna_from_revcomp)
