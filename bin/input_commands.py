@@ -392,10 +392,12 @@ def check_dependencies(skip_mash):
     # this handles the warning for setuptools https://github.com/gbouras13/pharokka/issues/395
     if "\n" in phanotate_version.strip():
         logger.warning("pkg_resources in phanotate is throwing a warning")
-        logger.warning("this should not affect pharokka but please make an issue at https://github.com/gbouras13/pharokka/issues if pharokka crashes")
+        logger.warning(
+            "this should not affect pharokka but please make an issue at https://github.com/gbouras13/pharokka/issues if pharokka crashes"
+        )
         logger.warning("printing the full warning for debugging if required")
         logger.warning(phanotate_version)
-        phanotate_version=phanotate_version.strip().split("\n")[-1]
+        phanotate_version = phanotate_version.strip().split("\n")[-1]
 
     phanotate_major_version = int(phanotate_version.split(".")[0])
     phanotate_minor_version = int(phanotate_version.split(".")[1])
@@ -416,11 +418,10 @@ def check_dependencies(skip_mash):
     # mmseqs
     #############
 
-
     try:
         process = sp.Popen(["mmseqs", "version"], stdout=sp.PIPE, stderr=sp.STDOUT)
     except:
-        logger.error("Foldseek not found. Please reinstall pharokka.")
+        logger.error("MMseqs2 not found. Please reinstall pharokka.")
 
     mmseqs_out, _ = process.communicate()
     mmseqs_out = mmseqs_out.decode()
@@ -428,33 +429,47 @@ def check_dependencies(skip_mash):
     mmseqs_version = mmseqs_out.strip()
 
     if "8cc5c" in mmseqs_version:
-        mmseqs_major_version="18"
-        mmseqs_minor_version="8cc5c"
+        mmseqs_major_version = "18"
+        mmseqs_minor_version = "8cc5c"
     elif "b804f" in mmseqs_version:
-        mmseqs_major_version="17"
-        mmseqs_minor_version="b804f"
+        mmseqs_major_version = "17"
+        mmseqs_minor_version = "b804f"
     elif "747c6" in mmseqs_version:
-        mmseqs_major_version="16"
-        mmseqs_minor_version="747c6"
+        mmseqs_major_version = "16"
+        mmseqs_minor_version = "747c6"
     elif "6f452" in mmseqs_version:
-        mmseqs_major_version="15"
-        mmseqs_minor_version="6f452"
+        mmseqs_major_version = "15"
+        mmseqs_minor_version = "6f452"
     elif "7e284" in mmseqs_version:
-        mmseqs_major_version="14"
-        mmseqs_minor_version="7e284"
+        mmseqs_major_version = "14"
+        mmseqs_minor_version = "7e284"
     elif "45111" in mmseqs_version:
-        mmseqs_major_version="13"
-        mmseqs_minor_version="45111"
-        logger.warning(f"MMseqs2 version found is v{mmseqs_major_version}.{mmseqs_minor_version}")
-        logger.warning(f"Pharokka from v1.8.0 onwards will not work with MMseqs2 versions older than v14-7e284 (October 13 2022)")
-        logger.error(f"Please install a newer version of MMseqs2, ideally v18.8cc5c or newer")
+        mmseqs_major_version = "13"
+        mmseqs_minor_version = "45111"
+        logger.warning(
+            f"MMseqs2 version found is v{mmseqs_major_version}.{mmseqs_minor_version}"
+        )
+        logger.warning(
+            f"Pharokka from v1.8.0 onwards will not work with MMseqs2 versions older than v14-7e284 (October 13 2022)"
+        )
+        logger.error(
+            f"Please install a newer version of MMseqs2, ideally v18.8cc5c or newer"
+        )
     else:
         logger.warning(f"MMseqs2 version found is v{mmseqs_version}")
-        logger.warning(f"Pharokka is recommended to be run with MMseqs2 v18.8cc5c or newer")
-        logger.warning(f"Using a different MMseqs2 version after v14-7e284 (October 13 2022) is likely to work with Pharokka without issue, but this cannot be guaranteed.")
-        logger.warning(f"Using an MMseqs2 version before v14-7e284 (October 13 2022) will not work with Pharokka from v1.8.0 onwards.")
-        logger.warning(f"If that is the case, please install a newer version of MMseqs2s.")
-        
+        logger.warning(
+            f"Pharokka is recommended to be run with MMseqs2 v18.8cc5c or newer"
+        )
+        logger.warning(
+            f"Using a different MMseqs2 version after v14-7e284 (October 13 2022) is likely to work with Pharokka without issue, but this cannot be guaranteed."
+        )
+        logger.warning(
+            f"Using an MMseqs2 version before v14-7e284 (October 13 2022) will not work with Pharokka from v1.8.0 onwards."
+        )
+        logger.warning(
+            f"If that is the case, please install a newer version of MMseqs2s."
+        )
+
     logger.info(
         f"MMseqs2 version found is v{mmseqs_major_version}.{mmseqs_minor_version}"
     )
