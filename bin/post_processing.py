@@ -2649,49 +2649,50 @@ def process_vfdb_results(out_dir, merged_df, proteins_flag=False):
     # 6677 VFG047453(gb|WP_013923073) (birA) biotin--[acetyl-CoA-carboxylase] ligase [Biotin synthesis (VF0552) - Nutritional/Metabolic factor (VFC0272)] [Francisella sp. TX077308] 
     # 6836 VFG011394(gb|WP_002964281) (lpxD) UDP-3-O-[3-hydroxymyristoyl] glucosamine N-acyltransferase [LPS (VF0367) - Immune modulation (VFC0258)] [Brucella melitensis bv. 1 str. 16M]
 
+
     replacements = {
         # 596
-        "L-allo-isoleucine:holo-[CmaA peptidyl-carrier protein] ligase [Phytotoxin coronatine (VF0916) - Exotoxin (VFC0235)] [Pseudomonas syringae pv. tomato str. DC3000]":
+        "L-allo-isoleucine:holo-[CmaA peptidyl-carrier protein] ligase [Phytotoxin coronatine (VF0916) - Exotoxin (VFC0235)] [Pseudomonas syringae pv. tomato str. DC3000] ":
         "L-allo-isoleucine:holo-CmaA peptidyl-carrier protein ligase [Phytotoxin coronatine (VF0916) - Exotoxin (VFC0235)] [Pseudomonas syringae pv. tomato str. DC3000]",
 
         # 1371
-        "UDP-3-O-[3-hydroxymyristoyl] N-acetylglucosamine deacetylase [Capsule I (VF0436) - Immune modulation (VFC0258)] [Burkholderia cenocepacia AU 1054]":
+        "UDP-3-O-[3-hydroxymyristoyl] N-acetylglucosamine deacetylase [Capsule I (VF0436) - Immune modulation (VFC0258)] [Burkholderia cenocepacia AU 1054] ":
         "UDP-3-O-3-hydroxymyristoyl N-acetylglucosamine deacetylase [Capsule I (VF0436) - Immune modulation (VFC0258)] [Burkholderia cenocepacia AU 1054]",
 
         # 1503
-        "N-[(2S)-2-amino-2-carboxyethyl]-L-glutamate dehydrogenase SbnB [Staphyloferrin B (VF1014) - Nutritional/Metabolic factor (VFC0272)] [Staphylococcus aureus subsp. aureus str. Newman]":
+        "N-[(2S)-2-amino-2-carboxyethyl]-L-glutamate dehydrogenase SbnB [Staphyloferrin B (VF1014) - Nutritional/Metabolic factor (VFC0272)] [Staphylococcus aureus subsp. aureus str. Newman] ":
         "N-(2S)-2-amino-2-carboxyethyl-L-glutamate dehydrogenase SbnB [Staphyloferrin B (VF1014) - Nutritional/Metabolic factor (VFC0272)] [Staphylococcus aureus subsp. aureus str. Newman]",
 
         # 2380
-        "3-(L-alanin-3-ylcarbamoyl)-2-[(2- aminoethylcarbamoyl)methyl]-2-hydroxypropanoate synthase SbnF [Staphyloferrin B (VF1014) - Nutritional/Metabolic factor (VFC0272)] [Staphylococcus aureus subsp. aureus str. Newman]":
+        "3-(L-alanin-3-ylcarbamoyl)-2-[(2- aminoethylcarbamoyl)methyl]-2-hydroxypropanoate synthase SbnF [Staphyloferrin B (VF1014) - Nutritional/Metabolic factor (VFC0272)] [Staphylococcus aureus subsp. aureus str. Newman] ":
         "3-(L-alanin-3-ylcarbamoyl)-2-(2- aminoethylcarbamoyl)methyl-2-hydroxypropanoate synthase SbnF [Staphyloferrin B (VF1014) - Nutritional/Metabolic factor (VFC0272)] [Staphylococcus aureus subsp. aureus str. Newman]",
 
         # 4925
-        "UDP-3-O-[3-hydroxymyristoyl] glucosamine N-acyltransferase [LPS (VF0542) - Immune modulation (VFC0258)] [Francisella philomiragia subsp. philomiragia ATCC 25017]":
+        "UDP-3-O-[3-hydroxymyristoyl] glucosamine N-acyltransferase [LPS (VF0542) - Immune modulation (VFC0258)] [Francisella philomiragia subsp. philomiragia ATCC 25017] ":
         "UDP-3-O-3-hydroxymyristoyl glucosamine N-acyltransferase [LPS (VF0542) - Immune modulation (VFC0258)] [Francisella philomiragia subsp. philomiragia ATCC 25017]",
 
         # 5362
-        "UDP-3-O-[3-hydroxymyristoyl] glucosamine N-acyltransferase [LPS (VF0542) - Immune modulation (VFC0258)] [Francisella novicida U112]":
+        "UDP-3-O-[3-hydroxymyristoyl] glucosamine N-acyltransferase [LPS (VF0542) - Immune modulation (VFC0258)] [Francisella novicida U112] ":
         "UDP-3-O-3-hydroxymyristoyl glucosamine N-acyltransferase [LPS (VF0542) - Immune modulation (VFC0258)] [Francisella novicida U112]",
 
         # 5418
-        "beta-ketoacyl-[acyl-carrier-protein] synthase family protein [Phytotoxin coronatine (VF0916) - Exotoxin (VFC0235)] [Pseudomonas syringae pv. tomato str. DC3000]":
+        "beta-ketoacyl-[acyl-carrier-protein] synthase family protein [Phytotoxin coronatine (VF0916) - Exotoxin (VFC0235)] [Pseudomonas syringae pv. tomato str. DC3000] ":
         "beta-ketoacyl-acyl-carrier-protein synthase family protein [Phytotoxin coronatine (VF0916) - Exotoxin (VFC0235)] [Pseudomonas syringae pv. tomato str. DC3000]",
 
         # 6458
-        "biotin--[acetyl-CoA-carboxylase] ligase [Biotin synthesis (VF0552) - Nutritional/Metabolic factor (VFC0272)] [Francisella novicida U112]":
+        "biotin--[acetyl-CoA-carboxylase] ligase [Biotin synthesis (VF0552) - Nutritional/Metabolic factor (VFC0272)] [Francisella novicida U112] ":
         "biotin--acetyl-CoA-carboxylase ligase [Biotin synthesis (VF0552) - Nutritional/Metabolic factor (VFC0272)] [Francisella novicida U112]",
 
         # 6617
-        "UDP-3-O-[3-hydroxymyristoyl] N-acetylglucosamine deacetylase [LPS (VF0367) - Immune modulation (VFC0258)] [Brucella melitensis bv. 1 str. 16M]":
+        "UDP-3-O-[3-hydroxymyristoyl] N-acetylglucosamine deacetylase [LPS (VF0367) - Immune modulation (VFC0258)] [Brucella melitensis bv. 1 str. 16M] ":
         "UDP-3-O-3-hydroxymyristoyl N-acetylglucosamine deacetylase [LPS (VF0367) - Immune modulation (VFC0258)] [Brucella melitensis bv. 1 str. 16M]",
 
         # 6677
-        "biotin--[acetyl-CoA-carboxylase] ligase [Biotin synthesis (VF0552) - Nutritional/Metabolic factor (VFC0272)] [Francisella sp. TX077308]":
+        "biotin--[acetyl-CoA-carboxylase] ligase [Biotin synthesis (VF0552) - Nutritional/Metabolic factor (VFC0272)] [Francisella sp. TX077308] ":
         "biotin--acetyl-CoA-carboxylase ligase [Biotin synthesis (VF0552) - Nutritional/Metabolic factor (VFC0272)] [Francisella sp. TX077308]",
 
         # 6836
-        "UDP-3-O-[3-hydroxymyristoyl] glucosamine N-acyltransferase [LPS (VF0367) - Immune modulation (VFC0258)] [Brucella melitensis bv. 1 str. 16M]":
+        "UDP-3-O-[3-hydroxymyristoyl] glucosamine N-acyltransferase [LPS (VF0367) - Immune modulation (VFC0258)] [Brucella melitensis bv. 1 str. 16M] ":
         "UDP-3-O-3-hydroxymyristoyl glucosamine N-acyltransferase [LPS (VF0367) - Immune modulation (VFC0258)] [Brucella melitensis bv. 1 str. 16M]"
     }
 
