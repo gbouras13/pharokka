@@ -2663,13 +2663,13 @@ def process_vfdb_results(out_dir, merged_df, proteins_flag=False):
     )
 
     vfdb_df["vfdb_hit"] = vfdb_df["vfdb_hit"].str.replace(
-        r"N-\[(2S)-2-amino-2-carboxyethyl\]",
+        r"N-\[\(2S\)-2-amino-2-carboxyethyl\]",
         "N-(2S)-2-amino-2-carboxyethyl",
         regex=True
     )
 
     vfdb_df["vfdb_hit"] = vfdb_df["vfdb_hit"].str.replace(
-        r"3-(L-alanin-3-ylcarbamoyl)-2-\[(2- aminoethylcarbamoyl)methyl\]",
+        r"3-\(L-alanin-3-ylcarbamoyl\)-2-\[\(2- aminoethylcarbamoyl\)methyl\]",
         "3-(L-alanin-3-ylcarbamoyl)-2-(2- aminoethylcarbamoyl)methyl",
         regex=True
     )
