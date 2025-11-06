@@ -97,6 +97,11 @@ def test_overall_pyhmmer_alphabet(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --fast"
     exec_command(cmd)
 
+def test_terminase(tmp_dir):
+    """test pharokka vfdb issue #410 fix with extra [] in vfdb headers"""
+    input_fasta: Path = f"{bug_data}/vfdb_issue_410.fasta"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --fast"
+    exec_command(cmd)
 
 def test_overall_mash_distance(tmp_dir):
     """test pharokka overall with stricter mash distance"""

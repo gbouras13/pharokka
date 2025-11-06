@@ -2635,7 +2635,89 @@ def process_vfdb_results(out_dir, merged_df, proteins_flag=False):
     touch_file(vfdb_file)
 
     vfdb_df = pd.read_csv(vfdb_file, delimiter="\t", index_col=False, names=col_list)
-    vfdb_df["vfdb_eVal"] = vfdb_df["vfdb_eVal"].astype(float)  # Issue #390
+
+    # Issue #410 - problematic extra set of square brackets
+    # 596 VFG015877(gb|WP_011105130) (cmaA) L-allo-isoleucine:holo-[CmaA peptidyl-carrier protein] ligase [Phytotoxin coronatine (VF0916) - Exotoxin (VFC0235)] [Pseudomonas syringae pv. tomato str. DC3000] 
+    # 1371 VFG026074(gb|WP_011544665) (wcbS) UDP-3-O-[3-hydroxymyristoyl] N-acetylglucosamine deacetylase [Capsule I (VF0436) - Immune modulation (VFC0258)] [Burkholderia cenocepacia AU 1054] 
+    # 1503 VFG044255(gb|WP_001078456) (sbnB) N-[(2S)-2-amino-2-carboxyethyl]-L-glutamate dehydrogenase SbnB [Staphyloferrin B (VF1014) - Nutritional/Metabolic factor (VFC0272)] [Staphylococcus aureus subsp. aureus str. Newman] 
+    # 2380 VFG044259(gb|WP_001795559) (sbnF) 3-(L-alanin-3-ylcarbamoyl)-2-[(2- aminoethylcarbamoyl)methyl]-2-hydroxypropanoate synthase SbnF [Staphyloferrin B (VF1014) - Nutritional/Metabolic factor (VFC0272)] [Staphylococcus aureus subsp. aureus str. Newman] 
+    # 4925 VFG047268(gb|WP_012280577) (lpxD) UDP-3-O-[3-hydroxymyristoyl] glucosamine N-acyltransferase [LPS (VF0542) - Immune modulation (VFC0258)] [Francisella philomiragia subsp. philomiragia ATCC 25017] 
+    # 5362 VFG046881(gb|WP_003041529) (lpxD2) UDP-3-O-[3-hydroxymyristoyl] glucosamine N-acyltransferase [LPS (VF0542) - Immune modulation (VFC0258)] [Francisella novicida U112] 
+    # 5418 VFG015866(gb|WP_011105119) (cfa3) beta-ketoacyl-[acyl-carrier-protein] synthase family protein [Phytotoxin coronatine (VF0916) - Exotoxin (VFC0235)] [Pseudomonas syringae pv. tomato str. DC3000] 
+    # 6458 VFG047424(gb|WP_003038601) (bplA) biotin--[acetyl-CoA-carboxylase] ligase [Biotin synthesis (VF0552) - Nutritional/Metabolic factor (VFC0272)] [Francisella novicida U112] 
+    # 6617 VFG011389(gb|WP_004684016) (lpxC) UDP-3-O-[3-hydroxymyristoyl] N-acetylglucosamine deacetylase [LPS (VF0367) - Immune modulation (VFC0258)] [Brucella melitensis bv. 1 str. 16M] 
+    # 6677 VFG047453(gb|WP_013923073) (birA) biotin--[acetyl-CoA-carboxylase] ligase [Biotin synthesis (VF0552) - Nutritional/Metabolic factor (VFC0272)] [Francisella sp. TX077308] 
+    # 6836 VFG011394(gb|WP_002964281) (lpxD) UDP-3-O-[3-hydroxymyristoyl] glucosamine N-acyltransferase [LPS (VF0367) - Immune modulation (VFC0258)] [Brucella melitensis bv. 1 str. 16M]
+
+
+    vfdb_df["vfdb_hit"] = vfdb_df["vfdb_hit"].str.replace(
+        r"L-allo-isoleucine:holo-\[CmaA peptidyl-carrier protein\]",
+        "L-allo-isoleucine:holo-CmaA peptidyl-carrier protein",
+        regex=True
+    )
+
+    vfdb_df["vfdb_hit"] = vfdb_df["vfdb_hit"].str.replace(
+        r"UDP-3-O-\[3-hydroxymyristoyl\]",
+        "UDP-3-O-3-hydroxymyristoyl",
+        regex=True
+    )
+
+    vfdb_df["vfdb_hit"] = vfdb_df["vfdb_hit"].str.replace(
+        r"N-\[\(2S\)-2-amino-2-carboxyethyl\]",
+        "N-(2S)-2-amino-2-carboxyethyl",
+        regex=True
+    )
+
+    vfdb_df["vfdb_hit"] = vfdb_df["vfdb_hit"].str.replace(
+        r"3-\(L-alanin-3-ylcarbamoyl\)-2-\[\(2- aminoethylcarbamoyl\)methyl\]",
+        "3-(L-alanin-3-ylcarbamoyl)-2-(2- aminoethylcarbamoyl)methyl",
+        regex=True
+    )
+
+
+    vfdb_df["vfdb_hit"] = vfdb_df["vfdb_hit"].str.replace(
+        r"UDP-3-O-\[3-hydroxymyristoyl\]",
+        "UDP-3-O-3-hydroxymyristoyl",
+        regex=True
+    )
+
+    vfdb_df["vfdb_hit"] = vfdb_df["vfdb_hit"].str.replace(
+        r"UDP-3-O-\[3-hydroxymyristoyl\]",
+        "UDP-3-O-3-hydroxymyristoyl",
+        regex=True
+    )
+
+    vfdb_df["vfdb_hit"] = vfdb_df["vfdb_hit"].str.replace(
+        r"beta-ketoacyl-\[acyl-carrier-protein\]",
+        "UDP-3-O-3-hydroxymyristoyl",
+        regex=True
+    )
+
+    vfdb_df["vfdb_hit"] = vfdb_df["vfdb_hit"].str.replace(
+        r"biotin--\[acetyl-CoA-carboxylase\] ligase",
+        "biotin--acetyl-CoA-carboxylase ligase",
+        regex=True
+    )
+
+    vfdb_df["vfdb_hit"] = vfdb_df["vfdb_hit"].str.replace(
+        r"DP-3-O-\[3-hydroxymyristoyl\]",
+        "DP-3-O-[3-hydroxymyristoyl]",
+        regex=True
+    )
+
+    vfdb_df["vfdb_hit"] = vfdb_df["vfdb_hit"].str.replace(
+        r"biotin--\[acetyl-CoA-carboxylase\]",
+        "biotin--acetyl-CoA-carboxylase",
+        regex=True
+    )
+
+    vfdb_df["vfdb_hit"] = vfdb_df["vfdb_hit"].str.replace(
+        r"UDP-3-O-\[3-hydroxymyristoyl\]",
+        "UDP-3-O-3-hydroxymyristoyl",
+        regex=True
+    )
+
+    vfdb_df['vfdb_eVal'] = vfdb_df['vfdb_eVal'].astype(float) #Issue #390
     # optimise the tophits generation
     # Group by 'gene' and find the top hit for each group
     tophits_df = (
@@ -2676,6 +2758,8 @@ def process_vfdb_results(out_dir, merged_df, proteins_flag=False):
     if len(tophits_df["vfdb_hit"]) > 0:
         number_vfs = len(tophits_df["vfdb_hit"])
         logger.info(str(number_vfs) + " VFDB virulence factors identified.")
+
+
         merged_df[["genbank", "desc_tmp", "vfdb_species"]] = merged_df[
             "vfdb_hit"
         ].str.split("[", expand=True)

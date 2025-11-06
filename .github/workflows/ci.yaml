@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-13, ubuntu-latest] #macos-latest/macos-14 is M1 - some deps
+        os: [macos-latest, ubuntu-latest] #macos-latest/macos-14 is M1 - some deps
         python-version: ["3.9", "3.13"]
 
     steps:
