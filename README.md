@@ -33,13 +33,20 @@ If you like `pharokka`, you will probably love [phold](https://github.com/gboura
 
 `phold` takes the Genbank output of Pharokka as input. Therefore, if you have already annotated your phage(s) with Pharokka, you can easily update the annotation with more functional predictions with [phold](https://github.com/gbouras13/phold).
 
-# Google Colab Notebooks
+# Google Colab Notebook
 
 If you don't want to install `pharokka` or `phold` locally, you can run `pharokka` and `phold` (and [`phynteny`](https://github.com/susiegriggo/Phynteny)), or only `pharokka`, without any code using the [Google Colab notebook](https://colab.research.google.com/github/gbouras13/pharokka/blob/master/run_pharokka_and_phold_and_phynteny.ipynb).
 
-* [`phynteny`](https://github.com/susiegriggo/Phynteny) uses a long-short term memory model trained on phage synteny (the conserved gene order across phages) to assign hypothetical phage proteins to a PHROG category - it might help you add extra PHROG category annotations to hypothetical genes remaining after you run `phold`. 
-* Note: Phynteny will work only if your phage has fewer than 120 predicted proteins
-* You can still use this notebook to run `pharokka` and/or `phold` if your phage(s) are too big - just don't run the Phynteny step!
+* [`phynteny`](https://github.com/susiegriggo/Phynteny_transformer) uses phage synteny (the conserved gene order across phages) to assign hypothetical phage proteins to a PHROG category - it might help you add extra PHROG category annotations to hypothetical genes remaining after you run phold.
+
+* Pharokka, Phold and Phynteny are complimentary tools and when used together, they substantially increase the annotation rate of your phage genome
+* The below plot shows the annotation rate of different tools across 4 benchmarked datasets ((a) INPHARED 1419, (b) Cook, (c) Crass and (d) Tara - see the [Phold preprint]((https://www.biorxiv.org/content/10.1101/2025.08.05.668817v1)) for more information)
+* The final Phynteny plots combine the benefits of annotation with Pharokka (with HMM, the second violin) followed by Phold (with structures, the fourth violin) followed by Phynteny
+
+<p align="center">
+  <img src="img/Pharokka_Phold_Phynteny.png" alt="pharokka plus phold plus phynteny" height=1200>
+</p>
+
   
 
 # Table of Contents
@@ -47,7 +54,7 @@ If you don't want to install `pharokka` or `phold` locally, you can run `pharokk
 - [pharokka](#pharokka)
   - [Fast Phage Annotation Tool](#fast-phage-annotation-tool)
 - [phold](#phold)
-- [Google Colab Notebooks](#google-colab-notebooks)
+- [Google Colab Notebook](#google-colab-notebook)
 - [Table of Contents](#table-of-contents)
 - [Quick Start](#quick-start)
 - [Documentation](#documentation)
@@ -67,7 +74,6 @@ If you don't want to install `pharokka` or `phold` locally, you can run `pharokk
   - [Source](#source)
 - [Database Installation](#database-installation)
 - [Beginner Conda Installation](#beginner-conda-installation)
-- [Beginner Conda Installation](#beginner-conda-installation-1)
 - [Usage](#usage)
 - [Version Log](#version-log)
 - [System](#system)
