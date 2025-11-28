@@ -47,7 +47,14 @@ If you don't want to install `pharokka` or `phold` locally, you can run `pharokk
   <img src="img/Pharokka_Phold_Phynteny.png" alt="pharokka plus phold plus phynteny" height=1200>
 </p>
 
-  
+# Phold plot Wasm App
+
+* We recommending running the web app to generate genomic maps using WebAssembly (Wasm) in your broswer  - no data ever leaves your machine!
+* Please go to [https://gbouras13.github.io/phold-plot-wasm-app/](https://gbouras13.github.io/phold-plot-wasm-app/) to use it
+* **Note: while this was designed for Phold, is also works for Pharokka output!**
+* You will need to first run Pharokka and upload the GenBank file via the button.
+* This was built during the WebAssembly workshop at ABACBS2025 - for more, you can find the website [here](https://wasmodic.github.io)
+
 
 # Table of Contents
 
@@ -55,6 +62,7 @@ If you don't want to install `pharokka` or `phold` locally, you can run `pharokk
   - [Fast Phage Annotation Tool](#fast-phage-annotation-tool)
 - [phold](#phold)
 - [Google Colab Notebook](#google-colab-notebook)
+- [Phold plot Wasm App](#phold-plot-wasm-app)
 - [Table of Contents](#table-of-contents)
 - [Quick Start](#quick-start)
 - [Documentation](#documentation)
