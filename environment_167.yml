@@ -1,4 +1,4 @@
-name: pharokka_env
+name: pharokka_env_167
 channels:
   - conda-forge
   - bioconda
@@ -6,7 +6,7 @@ channels:
 dependencies:
   - bcbio-gff >=0.7.0
   - biopython >=1.80
-  - phanotate >=1.6.7,<2
+  - phanotate >=1.6.7
   - mmseqs2 >=14.7e284
   - trnascan-se >=2.0.9
   - minced >=0.4.2
@@ -15,7 +15,6 @@ dependencies:
   - dnaapler >=1.0.1
   - pyrodigal >=3.1.0
   - pyrodigal-gv >=0.2.0
-  - pyrodigal-rv >=0.1.0
   - pycirclize >=0.3.1
   - alive-progress >=3.0.1
   - requests >=2.25.1

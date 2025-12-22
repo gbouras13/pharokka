@@ -6,6 +6,7 @@ from datetime import datetime
 import pandas as pd
 import pyrodigal
 import pyrodigal_gv
+import pyrodigal_rv
 from BCBio import GFF
 from Bio import SeqIO
 from Bio.Seq import Seq
@@ -38,6 +39,40 @@ def run_pyrodigal_gv(filepath_in, out_dir, threads):
             with open(os.path.join(out_dir, "prodigal-gv_out_tmp.fasta"), "w") as dst:
                 with open(
                     os.path.join(out_dir, "prodigal-gv_out_aas_tmp.fasta"), "w"
+                ) as aa_fasta:
+                    records = SeqIO.parse(filepath_in, "fasta")
+                    for record_id, genes in pool.imap(_find_genes, records):
+                        genes.write_gff(
+                            gff, sequence_id=record_id, include_translation_table=True
+                        )
+                        genes.write_genes(dst, sequence_id=record_id)
+                        # need to write the translation
+                        genes.write_translations(aa_fasta, sequence_id=record_id)
+
+
+def run_pyrodigal_rv(filepath_in, out_dir, threads):
+    """
+    Gets CDS using pyrodigal_gv
+    :param filepath_in: input filepath
+    :param out_dir: output directory
+    :param logger logger
+    :param meta Boolean - metagenomic mode flag
+    :param coding_table coding table for prodigal (default 11)
+    :return:
+    """
+
+    # true
+    orf_finder = pyrodigal_rv.ViralGeneFinder(meta=True)
+
+    def _find_genes(record):
+        genes = orf_finder.find_genes(str(record.seq))
+        return (record.id, genes)
+
+    with multiprocessing.pool.ThreadPool(threads) as pool:
+        with open(os.path.join(out_dir, "pyrodigal-rv_out.gff"), "w") as gff:
+            with open(os.path.join(out_dir, "pyrodigal-rv_out_tmp.fasta"), "w") as dst:
+                with open(
+                    os.path.join(out_dir, "pyrodigal-rv_out_aas_tmp.fasta"), "w"
                 ) as aa_fasta:
                     records = SeqIO.parse(filepath_in, "fasta")
                     for record_id, genes in pool.imap(_find_genes, records):
@@ -415,17 +450,15 @@ def tidy_phanotate_output(out_dir):
     return phan_df
 
 
-def tidy_prodigal_output(out_dir, gv_flag):
+def tidy_prodigal_output(out_dir, gene_predictor):
     """
     Tidies prodigal output
     :param out_dir: output directory
-    :param gv_flag: if prodigal-gv, then True
+    :param gene_predictor: gene predictor
     :return: prod_filt_df pandas dataframe
     """
-    if gv_flag is True:
-        prefix = "prodigal-gv"
-    else:
-        prefix = "prodigal"
+
+    prefix = gene_predictor
 
     prod_file = os.path.join(out_dir, f"{prefix}_out.gff")
     col_list = [
@@ -624,10 +657,8 @@ def translate_fastas(out_dir, gene_predictor, coding_table, genbank_file):
     """
     if gene_predictor == "phanotate":
         clean_df = tidy_phanotate_output(out_dir)
-    elif gene_predictor == "prodigal":
-        clean_df = tidy_prodigal_output(out_dir, False)  # gv_flag is false
-    elif gene_predictor == "prodigal-gv":
-        clean_df = tidy_prodigal_output(out_dir, True)  # gv_flag is true
+    elif gene_predictor == "prodigal" or gene_predictor == "prodigal-gv" or gene_predictor == "pyrodigal-rv" :
+        clean_df = tidy_prodigal_output(out_dir, gene_predictor)  
     elif gene_predictor == "genbank":
         clean_df = tidy_genbank_output(out_dir, genbank_file, coding_table)
 
@@ -653,7 +684,7 @@ def translate_fastas(out_dir, gene_predictor, coding_table, genbank_file):
                 )
                 SeqIO.write(aa_record, aa_fa, "fasta")
                 i += 1
-    elif gene_predictor == "prodigal-gv" or gene_predictor == "prodigal":
+    elif gene_predictor == "prodigal-gv" or gene_predictor == "prodigal" or gene_predictor == "pyrodigal-rv":
         # read in the AA file instead and parse that to clean the header
         fasta_input_tmp = gene_predictor + "_out_aas_tmp.fasta"
         with open(os.path.join(out_dir, fasta_output_aas_tmp), "w") as aa_fa:

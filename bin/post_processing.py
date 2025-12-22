@@ -70,6 +70,7 @@ class Pharok:
         phanotate_version: str = "1.5.0",
         pyrodigal_version: str = "3.0.0",
         pyrodigal_gv_version: str = "0.1.0",
+        pyrodigal_rv_version: str = "0.1.0",
         trna_version: str = "2.0.12",
         aragorn_version: str = "1.2.41",
         minced_version: str = "0.4.2",
@@ -162,6 +163,7 @@ class Pharok:
         self.phanotate_version = phanotate_version
         self.pyrodigal_version = pyrodigal_version
         self.pyrodigal_gv_version = pyrodigal_gv_version
+        self.pyrodigal_rv_version = pyrodigal_rv_version
         self.trna_version = trna_version
         self.aragorn_version = aragorn_version
         self.minced_version = minced_version
@@ -182,7 +184,7 @@ class Pharok:
         # read in the cds cdf
         cds_file = os.path.join(self.out_dir, "cleaned_" + self.gene_predictor + ".tsv")
 
-        if self.gene_predictor in ["prodigal", "prodigal-gv"]:
+        if self.gene_predictor in ["prodigal", "prodigal-gv", "pyrodigal-rv"]:
             col_list = ["start", "stop", "strand", "contig", "score", "partial", "gene"]
         else:
             col_list = ["start", "stop", "strand", "contig", "score", "gene"]
@@ -365,6 +367,10 @@ class Pharok:
             merged_df["Method"] = (
                 f"ab initio prediction:Pyrodigal-gv:{self.pyrodigal_gv_version}"
             )
+        elif self.gene_predictor == "pyrodigal-rv":
+            merged_df["Method"] = (
+                f"ab initio prediction:Pyrodigal-rv:{self.pyrodigal_rv_version}"
+            )
         merged_df["Region"] = "CDS"
 
         # cast all these columns to string to prevent warning
@@ -434,7 +440,7 @@ class Pharok:
 
         fasta_sequences = SeqIO.parse(open(self.input_fasta), "fasta")
 
-        if self.gene_predictor == "prodigal-gv":
+        if self.gene_predictor == "prodigal-gv" or self.gene_predictor == "pyrodigal-rv" :
             # define col list
             col_list = [
                 "contig",
@@ -448,21 +454,21 @@ class Pharok:
                 "attributes",
             ]
             # read gff (no fasta output)
-            pyrodigal_gv_gff = pd.read_csv(
-                os.path.join(self.out_dir, "prodigal-gv_out.gff"),
+            pyrodigal_gv_rv_gff = pd.read_csv(
+                os.path.join(self.out_dir, f"{self.gene_predictor}_out.gff"),
                 delimiter="\t",
                 index_col=False,
                 names=col_list,
             )
 
-            pyrodigal_gv_gff[["attributes", "transl_table"]] = pyrodigal_gv_gff[
+            pyrodigal_gv_rv_gff[["attributes", "transl_table"]] = pyrodigal_gv_rv_gff[
                 "attributes"
             ].str.split("transl_table=", expand=True)
-            pyrodigal_gv_gff[["transl_table", "rest"]] = pyrodigal_gv_gff[
+            pyrodigal_gv_rv_gff[["transl_table", "rest"]] = pyrodigal_gv_rv_gff[
                 "transl_table"
             ].str.split(";conf", expand=True)
             # drop and then remove duplicates in df
-            pyrodigal_gv_gff = pyrodigal_gv_gff.drop(
+            pyrodigal_gv_rv_gff = pyrodigal_gv_rv_gff.drop(
                 columns=[
                     "rest",
                     "Method",
@@ -476,9 +482,9 @@ class Pharok:
                 ]
             )
             # Remove duplicate rows based on all columns
-            pyrodigal_gv_gff = pyrodigal_gv_gff.drop_duplicates()
+            pyrodigal_gv_rv_gff = pyrodigal_gv_rv_gff.drop_duplicates()
             # Convert to a dictionary
-            transl_table_dict = pyrodigal_gv_gff.set_index("contig")[
+            transl_table_dict = pyrodigal_gv_rv_gff.set_index("contig")[
                 "transl_table"
             ].to_dict()
 
@@ -500,7 +506,7 @@ class Pharok:
             lengths.append(len(record.seq))
             gc.append(round(gc_fraction(record.seq), 2))
             # pyrodigal-gv lookup from the dict
-            if self.gene_predictor == "prodigal-gv":
+            if self.gene_predictor == "prodigal-gv" or self.gene_predictor == "pyrodigal-rv" :
                 # try catch clause if contig too small to have a gene
                 try:
                     transl_table = transl_table_dict[record.id]

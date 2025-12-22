@@ -24,7 +24,7 @@ from processes import (concat_phanotate_meta, concat_trnascan_meta,
                        run_dnaapler, run_mash_dist, run_mash_sketch,
                        run_minced, run_mmseqs, run_phanotate,
                        run_phanotate_fasta_meta, run_phanotate_txt_meta,
-                       run_pyrodigal, run_pyrodigal_gv, run_trna_scan,
+                       run_pyrodigal, run_pyrodigal_gv, run_pyrodigal_rv, run_trna_scan,
                        run_trnascan_meta, split_input_fasta, translate_fastas)
 from util import count_contigs, get_version
 
@@ -122,6 +122,7 @@ def main():
         phanotate_version,
         pyrodigal_version,
         pyrodigal_gv_version,
+        pyrodigal_rv_version,
         trna_version,
         aragorn_version,
         minced_version,
@@ -295,6 +296,9 @@ def main():
     elif gene_predictor == "prodigal-gv":
         logger.info("Implementing Prodigal-gv using Pyrodigal-gv.")
         run_pyrodigal_gv(input_fasta, out_dir, int(args.threads))
+    elif gene_predictor == "pyrodigal-rv":
+        logger.info("Implementing Pyrodigal-rv.")
+        run_pyrodigal_rv(input_fasta, out_dir, int(args.threads))
 
     # translate fastas (parse genbank) - gets the required CDS if --genbank is used too
     translate_fastas(out_dir, gene_predictor, args.coding_table, args.infile)
@@ -383,6 +387,7 @@ def main():
     pharok.phanotate_version = phanotate_version
     pharok.pyrodigal_version = pyrodigal_version
     pharok.pyrodigal_gv_version = pyrodigal_gv_version
+    pharok.pyrodigal_rv_version = pyrodigal_rv_version
     pharok.trna_version = trna_version
     pharok.aragorn_version = aragorn_version
     pharok.minced_version = minced_version
