@@ -288,9 +288,10 @@ def main():
             run_phanotate(input_fasta, out_dir, logdir)
     elif gene_predictor == "prodigal":
         logger.info("Implementing Prodigal using Pyrodigal.")
-        run_pyrodigal(
+        transl_table = run_pyrodigal(
             input_fasta, out_dir, args.meta, args.coding_table, int(args.threads)
         )
+        args.coding_table = transl_table
     elif gene_predictor == "genbank":
         logger.info("Extracting CDS information from your genbank file.")
     elif gene_predictor == "prodigal-gv":

@@ -375,10 +375,10 @@ def run_pyrodigal(filepath_in, out_dir, meta, coding_table, threads):
             total_length += len(record.seq)
 
     # if the length is 20000 or under, use meta mode by default
-
-    if total_length < 20001:
+    # reduce from 100000 #https://github.com/gbouras13/pharokka/issues/409
+    if total_length < 100001:
         orf_finder = pyrodigal.GeneFinder(meta=True)
-
+        prodigal_metamode = True
 
     # otherwise train it
     # recommend pyrodigal-gv anyway
@@ -397,6 +397,12 @@ def run_pyrodigal(filepath_in, out_dir, meta, coding_table, threads):
         genes = orf_finder.find_genes(str(record.seq))
         return (record.id, genes)
 
+    if prodigal_metamode:
+        transl_table = None 
+    else:
+        transl_table = "11" 
+
+
     with multiprocessing.pool.ThreadPool(threads) as pool:
         with open(os.path.join(out_dir, "prodigal_out.gff"), "w") as gff:
             with open(os.path.join(out_dir, "prodigal_out_tmp.fasta"), "w") as dst:
@@ -410,6 +416,12 @@ def run_pyrodigal(filepath_in, out_dir, meta, coding_table, threads):
                         # need to write the translation
                         genes.write_translations(aa_fasta, sequence_id=record_id)
 
+                        # get transl_table once
+                        if transl_table is None:
+                            for gene in genes:
+                                transl_table = str(gene.translation_table)
+                                break
+    return str(transl_table)
 
 def tidy_phanotate_output(out_dir):
     """
