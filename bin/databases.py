@@ -180,9 +180,14 @@ lots of this code from the marvellous bakta https://github.com/oschwengers/bakta
 
 
 def download(db_url: str, tarball_path: Path):
+
+    headers = {
+        "User-Agent": f"pharokka/{VERSION} (contact: george.bouras@adelaide.edu.au)"
+    }
+
     try:
         with tarball_path.open("wb") as fh_out, requests.get(
-            db_url, stream=True
+            db_url, stream=True, headers=headers
         ) as resp:
             total_length = resp.headers.get("content-length")
             if total_length is not None:  # content length header is set
