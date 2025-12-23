@@ -374,9 +374,12 @@ def run_pyrodigal(filepath_in, out_dir, meta, coding_table, threads):
         for record in SeqIO.parse(handle, "fasta"):
             total_length += len(record.seq)
 
-    # if the length is 100000 or under, use meta mode by default
-    if total_length < 100001:
+    # if the length is 20000 or under, use meta mode by default
+
+    if total_length < 20001:
         orf_finder = pyrodigal.GeneFinder(meta=True)
+
+
     # otherwise train it
     # recommend pyrodigal-gv anyway
     else:
