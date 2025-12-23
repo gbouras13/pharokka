@@ -69,6 +69,7 @@ If you don't want to install `pharokka` or `phold` locally, you can run `pharokk
 - [Paper](#paper)
 - [Pharokka with Galaxy Europe Webserver](#pharokka-with-galaxy-europe-webserver)
 - [Brief Overview](#brief-overview)
+  - [Pharokka v 1.9.0 Update (23 December 2025)](#pharokka-v-190-update-23-december-2025)
   - [Pharokka v 1.8.0 Update (14 September 2025)](#pharokka-v-180-update-14-september-2025)
   - [Pharokka v 1.7.0 Update (4 March 2024)](#pharokka-v-170-update-4-march-2024)
   - [Pharokka v 1.6.0 Update (11 January 2024)](#pharokka-v-160-update-11-january-2024)
@@ -136,6 +137,14 @@ So if you can't get `pharokka` to install on your machine for whatever reason or
 </p>
 
 `pharokka` uses [PHANOTATE](https://github.com/deprekate/PHANOTATE), the only gene prediction program tailored to bacteriophages, as the default program for gene prediction. [Prodigal](https://github.com/hyattpd/Prodigal) implemented with [pyrodigal](https://github.com/althonos/pyrodigal) and [Prodigal-gv](https://github.com/apcamargo/prodigal-gv) implemented with [pyrodigal-gv](https://github.com/althonos/pyrodigal-gv) are also available as alternatives. Following this, functional annotations are assigned by matching each predicted coding sequence (CDS) to the [PHROGs](https://phrogs.lmge.uca.fr), [CARD](https://card.mcmaster.ca) and [VFDB](http://www.mgc.ac.cn/VFs/main.htm) databases using [MMseqs2](https://github.com/soedinglab/MMseqs2). As of v1.4.0, `pharokka` will also match each CDS to the PHROGs database using more sensitive Hidden Markov Models using [PyHMMER](https://github.com/althonos/pyhmmer). Pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). `pharokka` also generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage) and check out the full [documentation](https://pharokka.readthedocs.io) for more details.  
+
+## Pharokka v 1.9.0 Update (23 December 2025)
+
+* Adds `pyrodigal-rv` (see https://github.com/LanderDC/pyrodigal-rv) dependency as a gene predictor option that may be useful if you are annotating RNA phages (also RNA viruses generally perhaps, although YMMV)
+    * Use `-g pyrodigal-rv` to use this 
+* Fixes bug with incorrect translation table being passed when using `-g prodigal` and meta mode (usually for single phages, where they are too small to have a Prodigal model trained for them) - see https://github.com/gbouras13/pharokka/issues/409
+    * We recommend you use `-g prodigal-gv` (the default) if you have metagenomic datasets anyway
+
 
 ## Pharokka v 1.8.0 Update (14 September 2025)
 
@@ -407,9 +416,9 @@ options:
                         Prefix for output files. This is not required.
   -l LOCUSTAG, --locustag LOCUSTAG
                         User specified locus tag for the gff/gbk files. This is not required. A random locus tag will be generated instead.
-  -g GENE_PREDICTOR, --gene_predictor GENE_PREDICTOR
-                        User specified gene predictor. Use "-g phanotate" or "-g prodigal" or "-g prodigal-gv" or "-g genbank". 
-                        Defaults to phanotate (not required unless prodigal is desired).
+  -g, --gene_predictor GENE_PREDICTOR
+                        User specified gene predictor. Use "-g phanotate" or "-g prodigal" or "-g prodigal-gv" or "-g pyrodigal-rv" or "-g genbank". 
+                        Defaults to phanotate usually and prodigal-gv in meta mode.
   -m, --meta            meta mode for metavirome input samples
   -s, --split           split mode for metavirome samples. -m must also be specified. 
                         Will output separate split FASTA, gff and genbank files for each input contig.
