@@ -185,9 +185,9 @@ options:
                         Prefix for output files. This is not required.
   -l LOCUSTAG, --locustag LOCUSTAG
                         User specified locus tag for the gff/gbk files. This is not required. A random locus tag will be generated instead.
-  -g GENE_PREDICTOR, --gene_predictor GENE_PREDICTOR
-                        User specified gene predictor. Use "-g phanotate" or "-g prodigal" or "-g prodigal-gv" or "-g genbank". 
-                        Defaults to phanotate (not required unless prodigal is desired).
+  -g, --gene_predictor GENE_PREDICTOR
+                        User specified gene predictor. Use "-g phanotate" or "-g prodigal" or "-g prodigal-gv" or "-g pyrodigal-rv" or "-g genbank". 
+                        Defaults to phanotate usually and prodigal-gv in meta mode.
   -m, --meta            meta mode for metavirome input samples
   -s, --split           split mode for metavirome samples. -m must also be specified. 
                         Will output separate split FASTA, gff and genbank files for each input contig.
