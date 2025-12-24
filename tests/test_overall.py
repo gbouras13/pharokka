@@ -180,17 +180,17 @@ def test_meta_unicycler_header_prodigal(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g prodigal-gv -m"
     exec_command(cmd)
 
-def test_pyrodigal_rv(tmp_dir):
+def test_pyrodigal_gv(tmp_dir):
     """test pharokka with prodigal-rv"""
     input_fasta: Path = f"{meta_data}/combined_meta.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m -g prodigal-gv"
     exec_command(cmd)
 
 
-def test_meta_prodigal_gv(tmp_dir):
+def test_meta_prodigal_rv(tmp_dir):
     """test pharokka meta with prodigal-gv"""
     input_fasta: Path = f"{rv_data}/Tymoviridae.fna"
-    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m -g prodigal-rv"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m -g pyrodigal-rv"
     exec_command(cmd)
 
 
