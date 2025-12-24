@@ -187,10 +187,10 @@ def test_pyrodigal_gv(tmp_dir):
     exec_command(cmd)
 
 
-def test_meta_prodigal_rv(tmp_dir):
-    """test pharokka meta with prodigal-gv"""
+def test_prodigal_rv(tmp_dir):
+    """test pharokka with prodigal-rv"""
     input_fasta: Path = f"{rv_data}/Tymoviridae.fna"
-    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m -g pyrodigal-rv"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g pyrodigal-rv"
     exec_command(cmd)
 
 
