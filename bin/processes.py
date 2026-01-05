@@ -754,7 +754,7 @@ def run_trna_scan(filepath_in, threads, out_dir, logdir, trna_scan_model):
         return 0
 
 
-def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, db_name):
+def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, reverse_mmseqs2, db_name):
     """
     Runs mmseqs2 on phrogs
     :param db_dir: database path
@@ -763,6 +763,7 @@ def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, db_name
     :params threads: threads
     :param gene_predictor: phanotate or prodigal
     :param evalue: evalue for mmseqs2
+    :param reverse_mmseqs2: reverse MMseqs2 database to be target not query
     :param db_name: str one of 'PHROG', 'VFDB' or 'CARD'
     :return:
     """
@@ -815,33 +816,57 @@ def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, db_name
 
     result_mmseqs = os.path.join(mmseqs_dir, "results_mmseqs")
 
+    
+
     if db_name == "PHROG":
+        if reverse_mmseqs2:
+            params_list = f"-e {evalue} {target_seqs} {profile_db} {result_mmseqs}"
+        
+        else:
+            params_list = f"-e {evalue} {profile_db} {target_seqs} {result_mmseqs}" # param goes before output and mmseqs2 required order
+
         mmseqs_search = ExternalTool(
             tool="mmseqs search",
             input=f"",
             output=f"{tmp_dir} -s 8.5 --threads {threads}",
-            params=f"-e {evalue} {profile_db} {target_seqs} {result_mmseqs}",  # param goes before output and mmseqs2 required order
+            params=params_list,  
             logdir=logdir,
             outfile="",
         )
     else:  # if it is vfdb or card search with cutoffs instead of evalue
+
+        if reverse_mmseqs2:
+            params_list = f"--min-seq-id 0.8 -c 0.4 {target_seqs} {profile_db} {result_mmseqs}"
+        
+        else:
+            params_list = f"--min-seq-id 0.8 -c 0.4 {profile_db} {target_seqs} {result_mmseqs}" # param goes before output and mmseqs2 required order
+
+
         mmseqs_search = ExternalTool(
             tool="mmseqs search",
             input=f"",
             output=f"{tmp_dir} -s 8.5 --threads {threads}",
-            params=f"--min-seq-id 0.8 -c 0.4 {profile_db} {target_seqs} {result_mmseqs}",  # param goes before output and mmseqs2 required order
+            params=params_list,  # param goes before output and mmseqs2 required order
             logdir=logdir,
             outfile="",
         )
 
     ExternalTool.run_tool(mmseqs_search)
 
+
+    if reverse_mmseqs2:
+        params_list = f"{target_seqs} {profile_db} {result_mmseqs}"
+    
+    else:
+        params_list = f"{profile_db} {target_seqs} {result_mmseqs}" # param goes before output and mmseqs2 required order
+
+
     # creates the output tsv
     mmseqs_createtsv = ExternalTool(
         tool="mmseqs createtsv",
         input=f"",
         output=f"{mmseqs_result_tsv} --full-header --threads {threads}",
-        params=f"{profile_db} {target_seqs} {result_mmseqs} ",  # param goes before output and mmseqs2 required order
+        params=params_list,  # param goes before output and mmseqs2 required order
         logdir=logdir,
         outfile="",
     )

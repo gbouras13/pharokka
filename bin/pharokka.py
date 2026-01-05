@@ -331,7 +331,8 @@ def main():
             logdir,
             gene_predictor,
             args.evalue,
-            db_name="PHROG",
+            args.reverse_mmseqs2,
+            db_name="PHROG"
         )
         run_mmseqs(
             db_dir,
@@ -340,7 +341,8 @@ def main():
             logdir,
             gene_predictor,
             args.evalue,
-            db_name="CARD",
+            args.reverse_mmseqs2,
+            db_name="CARD"
         )
         run_mmseqs(
             db_dir,
@@ -349,7 +351,8 @@ def main():
             logdir,
             gene_predictor,
             args.evalue,
-            db_name="VFDB",
+            args.reverse_mmseqs2,
+            db_name="VFDB"
         )
 
     if hmm_flag is True:

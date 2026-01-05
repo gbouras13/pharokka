@@ -175,6 +175,11 @@ def get_input():
         action="store_true",
     )
     parser.add_argument(
+        "--reverse_mmseqs2",
+        help="MMseqs2 database as target not query.",
+        action="store_true",
+    )
+    parser.add_argument(
         "-V",
         "--version",
         help="Print pharokka Version",
