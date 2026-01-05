@@ -396,6 +396,7 @@ def main():
     pharok.aragorn_version = aragorn_version
     pharok.minced_version = minced_version
     pharok.skip_extra_annotations = args.skip_extra_annotations
+    pharok.reverse_mmseqs2 = args.reverse_mmseqs2
 
     if pharok.hmm_flag is True:
         pharok.pyhmmer_results_dict = best_results_pyhmmer
