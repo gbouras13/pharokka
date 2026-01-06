@@ -597,20 +597,17 @@ class Pharok_Prot:
         # Creating a new DataFrame with columns rearranged
         tophits_df = tophits_df[desired_order]
 
-        # save
-
-        tophits_df["phrog"].fillna("No_PHROG", inplace=True)
-        tophits_df["annot"].fillna("hypothetical protein", inplace=True)
-        tophits_df["category"].fillna("unknown function", inplace=True)
-        tophits_df["mmseqs_phrog"].fillna("No_MMseqs", inplace=True)
-        tophits_df["mmseqs_alnScore"].fillna("No_MMseqs", inplace=True)
-        tophits_df["mmseqs_seqIdentity"].fillna("No_MMseqs", inplace=True)
-        tophits_df["mmseqs_eVal"].fillna("No_MMseqs", inplace=True)
-        tophits_df["pyhmmer_phrog"].fillna("No_PHROGs_HMM", inplace=True)
-        tophits_df["pyhmmer_bitscore"].fillna("No_PHROGs_HMM", inplace=True)
-        tophits_df["pyhmmer_evalue"].fillna("No_PHROGs_HMM", inplace=True)
-        tophits_df["color"].fillna("None", inplace=True)
-
+        tophits_df["phrog"] = tophits_df["phrog"].fillna("No_PHROG")
+        tophits_df["annot"] = tophits_df["annot"].fillna("hypothetical protein")
+        tophits_df["category"] = tophits_df["category"].fillna("unknown function")
+        tophits_df["mmseqs_phrog"] = tophits_df["mmseqs_phrog"].fillna("No_MMseqs")
+        tophits_df["mmseqs_alnScore"] = tophits_df["mmseqs_alnScore"].fillna("No_MMseqs")
+        tophits_df["mmseqs_seqIdentity"] = tophits_df["mmseqs_seqIdentity"].fillna("No_MMseqs")
+        tophits_df["mmseqs_eVal"] = tophits_df["mmseqs_eVal"].fillna("No_MMseqs")
+        tophits_df["pyhmmer_phrog"] = tophits_df["pyhmmer_phrog"].fillna("No_PHROGs_HMM")
+        tophits_df["pyhmmer_bitscore"] = tophits_df["pyhmmer_bitscore"].fillna("No_PHROGs_HMM")
+        tophits_df["pyhmmer_evalue"] = tophits_df["pyhmmer_evalue"].fillna("No_PHROGs_HMM")
+        tophits_df["color"] = tophits_df["color"].fillna("None")
 
         tophits_df.to_csv(
             os.path.join(self.out_dir, f"{self.prefix}_full_merged_output.tsv"),
