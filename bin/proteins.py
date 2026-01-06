@@ -20,7 +20,7 @@ from post_processing import (process_card_results, process_pyhmmer_results,
                              process_vfdb_results)
 from pyhmmer.easel import SequenceFile
 from pyhmmer.plan7 import HMM, HMMFile
-from util import (count_contigs, get_contig_headers, get_version,
+from util import ( get_contig_headers, get_version,
                   remove_directory)
 
 Result = collections.namedtuple("Result", ["protein", "phrog", "bitscore", "evalue"])
@@ -364,7 +364,13 @@ class Pharok_Prot:
         # get tophits 
         ####### ####### ####### ####### #######
         ####### ####### ####### ####### #######
-        if self.mmseqs_flag is True:
+
+        ids = get_contig_headers(self.input_fasta) # returns the seq.description
+        all_genes_df = pd.DataFrame({"gene": ids})
+        
+        if self.mmseqs_flag is True: 
+            # dummy df of all genes
+
             # MMseqs PHROGs file
             mmseqs_file = os.path.join(self.out_dir, "mmseqs_results.tsv")
             logger.info("Processing mmseqs2 output.")
@@ -401,57 +407,40 @@ class Pharok_Prot:
             mmseqs_df = pd.read_csv(
                 mmseqs_file, delimiter="\t", index_col=False, names=col_list
             )
-            # get list of genes
-            genes = mmseqs_df.gene.unique()
 
-            # instantiate tophits list
-            tophits = []
+             # get best hit per gene (lowest e-value)
+            tophits_df = (
+                mmseqs_df
+                .sort_values("mmseqs_eVal")
+                .groupby("gene", as_index=False)
+                .first()
+                [["gene", "mmseqs_phrog", "mmseqs_alnScore",
+                "mmseqs_seqIdentity", "mmseqs_eVal"]]
+            )
 
-            for gene in genes:
-                tmp_df = (
-                    mmseqs_df.loc[mmseqs_df["gene"] == gene]
-                    .sort_values("mmseqs_eVal")
-                    .reset_index(drop=True)
-                    .loc[0]
-                )
-                tophits.append(
-                    [
-                        tmp_df.gene,
-                        tmp_df.mmseqs_phrog,
-                        tmp_df.mmseqs_alnScore,
-                        tmp_df.mmseqs_seqIdentity,
-                        tmp_df.mmseqs_eVal,
-                    ]
-                )
+            # get all genes by leftjoining with the all gene df
 
-            # create tophits df
-            tophits_df = pd.DataFrame(
-                tophits,
-                columns=[
-                    "gene",
-                    "mmseqs_phrog",
-                    "mmseqs_alnScore",
-                    "mmseqs_seqIdentity",
-                    "mmseqs_eVal",
-                ],
+            tophits_df = (
+                all_genes_df
+                .merge(tophits_df, on="gene", how="left")
+                .fillna({
+                    "mmseqs_phrog": "No_MMseqs",
+                    "mmseqs_alnScore": "No_MMseqs",
+                    "mmseqs_seqIdentity": "No_MMseqs",
+                    "mmseqs_eVal": "No_MMseqs",
+                })
             )
 
         # tophits for pyhmmer only
         else:
-            prot_count = count_contigs(self.input_fasta)
-            ids = get_contig_headers(self.input_fasta)
             # create tophits df
-            # Create a dictionary with the column names and their corresponding values
-            data = {
-                "gene": ids,
-                "mmseqs_phrog": ["No_MMseqs"] * prot_count,
-                "mmseqs_alnScore": ["No_MMseqs"] * prot_count,
-                "mmseqs_seqIdentity": ["No_MMseqs"] * prot_count,
-                "mmseqs_eVal": ["No_MMseqs"] * prot_count,
-            }
+            tophits_df = all_genes_df.assign(
+                mmseqs_phrog="No_MMseqs",
+                mmseqs_alnScore="No_MMseqs",
+                mmseqs_seqIdentity="No_MMseqs",
+                mmseqs_eVal="No_MMseqs",
+            )
 
-            # Create a DataFrame from the dictionary
-            tophits_df = pd.DataFrame(data)
 
 
         ####################
