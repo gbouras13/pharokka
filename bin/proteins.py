@@ -89,6 +89,11 @@ def get_input_proteins():
         action="store_true",
     )
     parser.add_argument(
+        "--reverse_mmseqs2",
+        help="MMseqs2 database as target not query.",
+        action="store_true",
+    )
+    parser.add_argument(
         "-V",
         "--version",
         help="Print pharokka Version",
@@ -103,7 +108,7 @@ def get_input_proteins():
     return args
 
 
-def run_mmseqs_proteins(input_fasta, db_dir, out_dir, threads, logdir, evalue, db_name):
+def run_mmseqs_proteins(input_fasta, db_dir, out_dir, threads, logdir, evalue, reverse_mmseqs2, db_name):
     """
     Runs mmseqs2 for pharokka_proteins.py
     :param db_dir: database path
@@ -112,6 +117,7 @@ def run_mmseqs_proteins(input_fasta, db_dir, out_dir, threads, logdir, evalue, d
     :params threads: threads
     :param gene_predictor: phanotate or prodigal
     :param evalue: evalue for mmseqs2
+    :param reverse_mmseqs2: reverse mmseqs2 database to be target
     :param db_name: str one of 'PHROG', 'VFDB' or 'CARD'
     :return:
     """
@@ -161,32 +167,51 @@ def run_mmseqs_proteins(input_fasta, db_dir, out_dir, threads, logdir, evalue, d
     result_mmseqs = os.path.join(mmseqs_dir, "results_mmseqs")
 
     if db_name == "PHROG":
+
+        if reverse_mmseqs2:
+            params_list = f"-e {evalue} {target_seqs} {profile_db} {result_mmseqs}"
+        else:
+            params_list = f"-e {evalue} {profile_db} {target_seqs} {result_mmseqs}"
+
         mmseqs_search = ExternalTool(
             tool="mmseqs search",
             input=f"",
             output=f"{tmp_dir} -s 8.5 --threads {threads}",
-            params=f"-e {evalue} {profile_db} {target_seqs} {result_mmseqs}",  # param goes before output and mmseqs2 required order
+            params=params_list,  # param goes before output and mmseqs2 required order
             logdir=logdir,
             outfile="",
         )
     else:  # if it is vfdb or card search with cutoffs instead of evalue
+
+        if reverse_mmseqs2:
+            params_list = f"--min-seq-id 0.8 -c 0.4 {target_seqs} {profile_db} {result_mmseqs}"
+        else:
+            params_list = f"--min-seq-id 0.8 -c 0.4 {profile_db} {target_seqs} {result_mmseqs}"
+
         mmseqs_search = ExternalTool(
             tool="mmseqs search",
             input=f"",
             output=f"{tmp_dir} -s 8.5 --threads {threads}",
-            params=f"--min-seq-id 0.8 -c 0.4 {profile_db} {target_seqs} {result_mmseqs}",  # param goes before output and mmseqs2 required order
+            params=params_list,  # param goes before output and mmseqs2 required order
             logdir=logdir,
             outfile="",
         )
 
     ExternalTool.run_tool(mmseqs_search)
 
+
+    if reverse_mmseqs2:
+        params_list = f"{target_seqs} {profile_db} {result_mmseqs}"
+    else:
+        params_list = f"{profile_db} {target_seqs} {result_mmseqs}" # param goes before output and mmseqs2 required order
+
+
     # creates the output tsv
     mmseqs_createtsv = ExternalTool(
         tool="mmseqs createtsv",
         input=f"",
         output=f"{mmseqs_result_tsv} --full-header --threads {threads}",
-        params=f"{profile_db} {target_seqs} {result_mmseqs} ",  # param goes before output and mmseqs2 required order
+        params=params_list,  # param goes before output and mmseqs2 required order
         logdir=logdir,
         outfile="",
     )
@@ -282,7 +307,8 @@ class Pharok_Prot:
         ),
         mmseqs_flag: bool = True,
         hmm_flag: bool = True,
-    ) -> None:
+        reverse_mmseqs2: bool = False
+    ) -> None: 
         """
         Parameters
         --------
@@ -308,6 +334,8 @@ class Pharok_Prot:
             whether MMseqs2 was run
         run_hmm: bool
             whether HMM was run
+        reverse_mmseqs2: bool
+            whether to run MMseqs using database as target
         """
         self.out_dir = out_dir
         self.db_dir = db_dir
@@ -320,6 +348,7 @@ class Pharok_Prot:
         self.length_df = length_df
         self.mmseqs_flag = mmseqs_flag
         self.hmm_flag = hmm_flag
+        self.reverse_mmseqs2 = reverse_mmseqs2
 
     def process_dataframes(self):
         """
@@ -332,14 +361,30 @@ class Pharok_Prot:
 
         ####### ####### ####### ####### #######
         ####### ####### ####### ####### #######
-        # get tophits
+        # get tophits 
         ####### ####### ####### ####### #######
         ####### ####### ####### ####### #######
         if self.mmseqs_flag is True:
             # MMseqs PHROGs file
             mmseqs_file = os.path.join(self.out_dir, "mmseqs_results.tsv")
             logger.info("Processing mmseqs2 output.")
-            col_list = [
+
+            if self.reverse_mmseqs:
+                col_list = [
+                "gene",
+                "mmseqs_phrog",
+                "mmseqs_alnScore",
+                "mmseqs_seqIdentity",
+                "mmseqs_eVal",
+                "qStart",
+                "qEnd",
+                "qLen",
+                "tStart",
+                "tEnd",
+                "tLen"]
+
+            else:
+                col_list = [
                 "mmseqs_phrog",
                 "gene",
                 "mmseqs_alnScore",
@@ -350,8 +395,9 @@ class Pharok_Prot:
                 "qLen",
                 "tStart",
                 "tEnd",
-                "tLen",
-            ]
+                "tLen"]
+
+
             mmseqs_df = pd.read_csv(
                 mmseqs_file, delimiter="\t", index_col=False, names=col_list
             )
@@ -529,11 +575,11 @@ class Pharok_Prot:
         # process vfdb results
         # handles empty files without a problem
         (tophits_df, vfdb_results) = process_vfdb_results(
-            self.out_dir, tophits_df, proteins_flag=True
+            self.out_dir, tophits_df, proteins_flag=True, reverse_mmseqs2=self.reverse_mmseqs2
         )
         # process CARD results
         (tophits_df, card_results) = process_card_results(
-            self.out_dir, tophits_df, self.db_dir, proteins_flag=True
+            self.out_dir, tophits_df, self.db_dir, proteins_flag=True, reverse_mmseqs2=self.reverse_mmseqs2
         )
 
         # Rename the "gene" column to "id"
@@ -565,8 +611,6 @@ class Pharok_Prot:
         tophits_df["pyhmmer_evalue"].fillna("No_PHROGs_HMM", inplace=True)
         tophits_df["color"].fillna("None", inplace=True)
 
-        # merge the length df into the tophits
-        print(tophits_df.tail())
 
         tophits_df.to_csv(
             os.path.join(self.out_dir, f"{self.prefix}_full_merged_output.tsv"),
