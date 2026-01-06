@@ -369,7 +369,7 @@ class Pharok_Prot:
             mmseqs_file = os.path.join(self.out_dir, "mmseqs_results.tsv")
             logger.info("Processing mmseqs2 output.")
 
-            if self.reverse_mmseqs:
+            if self.reverse_mmseqs2:
                 col_list = [
                 "gene",
                 "mmseqs_phrog",
