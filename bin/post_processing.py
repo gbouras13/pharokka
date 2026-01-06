@@ -2570,9 +2570,6 @@ def process_pyhmmer_results(merged_df, pyhmmer_results_dict):
     # split to get protein name to match with pyhmmer
     merged_df["temp_prot"] = merged_df["gene"].str.split(" ", n=1).str[0]
 
-    print(merged_df)
-    print(merged_df["temp_prot"])
-    
     merged_df["pyhmmer_phrog"] = "No_PHROGs_HMM"
     merged_df["pyhmmer_bitscore"] = "No_PHROGs_HMM"
     merged_df["pyhmmer_evalue"] = "No_PHROGs_HMM"
