@@ -164,6 +164,7 @@ def main():
     pharok.prefix = prefix
     pharok.input_fasta = input_fasta
     pharok.mmseqs_flag = mmseqs_flag
+    pharok.reverse_mmseqs2 = args.reverse_mmseqs2
     pharok.hmm_flag = hmm_flag
     if pharok.hmm_flag is True:
         pharok.pyhmmer_results_dict = best_results_pyhmmer
