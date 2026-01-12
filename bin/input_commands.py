@@ -180,6 +180,12 @@ def get_input():
         action="store_true",
     )
     parser.add_argument(
+        "--sensitivity",
+        help="MMseqs2 sensitivity.",
+        default=8.5,
+        type=float,
+    )
+    parser.add_argument(
         "-V",
         "--version",
         help="Print pharokka Version",

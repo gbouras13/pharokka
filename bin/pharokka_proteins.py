@@ -121,6 +121,7 @@ def main():
             logdir,
             args.evalue,
             args.reverse_mmseqs2,
+            args.sensitivity,
             db_name="PHROG",
         )
         run_mmseqs_proteins(
@@ -131,6 +132,7 @@ def main():
             logdir,
             args.evalue,
             args.reverse_mmseqs2,
+            args.sensitivity,
             db_name="CARD",
         )
         run_mmseqs_proteins(
@@ -141,6 +143,7 @@ def main():
             logdir,
             args.evalue,
             args.reverse_mmseqs2,
+            args.sensitivity,
             db_name="VFDB",
         )
 

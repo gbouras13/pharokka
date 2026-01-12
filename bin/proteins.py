@@ -94,6 +94,12 @@ def get_input_proteins():
         action="store_true",
     )
     parser.add_argument(
+        "--sensitivity",
+        help="MMseqs2 sensitivity.",
+        default=8.5,
+        type=float,
+    )
+    parser.add_argument(
         "-V",
         "--version",
         help="Print pharokka Version",
@@ -108,7 +114,7 @@ def get_input_proteins():
     return args
 
 
-def run_mmseqs_proteins(input_fasta, db_dir, out_dir, threads, logdir, evalue, reverse_mmseqs2, db_name):
+def run_mmseqs_proteins(input_fasta, db_dir, out_dir, threads, logdir, evalue, reverse_mmseqs2, sensitivity, db_name):
     """
     Runs mmseqs2 for pharokka_proteins.py
     :param db_dir: database path
@@ -118,6 +124,7 @@ def run_mmseqs_proteins(input_fasta, db_dir, out_dir, threads, logdir, evalue, r
     :param gene_predictor: phanotate or prodigal
     :param evalue: evalue for mmseqs2
     :param reverse_mmseqs2: reverse mmseqs2 database to be target
+    :param sensitivity: MMseqs2 sensitivity
     :param db_name: str one of 'PHROG', 'VFDB' or 'CARD'
     :return:
     """
@@ -176,7 +183,7 @@ def run_mmseqs_proteins(input_fasta, db_dir, out_dir, threads, logdir, evalue, r
         mmseqs_search = ExternalTool(
             tool="mmseqs search",
             input=f"",
-            output=f"{tmp_dir} -s 8.5 --threads {threads}",
+            output=f"{tmp_dir} -s {sensitivity} --threads {threads}",
             params=params_list,  # param goes before output and mmseqs2 required order
             logdir=logdir,
             outfile="",
@@ -191,7 +198,7 @@ def run_mmseqs_proteins(input_fasta, db_dir, out_dir, threads, logdir, evalue, r
         mmseqs_search = ExternalTool(
             tool="mmseqs search",
             input=f"",
-            output=f"{tmp_dir} -s 8.5 --threads {threads}",
+            output=f"{tmp_dir} -s {sensitivity} --threads {threads}",
             params=params_list,  # param goes before output and mmseqs2 required order
             logdir=logdir,
             outfile="",

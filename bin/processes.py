@@ -754,7 +754,7 @@ def run_trna_scan(filepath_in, threads, out_dir, logdir, trna_scan_model):
         return 0
 
 
-def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, reverse_mmseqs2, db_name):
+def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, reverse_mmseqs2, sensitivity, db_name):
     """
     Runs mmseqs2 on phrogs
     :param db_dir: database path
@@ -764,6 +764,7 @@ def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, reverse
     :param gene_predictor: phanotate or prodigal
     :param evalue: evalue for mmseqs2
     :param reverse_mmseqs2: reverse MMseqs2 database to be target not query
+    :param sensitivity: MMseqs2 sensitivity
     :param db_name: str one of 'PHROG', 'VFDB' or 'CARD'
     :return:
     """
@@ -828,7 +829,7 @@ def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, reverse
         mmseqs_search = ExternalTool(
             tool="mmseqs search",
             input=f"",
-            output=f"{tmp_dir} -s 8.5 --threads {threads}",
+            output=f"{tmp_dir} -s {sensitivity} --threads {threads}",
             params=params_list,  
             logdir=logdir,
             outfile="",
@@ -845,7 +846,7 @@ def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, reverse
         mmseqs_search = ExternalTool(
             tool="mmseqs search",
             input=f"",
-            output=f"{tmp_dir} -s 8.5 --threads {threads}",
+            output=f"{tmp_dir} -s {sensitivity} --threads {threads}",
             params=params_list,  # param goes before output and mmseqs2 required order
             logdir=logdir,
             outfile="",

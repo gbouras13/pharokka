@@ -332,6 +332,7 @@ def main():
             gene_predictor,
             args.evalue,
             args.reverse_mmseqs2,
+            args.sensitivity,
             db_name="PHROG"
         )
         run_mmseqs(
@@ -342,6 +343,7 @@ def main():
             gene_predictor,
             args.evalue,
             args.reverse_mmseqs2,
+            args.sensitivity,
             db_name="CARD"
         )
         run_mmseqs(
@@ -352,6 +354,7 @@ def main():
             gene_predictor,
             args.evalue,
             args.reverse_mmseqs2,
+            args.sensitivity,
             db_name="VFDB"
         )
 
