@@ -69,7 +69,7 @@ If you don't want to install `pharokka` or `phold` locally, you can run `pharokk
 - [Paper](#paper)
 - [Pharokka with Galaxy Europe Webserver](#pharokka-with-galaxy-europe-webserver)
 - [Brief Overview](#brief-overview)
-  - [Pharokka v 1.9.0 Update (23 December 2025)](#pharokka-v-190-update-23-december-2025)
+  - [Pharokka v 1.9.0 Update (12 January 2026)](#pharokka-v-190-update-12-january-2026)
   - [Pharokka v 1.8.0 Update (14 September 2025)](#pharokka-v-180-update-14-september-2025)
   - [Pharokka v 1.7.0 Update (4 March 2024)](#pharokka-v-170-update-4-march-2024)
   - [Pharokka v 1.6.0 Update (11 January 2024)](#pharokka-v-160-update-11-january-2024)
@@ -138,13 +138,13 @@ So if you can't get `pharokka` to install on your machine for whatever reason or
 
 `pharokka` uses [PHANOTATE](https://github.com/deprekate/PHANOTATE), the only gene prediction program tailored to bacteriophages, as the default program for gene prediction. [Prodigal](https://github.com/hyattpd/Prodigal) implemented with [pyrodigal](https://github.com/althonos/pyrodigal) and [Prodigal-gv](https://github.com/apcamargo/prodigal-gv) implemented with [pyrodigal-gv](https://github.com/althonos/pyrodigal-gv) are also available as alternatives. Following this, functional annotations are assigned by matching each predicted coding sequence (CDS) to the [PHROGs](https://phrogs.lmge.uca.fr), [CARD](https://card.mcmaster.ca) and [VFDB](http://www.mgc.ac.cn/VFs/main.htm) databases using [MMseqs2](https://github.com/soedinglab/MMseqs2). As of v1.4.0, `pharokka` will also match each CDS to the PHROGs database using more sensitive Hidden Markov Models using [PyHMMER](https://github.com/althonos/pyhmmer). Pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). `pharokka` also generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage) and check out the full [documentation](https://pharokka.readthedocs.io) for more details.  
 
-## Pharokka v 1.9.0 Update (23 December 2025)
+## Pharokka v 1.9.0 Update (12 January 2026)
 
 * Adds `pyrodigal-rv` (see https://github.com/LanderDC/pyrodigal-rv) dependency as a gene predictor option that may be useful if you are annotating RNA phages (also RNA viruses generally perhaps, although YMMV)
     * Use `-g pyrodigal-rv` to use this 
 * Fixes bug with incorrect translation table being passed when using `-g prodigal` and meta mode (usually for single phages, where they are too small to have a Prodigal model trained for them) - see https://github.com/gbouras13/pharokka/issues/409
     * We recommend you use `-g prodigal-gv` (the default) if you have metagenomic datasets anyway
-
+* Adds `--reverse_mmseqs2` flag - this makes the PHROG MMseqs2 profile database the target not the query (thanks @simroux). This in only recommended for enormous datasets.
 
 ## Pharokka v 1.8.0 Update (14 September 2025)
 
@@ -394,27 +394,24 @@ For a full explanation of all arguments, please see [usage](docs/run.md).
 pharokka defaults to 1 thread.
 
 ```
-usage: pharokka.py [-h] [-i INFILE] [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG] [-g GENE_PREDICTOR] [-m] [-s]
-                   [-c CODING_TABLE] [-e EVALUE] [--fast] [--mmseqs2_only] [--meta_hmm] [--dnaapler] [--custom_hmm CUSTOM_HMM] [--genbank]
-                   [--terminase] [--terminase_strand TERMINASE_STRAND] [--terminase_start TERMINASE_START] [--skip_extra_annotations]
-                   [--skip_mash] [--minced_args MINCED_ARGS] [--mash_distance MASH_DISTANCE] [-V] [--citation]
+usage: pharokka.py [-h] [-i INFILE] [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG] [-g GENE_PREDICTOR] [-m] [-s] [-c CODING_TABLE] [-e EVALUE]
+                   [--fast] [--mmseqs2_only] [--meta_hmm] [--dnaapler] [--custom_hmm CUSTOM_HMM] [--genbank] [--terminase] [--terminase_strand TERMINASE_STRAND]
+                   [--terminase_start TERMINASE_START] [--skip_extra_annotations] [--skip_mash] [--minced_args MINCED_ARGS] [--mash_distance MASH_DISTANCE]
+                   [--trna_scan_model {general,bacterial}] [--keep_raw_prodigal] [--reverse_mmseqs2] [-V] [--citation]
 
 pharokka: fast phage annotation program
 
 options:
   -h, --help            show this help message and exit
-  -i INFILE, --infile INFILE
-                        Input genome file in fasta format.
-  -o OUTDIR, --outdir OUTDIR
-                        Directory to write the output to.
-  -d DATABASE, --database DATABASE
+  -i, --infile INFILE   Input genome file in fasta format.
+  -o, --outdir OUTDIR   Directory to write the output to.
+  -d, --database DATABASE
                         Database directory. If the databases have been installed in the default directory, this is not required. Otherwise specify the path.
-  -t THREADS, --threads THREADS
+  -t, --threads THREADS
                         Number of threads. Defaults to 1.
   -f, --force           Overwrites the output directory.
-  -p PREFIX, --prefix PREFIX
-                        Prefix for output files. This is not required.
-  -l LOCUSTAG, --locustag LOCUSTAG
+  -p, --prefix PREFIX   Prefix for output files. This is not required.
+  -l, --locustag LOCUSTAG
                         User specified locus tag for the gff/gbk files. This is not required. A random locus tag will be generated instead.
   -g, --gene_predictor GENE_PREDICTOR
                         User specified gene predictor. Use "-g phanotate" or "-g prodigal" or "-g prodigal-gv" or "-g pyrodigal-rv" or "-g genbank". 
@@ -422,10 +419,9 @@ options:
   -m, --meta            meta mode for metavirome input samples
   -s, --split           split mode for metavirome samples. -m must also be specified. 
                         Will output separate split FASTA, gff and genbank files for each input contig.
-  -c CODING_TABLE, --coding_table CODING_TABLE
+  -c, --coding_table CODING_TABLE
                         translation table for prodigal. Defaults to 11.
-  -e EVALUE, --evalue EVALUE
-                        E-value threshold for MMseqs2 database PHROGs, VFDB and CARD and PyHMMER PHROGs database search. Defaults to 1E-05.
+  -e, --evalue EVALUE   E-value threshold for MMseqs2 database PHROGs, VFDB and CARD and PyHMMER PHROGs database search. Defaults to 1E-05.
   --fast, --hmm_only    Runs PyHMMER (HMMs) with PHROGs only, not MMseqs2 with PHROGs, CARD or VFDB. 
                         Designed for phage isolates, will not likely be faster for large metagenomes.
   --mmseqs2_only        Runs MMseqs2 with PHROGs, CARD and VFDB only (same as Pharokka v1.3.2 and prior). Default in meta mode.
@@ -444,7 +440,7 @@ options:
   --terminase_start TERMINASE_START
                         Start coordinate of the terminase large subunit.
   --skip_extra_annotations
-                        Skips tRNAscan-se, MINced and Aragorn.
+                        Skips tRNAscan-SE 2, MinCED and Aragorn.
   --skip_mash           Skips running mash to find the closest match for each contig in INPHARED.
   --minced_args MINCED_ARGS
                         extra commands to pass to MINced (please omit the leading hyphen for the first argument). You will need to use quotation marks e.g. --minced_args "minNR 2 -minRL 21"
@@ -452,6 +448,8 @@ options:
                         mash distance for the search against INPHARED. Defaults to 0.2.
   --trna_scan_model {general,bacterial}
                         tRNAscan-SE model
+  --keep_raw_prodigal   Keeps raw prodigal header information.
+  --reverse_mmseqs2     MMseqs2 database as target not query.
   -V, --version         Print pharokka Version
   --citation            Print pharokka Citation
   ```
@@ -562,7 +560,7 @@ For the crAss-like phage genomes, `pharokka` meta mode `-m` was enabled.
 
 `pharokka` scales well for large metavirome datasets due to the speed of MMseqs2. In fact, as the size of the input file increases, the extra time taken is required for running gene prediction (particularly PHANOTATE) and tRNA-scan SE2 - the time taken to conduct MMseqs2 searches remain small due to its many vs many approach. 
 
-If you require  fast annotations of extremely large datasets (i.e. thousands of input contigs), running `pharokka` with Prodigal (`-g prodigal`) is recommended.
+If you require  fast annotations of extremely large datasets (i.e. thousands of input contigs), running `pharokka` with Pyrodigal-gv (`-g prodigal-gv`) is recommended.
 
  
 # Bugs and Suggestions

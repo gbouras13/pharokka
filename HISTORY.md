@@ -1,6 +1,15 @@
 History
 =======
 
+1.9.0 (2026-01-12)
+------------------
+
+* Adds `pyrodigal-rv` (see https://github.com/LanderDC/pyrodigal-rv) dependency as a gene predictor option that may be useful if you are annotating RNA phages (also RNA viruses generally perhaps, although YMMV)
+    * Use `-g pyrodigal-rv` to use this 
+* Fixes bug with incorrect translation table being passed when using `-g prodigal` and meta mode (usually for single phages, where they are too small to have a Prodigal model trained for them) - see https://github.com/gbouras13/pharokka/issues/409
+    * We recommend you use `-g prodigal-gv` (the default) if you have metagenomic datasets anyway
+* Adds `--reverse_mmseqs2` flag - this makes the PHROG MMseqs2 profile database the target not the query (thanks @simroux). This in only recommended for enormous datasets.
+
 1.8.1 (2025-09-25)
 ------------------
 
