@@ -97,6 +97,14 @@ def test_proteins_mmseqs_only(tmp_dir):
     cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --mmseqs2_only"
     exec_command(cmd)
 
+# takes too long to run in CI (or even locally) - designed for massive inputs
+
+# def test_proteins_reverse_mmseqs(tmp_dir):
+#     """test pharokka reverse_mmseqs"""
+#     input_fasta: Path = f"{proteins_data}/phanotate.faa"
+#     cmd = f"pharokka_proteins.py -i {input_fasta}  -d {database_dir} -o {tmp_dir} -t {threads} -f --reverse_mmseqs2"
+#     exec_command(cmd)
+
 
 temp_dir = Path(f"{test_data}/fake_out")
 

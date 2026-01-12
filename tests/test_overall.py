@@ -86,11 +86,13 @@ def test_overall(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
 
-def test_overall(tmp_dir):
-    """test pharokka reverse_mmseqs"""
-    input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
-    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --reverse_mmseqs2"
-    exec_command(cmd)
+# takes too long to run in CI (or even locally) - designed for massive inputs
+
+# def test_overall_reverse_mmseqs(tmp_dir):
+#     """test pharokka reverse_mmseqs - use rv example as way smaller"""
+#     input_fasta: Path = f"{rv_data}/Duamitovirus.fna"
+#     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --reverse_mmseqs2 -g pyrodigal-rv"
+#     exec_command(cmd)
 
 def test_overall_trna_anticodon(tmp_dir):
     """test for #405 trna anticodon bug"""
