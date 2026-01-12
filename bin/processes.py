@@ -6,6 +6,7 @@ from datetime import datetime
 import pandas as pd
 import pyrodigal
 import pyrodigal_gv
+import pyrodigal_rv
 from BCBio import GFF
 from Bio import SeqIO
 from Bio.Seq import Seq
@@ -38,6 +39,40 @@ def run_pyrodigal_gv(filepath_in, out_dir, threads):
             with open(os.path.join(out_dir, "prodigal-gv_out_tmp.fasta"), "w") as dst:
                 with open(
                     os.path.join(out_dir, "prodigal-gv_out_aas_tmp.fasta"), "w"
+                ) as aa_fasta:
+                    records = SeqIO.parse(filepath_in, "fasta")
+                    for record_id, genes in pool.imap(_find_genes, records):
+                        genes.write_gff(
+                            gff, sequence_id=record_id, include_translation_table=True
+                        )
+                        genes.write_genes(dst, sequence_id=record_id)
+                        # need to write the translation
+                        genes.write_translations(aa_fasta, sequence_id=record_id)
+
+
+def run_pyrodigal_rv(filepath_in, out_dir, threads):
+    """
+    Gets CDS using pyrodigal_gv
+    :param filepath_in: input filepath
+    :param out_dir: output directory
+    :param logger logger
+    :param meta Boolean - metagenomic mode flag
+    :param coding_table coding table for prodigal (default 11)
+    :return:
+    """
+
+    # true
+    orf_finder = pyrodigal_rv.ViralGeneFinder(meta=True)
+
+    def _find_genes(record):
+        genes = orf_finder.find_genes(str(record.seq))
+        return (record.id, genes)
+
+    with multiprocessing.pool.ThreadPool(threads) as pool:
+        with open(os.path.join(out_dir, "pyrodigal-rv_out.gff"), "w") as gff:
+            with open(os.path.join(out_dir, "pyrodigal-rv_out_tmp.fasta"), "w") as dst:
+                with open(
+                    os.path.join(out_dir, "pyrodigal-rv_out_aas_tmp.fasta"), "w"
                 ) as aa_fasta:
                     records = SeqIO.parse(filepath_in, "fasta")
                     for record_id, genes in pool.imap(_find_genes, records):
@@ -339,9 +374,12 @@ def run_pyrodigal(filepath_in, out_dir, meta, coding_table, threads):
         for record in SeqIO.parse(handle, "fasta"):
             total_length += len(record.seq)
 
-    # if the length is 100000 or under, use meta mode by default
+    # if the length is 20000 or under, use meta mode by default
+    # reduce from 100000 #https://github.com/gbouras13/pharokka/issues/409
     if total_length < 100001:
         orf_finder = pyrodigal.GeneFinder(meta=True)
+        prodigal_metamode = True
+
     # otherwise train it
     # recommend pyrodigal-gv anyway
     else:
@@ -359,6 +397,12 @@ def run_pyrodigal(filepath_in, out_dir, meta, coding_table, threads):
         genes = orf_finder.find_genes(str(record.seq))
         return (record.id, genes)
 
+    if prodigal_metamode:
+        transl_table = None 
+    else:
+        transl_table = "11" 
+
+
     with multiprocessing.pool.ThreadPool(threads) as pool:
         with open(os.path.join(out_dir, "prodigal_out.gff"), "w") as gff:
             with open(os.path.join(out_dir, "prodigal_out_tmp.fasta"), "w") as dst:
@@ -372,6 +416,12 @@ def run_pyrodigal(filepath_in, out_dir, meta, coding_table, threads):
                         # need to write the translation
                         genes.write_translations(aa_fasta, sequence_id=record_id)
 
+                        # get transl_table once
+                        if transl_table is None:
+                            for gene in genes:
+                                transl_table = str(gene.translation_table)
+                                break
+    return str(transl_table)
 
 def tidy_phanotate_output(out_dir):
     """
@@ -415,17 +465,15 @@ def tidy_phanotate_output(out_dir):
     return phan_df
 
 
-def tidy_prodigal_output(out_dir, gv_flag):
+def tidy_prodigal_output(out_dir, gene_predictor):
     """
     Tidies prodigal output
     :param out_dir: output directory
-    :param gv_flag: if prodigal-gv, then True
+    :param gene_predictor: gene predictor
     :return: prod_filt_df pandas dataframe
     """
-    if gv_flag is True:
-        prefix = "prodigal-gv"
-    else:
-        prefix = "prodigal"
+
+    prefix = gene_predictor
 
     prod_file = os.path.join(out_dir, f"{prefix}_out.gff")
     col_list = [
@@ -624,10 +672,8 @@ def translate_fastas(out_dir, gene_predictor, coding_table, genbank_file):
     """
     if gene_predictor == "phanotate":
         clean_df = tidy_phanotate_output(out_dir)
-    elif gene_predictor == "prodigal":
-        clean_df = tidy_prodigal_output(out_dir, False)  # gv_flag is false
-    elif gene_predictor == "prodigal-gv":
-        clean_df = tidy_prodigal_output(out_dir, True)  # gv_flag is true
+    elif gene_predictor == "prodigal" or gene_predictor == "prodigal-gv" or gene_predictor == "pyrodigal-rv" :
+        clean_df = tidy_prodigal_output(out_dir, gene_predictor)  
     elif gene_predictor == "genbank":
         clean_df = tidy_genbank_output(out_dir, genbank_file, coding_table)
 
@@ -653,7 +699,7 @@ def translate_fastas(out_dir, gene_predictor, coding_table, genbank_file):
                 )
                 SeqIO.write(aa_record, aa_fa, "fasta")
                 i += 1
-    elif gene_predictor == "prodigal-gv" or gene_predictor == "prodigal":
+    elif gene_predictor == "prodigal-gv" or gene_predictor == "prodigal" or gene_predictor == "pyrodigal-rv":
         # read in the AA file instead and parse that to clean the header
         fasta_input_tmp = gene_predictor + "_out_aas_tmp.fasta"
         with open(os.path.join(out_dir, fasta_output_aas_tmp), "w") as aa_fa:
@@ -708,7 +754,7 @@ def run_trna_scan(filepath_in, threads, out_dir, logdir, trna_scan_model):
         return 0
 
 
-def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, db_name):
+def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, reverse_mmseqs2, sensitivity, db_name):
     """
     Runs mmseqs2 on phrogs
     :param db_dir: database path
@@ -717,6 +763,8 @@ def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, db_name
     :params threads: threads
     :param gene_predictor: phanotate or prodigal
     :param evalue: evalue for mmseqs2
+    :param reverse_mmseqs2: reverse MMseqs2 database to be target not query
+    :param sensitivity: MMseqs2 sensitivity
     :param db_name: str one of 'PHROG', 'VFDB' or 'CARD'
     :return:
     """
@@ -769,33 +817,57 @@ def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, db_name
 
     result_mmseqs = os.path.join(mmseqs_dir, "results_mmseqs")
 
+    
+
     if db_name == "PHROG":
+        if reverse_mmseqs2:
+            params_list = f"-e {evalue} {target_seqs} {profile_db} {result_mmseqs}"
+        
+        else:
+            params_list = f"-e {evalue} {profile_db} {target_seqs} {result_mmseqs}" # param goes before output and mmseqs2 required order
+
         mmseqs_search = ExternalTool(
             tool="mmseqs search",
             input=f"",
-            output=f"{tmp_dir} -s 8.5 --threads {threads}",
-            params=f"-e {evalue} {profile_db} {target_seqs} {result_mmseqs}",  # param goes before output and mmseqs2 required order
+            output=f"{tmp_dir} -s {sensitivity} --threads {threads}",
+            params=params_list,  
             logdir=logdir,
             outfile="",
         )
     else:  # if it is vfdb or card search with cutoffs instead of evalue
+
+        if reverse_mmseqs2:
+            params_list = f"--min-seq-id 0.8 -c 0.4 {target_seqs} {profile_db} {result_mmseqs}"
+        
+        else:
+            params_list = f"--min-seq-id 0.8 -c 0.4 {profile_db} {target_seqs} {result_mmseqs}" # param goes before output and mmseqs2 required order
+
+
         mmseqs_search = ExternalTool(
             tool="mmseqs search",
             input=f"",
-            output=f"{tmp_dir} -s 8.5 --threads {threads}",
-            params=f"--min-seq-id 0.8 -c 0.4 {profile_db} {target_seqs} {result_mmseqs}",  # param goes before output and mmseqs2 required order
+            output=f"{tmp_dir} -s {sensitivity} --threads {threads}",
+            params=params_list,  # param goes before output and mmseqs2 required order
             logdir=logdir,
             outfile="",
         )
 
     ExternalTool.run_tool(mmseqs_search)
 
+
+    if reverse_mmseqs2:
+        params_list = f"{target_seqs} {profile_db} {result_mmseqs}"
+    
+    else:
+        params_list = f"{profile_db} {target_seqs} {result_mmseqs}" # param goes before output and mmseqs2 required order
+
+
     # creates the output tsv
     mmseqs_createtsv = ExternalTool(
         tool="mmseqs createtsv",
         input=f"",
         output=f"{mmseqs_result_tsv} --full-header --threads {threads}",
-        params=f"{profile_db} {target_seqs} {result_mmseqs} ",  # param goes before output and mmseqs2 required order
+        params=params_list,  # param goes before output and mmseqs2 required order
         logdir=logdir,
         outfile="",
     )

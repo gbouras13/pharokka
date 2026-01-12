@@ -97,6 +97,13 @@ def test_proteins_mmseqs_only(tmp_dir):
     cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --mmseqs2_only"
     exec_command(cmd)
 
+def test_proteins_reverse_mmseqs_sensitivity(tmp_dir):
+    """test pharokka reverse_mmseqs with sensitivity low or else takes forever"""
+    input_fasta: Path = f"{proteins_data}/phanotate.faa"
+    sensitivity = "0.5"
+    cmd = f"pharokka_proteins.py -i {input_fasta}  -d {database_dir} -o {tmp_dir} -t {threads} -f --reverse_mmseqs2 --sensitivity {sensitivity}"
+    exec_command(cmd)
+
 
 temp_dir = Path(f"{test_data}/fake_out")
 

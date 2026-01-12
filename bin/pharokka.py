@@ -24,7 +24,7 @@ from processes import (concat_phanotate_meta, concat_trnascan_meta,
                        run_dnaapler, run_mash_dist, run_mash_sketch,
                        run_minced, run_mmseqs, run_phanotate,
                        run_phanotate_fasta_meta, run_phanotate_txt_meta,
-                       run_pyrodigal, run_pyrodigal_gv, run_trna_scan,
+                       run_pyrodigal, run_pyrodigal_gv, run_pyrodigal_rv, run_trna_scan,
                        run_trnascan_meta, split_input_fasta, translate_fastas)
 from util import count_contigs, get_version
 
@@ -122,6 +122,7 @@ def main():
         phanotate_version,
         pyrodigal_version,
         pyrodigal_gv_version,
+        pyrodigal_rv_version,
         trna_version,
         aragorn_version,
         minced_version,
@@ -287,14 +288,18 @@ def main():
             run_phanotate(input_fasta, out_dir, logdir)
     elif gene_predictor == "prodigal":
         logger.info("Implementing Prodigal using Pyrodigal.")
-        run_pyrodigal(
+        transl_table = run_pyrodigal(
             input_fasta, out_dir, args.meta, args.coding_table, int(args.threads)
         )
+        args.coding_table = transl_table
     elif gene_predictor == "genbank":
         logger.info("Extracting CDS information from your genbank file.")
     elif gene_predictor == "prodigal-gv":
         logger.info("Implementing Prodigal-gv using Pyrodigal-gv.")
         run_pyrodigal_gv(input_fasta, out_dir, int(args.threads))
+    elif gene_predictor == "pyrodigal-rv":
+        logger.info("Implementing Pyrodigal-rv.")
+        run_pyrodigal_rv(input_fasta, out_dir, int(args.threads))
 
     # translate fastas (parse genbank) - gets the required CDS if --genbank is used too
     translate_fastas(out_dir, gene_predictor, args.coding_table, args.infile)
@@ -326,7 +331,9 @@ def main():
             logdir,
             gene_predictor,
             args.evalue,
-            db_name="PHROG",
+            args.reverse_mmseqs2,
+            args.sensitivity,
+            db_name="PHROG"
         )
         run_mmseqs(
             db_dir,
@@ -335,7 +342,9 @@ def main():
             logdir,
             gene_predictor,
             args.evalue,
-            db_name="CARD",
+            args.reverse_mmseqs2,
+            args.sensitivity,
+            db_name="CARD"
         )
         run_mmseqs(
             db_dir,
@@ -344,7 +353,9 @@ def main():
             logdir,
             gene_predictor,
             args.evalue,
-            db_name="VFDB",
+            args.reverse_mmseqs2,
+            args.sensitivity,
+            db_name="VFDB"
         )
 
     if hmm_flag is True:
@@ -383,10 +394,12 @@ def main():
     pharok.phanotate_version = phanotate_version
     pharok.pyrodigal_version = pyrodigal_version
     pharok.pyrodigal_gv_version = pyrodigal_gv_version
+    pharok.pyrodigal_rv_version = pyrodigal_rv_version
     pharok.trna_version = trna_version
     pharok.aragorn_version = aragorn_version
     pharok.minced_version = minced_version
     pharok.skip_extra_annotations = args.skip_extra_annotations
+    pharok.reverse_mmseqs2 = args.reverse_mmseqs2
 
     if pharok.hmm_flag is True:
         pharok.pyhmmer_results_dict = best_results_pyhmmer

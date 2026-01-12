@@ -57,7 +57,7 @@ def count_contigs(input_fasta) -> int:
 def get_contig_headers(fasta_file) -> pd.Series:
     headers = []
     for record in SeqIO.parse(fasta_file, "fasta"):
-        headers.append(record.id)
+        headers.append(record.description)
     headers_series = pd.Series(headers)
     return headers_series
 

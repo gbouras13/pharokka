@@ -70,10 +70,12 @@ class Pharok:
         phanotate_version: str = "1.5.0",
         pyrodigal_version: str = "3.0.0",
         pyrodigal_gv_version: str = "0.1.0",
+        pyrodigal_rv_version: str = "0.1.0",
         trna_version: str = "2.0.12",
         aragorn_version: str = "1.2.41",
         minced_version: str = "0.4.2",
         skip_extra_annotations: bool = False,
+        reverse_mmseqs2: bool = False
     ) -> None:
         """
         Parameters
@@ -136,6 +138,8 @@ class Pharok:
             dataframe with protein sequence  information for each egene
         skip_extra_annotations: bool
             boolean whether extra annotations are skipped
+        reverse_mmseqs2: bool
+            use mmseqs2 dbs as target not query
         """
         self.out_dir = out_dir
         self.db_dir = db_dir
@@ -162,11 +166,13 @@ class Pharok:
         self.phanotate_version = phanotate_version
         self.pyrodigal_version = pyrodigal_version
         self.pyrodigal_gv_version = pyrodigal_gv_version
+        self.pyrodigal_rv_version = pyrodigal_rv_version
         self.trna_version = trna_version
         self.aragorn_version = aragorn_version
         self.minced_version = minced_version
         self.prot_seq_df = prot_seq_df
         self.skip_extra_annotations = skip_extra_annotations
+        self.reverse_mmseqs2 = reverse_mmseqs2
 
     def process_results(self):
         """
@@ -182,7 +188,7 @@ class Pharok:
         # read in the cds cdf
         cds_file = os.path.join(self.out_dir, "cleaned_" + self.gene_predictor + ".tsv")
 
-        if self.gene_predictor in ["prodigal", "prodigal-gv"]:
+        if self.gene_predictor in ["prodigal", "prodigal-gv", "pyrodigal-rv"]:
             col_list = ["start", "stop", "strand", "contig", "score", "partial", "gene"]
         else:
             col_list = ["start", "stop", "strand", "contig", "score", "gene"]
@@ -239,7 +245,7 @@ class Pharok:
         ##########################################
         # create the tophits_df and write it to file
         if self.mmseqs_flag is True:
-            tophits_df = create_mmseqs_tophits(self.out_dir)
+            tophits_df = create_mmseqs_tophits(self.out_dir, self.reverse_mmseqs2)
 
         else:
             # create tophits df
@@ -365,6 +371,10 @@ class Pharok:
             merged_df["Method"] = (
                 f"ab initio prediction:Pyrodigal-gv:{self.pyrodigal_gv_version}"
             )
+        elif self.gene_predictor == "pyrodigal-rv":
+            merged_df["Method"] = (
+                f"ab initio prediction:Pyrodigal-rv:{self.pyrodigal_rv_version}"
+            )
         merged_df["Region"] = "CDS"
 
         # cast all these columns to string to prevent warning
@@ -413,11 +423,11 @@ class Pharok:
         # process vfdb results
         # handles empty files without a problem
         (merged_df, vfdb_results) = process_vfdb_results(
-            self.out_dir, merged_df, proteins_flag=False
+            self.out_dir, merged_df, proteins_flag=False, reverse_mmseqs2=self.reverse_mmseqs2
         )
         # process CARD results
         (merged_df, card_results) = process_card_results(
-            self.out_dir, merged_df, self.db_dir, proteins_flag=False
+            self.out_dir, merged_df, self.db_dir, proteins_flag=False, reverse_mmseqs2=self.reverse_mmseqs2
         )
 
         self.merged_df = merged_df
@@ -434,7 +444,7 @@ class Pharok:
 
         fasta_sequences = SeqIO.parse(open(self.input_fasta), "fasta")
 
-        if self.gene_predictor == "prodigal-gv":
+        if self.gene_predictor == "prodigal-gv" or self.gene_predictor == "pyrodigal-rv" :
             # define col list
             col_list = [
                 "contig",
@@ -448,21 +458,21 @@ class Pharok:
                 "attributes",
             ]
             # read gff (no fasta output)
-            pyrodigal_gv_gff = pd.read_csv(
-                os.path.join(self.out_dir, "prodigal-gv_out.gff"),
+            pyrodigal_gv_rv_gff = pd.read_csv(
+                os.path.join(self.out_dir, f"{self.gene_predictor}_out.gff"),
                 delimiter="\t",
                 index_col=False,
                 names=col_list,
             )
 
-            pyrodigal_gv_gff[["attributes", "transl_table"]] = pyrodigal_gv_gff[
+            pyrodigal_gv_rv_gff[["attributes", "transl_table"]] = pyrodigal_gv_rv_gff[
                 "attributes"
             ].str.split("transl_table=", expand=True)
-            pyrodigal_gv_gff[["transl_table", "rest"]] = pyrodigal_gv_gff[
+            pyrodigal_gv_rv_gff[["transl_table", "rest"]] = pyrodigal_gv_rv_gff[
                 "transl_table"
             ].str.split(";conf", expand=True)
             # drop and then remove duplicates in df
-            pyrodigal_gv_gff = pyrodigal_gv_gff.drop(
+            pyrodigal_gv_rv_gff = pyrodigal_gv_rv_gff.drop(
                 columns=[
                     "rest",
                     "Method",
@@ -476,9 +486,9 @@ class Pharok:
                 ]
             )
             # Remove duplicate rows based on all columns
-            pyrodigal_gv_gff = pyrodigal_gv_gff.drop_duplicates()
+            pyrodigal_gv_rv_gff = pyrodigal_gv_rv_gff.drop_duplicates()
             # Convert to a dictionary
-            transl_table_dict = pyrodigal_gv_gff.set_index("contig")[
+            transl_table_dict = pyrodigal_gv_rv_gff.set_index("contig")[
                 "transl_table"
             ].to_dict()
 
@@ -500,7 +510,7 @@ class Pharok:
             lengths.append(len(record.seq))
             gc.append(round(gc_fraction(record.seq), 2))
             # pyrodigal-gv lookup from the dict
-            if self.gene_predictor == "prodigal-gv":
+            if self.gene_predictor == "prodigal-gv" or self.gene_predictor == "pyrodigal-rv" :
                 # try catch clause if contig too small to have a gene
                 try:
                     transl_table = transl_table_dict[record.id]
@@ -2362,7 +2372,7 @@ class Pharok:
 ########################################
 
 
-def create_mmseqs_tophits(out_dir):
+def create_mmseqs_tophits(out_dir, reverse_mmseqs):
     """
     creates tophits_df dataframe from mmseqs2 phrog results
     """
@@ -2371,7 +2381,23 @@ def create_mmseqs_tophits(out_dir):
     mmseqs_file = os.path.join(out_dir, "mmseqs_results.tsv")
     logger.info("Processing MMseqs2 outputs.")
     logger.info("Processing PHROGs output.")
-    col_list = [
+
+    if reverse_mmseqs:
+        col_list = [
+        "gene",
+        "mmseqs_phrog",
+        "mmseqs_alnScore",
+        "mmseqs_seqIdentity",
+        "mmseqs_eVal",
+        "qStart",
+        "qEnd",
+        "qLen",
+        "tStart",
+        "tEnd",
+        "tLen"]
+
+    else:
+        col_list = [
         "mmseqs_phrog",
         "gene",
         "mmseqs_alnScore",
@@ -2382,8 +2408,8 @@ def create_mmseqs_tophits(out_dir):
         "qLen",
         "tStart",
         "tEnd",
-        "tLen",
-    ]
+        "tLen"]
+
     mmseqs_df = pd.read_csv(
         mmseqs_file, delimiter="\t", index_col=False, names=col_list
     )
@@ -2606,30 +2632,47 @@ def process_custom_pyhmmer_results(merged_df, custom_pyhmmer_results_dict):
 
 
 #### process vfdb files
-def process_vfdb_results(out_dir, merged_df, proteins_flag=False):
+def process_vfdb_results(out_dir, merged_df, proteins_flag=False, reverse_mmseqs2=False):
     """
     Processes VFDB results
     :param out_dir: output directory path
     :param merged_df: merged_df in process_results
     :proteins_flag bool, True if pharokka_proteins is run because we need to strip off everything before the first space
+    :reverse_mmseqs2 bool True is using database as target
     :return: merged_df merged_df updated with VFDB results
     """
     ##vfdb
     vfdb_file = os.path.join(out_dir, "vfdb_results.tsv")
     logger.info("Processing VFDB output.")
-    col_list = [
-        "vfdb_hit",
-        "gene",
-        "vfdb_alnScore",
-        "vfdb_seqIdentity",
-        "vfdb_eVal",
-        "qStart",
-        "qEnd",
-        "qLen",
-        "tStart",
-        "tEnd",
-        "tLen",
-    ]
+
+    if reverse_mmseqs2:
+        col_list = [
+            "gene",
+            "vfdb_hit",
+            "vfdb_alnScore",
+            "vfdb_seqIdentity",
+            "vfdb_eVal",
+            "qStart",
+            "qEnd",
+            "qLen",
+            "tStart",
+            "tEnd",
+            "tLen",
+        ]
+    else:
+        col_list = [
+            "vfdb_hit",
+            "gene",
+            "vfdb_alnScore",
+            "vfdb_seqIdentity",
+            "vfdb_eVal",
+            "qStart",
+            "qEnd",
+            "qLen",
+            "tStart",
+            "tEnd",
+            "tLen",
+        ]
 
     # touch the file in case it doesn't exist (for --fast mode)
     touch_file(vfdb_file)
@@ -2794,7 +2837,7 @@ def process_vfdb_results(out_dir, merged_df, proteins_flag=False):
 
 
 #### process CARD files
-def process_card_results(out_dir, merged_df, db_dir, proteins_flag=False):
+def process_card_results(out_dir, merged_df, db_dir, proteins_flag=False, reverse_mmseqs2=False):
     """
     Processes card results
     :param out_dir: output directory path
@@ -2805,19 +2848,35 @@ def process_card_results(out_dir, merged_df, db_dir, proteins_flag=False):
     ##card
     card_file = os.path.join(out_dir, "CARD_results.tsv")
     logger.info("Processing CARD output.")
-    col_list = [
-        "CARD_hit",
-        "gene",
-        "CARD_alnScore",
-        "CARD_seqIdentity",
-        "CARD_eVal",
-        "qStart",
-        "qEnd",
-        "qLen",
-        "tStart",
-        "tEnd",
-        "tLen",
-    ]
+    if reverse_mmseqs2:
+        col_list = [
+            "gene",
+            "CARD_hit",
+            "CARD_alnScore",
+            "CARD_seqIdentity",
+            "CARD_eVal",
+            "qStart",
+            "qEnd",
+            "qLen",
+            "tStart",
+            "tEnd",
+            "tLen",
+        ]
+    else:
+
+        col_list = [
+            "CARD_hit",
+            "gene",
+            "CARD_alnScore",
+            "CARD_seqIdentity",
+            "CARD_eVal",
+            "qStart",
+            "qEnd",
+            "qLen",
+            "tStart",
+            "tEnd",
+            "tLen",
+        ]
     touch_file(card_file)
     card_df = pd.read_csv(card_file, delimiter="\t", index_col=False, names=col_list)
 

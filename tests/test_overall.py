@@ -28,6 +28,7 @@ functions_data = Path(f"{test_data}/functions_files")
 database_dir = Path(f"{test_data}/database")
 overall_data = Path(f"{test_data}/overall")
 meta_data = Path(f"{overall_data}/Meta_example")
+rv_data = Path(f"{overall_data}/rv_example")
 bug_data = Path(f"{overall_data}/bug_examples")
 standard_data = Path(f"{overall_data}/Standard_examples")
 standard_data_output = Path(f"{standard_data}/SAOMS1_Output")
@@ -83,6 +84,13 @@ def test_overall(tmp_dir):
     """test pharokka overall"""
     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
+    exec_command(cmd)
+
+def test_overall_reverse_mmseqs_sensitivity(tmp_dir):
+    """test pharokka reverse_mmseqs - use with low sensitivity or else takes forever"""
+    input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
+    sensitivity = "0.5"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --reverse_mmseqs2 -g pyrodigal-rv --sensitivity {sensitivity}"
     exec_command(cmd)
 
 def test_overall_trna_anticodon(tmp_dir):
@@ -179,11 +187,17 @@ def test_meta_unicycler_header_prodigal(tmp_dir):
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g prodigal-gv -m"
     exec_command(cmd)
 
-
-def test_meta_prodigal_gv(tmp_dir):
-    """test pharokka meta with prodigal-gv"""
+def test_pyrodigal_gv(tmp_dir):
+    """test pharokka with prodigal-rv"""
     input_fasta: Path = f"{meta_data}/combined_meta.fasta"
     cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -m -g prodigal-gv"
+    exec_command(cmd)
+
+
+def test_prodigal_rv(tmp_dir):
+    """test pharokka with prodigal-rv"""
+    input_fasta: Path = f"{rv_data}/Tymoviridae.fna"
+    cmd = f"pharokka.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g pyrodigal-rv"
     exec_command(cmd)
 
 

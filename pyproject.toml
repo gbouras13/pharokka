@@ -1,6 +1,6 @@
 [project]
 name = "pharokka"
-version = "1.8.2" # change version.py also
+version = "1.9.0" # change version.py also
 description = "Fast phage annotation tool"
 authors = [{ name = "George Bouras", email = "george.bouras@adelaide.edu.au" }]
 readme = "README.md"
@@ -22,6 +22,7 @@ dependencies = [
     "bcbio-gff>=0.7.0",
     "pyrodigal>=3.0.0",
     "pyrodigal_gv>=0.1.0",
+    "pyrodigal_rv>=0.1.0",
     "phanotate>=1.6.7,<2"
 ]
 

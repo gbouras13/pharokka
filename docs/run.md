@@ -163,38 +163,34 @@ As of v1.7.4 you can specify the bacterial `tRNAscan-SE` model using `--trna_sca
 
 
 ```bash
-usage: pharokka.py [-h] [-i INFILE] [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG] [-g GENE_PREDICTOR] [-m] [-s]
-                   [-c CODING_TABLE] [-e EVALUE] [--fast] [--mmseqs2_only] [--meta_hmm] [--dnaapler] [--custom_hmm CUSTOM_HMM] [--genbank]
-                   [--terminase] [--terminase_strand TERMINASE_STRAND] [--terminase_start TERMINASE_START] [--skip_extra_annotations]
-                   [--skip_mash] [--minced_args MINCED_ARGS] [--mash_distance MASH_DISTANCE] [-V] [--citation]
+usage: pharokka.py [-h] [-i INFILE] [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG] [-g GENE_PREDICTOR] [-m] [-s] [-c CODING_TABLE] [-e EVALUE]
+                   [--fast] [--mmseqs2_only] [--meta_hmm] [--dnaapler] [--custom_hmm CUSTOM_HMM] [--genbank] [--terminase] [--terminase_strand TERMINASE_STRAND]
+                   [--terminase_start TERMINASE_START] [--skip_extra_annotations] [--skip_mash] [--minced_args MINCED_ARGS] [--mash_distance MASH_DISTANCE]
+                   [--trna_scan_model {general,bacterial}] [--keep_raw_prodigal] [--reverse_mmseqs2] [-V] [--citation]
 
 pharokka: fast phage annotation program
 
 options:
   -h, --help            show this help message and exit
-  -i INFILE, --infile INFILE
-                        Input genome file in fasta format.
-  -o OUTDIR, --outdir OUTDIR
-                        Directory to write the output to.
-  -d DATABASE, --database DATABASE
+  -i, --infile INFILE   Input genome file in fasta format.
+  -o, --outdir OUTDIR   Directory to write the output to.
+  -d, --database DATABASE
                         Database directory. If the databases have been installed in the default directory, this is not required. Otherwise specify the path.
-  -t THREADS, --threads THREADS
+  -t, --threads THREADS
                         Number of threads. Defaults to 1.
   -f, --force           Overwrites the output directory.
-  -p PREFIX, --prefix PREFIX
-                        Prefix for output files. This is not required.
-  -l LOCUSTAG, --locustag LOCUSTAG
+  -p, --prefix PREFIX   Prefix for output files. This is not required.
+  -l, --locustag LOCUSTAG
                         User specified locus tag for the gff/gbk files. This is not required. A random locus tag will be generated instead.
-  -g GENE_PREDICTOR, --gene_predictor GENE_PREDICTOR
-                        User specified gene predictor. Use "-g phanotate" or "-g prodigal" or "-g prodigal-gv" or "-g genbank". 
-                        Defaults to phanotate (not required unless prodigal is desired).
+  -g, --gene_predictor GENE_PREDICTOR
+                        User specified gene predictor. Use "-g phanotate" or "-g prodigal" or "-g prodigal-gv" or "-g pyrodigal-rv" or "-g genbank". 
+                        Defaults to phanotate usually and prodigal-gv in meta mode.
   -m, --meta            meta mode for metavirome input samples
   -s, --split           split mode for metavirome samples. -m must also be specified. 
                         Will output separate split FASTA, gff and genbank files for each input contig.
-  -c CODING_TABLE, --coding_table CODING_TABLE
+  -c, --coding_table CODING_TABLE
                         translation table for prodigal. Defaults to 11.
-  -e EVALUE, --evalue EVALUE
-                        E-value threshold for MMseqs2 database PHROGs, VFDB and CARD and PyHMMER PHROGs database search. Defaults to 1E-05.
+  -e, --evalue EVALUE   E-value threshold for MMseqs2 database PHROGs, VFDB and CARD and PyHMMER PHROGs database search. Defaults to 1E-05.
   --fast, --hmm_only    Runs PyHMMER (HMMs) with PHROGs only, not MMseqs2 with PHROGs, CARD or VFDB. 
                         Designed for phage isolates, will not likely be faster for large metagenomes.
   --mmseqs2_only        Runs MMseqs2 with PHROGs, CARD and VFDB only (same as Pharokka v1.3.2 and prior). Default in meta mode.
@@ -213,7 +209,7 @@ options:
   --terminase_start TERMINASE_START
                         Start coordinate of the terminase large subunit.
   --skip_extra_annotations
-                        Skips tRNAscan-se, MINced and Aragorn.
+                        Skips tRNAscan-SE 2, MinCED and Aragorn.
   --skip_mash           Skips running mash to find the closest match for each contig in INPHARED.
   --minced_args MINCED_ARGS
                         extra commands to pass to MINced (please omit the leading hyphen for the first argument). You will need to use quotation marks e.g. --minced_args "minNR 2 -minRL 21"
@@ -221,6 +217,8 @@ options:
                         mash distance for the search against INPHARED. Defaults to 0.2.
   --trna_scan_model {general,bacterial}
                         tRNAscan-SE model
+  --keep_raw_prodigal   Keeps raw prodigal header information.
+  --reverse_mmseqs2     MMseqs2 database as target not query.
   -V, --version         Print pharokka Version
   --citation            Print pharokka Citation
   ```

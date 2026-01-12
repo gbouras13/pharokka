@@ -6,6 +6,7 @@ from argparse import RawTextHelpFormatter
 
 import pyrodigal
 import pyrodigal_gv
+import pyrodigal_rv
 from Bio import SeqIO
 from loguru import logger
 from util import get_version
@@ -61,7 +62,7 @@ def get_input():
         "-g",
         "--gene_predictor",
         action="store",
-        help='User specified gene predictor. Use "-g phanotate" or "-g prodigal" or "-g prodigal-gv" or "-g genbank". \nDefaults to phanotate usually and prodigal-gv in meta mode.',
+        help='User specified gene predictor. Use "-g phanotate" or "-g prodigal" or "-g prodigal-gv" or "-g pyrodigal-rv" or "-g genbank". \nDefaults to phanotate usually and prodigal-gv in meta mode.',
         default="default",
     )
     parser.add_argument(
@@ -172,6 +173,17 @@ def get_input():
         "--keep_raw_prodigal",
         help="Keeps raw prodigal header information.",
         action="store_true",
+    )
+    parser.add_argument(
+        "--reverse_mmseqs2",
+        help="MMseqs2 database as target not query.",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--sensitivity",
+        help="MMseqs2 sensitivity.",
+        default=8.5,
+        type=float,
     )
     parser.add_argument(
         "-V",
@@ -286,6 +298,10 @@ def validate_gene_predictor(gene_predictor, genbank_flag):
         logger.info(
             "Prodigal-gv implemented with pyrodigal-gv will be used for gene prediction."
         )
+    elif gene_predictor == "pyrodigal-rv":
+        logger.info(
+            "pyrodigal-rv will be used for gene prediction."
+        )
     elif gene_predictor == "genbank":
         if genbank_flag is False:
             logger.error(
@@ -293,7 +309,7 @@ def validate_gene_predictor(gene_predictor, genbank_flag):
             )
     else:
         logger.error(
-            "Error: gene predictor was incorrectly specified. Please use 'phanotate', 'prodigal' or 'prodigal-gv'."
+            "Error: gene predictor was incorrectly specified. Please use 'phanotate', 'prodigal', 'prodigal-gv' or 'pyrodigal-rv'."
         )
 
 
@@ -660,10 +676,25 @@ def check_dependencies(skip_mash):
     logger.info(f"Pyrodigal_gv version is v{pyrodigal_gv_version}")
     logger.info(f"Pyrodigal_gv version is ok.")
 
+    #######
+    # pyrodigal rv
+    #######
+
+    pyrodigal_rv_version = pyrodigal_rv.__version__
+    pyrodigal_major_version = int(pyrodigal_rv_version.split(".")[0])
+
+    if pyrodigal_major_version < 0:
+        logger.error("Pyrodigal_rv is the wrong version. Please re-install pharokka.")
+
+    logger.info(f"Pyrodigal_rv version is v{pyrodigal_rv_version}")
+    logger.info(f"Pyrodigal_rv version is ok.")
+
+
     return (
         phanotate_version,
         pyrodigal_version,
         pyrodigal_gv_version,
+        pyrodigal_rv_version,
         trna_version,
         aragorn_version,
         minced_version,
