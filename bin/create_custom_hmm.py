@@ -132,8 +132,8 @@ def main():
                 # split the file into root and suffix
                 root, _ = os.path.splitext(file)
                 name = root
-                # convert to bytes
-                msa.name = name.encode("utf-8")
+                # no need convert to bytes since PyHMMER v0.12.0
+                msa.name = name
                 # build the HMM
                 builder = pyhmmer.plan7.Builder(alphabet)
                 background = pyhmmer.plan7.Background(alphabet)
