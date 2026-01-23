@@ -19,6 +19,6 @@ dependencies:
   - pycirclize >=0.3.1
   - alive-progress >=3.0.1
   - requests >=2.25.1
-  - pyhmmer >=0.11.0
+  - pyhmmer >=0.12.0
 
 
