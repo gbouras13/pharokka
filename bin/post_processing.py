@@ -240,7 +240,9 @@ class Pharok:
             gene = row["gene"]
             if gene in prot_dict.keys():
                 # add the AA sequence
-                self.prot_seq_df.at[index, "sequence"] = prot_dict[gene].seq
+                # python v3.13 fix with pyhmmer v0.12.0
+                seq = prot_dict[gene].seq
+                self.prot_seq_df.at[index, "sequence"] = str(seq) if seq is not None else ""
 
         ##########################################
         # create the tophits_df and write it to file
