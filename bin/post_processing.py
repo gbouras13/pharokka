@@ -2609,24 +2609,27 @@ def process_custom_pyhmmer_results(merged_df, custom_pyhmmer_results_dict):
 
     # split to get protein name to match with pyhmmer
     merged_df["temp_prot"] = merged_df["gene"].str.split(" ", n=1).str[0]
+
+    # initialise ALL columns with sentinel, force object dtype
     merged_df["custom_hmm_id"] = "No_custom_HMM"
     merged_df["custom_hmm_bitscore"] = "No_custom_HMM"
     merged_df["custom_hmm_evalue"] = "No_custom_HMM"
 
+
+    merged_df["custom_hmm_id"] = merged_df["custom_hmm_id"].astype(object)
+    merged_df["custom_hmm_bitscore"] = merged_df["custom_hmm_bitscore"].astype(object)
+    merged_df["custom_hmm_evalue"] = merged_df["custom_hmm_evalue"].astype(object)
+
     # iterate over the df
-    for index, row in merged_df.iterrows():
-        if (
-            row["temp_prot"] in custom_pyhmmer_results_dict
-        ):  # check if the protein is in the dictionary
-            merged_df.at[index, "custom_hmm_id"] = custom_pyhmmer_results_dict[
-                row["temp_prot"]
-            ].custom_hmm_id
-            merged_df.at[index, "custom_hmm_bitscore"] = round(
-                custom_pyhmmer_results_dict[row["temp_prot"]].bitscore, 6
-            )
-            merged_df.at[index, "custom_hmm_evalue"] = custom_pyhmmer_results_dict[
-                row["temp_prot"]
-            ].evalue
+    for index, prot in merged_df["temp_prot"].items():
+        hit = custom_pyhmmer_results_dict.get(prot)
+        if hit is None:
+            continue
+
+        merged_df.at[index, "custom_hmm_id"] = hit.custom_hmm_id
+        merged_df.at[index, "custom_hmm_bitscore"] = round(hit.bitscore, 6)
+        merged_df.at[index, "custom_hmm_evalue"] = hit.evalue
+
 
     # drop temp prot
     merged_df = merged_df.drop(columns=["temp_prot"])
