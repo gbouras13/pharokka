@@ -40,7 +40,7 @@ for i in range(1, number_of_phrogs + 1):
     name = f"phrog_{i}"
     print(name)
     # convert to bytes
-    msa.name = name.encode("utf-8")
+    msa.name = name
 
     # build the MSA
     builder = pyhmmer.plan7.Builder(alphabet)

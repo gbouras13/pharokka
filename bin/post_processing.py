@@ -240,7 +240,9 @@ class Pharok:
             gene = row["gene"]
             if gene in prot_dict.keys():
                 # add the AA sequence
-                self.prot_seq_df.at[index, "sequence"] = prot_dict[gene].seq
+                # python v3.13 fix with pyhmmer v0.12.0
+                seq = prot_dict[gene].seq
+                self.prot_seq_df.at[index, "sequence"] = str(seq) if seq is not None else ""
 
         ##########################################
         # create the tophits_df and write it to file
@@ -2567,30 +2569,30 @@ def process_pyhmmer_results(merged_df, pyhmmer_results_dict):
     :return: merged_df merged_df updated with pyhmmer results
     """
 
+
     # split to get protein name to match with pyhmmer
     merged_df["temp_prot"] = merged_df["gene"].str.split(" ", n=1).str[0]
 
+    # initialise ALL columns with sentinel, force object dtype
     merged_df["pyhmmer_phrog"] = "No_PHROGs_HMM"
     merged_df["pyhmmer_bitscore"] = "No_PHROGs_HMM"
     merged_df["pyhmmer_evalue"] = "No_PHROGs_HMM"
 
+    merged_df["pyhmmer_phrog"] = merged_df["pyhmmer_phrog"].astype(object)
+    merged_df["pyhmmer_bitscore"] = merged_df["pyhmmer_bitscore"].astype(object)
+    merged_df["pyhmmer_evalue"] = merged_df["pyhmmer_evalue"].astype(object)
+
     # iterate over the df
-    for index, row in merged_df.iterrows():
-        if (
-            row["temp_prot"] in pyhmmer_results_dict
-        ):  # check if the protein is in the dictionary
-            merged_df.at[index, "pyhmmer_phrog"] = pyhmmer_results_dict[
-                row["temp_prot"]
-            ].phrog
-            merged_df.at[index, "pyhmmer_bitscore"] = round(
-                pyhmmer_results_dict[row["temp_prot"]].bitscore, 6
-            )
-            merged_df.at[index, "pyhmmer_evalue"] = pyhmmer_results_dict[
-                row["temp_prot"]
-            ].evalue
+    for index, prot in merged_df["temp_prot"].items():
+        hit = pyhmmer_results_dict.get(prot)
+        if hit is None:
+            continue
+
+        merged_df.at[index, "pyhmmer_phrog"] = hit.phrog
+        merged_df.at[index, "pyhmmer_bitscore"] = round(hit.bitscore, 6)
+        merged_df.at[index, "pyhmmer_evalue"] = hit.evalue
 
     # drop temp prot
-
     merged_df = merged_df.drop(columns=["temp_prot"])
 
     return merged_df
@@ -2607,24 +2609,27 @@ def process_custom_pyhmmer_results(merged_df, custom_pyhmmer_results_dict):
 
     # split to get protein name to match with pyhmmer
     merged_df["temp_prot"] = merged_df["gene"].str.split(" ", n=1).str[0]
+
+    # initialise ALL columns with sentinel, force object dtype
     merged_df["custom_hmm_id"] = "No_custom_HMM"
     merged_df["custom_hmm_bitscore"] = "No_custom_HMM"
     merged_df["custom_hmm_evalue"] = "No_custom_HMM"
 
+
+    merged_df["custom_hmm_id"] = merged_df["custom_hmm_id"].astype(object)
+    merged_df["custom_hmm_bitscore"] = merged_df["custom_hmm_bitscore"].astype(object)
+    merged_df["custom_hmm_evalue"] = merged_df["custom_hmm_evalue"].astype(object)
+
     # iterate over the df
-    for index, row in merged_df.iterrows():
-        if (
-            row["temp_prot"] in custom_pyhmmer_results_dict
-        ):  # check if the protein is in the dictionary
-            merged_df.at[index, "custom_hmm_id"] = custom_pyhmmer_results_dict[
-                row["temp_prot"]
-            ].custom_hmm_id
-            merged_df.at[index, "custom_hmm_bitscore"] = round(
-                custom_pyhmmer_results_dict[row["temp_prot"]].bitscore, 6
-            )
-            merged_df.at[index, "custom_hmm_evalue"] = custom_pyhmmer_results_dict[
-                row["temp_prot"]
-            ].evalue
+    for index, prot in merged_df["temp_prot"].items():
+        hit = custom_pyhmmer_results_dict.get(prot)
+        if hit is None:
+            continue
+
+        merged_df.at[index, "custom_hmm_id"] = hit.custom_hmm_id
+        merged_df.at[index, "custom_hmm_bitscore"] = round(hit.bitscore, 6)
+        merged_df.at[index, "custom_hmm_evalue"] = hit.evalue
+
 
     # drop temp prot
     merged_df = merged_df.drop(columns=["temp_prot"])
