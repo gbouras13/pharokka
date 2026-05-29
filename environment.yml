@@ -7,6 +7,7 @@ dependencies:
   - bcbio-gff >=0.7.0
   - biopython >=1.80
   - phanotate >=1.6.7,<2
+  - polars >=0.19.0
   - mmseqs2 >=14.7e284
   - trnascan-se >=2.0.9
   - minced >=0.4.2
@@ -20,5 +21,3 @@ dependencies:
   - alive-progress >=3.0.1
   - requests >=2.25.1
   - pyhmmer >=0.12.0
-
-
