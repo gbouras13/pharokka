@@ -1,22 +1,17 @@
 [project]
 name = "pharokka"
-version = "1.9.1" # change version.py also
+dynamic = ["version"]
 description = "Fast phage annotation tool"
 authors = [{ name = "George Bouras", email = "george.bouras@adelaide.edu.au" }]
 readme = "README.md"
 license = { text = "MIT" }
-requires-python = ">=3.5"
+requires-python = ">=3.8"
 dependencies = [
-    "setuptools>=67.7.2,<81",
     "loguru>=0.5.4",
     "pyyaml>=6.0",
-    "pandas>=1.4.2",
+    "polars>=0.19.0",
     "biopython>=1.80",
     "pyhmmer>=0.12.0",
-    "black>=22.3.0",
-    "isort>=5.10.1",
-    "pytest>=6.2.5",
-    "pytest-cov>=3.0.0",
     "alive-progress>=3.0.1",
     "requests>=2.25.1",
     "bcbio-gff>=0.7.0",
@@ -26,32 +21,46 @@ dependencies = [
     "phanotate>=1.6.7,<2"
 ]
 
+[project.scripts]
+# The main entry point is also routed through pharokka_scripts (not directly
+# to pharokka.cli:main) to avoid a sys.path shadowing bug: bin/pharokka.py
+# (the legacy compat script) would shadow the pharokka package when bin/ is
+# on sys.path[0], causing "pharokka is not a package" for any script run from
+# that directory.  pharokka_scripts:pharokka_main calls _fix_sys_path() first.
+pharokka = "pharokka_scripts:pharokka_main"
+# Backward-compatible script names (deprecated — use 'pharokka <subcommand>').
+# These are wired through pharokka_scripts (a separate top-level module) to
+# avoid a sys.path collision: if the entry point were named pharokka.py and
+# imported from pharokka.*, Python would find the script file in bin/ before
+# the installed package.  pharokka_scripts has no such naming conflict.
+"pharokka.py"              = "pharokka_scripts:pharokka_py"
+"pharokka_proteins.py"     = "pharokka_scripts:pharokka_proteins_py"
+"install_databases.py"     = "pharokka_scripts:install_databases_py"
+"pharokka_plotter.py"      = "pharokka_scripts:pharokka_plotter_py"
+"pharokka_multiplotter.py" = "pharokka_scripts:pharokka_multiplotter_py"
+"create_custom_hmm.py"     = "pharokka_scripts:create_custom_hmm_py"
+
+# ---------------------------------------------------------------------------
+# Package discovery
+# ---------------------------------------------------------------------------
+# package-dir tells setuptools that src/ is the root for both packages
+# (pharokka/) and top-level modules (pharokka_scripts.py).
+[tool.setuptools.dynamic]
+version = {attr = "pharokka.version.__version__"}
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["pharokka", "pharokka.*"]
+
 [tool.setuptools]
-packages = ["pharokka_runner"]
-package-dir = { pharokka_runner = "bin" }
 include-package-data = true
-script-files = [
-    "bin/pharokka.py",
-    "bin/pharokka_plotter.py",
-    "bin/pharokka_multiplotter.py",
-    "bin/install_databases.py",
-    "bin/pharokka_proteins.py",
-    "bin/citation.py",
-    "bin/databases.py",
-    "bin/external_tools.py",
-    "bin/input_commands.py",
-    "bin/hmm.py",
-    "bin/plot.py",
-    "bin/post_processing.py",
-    "bin/processes.py",
-    "bin/proteins.py",
-    "bin/util.py",
-    "bin/version.py",
-    "bin/create_custom_hmm.py",
-    "bin/custom_db.py"
-]
+# pharokka_scripts.py lives in src/ alongside the pharokka package.
+# Listing it here ensures it is installed as a top-level module.
+py-modules = ["pharokka_scripts"]
 
 [build-system]
-requires = ["setuptools>=67.7.2,<81", "wheel"]
+requires = ["setuptools>=67.7.2", "wheel"]
 build-backend = "setuptools.build_meta"
-

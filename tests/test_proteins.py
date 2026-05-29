@@ -18,14 +18,14 @@ from unittest.mock import patch
 import pytest
 from loguru import logger
 
-from bin.util import remove_directory
+from pharokka.util import remove_directory
 
 # import functions
 
 
 # test data
 test_data = Path("tests/test_data")
-database_dir = Path(f"{test_data}/database")
+database_dir = Path(os.environ.get("PHAROKKA_DB", "tests/test_data/database"))
 overall_data = Path(f"{test_data}/overall")
 meta_data = Path(f"{test_data}/Meta_example")
 proteins_data = Path(f"{test_data}/proteins")
@@ -66,42 +66,42 @@ def exec_command(cmnd, stdout=subprocess.PIPE, stderr=subprocess.PIPE):
 
 def test_download(tmp_dir):
     """test pharokka download"""
-    cmd = f"install_databases.py -o {database_dir}"
+    cmd = f"pharokka install -o {database_dir}"
     exec_command(cmd)
 
 
 def test_proteins(tmp_dir):
     """test pharokka proteins"""
     input_fasta: Path = f"{proteins_data}/phanotate.faa"
-    cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
+    cmd = f"pharokka proteins -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
 
 
 def test_proteins_with_vfdb_card(tmp_dir):
     """test pharokka proteins"""
     input_fasta: Path = f"{proteins_data}/vfdb_card.faa"
-    cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
+    cmd = f"pharokka proteins -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
     exec_command(cmd)
 
 
 def test_proteins_hmm_only(tmp_dir):
     """test pharokka proteins hmm_only"""
     input_fasta: Path = f"{proteins_data}/phanotate.faa"
-    cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --hmm_only"
+    cmd = f"pharokka proteins -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --hmm_only"
     exec_command(cmd)
 
 
 def test_proteins_mmseqs_only(tmp_dir):
     """test pharokka proteins mmseqs_only"""
     input_fasta: Path = f"{proteins_data}/phanotate.faa"
-    cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --mmseqs2_only"
+    cmd = f"pharokka proteins -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --mmseqs2_only"
     exec_command(cmd)
 
 def test_proteins_reverse_mmseqs_sensitivity(tmp_dir):
     """test pharokka reverse_mmseqs with sensitivity low or else takes forever"""
     input_fasta: Path = f"{proteins_data}/phanotate.faa"
     sensitivity = "0.5"
-    cmd = f"pharokka_proteins.py -i {input_fasta}  -d {database_dir} -o {tmp_dir} -t {threads} -f --reverse_mmseqs2 --sensitivity {sensitivity}"
+    cmd = f"pharokka proteins -i {input_fasta}  -d {database_dir} -o {tmp_dir} -t {threads} -f --reverse_mmseqs2 --sensitivity {sensitivity}"
     exec_command(cmd)
 
 
@@ -115,9 +115,8 @@ class testFails(unittest.TestCase):
         """tests that pharokka breaks if nucleotide input"""
         with self.assertRaises(RuntimeError):
             input_fasta: Path = f"{meta_data}/fake_meta.fasta"
-            cmd = f"pharokka_proteins.py -i {input_fasta} -d {database_dir} -o {temp_dir} -t {threads} -f"
+            cmd = f"pharokka proteins -i {input_fasta} -d {database_dir} -o {temp_dir} -t {threads} -f"
             exec_command(cmd)
 
 
 remove_directory(f"{temp_dir}")
-remove_directory(f"{database_dir}")

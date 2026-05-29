@@ -1,6 +1,17 @@
 History
 =======
 
+1.10.0 (TBD)
+-------------
+
+* New subcommand-based CLI: `pharokka run`, `pharokka proteins`, `pharokka install`, `pharokka plot`, `pharokka multiplot`, `pharokka create-hmm`
+* All old entry-point script names (`pharokka.py`, `pharokka_proteins.py`, `install_databases.py`, `pharokka_plotter.py`, `pharokka_multiplotter.py`, `create_custom_hmm.py`) remain installed and continue to work — they forward calls to the new subcommands and print a deprecation notice
+* Internal rewrite from pandas to polars for improved performance and memory efficiency
+* `src/` package layout
+* Fixes a bug where tmRNA and CRISPR features were not counted for contigs with purely numeric headers (e.g. those produced by Unicycler)
+* Fixes a bug in meta mode where `top_hits_vfdb.tsv` and `top_hits_card.tsv` reported inverted coordinates (start > stop) for negative-strand CDS hits — a pandas reference side-effect that caused `locus_df` to capture biological-order coordinates before the GFF positional swap
+* Cleaned up numerical precision and float handling throughout
+
 1.9.0 (2026-01-12)
 ------------------
 

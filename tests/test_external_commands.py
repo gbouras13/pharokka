@@ -6,6 +6,7 @@ Usage: pytest
 """
 
 # import
+import sys
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -13,10 +14,10 @@ from unittest.mock import patch
 import pytest
 from loguru import logger
 
-from bin.processes import (run_aragorn, run_mash_sketch, run_minced,
-                           run_phanotate, run_pyrodigal, run_pyrodigal_gv)
+from pharokka.processes import (run_aragorn, run_mash_sketch, run_minced,
+                                run_phanotate, run_pyrodigal, run_pyrodigal_gv)
 # import functions
-from bin.util import remove_directory
+from pharokka.util import remove_directory
 
 # test data
 test_data = Path("tests/test_data")

@@ -14,11 +14,11 @@ from unittest.mock import patch
 import pytest
 from loguru import logger
 
-from bin.input_commands import (instantiate_dirs, validate_fasta,
-                                validate_gene_predictor, validate_meta,
-                                validate_strand, validate_terminase,
-                                validate_terminase_start, validate_threads)
-from bin.util import remove_directory
+from pharokka.input_commands import (instantiate_dirs, validate_fasta,
+                                     validate_gene_predictor, validate_meta,
+                                     validate_strand, validate_terminase,
+                                     validate_terminase_start, validate_threads)
+from pharokka.util import remove_directory
 
 # test data
 test_data = Path("tests/test_data")

@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+# claude
+.claude
+
 # test data
 tests/test_data/database/*
 tests/test_data/logs/*
