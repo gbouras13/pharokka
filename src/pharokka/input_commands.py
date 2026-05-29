@@ -251,13 +251,19 @@ def validate_fasta(filename):
             f"Error: Input file {filename} does not exist. Please check your input."
         )
     else:
-        with open(filename, "r") as handle:
-            fasta = SeqIO.parse(handle, "fasta")
-            logger.info(f"Checking input {filename}.")
-            if any(fasta):
-                logger.info(f"Input {filename} is in FASTA format.")
-            else:
-                logger.error("Error: Input file is not in the FASTA format.")
+        try:
+            with open(filename, "r") as handle:
+                fasta = SeqIO.parse(handle, "fasta")
+                logger.info(f"Checking input {filename}.")
+                if any(fasta):
+                    logger.info(f"Input {filename} is in FASTA format.")
+                else:
+                    logger.error("Error: Input file is not in the FASTA format.")
+        except ValueError as e:
+            # Newer Biopython (>=1.83) raises ValueError for malformed FASTA
+            # (e.g. files with comment lines or no valid sequences) rather than
+            # returning an empty iterator.
+            logger.error(f"Error: Input file {filename} is not valid FASTA: {e}")
 
     logger.info(f"Checking input {filename} for duplicate FASTA headers.")
     check_duplicate_headers(filename)

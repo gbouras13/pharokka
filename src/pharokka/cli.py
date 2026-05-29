@@ -45,6 +45,12 @@ Run `pharokka <command> --help` for help on a specific command.
 
 
 def main():
+    # Make every logger.error() call exit with status 1.
+    # Matches the behaviour of the old pharokka.py entry point
+    # (https://github.com/gbouras13/plassembler/pull/69).
+    from loguru import logger as _logger
+    _logger.add(lambda _: sys.exit(1), level="ERROR")
+
     # Backward compat: detect legacy invocation names and inject subcommand.
     # This covers users who have a symlink  pharokka.py → pharokka  or an
     # alias, rather than the installed compat script in scripts/.
