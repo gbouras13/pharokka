@@ -42,7 +42,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e .
       - name: Run tests and collect coverage
-        run: pytest --cov=src/pharokka --cov-report=xml
+        # Use 'python -m pytest' rather than bare 'pytest': the bare pytest
+        # script adds bin/ to sys.path[0], which causes bin/pharokka.py (the
+        # legacy backward-compat entry point) to shadow the pharokka package
+        # and produces "pharokka is not a package" on every test import.
+        # python -m sets sys.path[0] to the project root instead.
+        run: python -m pytest --cov=src/pharokka --cov-report=xml
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
         with:
