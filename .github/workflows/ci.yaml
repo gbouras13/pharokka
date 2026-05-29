@@ -33,6 +33,9 @@ jobs:
           auto-update-conda: true
       - name: Install pip
         run: conda install -n pharokka_env pip -y
+      - name: Install test deps
+        run: |
+          pip install pytest pytest-cov
       - name: Install pharokka
         shell: bash -l {0}
         run: |
