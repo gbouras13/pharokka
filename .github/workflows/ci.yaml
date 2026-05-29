@@ -31,6 +31,8 @@ jobs:
           channels: conda-forge,bioconda,defaults
           channel-priority: strict
           auto-update-conda: true
+      - name: Install pip
+        run: conda install -n pharokka_env pip -y
       - name: Install pharokka
         shell: bash -l {0}
         run: |
