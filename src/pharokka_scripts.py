@@ -33,18 +33,23 @@ import sys
 # ---------------------------------------------------------------------------
 
 def _fix_sys_path() -> None:
-    """Remove the entry-point script's directory from sys.path.
+    """Remove any sys.path entry that contains a ``pharokka.py`` file.
 
-    When pip installs e.g. ``bin/pharokka.py``, running that script adds
-    ``bin/`` as ``sys.path[0]``.  Any ``.py`` file in ``bin/`` with the
-    same stem as a package will shadow that package.  Removing ``bin/``
-    before importing from ``pharokka.*`` restores correct resolution.
+    When pip installs the ``pharokka.py`` backward-compat console_script,
+    it writes ``bin/pharokka.py``.  Python then adds ``bin/`` to
+    ``sys.path[0]`` whenever any script in that directory is executed,
+    causing ``import pharokka`` to find the file ``bin/pharokka.py``
+    instead of the installed ``pharokka`` package.
+
+    Rather than guessing the offending directory from ``sys.argv[0]``
+    (which is unreliable on HPC systems where argv[0] may be a relative
+    path, a symlink, or a wrapper script), we scan every entry in sys.path
+    and drop any directory that contains a ``pharokka.py`` file.
     """
-    if not sys.path:
-        return
-    # sys.argv[0] is the entry-point script that was executed
-    script_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
-    sys.path = [p for p in sys.path if os.path.abspath(p) != script_dir]
+    sys.path = [
+        p for p in sys.path
+        if not (p and os.path.isfile(os.path.join(p, "pharokka.py")))
+    ]
 
 
 def _warn(old: str, new: str) -> None:
