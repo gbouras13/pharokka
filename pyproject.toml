@@ -64,3 +64,25 @@ py-modules = ["pharokka_scripts"]
 [build-system]
 requires = ["setuptools>=67.7.2", "wheel"]
 build-backend = "setuptools.build_meta"
+
+# ---------------------------------------------------------------------------
+# Coverage configuration
+# ---------------------------------------------------------------------------
+# parallel = true: each subprocess writes its own .coverage.* file; pytest-cov
+# combines them at the end.  This is required for subprocess coverage tracking
+# (test_overall.py and test_proteins.py run pharokka as subprocesses via
+# subprocess.Popen, so the main pytest process has no visibility into them
+# without this).  Enable subprocess tracking in CI by:
+#   1. Writing sitecustomize.py to site-packages (see ci.yaml)
+#   2. Setting COVERAGE_PROCESS_START=pyproject.toml in the test step env.
+[tool.coverage.run]
+source = ["pharokka"]
+parallel = true
+
+[tool.coverage.report]
+# Plotting modules require an interactive display — not testable in headless CI.
+omit = [
+    "src/pharokka/plot.py",
+    "src/pharokka/plot_entry.py",
+    "src/pharokka/multiplot_entry.py",
+]
