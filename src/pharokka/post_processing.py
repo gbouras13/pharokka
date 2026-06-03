@@ -156,6 +156,26 @@ class Pharok:
         self.minced_version = minced_version
         self.skip_extra_annotations = skip_extra_annotations
         self.reverse_mmseqs2 = reverse_mmseqs2
+        # Lazy cache of input FASTA records keyed by contig id.  Built on first
+        # access via _get_input_records(); avoids repeatedly re-parsing the
+        # FASTA from disk in the downstream writers.
+        self._input_records_cache: dict | None = None
+
+    def _get_input_records(self) -> dict:
+        """Return ``{contig_id: SeqRecord}`` for the input FASTA, cached.
+
+        Multiple output writers (``create_gff``, ``create_gff_singles``,
+        ``split_fasta_singles``) all need to walk the input FASTA.  Parsing
+        once and caching avoids redundant disk I/O — and turns
+        ``create_gff_singles``' previously O(n × m) re-parse-per-contig into
+        an O(n + m) dict lookup.
+        """
+        if self._input_records_cache is None:
+            with open(self.input_fasta) as fa_handle:
+                self._input_records_cache = {
+                    rec.id: rec for rec in SeqIO.parse(fa_handle, "fasta")
+                }
+        return self._input_records_cache
 
     def process_results(self):
         """
@@ -1108,13 +1128,12 @@ class Pharok:
         # write fasta on the end
         with open(os.path.join(self.out_dir, self.prefix + ".gff"), "a") as f:
             f.write("##FASTA\n")
-            with open(self.input_fasta) as fa_handle:
-                for record in SeqIO.parse(fa_handle, "fasta"):
-                    f.write(f">{record.id}\n")
-                    sequence = record.seq
-                    chunk_size = 60
-                    for i in range(0, len(sequence), chunk_size):
-                        f.write(str(sequence[i: i + chunk_size]) + "\n")
+            for record in self._get_input_records().values():
+                f.write(f">{record.id}\n")
+                sequence = record.seq
+                chunk_size = 60
+                for i in range(0, len(sequence), chunk_size):
+                    f.write(str(sequence[i: i + chunk_size]) + "\n")
 
         self.gff_df = gff_df
         self.total_gff = total_gff
@@ -1290,10 +1309,11 @@ class Pharok:
 
             with open(os.path.join(single_gff_dir, contig + ".gff"), "a") as f:
                 f.write("##FASTA\n")
-                with open(self.input_fasta) as fa_handle:
-                    for dna_record in SeqIO.parse(fa_handle, "fasta"):
-                        if dna_record.id == contig:
-                            SeqIO.write(dna_record, f, "fasta")
+                # O(1) dict lookup — previously this re-parsed the entire FASTA
+                # once per contig (O(n × m) in total).
+                dna_record = self._get_input_records().get(contig)
+                if dna_record is not None:
+                    SeqIO.write(dna_record, f, "fasta")
 
     def convert_singles_gff_to_gbk(self):
         """
@@ -1320,11 +1340,10 @@ class Pharok:
 
         single_fastas = os.path.join(self.out_dir, "single_fastas")
         check_and_create_directory(single_fastas)
-        with open(self.input_fasta) as handle:
-            for dna_record in SeqIO.parse(handle, "fasta"):
-                contig = dna_record.id
-                with open(os.path.join(single_fastas, contig + ".fasta"), "w") as f:
-                    SeqIO.write(dna_record, f, "fasta")
+        for dna_record in self._get_input_records().values():
+            contig = dna_record.id
+            with open(os.path.join(single_fastas, contig + ".fasta"), "w") as f:
+                SeqIO.write(dna_record, f, "fasta")
 
     def split_faas_singles(self):
         """Splits the .faa fasta into separate single fasta files for output based on contig names"""
@@ -1395,9 +1414,12 @@ class Pharok:
 
     def create_txt(self):
         """
-        Creates the _cds_functions.tsv and _length_gc_cds_density.tsv outputs
-        """
+        Creates the _cds_functions.tsv and _length_gc_cds_density.tsv outputs.
 
+        Per-contig counts (CDS by PHROG category, tRNAs, CRISPRs, tmRNAs,
+        VFDB, CARD) are computed in a single ``group_by`` pass over each
+        source DataFrame, then assembled into the long-format output table.
+        """
         # get contigs
         contigs = self.length_df["contig"].cast(pl.Utf8)
         contigs_list = contigs.to_list()
@@ -1451,99 +1473,120 @@ class Pharok:
             except pl.exceptions.NoDataError:
                 tmrna_df = _empty_gff
 
-        combo_list = []
+        # ─── Per-contig CDS stats: count + PHROG category breakdown + length sum
+        # The 11 PHROG-category labels in display order.
+        cds_categories = [
+            ("connector",       "connector"),
+            ("metabolism",      "DNA, RNA and nucleotide metabolism"),
+            ("head",            "head and packaging"),
+            ("integration",     "integration and excision"),
+            ("lysis",           "lysis"),
+            ("moron",           "moron, auxiliary metabolic gene and host takeover"),
+            ("other",           "other"),
+            ("tail",            "tail"),
+            ("transcription",   "transcription regulation"),
+            ("unknown",         "unknown function"),
+        ]
+
+        cds_only_df = self.merged_df.filter(pl.col("Region") == "CDS")
+        if cds_only_df.height > 0:
+            cds_only_df = cds_only_df.with_columns([
+                # function name extracted from attributes (matches old splitn logic)
+                pl.col("attributes")
+                  .str.splitn(";function=", 2).struct.field("field_1")
+                  .str.splitn(";product=", 2).struct.field("field_0")
+                  .alias("_function"),
+                # |start − stop| feeds the coding-density calculation
+                (pl.col("start").cast(pl.Int64) - pl.col("stop").cast(pl.Int64))
+                    .abs()
+                    .alias("_cds_len"),
+            ])
+            cds_stats = cds_only_df.group_by("contig", maintain_order=True).agg(
+                [pl.len().alias("CDS"), pl.col("_cds_len").sum().alias("_cds_len_sum")]
+                + [
+                    (pl.col("_function") == label).sum().alias(short)
+                    for short, label in cds_categories
+                ]
+            )
+        else:
+            cds_stats = pl.DataFrame(schema={
+                "contig": pl.Utf8, "CDS": pl.UInt32, "_cds_len_sum": pl.Int64,
+                **{short: pl.UInt32 for short, _ in cds_categories},
+            })
+
+        cds_stats_dict = {
+            row["contig"]: row for row in cds_stats.iter_rows(named=True)
+        }
+
+        # ─── Per-contig RNA / CRISPR / tmRNA counts via group_by
+        def _counts_by_contig(src_df):
+            if src_df.height == 0:
+                return {}
+            return dict(
+                src_df.group_by("contig")
+                      .agg(pl.len().alias("_n"))
+                      .iter_rows()
+            )
+
+        if self.skip_extra_annotations is False:
+            trna_counts   = _counts_by_contig(trna_df)
+            crispr_counts = _counts_by_contig(crispr_df)
+            tmrna_counts  = _counts_by_contig(tmrna_df)
+
+        # ─── VFDB / CARD counts.  v1.9.1 used str.contains(contig) on the hit
+        # row's contig column — preserved here in case the test suite ever
+        # depends on substring matching (would need explicit handling if two
+        # contig names were substrings of one another).
+        def _counts_by_contig_contains(src_df, contig_names):
+            if src_df.height == 0:
+                return {c: 0 for c in contig_names}
+            return {
+                c: src_df.filter(pl.col("contig").str.contains(c)).height
+                for c in contig_names
+            }
+
+        vfdb_counts = _counts_by_contig_contains(self.vfdb_results, contigs_list)
+        card_counts = _counts_by_contig_contains(self.card_results, contigs_list)
+
+        # ─── Total contig length for coding-density calculation
+        length_lookup = dict(
+            self.length_df.select(["contig", "length"]).iter_rows()
+        )
+
+        # ─── Assemble the long-format output table.  Build flat lists once,
+        # then construct a single DataFrame (avoids 16+ tiny DataFrames/contig).
+        descriptions, counts, contigs_out = [], [], []
         density_dict = {}
 
         for contig in contigs_list:
-            cds_mmseqs_merge_cont_df = self.merged_df.filter(pl.col("contig") == contig)
-            cds_count = cds_mmseqs_merge_cont_df.filter(pl.col("Region") == "CDS").height
-            if self.skip_extra_annotations is False:
-                trna_count = trna_df.filter(pl.col("contig") == contig).height
-                tmrna_count = tmrna_df.filter(pl.col("contig") == contig).height
-                crispr_count = crispr_df.filter(pl.col("contig") == contig).height
-            if self.vfdb_results.height != 0:
-                vfdb_count = self.vfdb_results.filter(
-                    pl.col("contig").str.contains(contig)
-                ).height
+            stats = cds_stats_dict.get(contig)
+            if stats is None:
+                cds_count, cds_len_sum = 0, 0
+                cat_counts = [0] * len(cds_categories)
             else:
-                vfdb_count = 0
-            if self.card_results.height != 0:
-                CARD_count = self.card_results.filter(
-                    pl.col("contig").str.contains(contig)
-                ).height
-            else:
-                CARD_count = 0
+                cds_count    = stats["CDS"]
+                cds_len_sum  = stats["_cds_len_sum"]
+                cat_counts   = [stats[short] for short, _ in cds_categories]
 
-            # get total length
-            contig_length_val = self.length_df.filter(pl.col("contig") == contig)[0, "length"]
-
-            if cds_count > 0:
-                cds_lengths = (
-                    (cds_mmseqs_merge_cont_df["start"].cast(pl.Int64) - cds_mmseqs_merge_cont_df["stop"].cast(pl.Int64)).abs().sum()
-                )
-                # get function by parsing attributes
-                func_list = (
-                    cds_mmseqs_merge_cont_df["attributes"]
-                    .str.splitn(";function=", 2)
-                    .struct.field("field_1")
-                    .str.splitn(";product=", 2)
-                    .struct.field("field_0")
-                    .to_list()
-                )
-
-                connector_count = func_list.count("connector")
-                metabolism_count = func_list.count("DNA, RNA and nucleotide metabolism")
-                head_count = func_list.count("head and packaging")
-                integration_count = func_list.count("integration and excision")
-                lysis_count = func_list.count("lysis")
-                moron_count = func_list.count("moron, auxiliary metabolic gene and host takeover")
-                other_count = func_list.count("other")
-                tail_count = func_list.count("tail")
-                transcription_count = func_list.count("transcription regulation")
-                unknown_count = func_list.count("unknown function")
-
-                count_list = [
-                    cds_count, connector_count, metabolism_count, head_count,
-                    integration_count, lysis_count, moron_count, other_count,
-                    tail_count, transcription_count, unknown_count,
-                ]
-            else:
-                cds_lengths = 0
-                count_list = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
-            description_list = [
-                "CDS", "connector", "DNA, RNA and nucleotide metabolism",
-                "head and packaging", "integration and excision", "lysis",
-                "moron, auxiliary metabolic gene and host takeover", "other",
-                "tail", "transcription regulation", "unknown function",
-            ]
-            contig_list_vals = [contig] * 11
-
-            cds_df = pl.DataFrame({
-                "Description": description_list,
-                "Count": count_list,
-                "contig": contig_list_vals,
-            })
+            # 11 PHROG-category rows
+            descriptions.append("CDS"); counts.append(cds_count); contigs_out.append(contig)
+            for (_short, label), n in zip(cds_categories, cat_counts):
+                descriptions.append(label); counts.append(n); contigs_out.append(contig)
 
             if self.skip_extra_annotations is False:
-                trna_row = pl.DataFrame({"Description": ["tRNAs"], "Count": [trna_count], "contig": [contig]})
-                crispr_row = pl.DataFrame({"Description": ["CRISPRs"], "Count": [crispr_count], "contig": [contig]})
-                tmrna_row = pl.DataFrame({"Description": ["tmRNAs"], "Count": [tmrna_count], "contig": [contig]})
+                descriptions.append("tRNAs");   counts.append(trna_counts.get(contig, 0));   contigs_out.append(contig)
+                descriptions.append("CRISPRs"); counts.append(crispr_counts.get(contig, 0)); contigs_out.append(contig)
+                descriptions.append("tmRNAs");  counts.append(tmrna_counts.get(contig, 0));  contigs_out.append(contig)
 
-            vfdb_row = pl.DataFrame({"Description": ["VFDB_Virulence_Factors"], "Count": [vfdb_count], "contig": [contig]})
-            CARD_row = pl.DataFrame({"Description": ["CARD_AMR_Genes"], "Count": [CARD_count], "contig": [contig]})
+            descriptions.append("VFDB_Virulence_Factors"); counts.append(vfdb_counts.get(contig, 0)); contigs_out.append(contig)
+            descriptions.append("CARD_AMR_Genes");         counts.append(card_counts.get(contig, 0)); contigs_out.append(contig)
 
-            # calculate coding density
-            cds_coding_density = round(cds_lengths * 100 / contig_length_val, 2)
-            density_dict[contig] = cds_coding_density
-
-            combo_list.append(cds_df)
-            if self.skip_extra_annotations is False:
-                combo_list.append(trna_row)
-                combo_list.append(crispr_row)
-                combo_list.append(tmrna_row)
-            combo_list.append(vfdb_row)
-            combo_list.append(CARD_row)
+            # coding density
+            contig_length_val = length_lookup.get(contig)
+            density_dict[contig] = (
+                round(cds_len_sum * 100 / contig_length_val, 2)
+                if contig_length_val else 0
+            )
 
         # update length_df with densities
         density_vals = [density_dict.get(c, None) for c in self.length_df["contig"].to_list()]
@@ -1551,7 +1594,11 @@ class Pharok:
             pl.Series("cds_coding_density", density_vals)
         )
 
-        description_total_df = pl.concat(combo_list)
+        description_total_df = pl.DataFrame({
+            "Description": descriptions,
+            "Count": counts,
+            "contig": contigs_out,
+        })
         description_total_df.write_csv(
             os.path.join(self.out_dir, self.prefix + "_cds_functions.tsv"),
             separator="\t",
@@ -2343,25 +2390,77 @@ def check_and_create_directory(directory):
 
 
 def parse_attributes_column(df):
-    """Parse attributes column into separate columns"""
-    parsed = [parse_attributes(attrs) for attrs in df["attributes"].to_list()]
-    # Collect all keys to handle inconsistent schemas
-    all_keys = []
-    seen = set()
-    for d in parsed:
-        for k in d.keys():
-            if k not in seen:
-                all_keys.append(k)
-                seen.add(k)
-    # Build dict of lists
-    col_data = {k: [] for k in all_keys}
-    for d in parsed:
-        for k in all_keys:
-            col_data[k].append(d.get(k, None))
-    attributes_df = pl.DataFrame(col_data)
-    cols_to_drop = [c for c in df.columns if c in attributes_df.columns]
-    result_df = pl.concat([df.drop(cols_to_drop), attributes_df], how="horizontal")
-    return result_df
+    """Parse a GFF-style ``attributes`` column into separate columns.
+
+    Attributes look like ``ID=foo;phrog=123;product=bar``.  Each key=value
+    pair becomes its own column.  Keys missing from a row produce nulls.
+
+    Column ordering matches the order in which each key first appears across
+    the rows (preserving the original loop-based behaviour).
+
+    Vectorised implementation: splits the column on ``;`` and ``=`` using
+    polars list/struct kernels, then pivots into wide form.  No Python loop
+    over rows — runs in a single polars query for the whole column.
+    """
+    if df.height == 0 or "attributes" not in df.columns:
+        return df
+
+    # Tokenise: attributes → list[struct{key, value}], drop empty / malformed entries.
+    # _pair_pos preserves the position of each pair within its row so that the
+    # final column ordering matches the order in which the keys appear in the
+    # original attributes string (matches the old loop-based dict iteration).
+    pairs = (
+        df.select(
+            pl.int_range(0, df.height).alias("_row"),
+            pl.col("attributes")
+              .str.split(";")
+              .list.eval(
+                  pl.element().str.splitn("=", 2).struct.rename_fields(["key", "value"])
+              )
+              .alias("_pairs"),
+        )
+        .with_columns(
+            pl.int_ranges(0, pl.col("_pairs").list.len()).alias("_pair_pos")
+        )
+        .explode(["_pairs", "_pair_pos"])
+        .unnest("_pairs")
+        .filter(pl.col("key").is_not_null() & (pl.col("key") != "") & pl.col("value").is_not_null())
+    )
+
+    if pairs.height == 0:
+        return df
+
+    # Preserve first-seen order of keys: within a single row, dict insertion
+    # order = pair position; across rows, the first row each key appears in
+    # wins.  Sort by (row, pair_pos) of first appearance.
+    key_order = (
+        pairs.group_by("key", maintain_order=True)
+             .agg([
+                 pl.col("_row").min().alias("_first_row"),
+                 pl.col("_pair_pos").first().alias("_first_pos"),
+             ])
+             .sort(["_first_row", "_first_pos"])
+             ["key"]
+             .to_list()
+    )
+
+    # Pivot to wide form: one column per key, row-indexed by _row.
+    wide = (
+        pairs.pivot(
+            on="key",
+            index="_row",
+            values="value",
+            aggregate_function="first",
+        )
+        .sort("_row")
+        .drop("_row")
+    )
+
+    # Reorder columns to match first-appearance order.
+    wide = wide.select(key_order)
+
+    cols_to_drop = [c for c in df.columns if c in wide.columns]
+    return pl.concat([df.drop(cols_to_drop), wide], how="horizontal")
 
 
 def get_codon_from_anticodon(anticodon):
