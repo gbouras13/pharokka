@@ -124,7 +124,8 @@ def main():
     logger.info("Repository homepage is https://github.com/gbouras13/pharokka")
     logger.info("Written by George Bouras: george.bouras@adelaide.edu.au")
     logger.info("Checking your inputs.")
-    logger.add(lambda _: sys.exit(1), level="ERROR")  # https://github.com/gbouras13/plassembler/pull/69
+    # The logger.error → sys.exit(1) sink is registered once per process
+    # by the entry-point dispatcher (cli.main or pharokka_scripts._legacy_shim).
 
     try:
         int(args.interval)

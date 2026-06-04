@@ -204,49 +204,49 @@ def get_input():
 
 def instantiate_dirs(output_dir, meta, force):
     # remove outdir on force
-    if force == True:
-        if os.path.isdir(output_dir) == True:
+    if force:
+        if os.path.isdir(output_dir):
             logger.info(
                 f"Removing output directory {output_dir} as -f or --force was specified."
             )
             shutil.rmtree(output_dir)
 
-        elif os.path.isfile(output_dir) == True:
+        elif os.path.isfile(output_dir):
             os.remove(output_dir)
         else:
             logger.info(
                 f"--force was specified even though the output directory {output_dir} does not already exist. Continuing."
             )
     else:
-        if os.path.isdir(output_dir) == True or os.path.isfile(output_dir) == True:
+        if os.path.isdir(output_dir) or os.path.isfile(output_dir):
             logger.error(
                 f"The output directory {output_dir} already exists and force was not specified. Please specify -f or --force to overwrite it."
             )
 
     # instantiate outdir
-    if os.path.isdir(output_dir) == False:
+    if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
     mmseqs_dir = os.path.join(output_dir, "mmseqs/")
-    if os.path.isdir(mmseqs_dir) == False:
+    if not os.path.isdir(mmseqs_dir):
         os.mkdir(mmseqs_dir)
     vfdb_dir = os.path.join(output_dir, "VFDB/")
-    if os.path.isdir(vfdb_dir) == False:
+    if not os.path.isdir(vfdb_dir):
         os.mkdir(vfdb_dir)
     CARD_dir = os.path.join(output_dir, "CARD/")
-    if os.path.isdir(CARD_dir) == False:
+    if not os.path.isdir(CARD_dir):
         os.mkdir(CARD_dir)
 
     # tmp dir for meta mode trnascan and phanotate
     input_tmp_dir = os.path.join(output_dir, "input_split_tmp/")
-    if meta == True:
-        if os.path.isdir(input_tmp_dir) == False:
+    if meta:
+        if not os.path.isdir(input_tmp_dir):
             os.mkdir(input_tmp_dir)
 
     return output_dir
 
 
 def validate_fasta(filename):
-    if os.path.isfile(filename) == False:
+    if not os.path.isfile(filename):
         logger.error(
             f"Error: Input file {filename} does not exist. Please check your input."
         )
@@ -315,7 +315,7 @@ def validate_gene_predictor(gene_predictor, genbank_flag):
 def validate_meta(filepath_in, meta, split, genbank):
     if genbank is False:
         num_fastas = count_contigs(filepath_in)
-        if meta == True:
+        if meta:
             if num_fastas < 2:
                 logger.error(
                     "ERROR: -m meta mode specified when the input file only contains 1 contig. Please re-run without specifying -m."
@@ -323,14 +323,14 @@ def validate_meta(filepath_in, meta, split, genbank):
             else:
                 message = f"{num_fastas} input contigs detected."
                 logger.info(message)
-                if split == True:
+                if split:
                     message = "Split mode activtated. Separate output FASTA, gff and genbank files will be output for each contig."
                     logger.info(message)
         else:
             if num_fastas > 1:
                 message = "More than one contig detected in the input file. Re-running pharokka with -m meta mode is recommended unless this is a fragmented isolate genome. Continuing."
                 logger.info(message)
-            if split == True:
+            if split:
                 message = "-s or --split was specified without -m or --meta and will be ignored. Please specify -s with -m if you want to run split mode. Continuing."
                 logger.info(message)
 
@@ -687,13 +687,13 @@ def instantiate_split_output(out_dir, split):
     """
     if the split flag is true, will create these output directories
     """
-    if split == True:
+    if split:
         single_gff_dir = os.path.join(out_dir, "single_gffs")
         single_gbk_dir = os.path.join(out_dir, "single_gbks")
 
-        if os.path.isdir(single_gff_dir) == False:
+        if not os.path.isdir(single_gff_dir):
             os.mkdir(single_gff_dir)
-        if os.path.isdir(single_gbk_dir) == False:
+        if not os.path.isdir(single_gbk_dir):
             os.mkdir(single_gbk_dir)
 
 

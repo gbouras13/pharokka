@@ -1,5 +1,6 @@
 import os
 import shutil
+import sys
 
 import click
 import polars as pl
@@ -12,6 +13,20 @@ from .version import __version__
 
 def get_version():
     return __version__
+
+
+def register_error_sink() -> None:
+    """Make every ``logger.error()`` call exit the process with status 1.
+
+    Originally taken from https://github.com/gbouras13/plassembler/pull/69.
+
+    Callers should invoke this once at the start of an entry point.  Called
+    multiple times in the same process the extra sinks are harmless (each
+    ``logger.error`` would just call ``sys.exit(1)`` once — the first sink
+    to fire raises ``SystemExit`` and the rest never run), but registering
+    in one place keeps the sink set clean.
+    """
+    logger.add(lambda _: sys.exit(1), level="ERROR")
 
 
 def echo_click(msg, log=None):

@@ -104,8 +104,9 @@ def get_input():
 
 def main():
     args = get_input()
+    # The logger.error → sys.exit(1) sink is registered once per process
+    # by the entry-point dispatcher (cli.main or pharokka_scripts._legacy_shim).
     # preamble
-    logger.add(lambda _: sys.exit(1), level="ERROR")
     logger.info(f"Starting Pharokka v{get_version()}")
     logger.info("Running pharokka multiplot to plot your phages.")
     logger.info("Command executed: {}", args)

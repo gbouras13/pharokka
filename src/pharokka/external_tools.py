@@ -60,19 +60,41 @@ class ExternalTool:
         subprocess.check_call(command, stdout=stdout_fh, stderr=stderr_fh)
 
     @staticmethod
+    def _handle_run_error(tool: "ExternalTool", error: Exception) -> None:
+        """Log an error from a tool invocation and exit.
+
+        Distinguishes the two failure modes that can come out of
+        ``subprocess.check_call``:
+        - ``FileNotFoundError``: the binary itself was not on PATH.  Most
+          likely the user's conda environment is misconfigured.
+        - ``CalledProcessError``: the tool ran but exited non-zero.  Point
+          the user at the captured stdout/stderr logs.
+        """
+        tool_name = Path(tool.command[0]).name if tool.command else "<unknown>"
+        if isinstance(error, FileNotFoundError):
+            logger.error(
+                f"'{tool_name}' was not found on $PATH.  Please reinstall "
+                f"pharokka or activate the correct conda environment."
+            )
+            logger.error("Exiting...")
+        else:
+            returncode = getattr(error, "returncode", "?")
+            logger.error(
+                f"Error calling {tool.command_as_str} (return code {returncode})"
+            )
+            logger.error(f"Please check stdout log file: {tool.out_log}")
+            logger.error(f"Please check stderr log file: {tool.err_log}")
+            logger.error("Temporary files are preserved for debugging")
+            logger.error("Exiting...")
+        sys.exit(1)
+
+    @staticmethod
     def run_tools(tools_to_run: Tuple["ExternalTool", ...]) -> None:
         for tool in tools_to_run:
             try:
                 tool.run()
-            except subprocess.CalledProcessError as error:
-                logger.error(
-                    f"Error calling {tool.command_as_str} (return code {error.returncode})"
-                )
-                logger.error(f"Please check stdout log file: {tool.out_log}")
-                logger.error(f"Please check stderr log file: {tool.err_log}")
-                logger.error("Temporary files are preserved for debugging")
-                logger.error("Exiting...")
-                sys.exit(1)
+            except (subprocess.CalledProcessError, FileNotFoundError) as error:
+                ExternalTool._handle_run_error(tool, error)
 
     @staticmethod
     def run_tool(tool: "ExternalTool", to_stdout: Optional[bool] = False) -> None:
@@ -81,12 +103,5 @@ class ExternalTool:
                 tool.run()
             else:
                 tool.run_to_stdout()
-        except subprocess.CalledProcessError as error:
-            logger.error(
-                f"Error calling {tool.command_as_str} (return code {error.returncode})"
-            )
-            logger.error(f"Please check stdout log file: {tool.out_log}")
-            logger.error(f"Please check stderr log file: {tool.err_log}")
-            logger.error("Temporary files are preserved for debugging")
-            logger.error("Exiting...")
-            sys.exit(1)
+        except (subprocess.CalledProcessError, FileNotFoundError) as error:
+            ExternalTool._handle_run_error(tool, error)

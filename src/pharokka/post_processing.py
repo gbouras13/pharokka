@@ -292,15 +292,15 @@ class Pharok:
         ])
 
         ############
-        # code to create 1 overall phrog column
+        # Build the overall "phrog" column.  In mmseqs mode: take mmseqs_phrog,
+        # falling back to pyhmmer_phrog for CDS with no mmseqs hit.  Otherwise
+        # just copy pyhmmer_phrog.
         if self.mmseqs_flag is True:
-            merged_df = merged_df.with_columns(pl.col("mmseqs_phrog").alias("phrog"))
-            # add pyhmmer phrog for any entry without mmseqs (null after left join)
             merged_df = merged_df.with_columns(
                 pl.when(
-                    pl.col("phrog").is_null() & (pl.col("pyhmmer_phrog") != "No_PHROGs_HMM")
+                    pl.col("mmseqs_phrog").is_null() & (pl.col("pyhmmer_phrog") != "No_PHROGs_HMM")
                 ).then(pl.col("pyhmmer_phrog"))
-                .otherwise(pl.col("phrog"))
+                .otherwise(pl.col("mmseqs_phrog"))
                 .alias("phrog")
             )
         else:  # only need to worry about pyhmmer
@@ -338,47 +338,36 @@ class Pharok:
             "mmseqs_eVal",
         ]
 
+        # Cast mmseqs cols to string and fill nulls with "No_PHROG" in one pass.
         # mmseqs_alnScore is the raw integer string from the mmseqs output (e.g. "82").
         # Differs from pharokka v1.9.1 (pandas): when null rows exist (no-hit CDS),
         # pandas promoted the int64 column to float64 due to NaN, writing "82.0"
         # instead of "82". New polars behaviour keeps the raw integer string.
         # Example: "82.0" (old, when ≥1 CDS had no hit) → "82" (new).
-
+        #
+        # The "phrog" column also gets cast + filled here.  "No_PHROG" exists in
+        # phrog_annot_v4.tsv with annot="NA"; the explicit "NA"→"hypothetical
+        # protein" replacement below handles that case.
         merged_df = merged_df.with_columns([
-            pl.col(c).cast(pl.Utf8) for c in cols_to_force_string
+            pl.col(c).cast(pl.Utf8).fill_null("No_PHROG")
+            for c in cols_to_force_string + ["phrog"]
         ])
 
-        # fill any remaining nulls in string cols with "No_PHROG"
-        for c in cols_to_force_string:
-            merged_df = merged_df.with_columns(pl.col(c).fill_null("No_PHROG"))
-
-        # get phrog as string and fill nulls with "No_PHROG"
-        merged_df = merged_df.with_columns(pl.col("phrog").cast(pl.Utf8))
-        # Fill null phrog with "No_PHROG" so the column is populated in the final
-        # output.  "No_PHROG" exists in phrog_annot_v4.tsv with annot="NA"; the
-        # explicit "NA"→"hypothetical protein" replacement below handles that.
-        merged_df = merged_df.with_columns(pl.col("phrog").fill_null("No_PHROG"))
-
-        # merge phrog annotation (single join)
-        merged_df = merged_df.join(phrog_annot_df, on="phrog", how="left")
-        merged_df = merged_df.with_columns([
-            pl.col("annot").fill_null("hypothetical protein"),
-            pl.col("category").fill_null("unknown function"),
-            pl.col("color").fill_null("None"),
-        ])
-        # phrog_annot_v4.tsv stores "NA" as a literal string for unannotated phrogs.
-        # pandas treated "NA" as NaN so fillna("hypothetical protein") worked;
-        # polars infer_schema=False keeps "NA" as a string, so fill_null has no effect.
-        # Replace explicitly here to match the old pandas behaviour.
-        merged_df = merged_df.with_columns([
-            pl.when(pl.col("annot") == "NA")
+        # merge phrog annotation (single join) and normalise null/"NA" values
+        # in one pass.  phrog_annot_v4.tsv stores "NA" as a literal string for
+        # unannotated phrogs — pandas treated "NA" as NaN so fillna() worked,
+        # but polars with infer_schema=False keeps it as a string, so we
+        # explicitly map both null and "NA" to the user-facing default value.
+        merged_df = merged_df.join(phrog_annot_df, on="phrog", how="left").with_columns([
+            pl.when(pl.col("annot").is_null() | (pl.col("annot") == "NA"))
               .then(pl.lit("hypothetical protein"))
               .otherwise(pl.col("annot"))
               .alias("annot"),
-            pl.when(pl.col("category") == "NA")
+            pl.when(pl.col("category").is_null() | (pl.col("category") == "NA"))
               .then(pl.lit("unknown function"))
               .otherwise(pl.col("category"))
               .alias("category"),
+            pl.col("color").fill_null("None"),
         ])
 
         # process vfdb results
@@ -659,7 +648,7 @@ class Pharok:
         self.merged_df = self.merged_df.join(transl_table_df, how="left", on="contig")
 
         ############ locus tag #########
-        if self.meta_mode == True:
+        if self.meta_mode:
             subset_dfs = []
             for contig in contigs_list:
                 subset_df = self.merged_df.filter(pl.col("contig") == contig)
@@ -674,7 +663,7 @@ class Pharok:
             ).drop("_idx")
 
         # get the locus tag
-        if self.meta_mode == False:
+        if not self.meta_mode:
             self.merged_df = self.merged_df.with_columns(
                 (pl.lit(self.locustag + "_CDS_") + pl.col("count")).alias("locus_tag")
             )
@@ -780,7 +769,7 @@ class Pharok:
                 "contig", "Method", "Region", "start", "stop", "score", "strand", "frame", "attributes",
             ]
             trna_empty = is_trna_empty(self.out_dir)
-            if trna_empty == False:
+            if not trna_empty:
                 trna_df = pl.read_csv(
                     os.path.join(self.out_dir, "trnascan_out.gff"),
                     separator="\t",
@@ -796,7 +785,7 @@ class Pharok:
                 )
 
                 # index hack if meta mode
-                if self.meta_mode == True:
+                if self.meta_mode:
                     subset_dfs = []
                     for contig in contigs_list:
                         subset_df = trna_df.filter(pl.col("contig") == contig)
@@ -849,54 +838,111 @@ class Pharok:
                     pl.col("_s3").struct.field("field_1").alias("rest"),
                 ]).drop("_s3")
 
-                # Extract anticodon positions once, before the loop
+                # Extract anticodon positions once, up-front.
                 anticodon_positions = extract_anticodon_positions(self.out_dir)
 
                 if "note" not in trna_df.columns:
                     trna_df = trna_df.with_columns(pl.lit("").alias("note"))
 
-                # Build result columns iteratively (complex per-row logic)
-                isotypes_list = trna_df["isotypes"].to_list()
-                anticodon_list = trna_df["anticodon"].to_list()
-                note_list = trna_df["note"].to_list() if "note" in trna_df.columns else [""] * trna_df.height
-                codon_list = [""] * trna_df.height
-                anticodon_gb_list = [None] * trna_df.height
-                start_list = trna_df["start"].to_list()
-                stop_list = trna_df["stop"].to_list()
+                # ─── Vectorised tRNA isotype/codon/note/anticodon_gb logic ───
+                # Old code: per-row Python loop building isotypes/note/codon
+                # /anticodon_gb lists, then re-attaching them as polars Series.
+                # New code: native polars expressions in a single with_columns.
+                #
+                # Per-row semantics (per the original loop):
+                #   isotype == "Undet"  → isotypes := "OTHER", note := "Undetermined tRNA",
+                #                         codon := "", anticodon_gb := None
+                #   isotype == "Sup"    → isotypes := "TERM",  note := "Suppressor tRNA",
+                #                         codon := get_codon_from_anticodon(anticodon),
+                #                         anticodon_gb := "(pos:S..E,aa:TERM,seq:ANT)"
+                #   else                → isotypes/note unchanged,
+                #                         codon := get_codon_from_anticodon(anticodon),
+                #                         anticodon_gb := "(pos:S..E,aa:ISO,seq:ANT)"
+                # where (S, E) is anticodon_positions[idx] if it exists, else
+                # the row's own (start, stop).
 
-                for idx in range(trna_df.height):
-                    isotype = isotypes_list[idx]
-                    anticodon = anticodon_list[idx]
+                # 1) Build a positions DataFrame for left-join by row index.
+                if anticodon_positions:
+                    positions_df = pl.DataFrame({
+                        "_pos_idx":   list(range(len(anticodon_positions))),
+                        "_pos_start": [s for s, _ in anticodon_positions],
+                        "_pos_end":   [e for _, e in anticodon_positions],
+                    }).with_columns([
+                        pl.col("_pos_idx").cast(pl.UInt32),
+                        pl.col("_pos_start").cast(pl.Int64),
+                        pl.col("_pos_end").cast(pl.Int64),
+                    ])
+                    trna_df = (
+                        trna_df
+                        .with_row_index("_pos_idx")
+                        .join(positions_df, on="_pos_idx", how="left")
+                    )
+                else:
+                    # No .sec file / no positions parsed — fall back to start/stop.
+                    trna_df = trna_df.with_columns([
+                        pl.lit(None, dtype=pl.Int64).alias("_pos_start"),
+                        pl.lit(None, dtype=pl.Int64).alias("_pos_end"),
+                    ])
 
-                    if isotype == "Undet":
-                        isotypes_list[idx] = "OTHER"
-                        note_list[idx] = "Undetermined tRNA"
-                        codon_list[idx] = ""
-                        continue
-                    elif isotype == "Sup":
-                        isotypes_list[idx] = "TERM"
-                        isotype = "TERM"
-                        codon_list[idx] = get_codon_from_anticodon(anticodon)
-                        note_list[idx] = "Suppressor tRNA"
-                    else:
-                        codon_list[idx] = get_codon_from_anticodon(anticodon)
+                # 2) Compute the codon column using Biopython's reverse-complement
+                # + transcribe.  ``map_elements`` evaluates per-row; the safe
+                # wrapper protects against the Undet case where anticodon may be
+                # malformed (Biopython would raise) — when/otherwise evaluates
+                # both branches in polars so we cannot rely on the Undet mask
+                # alone to skip the call.
+                def _safe_codon(s):
+                    if not isinstance(s, str) or not s.strip():
+                        return ""
+                    try:
+                        return get_codon_from_anticodon(s)
+                    except (ValueError, TypeError):
+                        return ""
 
-                    if idx < len(anticodon_positions):
-                        start, end = anticodon_positions[idx]
-                        anticodon_gb_list[idx] = (
-                            f"(pos:{start}..{end},aa:{isotype},seq:{anticodon})"
-                        )
-                    else:
-                        anticodon_gb_list[idx] = (
-                            f"(pos:{start_list[idx]}..{stop_list[idx]},aa:{isotype},seq:{anticodon})"
-                        )
+                # 3) Build all derived columns in a single pass.  All when() /
+                # otherwise() expressions read the *original* isotypes value
+                # since polars evaluates with_columns inputs in parallel against
+                # the current frame state.
+                _isotypes_remapped = (
+                    pl.when(pl.col("isotypes") == "Undet").then(pl.lit("OTHER"))
+                      .when(pl.col("isotypes") == "Sup").then(pl.lit("TERM"))
+                      .otherwise(pl.col("isotypes"))
+                )
 
                 trna_df = trna_df.with_columns([
-                    pl.Series("isotypes", isotypes_list),
-                    pl.Series("note", note_list),
-                    pl.Series("codon", codon_list),
-                    pl.Series("anticodon_gb", anticodon_gb_list),
+                    # note: assigned only for Undet / Sup, unchanged otherwise
+                    pl.when(pl.col("isotypes") == "Undet").then(pl.lit("Undetermined tRNA"))
+                      .when(pl.col("isotypes") == "Sup").then(pl.lit("Suppressor tRNA"))
+                      .otherwise(pl.col("note"))
+                      .alias("note"),
+                    # codon: empty for Undet, computed via Biopython otherwise
+                    pl.when(pl.col("isotypes") == "Undet")
+                      .then(pl.lit(""))
+                      .otherwise(
+                          pl.col("anticodon").map_elements(_safe_codon, return_dtype=pl.Utf8)
+                      )
+                      .alias("codon"),
+                    # anticodon_gb: None for Undet; otherwise pos:start..end,aa:ISO,seq:ANT
+                    pl.when(pl.col("isotypes") == "Undet")
+                      .then(pl.lit(None, dtype=pl.Utf8))
+                      .otherwise(
+                          pl.format(
+                              "(pos:{}..{},aa:{},seq:{})",
+                              pl.coalesce([pl.col("_pos_start"), pl.col("start")]),
+                              pl.coalesce([pl.col("_pos_end"),   pl.col("stop")]),
+                              _isotypes_remapped,
+                              pl.col("anticodon"),
+                          )
+                      )
+                      .alias("anticodon_gb"),
+                    # isotypes: remapped Undet→OTHER, Sup→TERM, else unchanged
+                    _isotypes_remapped.alias("isotypes"),
                 ])
+
+                # Drop temp columns from the positions join.
+                _drop_cols = ["_pos_start", "_pos_end"]
+                if "_pos_idx" in trna_df.columns:
+                    _drop_cols.append("_pos_idx")
+                trna_df = trna_df.drop(_drop_cols)
 
                 trna_df = trna_df.with_columns([
                     (
@@ -992,7 +1038,7 @@ class Pharok:
                 minced_df = minced_df.drop(["attributes"])
 
                 # index hack if meta mode
-                if self.meta_mode == True:
+                if self.meta_mode:
                     subset_dfs = []
                     for contig in contigs_list:
                         subset_df = minced_df.filter(pl.col("contig") == contig)
@@ -1026,7 +1072,7 @@ class Pharok:
                 minced_df = minced_df.drop(["rpt_unit_seq", "rpt_family", "rpt_type", "locus_tag"])
 
             ### tmrna
-            if self.tmrna_flag == True:
+            if self.tmrna_flag:
                 tmrna_df = pl.read_csv(
                     os.path.join(self.out_dir, self.prefix + "_aragorn.gff"),
                     separator="\t",
@@ -1043,7 +1089,7 @@ class Pharok:
                 ])
 
                 # index hack if meta mode
-                if self.meta_mode == True:
+                if self.meta_mode:
                     subset_dfs = []
                     for contig in contigs_list:
                         subset_df = tmrna_df.filter(pl.col("contig") == contig)
@@ -1242,7 +1288,7 @@ class Pharok:
                     f.write(f"\t\t\ttransl_table\t{srow['transl_table']}\n")
                     if codon_start is not None:
                         f.write(f"\t\t\tcodon_start\t{codon_start}\n")
-                if self.trna_empty == False:
+                if not self.trna_empty:
                     subset_trna_df = trna_df.filter(pl.col("contig") == contig)
                     for trow in subset_trna_df.iter_rows(named=True):
                         start = str(trow["start"])
@@ -1272,7 +1318,7 @@ class Pharok:
                         f.write(f"\t\t\trpt_type\t{crow['rpt_type']}\n")
                         f.write(f"\t\t\trpt_unit_range\t{crow['rpt_unit_range']}\n")
                         f.write(f"\t\t\trpt_unit_seq\t{crow['rpt_unit_seq']}\n")
-                if self.tmrna_flag == True:
+                if self.tmrna_flag:
                     subset_tmrna_df = tmrna_df.filter(pl.col("contig") == contig)
                     for tmrow in subset_tmrna_df.iter_rows(named=True):
                         start = str(tmrow["start"])
@@ -1945,7 +1991,7 @@ def remove_post_processing_files(out_dir, gene_predictor, meta, keep_raw_prodiga
             remove_file(os.path.join(out_dir, gene_predictor + "_out_tmp.fasta"))
             remove_file(os.path.join(out_dir, gene_predictor + "_out_aas_tmp.fasta"))
 
-    if meta == True:
+    if meta:
         remove_directory(os.path.join(out_dir, "input_split_tmp/"))
 
 
@@ -2385,7 +2431,7 @@ def is_file_empty(file):
 
 def check_and_create_directory(directory):
     """Checks if directory exists, creates it if not"""
-    if os.path.isdir(directory) == False:
+    if not os.path.isdir(directory):
         os.mkdir(directory)
 
 

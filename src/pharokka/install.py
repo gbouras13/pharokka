@@ -44,7 +44,8 @@ def _default_db_dir():
 
 
 def main():
-    logger.add(lambda _: sys.exit(1), level="ERROR")
+    # The logger.error → sys.exit(1) sink is registered once per process
+    # by the entry-point dispatcher (cli.main or pharokka_scripts._legacy_shim).
     args = get_db_input()
 
     if args.default is True:

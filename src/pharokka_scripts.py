@@ -76,49 +76,63 @@ def pharokka_main() -> None:
     main()
 
 
+def _legacy_shim(old: str, new: str, import_main):
+    """Common boilerplate for the legacy script shims.
+
+    Fixes sys.path, prints the deprecation notice, registers the
+    loguru→sys.exit error sink (these shims bypass ``cli.main()`` which
+    normally registers it), then calls the subcommand's ``main()``.
+    """
+    _fix_sys_path()
+    _warn(old, new)
+    from pharokka.util import register_error_sink
+    register_error_sink()
+    import_main()()
+
+
 def pharokka_py() -> None:
     """pharokka.py  →  pharokka run"""
-    _fix_sys_path()
-    _warn("pharokka.py", "pharokka run")
-    from pharokka.run import main
-    main()
+    def _imp():
+        from pharokka.run import main
+        return main
+    _legacy_shim("pharokka.py", "pharokka run", _imp)
 
 
 def pharokka_proteins_py() -> None:
     """pharokka_proteins.py  →  pharokka proteins"""
-    _fix_sys_path()
-    _warn("pharokka_proteins.py", "pharokka proteins")
-    from pharokka.proteins import main
-    main()
+    def _imp():
+        from pharokka.proteins import main
+        return main
+    _legacy_shim("pharokka_proteins.py", "pharokka proteins", _imp)
 
 
 def install_databases_py() -> None:
     """install_databases.py  →  pharokka install"""
-    _fix_sys_path()
-    _warn("install_databases.py", "pharokka install")
-    from pharokka.install import main
-    main()
+    def _imp():
+        from pharokka.install import main
+        return main
+    _legacy_shim("install_databases.py", "pharokka install", _imp)
 
 
 def pharokka_plotter_py() -> None:
     """pharokka_plotter.py  →  pharokka plot"""
-    _fix_sys_path()
-    _warn("pharokka_plotter.py", "pharokka plot")
-    from pharokka.plot_entry import main
-    main()
+    def _imp():
+        from pharokka.plot_entry import main
+        return main
+    _legacy_shim("pharokka_plotter.py", "pharokka plot", _imp)
 
 
 def pharokka_multiplotter_py() -> None:
     """pharokka_multiplotter.py  →  pharokka multiplot"""
-    _fix_sys_path()
-    _warn("pharokka_multiplotter.py", "pharokka multiplot")
-    from pharokka.multiplot_entry import main
-    main()
+    def _imp():
+        from pharokka.multiplot_entry import main
+        return main
+    _legacy_shim("pharokka_multiplotter.py", "pharokka multiplot", _imp)
 
 
 def create_custom_hmm_py() -> None:
     """create_custom_hmm.py  →  pharokka create-hmm"""
-    _fix_sys_path()
-    _warn("create_custom_hmm.py", "pharokka create-hmm")
-    from pharokka.create_custom_hmm import main
-    main()
+    def _imp():
+        from pharokka.create_custom_hmm import main
+        return main
+    _legacy_shim("create_custom_hmm.py", "pharokka create-hmm", _imp)

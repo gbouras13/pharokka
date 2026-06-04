@@ -68,19 +68,20 @@ def get_input():
 def main():
     args = get_input()
 
-    logger.add(lambda _: sys.exit(1), level="ERROR")
+    # The logger.error → sys.exit(1) sink is registered once per process
+    # by the entry-point dispatcher (cli.main or pharokka_scripts._legacy_shim).
     logger.info(f"Starting pharokka v{get_version()} - create_hmms")
 
     MSA_dir = args.indir
     HMM_dir = args.outdir
 
-    if args.force == True:
-        if os.path.isdir(HMM_dir) == True:
+    if args.force:
+        if os.path.isdir(HMM_dir):
             logger.info(
                 f"Removing output directory {HMM_dir} as -f or --force was specified."
             )
             shutil.rmtree(HMM_dir)
-        elif os.path.isfile(HMM_dir) == True:
+        elif os.path.isfile(HMM_dir):
             logger.info(
                 f"Removing output file {HMM_dir} as -f or --force was specified."
             )
@@ -90,7 +91,7 @@ def main():
                 f"--force was specified even though the output directory {HMM_dir} does not already exist. Continuing."
             )
     else:
-        if os.path.isdir(HMM_dir) == True or os.path.isfile(HMM_dir) == True:
+        if os.path.isdir(HMM_dir) or os.path.isfile(HMM_dir):
             logger.error(
                 f"The output directory {HMM_dir} already exists and force was not specified. Please specify -f or --force to overwrite it."
             )

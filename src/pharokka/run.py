@@ -60,10 +60,9 @@ warnings.simplefilter("default", BiopythonDeprecationWarning)
 
 
 def main():
-    # get the args
+    # The logger.error → sys.exit(1) sink is registered once per process
+    # by the entry-point dispatcher (cli.main or pharokka_scripts._legacy_shim).
     args = get_input()
-
-    logger.add(lambda _: sys.exit(1), level="ERROR")  # https://github.com/gbouras13/plassembler/pull/69
 
     if args.citation is True:
         logger.info("If you use Pharokka in your research, please cite:")

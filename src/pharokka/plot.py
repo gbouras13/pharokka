@@ -193,7 +193,7 @@ def create_plot(
     ####### thin out extra features #########
     ##################################
 
-    if remove_other_features_labels == False:
+    if not remove_other_features_labels:
         # trna
         pos_list_trna, labels_trna, length_list_trna = [], [], []
         for f in gff.extract_features("tRNA"):
@@ -309,7 +309,7 @@ def create_plot(
             id_list.append(id)
             continue  # to break if in the list
         else:
-            if label_hypotheticals == False:
+            if not label_hypotheticals:
                 if (
                     label == ""
                     or label.startswith("hypothetical")
@@ -379,7 +379,7 @@ def create_plot(
     ###################################################
     # set other features
     ###################################################
-    if remove_other_features_labels == False:
+    if not remove_other_features_labels:
         # add trnas
         cds_track.xticks(
             pos_list_trna,
@@ -820,7 +820,7 @@ def create_single_plot(
     ####### thin out extra features #########
     ##################################
 
-    if remove_other_features_labels == False:
+    if not remove_other_features_labels:
         # trna
         pos_list_trna, labels_trna, length_list_trna = [], [], []
         for f in trna_features:
@@ -996,7 +996,7 @@ def create_single_plot(
     ###################################################
     # set other features
     ###################################################
-    if remove_other_features_labels == False:
+    if not remove_other_features_labels:
         # add trnas
         cds_track.xticks(
             pos_list_trna,

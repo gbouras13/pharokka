@@ -123,7 +123,7 @@ def instantiate_install(db_dir):
     # check the database is installed
     logger.info(f"Checking Pharokka database installation in {db_dir}.")
     downloaded_flag = check_db_installation(db_dir)
-    if downloaded_flag == True:
+    if downloaded_flag:
         logger.info("All Pharokka Databases have already been Downloaded and Checked.")
     else:
         logger.info("Some Databases are missing.")
@@ -215,7 +215,7 @@ def untar(tarball_path: Path, output_path: Path):
 
 
 def instantiate_dir(db_dir):
-    if os.path.isdir(db_dir) == False:
+    if not os.path.isdir(db_dir):
         os.mkdir(db_dir)
 
 
@@ -224,38 +224,38 @@ def check_db_installation(db_dir):
     # PHROGS files
     for file_name in PHROG_DB_NAMES:
         path = os.path.join(db_dir, file_name)
-        if os.path.isfile(path) == False:
+        if not os.path.isfile(path):
             logger.info(f"PHROGs Database file {file_name} is missing.")
             downloaded_flag = False
             break
     # VFDB
     for file_name in VFDB_DB_NAMES:
         path = os.path.join(db_dir, file_name)
-        if os.path.isfile(path) == False:
+        if not os.path.isfile(path):
             logger.info("VFDB Databases are missing.")
             downloaded_flag = False
             break
     # CARD
     for file_name in CARD_DB_NAMES:
         path = os.path.join(db_dir, file_name)
-        if os.path.isfile(path) == False:
+        if not os.path.isfile(path):
             logger.info("CARD Databases are missing.")
             downloaded_flag = False
             break
     # annot.tsv
     path = os.path.join(db_dir, "phrog_annot_v4.tsv")
-    if os.path.isfile(path) == False:
+    if not os.path.isfile(path):
         logger.info("PHROGs Annotation File is missing.")
         downloaded_flag = False
 
     # mash files
     path = os.path.join(db_dir, VERSION_DICTIONARY[VERSION]["inphared_annot"])
-    if os.path.isfile(path) == False:
+    if not os.path.isfile(path):
         logger.info("INPHARED Mash Annotation File is missing.")
         downloaded_flag = False
 
     path = os.path.join(db_dir, VERSION_DICTIONARY[VERSION]["inphared_mash"])
-    if os.path.isfile(path) == False:
+    if not os.path.isfile(path):
         logger.info("INPHARED Mash Sketch File is missing.")
         downloaded_flag = False
 

@@ -137,7 +137,7 @@ def run_mmseqs_proteins(input_fasta, db_dir, out_dir, threads, logdir, evalue, r
 
     target_seqs = os.path.join(target_db_dir, "target_seqs")
 
-    if os.path.isdir(target_db_dir) == False:
+    if not os.path.isdir(target_db_dir):
         os.mkdir(target_db_dir)
 
     mmseqs_createdb = ExternalTool(
@@ -518,10 +518,9 @@ class Pharok_Prot:
 
 def main():
     """Entry point for `pharokka proteins` command."""
-    # get the args
+    # The logger.error → sys.exit(1) sink is registered once per process
+    # by the entry-point dispatcher (cli.main or pharokka_scripts._legacy_shim).
     args = get_input_proteins()
-
-    logger.add(lambda _: sys.exit(1), level="ERROR")  # https://github.com/gbouras13/plassembler/pull/69
 
     if args.citation is True:
         logger.info("If you use Pharokka in your research, please cite:")

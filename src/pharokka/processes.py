@@ -248,7 +248,7 @@ def run_phanotate(filepath_in, out_dir, logdir):
 def run_pyrodigal(filepath_in, out_dir, meta, coding_table, threads):
     """Gets CDS using pyrodigal."""
     prodigal_metamode = False
-    if meta == True:
+    if meta:
         prodigal_metamode = True
         logger.info("Prodigal Meta Mode Enabled")
 
@@ -635,7 +635,7 @@ def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, reverse
     input_aa_fasta = os.path.join(out_dir, amino_acid_fasta)
     target_seqs = os.path.join(target_db_dir, "target_seqs")
 
-    if os.path.isdir(target_db_dir) == False:
+    if not os.path.isdir(target_db_dir):
         os.mkdir(target_db_dir)
 
     mmseqs_createdb = ExternalTool(
