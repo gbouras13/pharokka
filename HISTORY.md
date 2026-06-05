@@ -10,6 +10,7 @@ History
 * `src/` package layout
 * Fixes a bug where tmRNA and CRISPR features were not counted for contigs with purely numeric headers (e.g. those produced by Unicycler)
 * Fixes a bug in meta mode where `top_hits_vfdb.tsv` and `top_hits_card.tsv` reported inverted coordinates (start > stop) for negative-strand CDS hits — a pandas reference side-effect that caused `locus_df` to capture biological-order coordinates before the GFF positional swap
+* Fixes a bug where the `/anticodon=(pos:X..Y,…)` qualifier in `pharokka.gff` / `pharokka.gbk` / `pharokka.tbl` could be attached to the wrong tRNA on any contig with more than one tRNA. The previous implementation matched `.sec`-file positions to GFF tRNA rows by row index; the GFF is in genomic-position order while tRNAscan-SE's `.sec` output is in tRNA-ID order, so positions were silently misaligned. Now keyed by tRNAscan ID (e.g. `MW460250_1.trna3`)
 * Cleaned up numerical precision and float handling throughout
 
 1.9.0 (2026-01-12)

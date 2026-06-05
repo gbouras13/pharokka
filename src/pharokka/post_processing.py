@@ -197,7 +197,6 @@ class Pharok:
             col_list = ["start", "stop", "strand", "contig", "score", "gene"]
 
         # Read only columns present in file
-        all_possible = ["start", "stop", "strand", "contig", "score", "partial", "gene"]
         cds_df = pl.read_csv(
             cds_file,
             separator="\t",
@@ -672,6 +671,21 @@ class Pharok:
                 (pl.col("contig") + pl.lit("_CDS_") + pl.col("count")).alias("locus_tag")
             )
 
+        # Propagate the locus_tag to prot_seq_df so that convert_gff_to_gbk
+        # can key protein translations by locus_tag rather than by row
+        # position (which silently produced wrong /translation values if the
+        # prot_seq_df rows ever diverged from GFF feature order).
+        #
+        # prot_seq_df.gene was split on first space upstream (in process_results)
+        # whereas merged_df.gene retains the full pre-split string, so we
+        # normalise merged_df's gene with the same splitn before joining.
+        self.prot_seq_df = self.prot_seq_df.with_columns(pl.col("gene").cast(pl.Utf8))
+        _locus_lookup = self.merged_df.select([
+            pl.col("gene").cast(pl.Utf8).str.splitn(" ", 2).struct.field("field_0").alias("gene"),
+            "locus_tag",
+        ])
+        self.prot_seq_df = self.prot_seq_df.join(_locus_lookup, on="gene", how="left")
+
         #########
         # Rearrange start and stop so that start is always less than stop for GFF.
         # GFF3 requires start ≤ end (purely positional); strand carries direction.
@@ -784,6 +798,15 @@ class Pharok:
                     pl.lit(f"profile:tRNAscan-SE:{self.trna_version}").alias("Method")
                 )
 
+                # Extract the tRNAscan ID (e.g. "MW460250_1.trna3") from
+                # attributes — used to key the anticodon-positions lookup
+                # below.  Raw attribute string starts with "ID=<id>;..."
+                trna_df = trna_df.with_columns(
+                    pl.col("attributes")
+                      .str.extract(r"ID=([^;]+)", 1)
+                      .alias("_trnascan_id")
+                )
+
                 # index hack if meta mode
                 if self.meta_mode:
                     subset_dfs = []
@@ -858,25 +881,24 @@ class Pharok:
                 #   else                → isotypes/note unchanged,
                 #                         codon := get_codon_from_anticodon(anticodon),
                 #                         anticodon_gb := "(pos:S..E,aa:ISO,seq:ANT)"
-                # where (S, E) is anticodon_positions[idx] if it exists, else
-                # the row's own (start, stop).
+                # where (S, E) comes from extract_anticodon_positions() if the
+                # row's tRNA ID is present, else the row's own (start, stop).
 
-                # 1) Build a positions DataFrame for left-join by row index.
+                # 1) Build a positions DataFrame keyed by the tRNAscan ID.
+                # This replaces the v1.9.1 row-position-based lookup, which
+                # silently attached anticodon positions to the wrong tRNA when
+                # the GFF and .sec files were sorted differently (common — the
+                # GFF is in genomic order; the .sec is in tRNA-ID order).
                 if anticodon_positions:
                     positions_df = pl.DataFrame({
-                        "_pos_idx":   list(range(len(anticodon_positions))),
-                        "_pos_start": [s for s, _ in anticodon_positions],
-                        "_pos_end":   [e for _, e in anticodon_positions],
+                        "_trnascan_id": list(anticodon_positions.keys()),
+                        "_pos_start":   [s for s, _ in anticodon_positions.values()],
+                        "_pos_end":     [e for _, e in anticodon_positions.values()],
                     }).with_columns([
-                        pl.col("_pos_idx").cast(pl.UInt32),
                         pl.col("_pos_start").cast(pl.Int64),
                         pl.col("_pos_end").cast(pl.Int64),
                     ])
-                    trna_df = (
-                        trna_df
-                        .with_row_index("_pos_idx")
-                        .join(positions_df, on="_pos_idx", how="left")
-                    )
+                    trna_df = trna_df.join(positions_df, on="_trnascan_id", how="left")
                 else:
                     # No .sec file / no positions parsed — fall back to start/stop.
                     trna_df = trna_df.with_columns([
@@ -938,11 +960,8 @@ class Pharok:
                     _isotypes_remapped.alias("isotypes"),
                 ])
 
-                # Drop temp columns from the positions join.
-                _drop_cols = ["_pos_start", "_pos_end"]
-                if "_pos_idx" in trna_df.columns:
-                    _drop_cols.append("_pos_idx")
-                trna_df = trna_df.drop(_drop_cols)
+                # Drop temp columns from the positions join + ID extraction.
+                trna_df = trna_df.drop(["_pos_start", "_pos_end", "_trnascan_id"])
 
                 trna_df = trna_df.with_columns([
                     (
@@ -2020,22 +2039,49 @@ def is_trna_empty(out_dir):
 
 
 def extract_anticodon_positions(out_dir):
-    """
-    Extracts anticodon positions from a tRNAscan-SE -f output file.
-    Returns a list of tuples: (anticodon_start, anticodon_end)
+    """Extract anticodon genomic positions from a tRNAscan-SE -f output file.
+
+    Returns a dict mapping each tRNAscan tRNA ID (e.g. ``"MW460250_1.trna3"``)
+    to its ``(anticodon_genomic_start, anticodon_genomic_end)`` tuple.
+
+    The ``.sec`` file format alternates header lines like::
+
+        MW460250_1.trna3 (115265-115194)\tLength: 72 bp
+        Type: Met\tAnticodon: CAT at 33-35 (115233-115231)\tScore: 61.2
+
+    Previously this function returned a positional list, which was matched
+    against ``trna_df`` rows by index in ``create_gff``.  ``trna_df`` is
+    sorted by genomic position (the GFF's order); the ``.sec`` file is
+    sorted by tRNA ID — so for any contig with more than one tRNA, the
+    anticodon ``(pos:X..Y)`` attribute in the output GFF/GBK was attached
+    to the wrong tRNA.  Keying by the tRNAscan ID fixes that misalignment.
     """
     trna_ss_path = os.path.join(out_dir, "trnascan_out.sec")
-    positions = []
+    positions: dict = {}
+    current_id = None
     with open(trna_ss_path) as f:
         for line in f:
             if line.startswith("Type:"):
+                # Body line — attach the anticodon position to the ID we
+                # parsed from the most recent header line.
+                if current_id is None:
+                    continue
                 parts = line.split("Anticodon:")
                 if len(parts) > 1:
                     after_anticodon = parts[1]
                     if "(" in after_anticodon and ")" in after_anticodon:
                         pos_str = after_anticodon.split("(")[1].split(")")[0]
                         start, end = pos_str.split("-")
-                        positions.append((int(start), int(end)))
+                        positions[current_id] = (int(start), int(end))
+                current_id = None
+            else:
+                # Header lines look like:
+                #   "MW460250_1.trna3 (115265-115194)\tLength: 72 bp"
+                # The tRNA ID is the first whitespace-delimited token and
+                # contains ".trna" (distinguishes from blank / Seq: / Str: lines).
+                token = line.split(maxsplit=1)[0] if line.strip() else ""
+                if ".trna" in token:
+                    current_id = token
     return positions
 
 

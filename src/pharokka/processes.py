@@ -702,12 +702,26 @@ def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, reverse
 def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, prot_seq_df):
     """Converts the gff to genbank.
 
-    prot_seq_df is a polars DataFrame with columns 'contig' and 'sequence'.
+    ``prot_seq_df`` is a polars DataFrame with at least the columns
+    ``contig``, ``sequence`` and ``locus_tag``.  Translations are matched to
+    CDS features by ``locus_tag`` (a stable identifier carried in the GFF
+    ``ID=`` / ``locus_tag=`` attribute), not by row position — that
+    previously silently emitted wrong ``/translation`` qualifiers whenever
+    the row order of ``prot_seq_df`` diverged from the GFF feature order.
     """
     gff_file = os.path.join(input_dir, f"{prefix}.gff")
     gbk_file = os.path.join(out_dir, f"{prefix}.gbk")
 
     prot_seq_df = prot_seq_df.with_columns(pl.col("contig").cast(pl.Utf8))
+
+    # Build a {locus_tag → sequence} dict for O(1) lookup.
+    if "locus_tag" in prot_seq_df.columns:
+        translation_lookup = dict(zip(
+            prot_seq_df["locus_tag"].to_list(),
+            prot_seq_df["sequence"].to_list(),
+        ))
+    else:
+        translation_lookup = {}
 
     with open(gbk_file, "wt") as gbk_handler:
         fasta_handler = SeqIO.to_dict(SeqIO.parse(filepath_in, "fasta"))
@@ -715,9 +729,6 @@ def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, prot_seq_df):
         for record in GFF.parse(gff_file, fasta_handler):
             record.id = str(record.id)
             sequence_length = len(record.seq)
-            subset_df = prot_seq_df.filter(pl.col("contig") == record.id)
-            subset_seqs = subset_df["sequence"].to_list()
-            i = 0
 
             record.annotations["molecule_type"] = "DNA"
             record.annotations["date"] = datetime.today()
@@ -756,8 +767,14 @@ def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, prot_seq_df):
                                 sequence_length - feature.location.end + 1
                             )
 
-                    feature.qualifiers.update({"translation": subset_seqs[i]})
-                    i += 1
+                    # Look up translation by locus_tag (stable key) rather
+                    # than by row position.  Falls back to empty string if
+                    # unmatched — better than a misaligned translation.
+                    locus_tag_vals = feature.qualifiers.get("locus_tag") or feature.qualifiers.get("ID")
+                    locus_tag = locus_tag_vals[0] if locus_tag_vals else None
+                    feature.qualifiers.update({
+                        "translation": translation_lookup.get(locus_tag, "")
+                    })
 
             SeqIO.write(record, gbk_handler, "genbank")
 
