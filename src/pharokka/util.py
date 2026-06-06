@@ -82,11 +82,18 @@ def touch_file(path):
 def rename_file(old_path, new_path):
     """
     Rename a file from old_path to new_path.
+
+    Returns after the first ``logger.error`` so that even when the loguru →
+    ``sys.exit(1)`` sink isn't installed (e.g. when this is called from a
+    library context rather than from a pharokka entry point), we don't fall
+    through to ``os.rename`` and raise a confusing ``OSError``.
     """
     if not os.path.exists(old_path):
         logger.error(f"File '{old_path}' does not exist.")
+        return
     if os.path.exists(new_path):
         logger.error(f"A file already exists at '{new_path}'.")
+        return
     os.rename(old_path, new_path)
 
 
