@@ -1,3 +1,4 @@
+import concurrent.futures
 import multiprocessing.pool
 import os
 import subprocess as sp
@@ -93,46 +94,50 @@ def split_input_fasta(filepath_in, out_dir):
     return num_fastas
 
 
+def _run_subprocess(cmd):
+    """Run a single command as a subprocess, inheriting stdout/stderr."""
+    sp.run(cmd)
+
+
+def _run_subprocess_quiet(cmd):
+    """Run a single command suppressing stdout; captures stderr silently."""
+    sp.run(cmd, stdout=sp.DEVNULL, stderr=sp.PIPE)
+
+
 def run_phanotate_fasta_meta(filepath_in, out_dir, threads, num_fastas):
-    """Runs phanotate to output fastas."""
+    """Runs phanotate (fasta output) across all split contigs in parallel.
+
+    Uses ``ThreadPoolExecutor`` instead of the old batch-and-wait loop so
+    that a free worker slot picks up the next command the moment any job
+    finishes, rather than waiting for the slowest job in each batch.
+    """
     phanotate_tmp_dir = os.path.join(out_dir, "input_split_tmp")
-    commands = []
-
-    for i in range(1, num_fastas + 1):
-        in_path = os.path.join(phanotate_tmp_dir, "input_subprocess" + str(i) + ".fasta")
-        out_path = os.path.join(phanotate_tmp_dir, "phanotate_out_tmp" + str(i) + ".fasta")
-        cmd = ["phanotate.py", in_path, "-o", out_path, "-f", "fasta"]
-        commands.append(cmd)
-
-    n = int(threads)
-    for j in range(max(int(len(commands) / n) + 1, 1)):
-        procs = [
-            sp.Popen(cmd)
-            for cmd in commands[j * n : min((j + 1) * n, len(commands))]
-        ]
-        for p in procs:
-            p.wait()
+    commands = [
+        ["phanotate.py",
+         os.path.join(phanotate_tmp_dir, f"input_subprocess{i}.fasta"),
+         "-o", os.path.join(phanotate_tmp_dir, f"phanotate_out_tmp{i}.fasta"),
+         "-f", "fasta"]
+        for i in range(1, num_fastas + 1)
+    ]
+    with concurrent.futures.ThreadPoolExecutor(max_workers=int(threads)) as ex:
+        list(ex.map(_run_subprocess, commands))
 
 
 def run_phanotate_txt_meta(filepath_in, out_dir, threads, num_fastas):
-    """Runs phanotate to output text file."""
+    """Runs phanotate (tabular output) across all split contigs in parallel.
+
+    Uses ``ThreadPoolExecutor`` — see ``run_phanotate_fasta_meta``.
+    """
     phanotate_tmp_dir = os.path.join(out_dir, "input_split_tmp")
-    commands = []
-
-    for i in range(1, num_fastas + 1):
-        in_path = os.path.join(phanotate_tmp_dir, "input_subprocess" + str(i) + ".fasta")
-        out_path = os.path.join(phanotate_tmp_dir, "phanotate_out_tmp" + str(i) + ".txt")
-        cmd = ["phanotate.py", in_path, "-o", out_path, "-f", "tabular"]
-        commands.append(cmd)
-
-    n = int(threads)
-    for j in range(max(int(len(commands) / n) + 1, 1)):
-        procs = [
-            sp.Popen(cmd)
-            for cmd in commands[j * n : min((j + 1) * n, len(commands))]
-        ]
-        for p in procs:
-            p.wait()
+    commands = [
+        ["phanotate.py",
+         os.path.join(phanotate_tmp_dir, f"input_subprocess{i}.fasta"),
+         "-o", os.path.join(phanotate_tmp_dir, f"phanotate_out_tmp{i}.txt"),
+         "-f", "tabular"]
+        for i in range(1, num_fastas + 1)
+    ]
+    with concurrent.futures.ThreadPoolExecutor(max_workers=int(threads)) as ex:
+        list(ex.map(_run_subprocess, commands))
 
 
 def concat_phanotate_meta(out_dir, num_fastas):
@@ -177,14 +182,8 @@ def run_trnascan_meta(filepath_in, out_dir, threads, num_fastas, trna_scan_model
         cmd = ["tRNAscan-SE", in_path, "--thread", "1", f"-{model}", "-D", "-Q", "-j", filepath_out, "-f", sec_out]
         commands.append(cmd)
 
-    n = int(threads)
-    for j in range(max(int(len(commands) / n) + 1, 1)):
-        procs = [
-            sp.Popen(cmd, stderr=sp.PIPE, stdout=sp.DEVNULL)
-            for cmd in commands[j * n : min((j + 1) * n, len(commands))]
-        ]
-        for p in procs:
-            p.wait()
+    with concurrent.futures.ThreadPoolExecutor(max_workers=int(threads)) as ex:
+        list(ex.map(_run_subprocess_quiet, commands))
 
 
 def concat_trnascan_meta(out_dir, num_fastas):

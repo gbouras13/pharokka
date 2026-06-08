@@ -9,6 +9,9 @@ __pycache__/
 # claude
 .claude
 
+# local tracking docs (not for commit)
+docs/refactor_improvements.md
+
 # test data
 tests/test_data/database/*
 tests/test_data/logs/*
