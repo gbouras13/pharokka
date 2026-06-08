@@ -45,7 +45,18 @@ def _fix_sys_path() -> None:
     (which is unreliable on HPC systems where argv[0] may be a relative
     path, a symlink, or a wrapper script), we scan every entry in sys.path
     and drop any directory that contains a ``pharokka.py`` file.
+
+    Short-circuits immediately if ``sys.path[0]`` doesn't contain
+    ``pharokka.py`` — the common case when called from the main
+    ``pharokka`` entry point, which has no such file in its script
+    directory.
     """
+    # Fast path: nothing to do if no entry on sys.path shadows pharokka.
+    if not any(
+        p and os.path.isfile(os.path.join(p, "pharokka.py"))
+        for p in sys.path
+    ):
+        return
     sys.path = [
         p for p in sys.path
         if not (p and os.path.isfile(os.path.join(p, "pharokka.py")))
