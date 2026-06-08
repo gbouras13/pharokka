@@ -2174,54 +2174,44 @@ def process_vfdb_results(out_dir, merged_df, proteins_flag=False, reverse_mmseqs
             vfdb_file, separator="\t", has_header=False, new_columns=col_list, infer_schema=False
         )
 
-    # Issue #410 - problematic extra set of square brackets
+    # Issue #410 — strip problematic square brackets from certain VFDB hit
+    # strings that break GenBank parsing.  All 8 substitutions are chained
+    # on the same expression so polars processes them in a single pass over
+    # the column rather than materialising 8 separate DataFrames.
     vfdb_df = vfdb_df.with_columns(
-        pl.col("vfdb_hit").str.replace_all(
-            r"L-allo-isoleucine:holo-\[CmaA peptidyl-carrier protein\]",
-            "L-allo-isoleucine:holo-CmaA peptidyl-carrier protein",
-        )
-    )
-    vfdb_df = vfdb_df.with_columns(
-        pl.col("vfdb_hit").str.replace_all(
-            r"UDP-3-O-\[3-hydroxymyristoyl\]",
-            "UDP-3-O-3-hydroxymyristoyl",
-        )
-    )
-    vfdb_df = vfdb_df.with_columns(
-        pl.col("vfdb_hit").str.replace_all(
-            r"N-\[\(2S\)-2-amino-2-carboxyethyl\]",
-            "N-(2S)-2-amino-2-carboxyethyl",
-        )
-    )
-    vfdb_df = vfdb_df.with_columns(
-        pl.col("vfdb_hit").str.replace_all(
-            r"3-\(L-alanin-3-ylcarbamoyl\)-2-\[\(2- aminoethylcarbamoyl\)methyl\]",
-            "3-(L-alanin-3-ylcarbamoyl)-2-(2- aminoethylcarbamoyl)methyl",
-        )
-    )
-    vfdb_df = vfdb_df.with_columns(
-        pl.col("vfdb_hit").str.replace_all(
-            r"beta-ketoacyl-\[acyl-carrier-protein\]",
-            "UDP-3-O-3-hydroxymyristoyl",
-        )
-    )
-    vfdb_df = vfdb_df.with_columns(
-        pl.col("vfdb_hit").str.replace_all(
-            r"biotin--\[acetyl-CoA-carboxylase\] ligase",
-            "biotin--acetyl-CoA-carboxylase ligase",
-        )
-    )
-    vfdb_df = vfdb_df.with_columns(
-        pl.col("vfdb_hit").str.replace_all(
-            r"DP-3-O-\[3-hydroxymyristoyl\]",
-            "DP-3-O-[3-hydroxymyristoyl]",
-        )
-    )
-    vfdb_df = vfdb_df.with_columns(
-        pl.col("vfdb_hit").str.replace_all(
-            r"biotin--\[acetyl-CoA-carboxylase\]",
-            "biotin--acetyl-CoA-carboxylase",
-        )
+        pl.col("vfdb_hit")
+          .str.replace_all(
+              r"L-allo-isoleucine:holo-\[CmaA peptidyl-carrier protein\]",
+              "L-allo-isoleucine:holo-CmaA peptidyl-carrier protein",
+          )
+          .str.replace_all(
+              r"UDP-3-O-\[3-hydroxymyristoyl\]",
+              "UDP-3-O-3-hydroxymyristoyl",
+          )
+          .str.replace_all(
+              r"N-\[\(2S\)-2-amino-2-carboxyethyl\]",
+              "N-(2S)-2-amino-2-carboxyethyl",
+          )
+          .str.replace_all(
+              r"3-\(L-alanin-3-ylcarbamoyl\)-2-\[\(2- aminoethylcarbamoyl\)methyl\]",
+              "3-(L-alanin-3-ylcarbamoyl)-2-(2- aminoethylcarbamoyl)methyl",
+          )
+          .str.replace_all(
+              r"beta-ketoacyl-\[acyl-carrier-protein\]",
+              "UDP-3-O-3-hydroxymyristoyl",
+          )
+          .str.replace_all(
+              r"biotin--\[acetyl-CoA-carboxylase\] ligase",
+              "biotin--acetyl-CoA-carboxylase ligase",
+          )
+          .str.replace_all(
+              r"DP-3-O-\[3-hydroxymyristoyl\]",
+              "DP-3-O-[3-hydroxymyristoyl]",
+          )
+          .str.replace_all(
+              r"biotin--\[acetyl-CoA-carboxylase\]",
+              "biotin--acetyl-CoA-carboxylase",
+          )
     )
 
     # Sort by eVal; normalise eVal and seqIdentity to canonical float64 strings.
