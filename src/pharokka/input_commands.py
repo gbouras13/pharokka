@@ -246,33 +246,55 @@ def instantiate_dirs(output_dir, meta, force):
 
 
 def validate_fasta(filename):
+    """Validate that ``filename`` is a readable, non-empty FASTA file with no
+    duplicate or forbidden headers.
+
+    Previously this function made two full passes over the file — one for
+    format validation and one inside ``check_duplicate_headers``.  Both
+    passes are now merged into a single ``SeqIO.parse`` iteration.
+    """
     if not os.path.isfile(filename):
         logger.error(
             f"Error: Input file {filename} does not exist. Please check your input."
         )
-    else:
-        try:
-            with open(filename, "r") as handle:
-                fasta = SeqIO.parse(handle, "fasta")
-                logger.info(f"Checking input {filename}.")
-                if any(fasta):
-                    logger.info(f"Input {filename} is in FASTA format.")
-                else:
-                    logger.error("Error: Input file is not in the FASTA format.")
-        except ValueError as e:
-            # Newer Biopython (>=1.83) raises ValueError for malformed FASTA
-            # (e.g. files with comment lines or no valid sequences) rather than
-            # returning an empty iterator.
-            logger.error(f"Error: Input file {filename} is not valid FASTA: {e}")
+        return
 
-    logger.info(f"Checking input {filename} for duplicate FASTA headers.")
-    check_duplicate_headers(filename)
+    logger.info(f"Checking input {filename}.")
+    try:
+        with open(filename, "r") as handle:
+            header_set = set()
+            found_any = False
+            for record in SeqIO.parse(handle, "fasta"):
+                found_any = True
+                header = record.description
+                if header in header_set:
+                    logger.error(f"Duplicate contig header found: {header}")
+                if "#" in header:
+                    logger.error(
+                        f"# character found in contig: {header} - please remove all '#' from your contig headers"
+                    )
+                else:
+                    header_set.add(header)
+            if not found_any:
+                logger.error("Error: Input file is not in the FASTA format.")
+                return
+    except ValueError as e:
+        # Newer Biopython (>=1.83) raises ValueError for malformed FASTA
+        # (e.g. files with comment lines or no valid sequences) rather than
+        # returning an empty iterator.
+        logger.error(f"Error: Input file {filename} is not valid FASTA: {e}")
+        return
+
+    logger.info(f"Input {filename} is in FASTA format.")
     logger.info(f"All headers in {filename} are unique.")
 
 
 def check_duplicate_headers(fasta_file):
-    """
-    checks if there are duplicated in the FASTA header
+    """Check for duplicate or forbidden headers.
+
+    .. deprecated::
+        ``validate_fasta`` now performs this check in the same pass.
+        This function is retained only for any external callers.
     """
     header_set = set()
 
