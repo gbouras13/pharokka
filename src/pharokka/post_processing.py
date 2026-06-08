@@ -50,13 +50,13 @@ class Pharok:
         mmseqs_flag: bool = True,
         hmm_flag: bool = True,
         custom_hmm_flag: bool = False,
-        phanotate_version: str = "1.5.0",
-        pyrodigal_version: str = "3.0.0",
-        pyrodigal_gv_version: str = "0.1.0",
-        pyrodigal_rv_version: str = "0.1.0",
-        trna_version: str = "2.0.12",
-        aragorn_version: str = "1.2.41",
-        minced_version: str = "0.4.2",
+        phanotate_version: str = None,
+        pyrodigal_version: str = None,
+        pyrodigal_gv_version: str = None,
+        pyrodigal_rv_version: str = None,
+        trna_version: str = None,
+        aragorn_version: str = None,
+        minced_version: str = None,
         skip_extra_annotations: bool = False,
         reverse_mmseqs2: bool = False,
     ) -> None:
@@ -105,18 +105,21 @@ class Pharok:
             whether HMM was run
         custom_hmm_flag: bool
             whether a custom db of HMMs was run
-        phanotate_version: str
-            phanotate_version from check_dependencies()
-        prodigal_version: str
-            prodigal_version from check_dependencies()
-        pyrodigal_gv_version: str
-            pyrodigal_gv_version from check dependencies()
-        trna_version: str
+        phanotate_version: str or None
+            phanotate_version from check_dependencies(); must be set before
+            calling process_results() / create_gff()
+        pyrodigal_version: str or None
+            pyrodigal_version from check_dependencies()
+        pyrodigal_gv_version: str or None
+            pyrodigal_gv_version from check_dependencies()
+        pyrodigal_rv_version: str or None
+            pyrodigal_rv_version from check_dependencies()
+        trna_version: str or None
             trnascan_version from check_dependencies()
-        aragorn_version: str
+        aragorn_version: str or None
             aragorn_version from check_dependencies()
-        minced_version: str
-            minced_version from check dependencies()
+        minced_version: str or None
+            minced_version from check_dependencies()
         prot_seq_df: pl.DataFrame,
             dataframe with protein sequence information for each gene
         skip_extra_annotations: bool
