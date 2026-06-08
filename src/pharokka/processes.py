@@ -104,40 +104,37 @@ def _run_subprocess_quiet(cmd):
     sp.run(cmd, stdout=sp.DEVNULL, stderr=sp.PIPE)
 
 
-def run_phanotate_fasta_meta(filepath_in, out_dir, threads, num_fastas):
-    """Runs phanotate (fasta output) across all split contigs in parallel.
+def _run_phanotate_meta(out_dir, threads, num_fastas, fmt):
+    """Run phanotate across all split contigs in parallel.
 
-    Uses ``ThreadPoolExecutor`` instead of the old batch-and-wait loop so
-    that a free worker slot picks up the next command the moment any job
-    finishes, rather than waiting for the slowest job in each batch.
+    ``fmt`` is the phanotate ``-f`` argument: ``"fasta"`` or ``"tabular"``.
+    Output filenames use ``.fasta`` for fasta format and ``.txt`` for tabular.
+
+    Uses ``ThreadPoolExecutor`` so a free worker slot picks up the next
+    command as soon as any job finishes, rather than waiting for the slowest
+    job in each batch.
     """
+    ext = "fasta" if fmt == "fasta" else "txt"
     phanotate_tmp_dir = os.path.join(out_dir, "input_split_tmp")
     commands = [
         ["phanotate.py",
          os.path.join(phanotate_tmp_dir, f"input_subprocess{i}.fasta"),
-         "-o", os.path.join(phanotate_tmp_dir, f"phanotate_out_tmp{i}.fasta"),
-         "-f", "fasta"]
+         "-o", os.path.join(phanotate_tmp_dir, f"phanotate_out_tmp{i}.{ext}"),
+         "-f", fmt]
         for i in range(1, num_fastas + 1)
     ]
     with concurrent.futures.ThreadPoolExecutor(max_workers=int(threads)) as ex:
         list(ex.map(_run_subprocess, commands))
+
+
+def run_phanotate_fasta_meta(filepath_in, out_dir, threads, num_fastas):
+    """Runs phanotate (fasta output) across all split contigs in parallel."""
+    _run_phanotate_meta(out_dir, threads, num_fastas, fmt="fasta")
 
 
 def run_phanotate_txt_meta(filepath_in, out_dir, threads, num_fastas):
-    """Runs phanotate (tabular output) across all split contigs in parallel.
-
-    Uses ``ThreadPoolExecutor`` — see ``run_phanotate_fasta_meta``.
-    """
-    phanotate_tmp_dir = os.path.join(out_dir, "input_split_tmp")
-    commands = [
-        ["phanotate.py",
-         os.path.join(phanotate_tmp_dir, f"input_subprocess{i}.fasta"),
-         "-o", os.path.join(phanotate_tmp_dir, f"phanotate_out_tmp{i}.txt"),
-         "-f", "tabular"]
-        for i in range(1, num_fastas + 1)
-    ]
-    with concurrent.futures.ThreadPoolExecutor(max_workers=int(threads)) as ex:
-        list(ex.map(_run_subprocess, commands))
+    """Runs phanotate (tabular output) across all split contigs in parallel."""
+    _run_phanotate_meta(out_dir, threads, num_fastas, fmt="tabular")
 
 
 def concat_phanotate_meta(out_dir, num_fastas):
