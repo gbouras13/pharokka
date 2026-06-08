@@ -2,12 +2,10 @@ import os
 import shutil
 import sys
 
-import click
 import polars as pl
 from Bio import SeqIO
 from loguru import logger
 
-from .citation import __citation__
 from .version import __version__
 
 
@@ -27,17 +25,6 @@ def register_error_sink() -> None:
     in one place keeps the sink set clean.
     """
     logger.add(lambda _: sys.exit(1), level="ERROR")
-
-
-def echo_click(msg, log=None):
-    click.echo(msg, nl=False, err=True)
-    if log:
-        with open(log, "a") as lo:
-            lo.write(msg)
-
-
-def print_citation():
-    echo_click(__citation__)
 
 
 log_fmt = (
