@@ -44,9 +44,12 @@ _NUMERIC_FIELD_RE = re.compile(
     r'^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$'
 )
 
+# Matches a field that is a pure integer (no decimal point, no exponent).
+_INTEGER_FIELD_RE = re.compile(r'^[+-]?\d+$')
 
-def _numeric_equal(a: str, b: str) -> bool:
-    """Return True if a and b represent the same number within tolerance.
+
+def _numeric_equal(a: str, b: str, rel_tol: float = 1e-9) -> bool:
+    """Return True if a and b represent the same number within ``rel_tol``.
 
     Handles:
     - identical strings            → True (fast path)
@@ -54,25 +57,32 @@ def _numeric_equal(a: str, b: str) -> bool:
     - exponent padding: "1.741e-7" == "1.741e-07"
     - float precision: "3.473e-22" == "3.4729999999999998e-22"
       (same IEEE 754 double, different string repr from different parsers)
+
+    Two *distinct* pure integers never compare equal regardless of ``rel_tol``:
+    a loose tolerance is only ever applied to floating-point fields, so it can
+    never silently merge two integer identifiers / coordinates / counts (e.g.
+    phrog 15361 vs 15362, or start 1636 vs 1637).
     """
     if a == b:
         return True
     if _NUMERIC_FIELD_RE.match(a) and _NUMERIC_FIELD_RE.match(b):
+        # Distinct integers (we already know a != b) must not be merged by a
+        # relative tolerance — those columns are IDs / coordinates / counts.
+        if _INTEGER_FIELD_RE.match(a) and _INTEGER_FIELD_RE.match(b):
+            return False
         try:
             fa, fb = float(a), float(b)
             if math.isnan(fa) and math.isnan(fb):
                 return True
             if math.isinf(fa) or math.isinf(fb):
                 return fa == fb
-            # Use a tight relative tolerance: these should be the *same* number
-            # just serialised differently, not genuinely different values.
-            return math.isclose(fa, fb, rel_tol=1e-9, abs_tol=1e-300)
+            return math.isclose(fa, fb, rel_tol=rel_tol, abs_tol=1e-300)
         except (ValueError, OverflowError):
             pass
     return False
 
 
-def _tsv_lines_match(a: str, b: str) -> bool:
+def _tsv_lines_match(a: str, b: str, rel_tol: float = 1e-9) -> bool:
     """Compare two tab-separated lines with per-field float tolerance."""
     if a == b:
         return True
@@ -80,7 +90,7 @@ def _tsv_lines_match(a: str, b: str) -> bool:
     fields_b = b.split('\t')
     if len(fields_a) != len(fields_b):
         return False
-    return all(_numeric_equal(fa, fb) for fa, fb in zip(fields_a, fields_b))
+    return all(_numeric_equal(fa, fb, rel_tol) for fa, fb in zip(fields_a, fields_b))
 
 
 # Matches a contig name that is purely an integer (unicycler-style numeric headers).
@@ -221,10 +231,19 @@ def _diff_file(fn: Path, fr: Path, rel: Path) -> tuple[list[str], list[str]]:
             diffs.append(f"  DIFFER (sorted) : {rel}")
             diffs.append(f"    line count: new={len(sn)} ref={len(sr)}")
             return diffs, notices
+        # pharokka_cds_final_merged_output.tsv carries pyhmmer bitscore / E-value
+        # columns computed in float math that differ slightly between platforms
+        # (e.g. golden files generated on macOS vs CI on Linux): the bitscore
+        # varies by ~1e-3 absolute and the E-value — roughly exp(-bitscore) —
+        # by up to ~5e-4 relative.  Compare its FLOAT fields with a loose
+        # relative tolerance so this platform noise is ignored.  Integer fields
+        # (coordinates, phrog IDs, counts) are still matched exactly by
+        # _numeric_equal regardless of rel_tol, so real regressions are caught.
+        rel_tol = 5e-3 if rel.name == "pharokka_cds_final_merged_output.tsv" else 1e-9
         mismatches = [
             (i, a, b)
             for i, (a, b) in enumerate(zip(sn, sr))
-            if not _tsv_lines_match(a, b)
+            if not _tsv_lines_match(a, b, rel_tol)
         ]
         if mismatches:
             # For the mash top-hits file, filter out non-deterministic tie-breaks.
