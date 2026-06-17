@@ -1,0 +1,7 @@
+##gff-version 3
+##gff-version 3
+##gff-version 3
+##gff-version 3
+SR-VP_4-6_scaffold_141_1259094	minced:0.4.2	repeat_region	9670	10000	5	.	.	ID=CRISPR1;rpt_type=direct;rpt_family=CRISPR;rpt_unit_seq=CGTCTCGACTAATCGAGCAATCGTTTGAGATCTCTCC
+SR-VP_4-6_scaffold_141_1259094	minced:0.4.2	repeat_region	10008	10193	3	.	.	ID=CRISPR2;rpt_type=direct;rpt_family=CRISPR;rpt_unit_seq=GTCTCGACTAATCGAGCAATCGTTTGAGATCTCTCC
+##gff-version 3

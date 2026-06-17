@@ -66,6 +66,14 @@ requires = ["setuptools>=67.7.2", "wheel"]
 build-backend = "setuptools.build_meta"
 
 # ---------------------------------------------------------------------------
+# Pytest configuration
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+markers = [
+    "golden: golden-output regression tests — run pharokka end-to-end and diff key output files against committed reference outputs (deselect with -m 'not golden').",
+]
+
+# ---------------------------------------------------------------------------
 # Coverage configuration
 # ---------------------------------------------------------------------------
 # parallel = true: each subprocess writes its own .coverage.* file; pytest-cov

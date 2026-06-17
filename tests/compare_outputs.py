@@ -189,6 +189,138 @@ def filter_lines(path: Path) -> list[str]:
     return filtered
 
 
+def should_skip(rel: Path) -> bool:
+    """True if a relative path should be ignored (logs, .log files, etc.)."""
+    return (
+        rel.suffix in SKIP_EXTENSIONS
+        or rel.name in SKIP_FILENAMES
+        or bool(SKIP_DIRS.intersection(rel.parts))
+    )
+
+
+def _diff_file(fn: Path, fr: Path, rel: Path) -> tuple[list[str], list[str]]:
+    """Compare a single file present in both trees.
+
+    ``fn`` is the "new"/produced file, ``fr`` the "ref"/golden file.  Returns
+    (diffs, notices) using the same timestamp/float/tie-break-tolerant rules
+    as the directory walk.
+    """
+    diffs: list[str] = []
+    notices: list[str] = []
+
+    ln = filter_lines(fn)
+    lr = filter_lines(fr)
+
+    # For TSV/TXT files where row order may differ, compare sorted with
+    # per-field float tolerance so formatting differences (e.g. "82" vs "82.0",
+    # "3.473e-22" vs "3.4729999999999998e-22") do not count as mismatches.
+    if rel.suffix in {".tsv", ".txt"}:
+        sn = sorted(ln)
+        sr = sorted(lr)
+        if len(sn) != len(sr):
+            diffs.append(f"  DIFFER (sorted) : {rel}")
+            diffs.append(f"    line count: new={len(sn)} ref={len(sr)}")
+            return diffs, notices
+        mismatches = [
+            (i, a, b)
+            for i, (a, b) in enumerate(zip(sn, sr))
+            if not _tsv_lines_match(a, b)
+        ]
+        if mismatches:
+            # For the mash top-hits file, filter out non-deterministic tie-breaks.
+            # mash dist output order is non-deterministic when multiple database
+            # entries share the same minimum distance (e.g. distance=0.0, 1000/1000
+            # hashes).  The chosen Accession may differ between runs even though
+            # both are valid.
+            is_mash_file = rel.name == "pharokka_top_hits_mash_inphared.tsv"
+            if is_mash_file:
+                real_mismatches = [
+                    (i, a, b) for (i, a, b) in mismatches
+                    if not _mash_tiebreak(a, b)
+                ]
+                tiebreak_count = len(mismatches) - len(real_mismatches)
+                if tiebreak_count > 0:
+                    notices.append(
+                        f"  MASH TIE-BREAK SKIP : {rel} "
+                        f"({tiebreak_count} row(s) differ only in tied-distance Accession — "
+                        f"mash output order is non-deterministic for equal distances)"
+                    )
+                if not real_mismatches:
+                    # All differences were non-deterministic tie-breaks → no real diff
+                    return diffs, notices
+                # Mix: only report real differences
+                mismatches = real_mismatches
+
+            # For pharokka_cds_functions.tsv, demote the known v1.9.1 pandas
+            # int/str contig-name bug (purely-numeric contig headers) to a notice.
+            is_cds_functions_file = rel.name == "pharokka_cds_functions.tsv"
+            if is_cds_functions_file:
+                bug_count, non_bug_count = _cds_functions_v191_intcontig_bugs(ln, lr)
+                if bug_count > 0:
+                    notices.append(
+                        f"  V1.9.1 INT-CONTIG BUG SKIP : {rel} "
+                        f"({bug_count} CRISPRs/tmRNAs row(s) differ because pharokka v1.9.1 "
+                        f"fails to count features on purely-numeric contig names — pandas "
+                        f"reads the GFF contig column as int64 vs str in the loop)"
+                    )
+                if non_bug_count == 0:
+                    # All differences are the known v1.9.1 bug → no real diff
+                    return diffs, notices
+                # Some real mismatches remain; fall through to report them
+
+            diffs.append(f"  DIFFER (sorted) : {rel}")
+            for i, a, b in mismatches[:11]:
+                diffs.append(f"    new[{i}]: {a[:120]}")
+                diffs.append(f"    ref[{i}]: {b[:120]}")
+            if len(mismatches) > 11:
+                diffs.append("    ... (truncated)")
+    else:
+        if ln != lr:
+            diffs.append(f"  DIFFER : {rel}")
+            for i, (a, b) in enumerate(zip(ln, lr)):
+                if a != b:
+                    diffs.append(f"    new[{i}]: {a[:120]}")
+                    diffs.append(f"    ref[{i}]: {b[:120]}")
+                    if i > 10:
+                        diffs.append("    ... (truncated)")
+                        break
+            if len(ln) != len(lr):
+                diffs.append(f"    line count: new={len(ln)} ref={len(lr)}")
+
+    return diffs, notices
+
+
+def compare_against_golden(produced_dir: Path, golden_dir: Path) -> tuple[list[str], list[str]]:
+    """Golden-file comparison.
+
+    Every file committed under ``golden_dir`` must have a matching file under
+    ``produced_dir`` (modulo the timestamp/float/tie-break tolerances above).
+    Extra files in ``produced_dir`` are ignored — this is the standard golden
+    pattern, and lets a maintainer narrow what is checked simply by removing a
+    golden file.  A golden file missing from the produced output is a failure.
+
+    Returns (diffs, notices); empty diffs == match.
+    """
+    diffs: list[str] = []
+    notices: list[str] = []
+
+    golden_files = {
+        f.relative_to(golden_dir) for f in golden_dir.rglob("*") if f.is_file()
+    }
+    for rel in sorted(golden_files):
+        if should_skip(rel):
+            continue
+        produced = produced_dir / rel
+        if not produced.is_file():
+            diffs.append(f"  MISSING IN OUTPUT : {rel}")
+            continue
+        d, n = _diff_file(produced, golden_dir / rel, rel)
+        diffs.extend(d)
+        notices.extend(n)
+
+    return diffs, notices
+
+
 def compare_dirs(dir_new: Path, dir_ref: Path, prefix: str = "") -> tuple[list[str], list[str]]:
     """Recursively compare two directories.
 
@@ -205,13 +337,6 @@ def compare_dirs(dir_new: Path, dir_ref: Path, prefix: str = "") -> tuple[list[s
     only_ref = ref_files - new_files
     common   = new_files & ref_files
 
-    def should_skip(rel: Path) -> bool:
-        return (
-            rel.suffix in SKIP_EXTENSIONS
-            or rel.name in SKIP_FILENAMES
-            or bool(SKIP_DIRS.intersection(rel.parts))
-        )
-
     for f in sorted(only_new):
         if should_skip(f):
             continue
@@ -222,94 +347,12 @@ def compare_dirs(dir_new: Path, dir_ref: Path, prefix: str = "") -> tuple[list[s
             continue
         diffs.append(f"  ONLY IN REF : {f}")
 
-
     for rel in sorted(common):
         if should_skip(rel):
             continue
-
-        fn = dir_new / rel
-        fr = dir_ref / rel
-
-        ln = filter_lines(fn)
-        lr = filter_lines(fr)
-
-        # For TSV/TXT files where row order may differ, compare sorted with
-        # per-field float tolerance so formatting differences (e.g. "82" vs "82.0",
-        # "3.473e-22" vs "3.4729999999999998e-22") do not count as mismatches.
-        if rel.suffix in {".tsv", ".txt"}:
-            sn = sorted(ln)
-            sr = sorted(lr)
-            if len(sn) != len(sr):
-                diffs.append(f"  DIFFER (sorted) : {rel}")
-                diffs.append(f"    line count: new={len(sn)} ref={len(sr)}")
-                continue
-            mismatches = [
-                (i, a, b)
-                for i, (a, b) in enumerate(zip(sn, sr))
-                if not _tsv_lines_match(a, b)
-            ]
-            if mismatches:
-                # For the mash top-hits file, filter out non-deterministic tie-breaks.
-                # mash dist output order is non-deterministic when multiple database entries
-                # share the same minimum distance (e.g. distance=0.0, 1000/1000 hashes).
-                # The chosen Accession may differ between runs even though both are valid.
-                is_mash_file = rel.name == "pharokka_top_hits_mash_inphared.tsv"
-                if is_mash_file:
-                    real_mismatches = [
-                        (i, a, b) for (i, a, b) in mismatches
-                        if not _mash_tiebreak(a, b)
-                    ]
-                    tiebreak_count = len(mismatches) - len(real_mismatches)
-                    if tiebreak_count > 0:
-                        notices.append(
-                            f"  MASH TIE-BREAK SKIP : {rel} "
-                            f"({tiebreak_count} row(s) differ only in tied-distance Accession — "
-                            f"mash output order is non-deterministic for equal distances)"
-                        )
-                    if not real_mismatches:
-                        # All differences were non-deterministic tie-breaks → no real diff
-                        continue
-                    # Mix: only report real differences
-                    mismatches = real_mismatches
-
-                # For pharokka_cds_functions.tsv, check for the v1.9.1 pandas int/str
-                # contig-name bug: when contig names are purely numeric (unicycler integer
-                # headers), pandas infers the GFF contig column as int64 but the loop
-                # variable is str, so CRISPRs/tmRNAs are counted as 0 in the reference
-                # even though the raw GFF contains the annotations.  Demote to notices.
-                is_cds_functions_file = rel.name == "pharokka_cds_functions.tsv"
-                if is_cds_functions_file:
-                    bug_count, non_bug_count = _cds_functions_v191_intcontig_bugs(ln, lr)
-                    if bug_count > 0:
-                        notices.append(
-                            f"  V1.9.1 INT-CONTIG BUG SKIP : {rel} "
-                            f"({bug_count} CRISPRs/tmRNAs row(s) differ because pharokka v1.9.1 "
-                            f"fails to count features on purely-numeric contig names — pandas "
-                            f"reads the GFF contig column as int64 vs str in the loop)"
-                        )
-                    if non_bug_count == 0:
-                        # All differences are the known v1.9.1 bug → no real diff
-                        continue
-                    # Some real mismatches remain; fall through to report them
-
-                diffs.append(f"  DIFFER (sorted) : {rel}")
-                for i, a, b in mismatches[:11]:
-                    diffs.append(f"    new[{i}]: {a[:120]}")
-                    diffs.append(f"    ref[{i}]: {b[:120]}")
-                if len(mismatches) > 11:
-                    diffs.append("    ... (truncated)")
-        else:
-            if ln != lr:
-                diffs.append(f"  DIFFER : {rel}")
-                for i, (a, b) in enumerate(zip(ln, lr)):
-                    if a != b:
-                        diffs.append(f"    new[{i}]: {a[:120]}")
-                        diffs.append(f"    ref[{i}]: {b[:120]}")
-                        if i > 10:
-                            diffs.append("    ... (truncated)")
-                            break
-                if len(ln) != len(lr):
-                    diffs.append(f"    line count: new={len(ln)} ref={len(lr)}")
+        d, n = _diff_file(dir_new / rel, dir_ref / rel, rel)
+        diffs.extend(d)
+        notices.extend(n)
 
     return diffs, notices
 

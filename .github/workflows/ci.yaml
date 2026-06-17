@@ -70,9 +70,23 @@ jobs:
         #
         # COVERAGE_PROCESS_START tells coverage.process_startup() (called by
         # sitecustomize.py in each subprocess) which config file to use.
+        #
+        # Golden-output regression tests (test_golden.py, marked `golden`) run
+        # 6 extra full pharokka pipelines and diff key outputs against committed
+        # reference files.  Output is reproducible (the database is version
+        # pinned), but they only need to run on ONE matrix cell to catch
+        # regressions — running them on all four would quadruple the heavy work
+        # for no extra signal.  So they run only on ubuntu-latest + Python 3.13
+        # (the reference platform the golden files were generated against) and
+        # are deselected elsewhere with -m "not golden".
         env:
           COVERAGE_PROCESS_START: pyproject.toml
-        run: python -m pytest --cov=src/pharokka --cov-report=xml
+        run: |
+          if [[ "${{ matrix.os }}" == "ubuntu-latest" && "${{ matrix.python-version }}" == "3.13" ]]; then
+            python -m pytest --cov=src/pharokka --cov-report=xml
+          else
+            python -m pytest -m "not golden" --cov=src/pharokka --cov-report=xml
+          fi
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3

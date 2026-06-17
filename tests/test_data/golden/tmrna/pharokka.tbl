@@ -1,0 +1,566 @@
+>Feature NC_051700.1
+3	125	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+109	564	CDS
+			product	minor tail protein
+			function	tail
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+572	2209	CDS
+			product	terminase large subunit
+			function	head and packaging
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+2300	3610	CDS
+			product	portal protein
+			function	head and packaging
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+3597	4352	CDS
+			product	head maturation protease
+			function	head and packaging
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+4379	5029	CDS
+			product	head scaffolding protein
+			function	head and packaging
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+5048	5869	CDS
+			product	major head protein
+			function	head and packaging
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+5878	6447	CDS
+			product	head-tail adaptor Ad1
+			function	connector
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+6444	6773	CDS
+			product	head-tail adaptor
+			function	connector
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+6882	7106	CDS
+			product	head-tail connector protein
+			function	connector
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+7096	7500	CDS
+			product	head-tail adaptor
+			function	connector
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+7501	7596	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+7610	8419	CDS
+			product	major tail protein
+			function	tail
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+8423	8533	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+8533	9084	CDS
+			product	tail assembly chaperone
+			function	tail
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+9035	9469	CDS
+			product	tail assembly chaperone
+			function	tail
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+9487	10026	CDS
+			product	HNH endonuclease
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+10026	13553	CDS
+			product	tail length tape measure protein
+			function	tail
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+13554	15263	CDS
+			product	minor tail protein
+			function	tail
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+15377	15547	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+15504	17057	CDS
+			product	minor tail protein
+			function	tail
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+17098	17943	CDS
+			product	minor tail protein
+			function	tail
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+17940	20477	CDS
+			product	minor tail protein
+			function	tail
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+20474	22363	CDS
+			product	minor tail protein with lysin activity
+			function	tail
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+22360	23523	CDS
+			product	minor tail protein
+			function	tail
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+23537	23878	CDS
+			product	head protein
+			function	head and packaging
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+23946	24155	CDS
+			product	minor tail protein
+			function	tail
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+24169	24807	CDS
+			product	minor tail protein
+			function	tail
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+24804	25628	CDS
+			product	minor tail protein
+			function	tail
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+25708	25836	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+25811	25903	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+25979	26263	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+26270	26416	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+26413	26565	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+26617	28140	CDS
+			product	endolysin
+			function	lysis
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+28140	29141	CDS
+			product	endolysin
+			function	lysis
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+29157	29390	CDS
+			product	holin
+			function	lysis
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+29387	29761	CDS
+			product	minor tail protein
+			function	tail
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+29786	30019	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+30006	30827	CDS
+			product	DNA polymerase exonuclease subunit
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+30843	31133	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+31126	31218	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+31265	31426	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+31444	31980	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+32217	33518	CDS
+			product	integrase
+			function	integration and excision
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+34051	33596	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+34222	34079	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+35054	34314	CDS
+			product	transcriptional repressor
+			function	transcription regulation
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+35382	35116	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+35346	35636	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+35723	35920	CDS
+			product	excisionase and transcriptional regulator
+			function	integration and excision
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+35964	36347	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+36344	36532	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+36529	36789	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+36890	37027	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+37024	37638	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+37713	37991	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+37988	38335	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+38335	38829	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+38874	39311	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+39308	39586	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+39583	39948	CDS
+			product	DNA binding protein
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+39948	40103	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+40100	40522	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+40519	40761	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+40758	41735	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+41732	42340	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+42337	42693	CDS
+			product	HNH endonuclease
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+42690	44204	CDS
+			product	DNA methyltransferase
+			function	other
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+44299	44595	CDS
+			product	methyltransferase
+			function	other
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+44595	45101	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+45098	45268	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+45309	45401	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+45436	46047	CDS
+			product	Rnase H
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+46044	46439	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+46436	46738	CDS
+			product	DNA methyltransferase
+			function	other
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+46809	47525	CDS
+			product	DNA methyltransferase
+			function	other
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+47551	47673	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+47670	47897	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+47894	48562	CDS
+			product	DNA methyltransferase
+			function	other
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+48559	48693	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+48745	49548	CDS
+			product	replication initiation protein
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+49590	49805	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+49805	50008	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+50011	50199	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+50196	50327	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+50327	50572	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+50593	51069	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+51066	51236	CDS
+			product	site-specific recombination directionality factor RDF
+			function	integration and excision
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+51295	51498	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+51500	51877	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+51874	52086	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+52083	52274	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+52271	52450	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+52432	52902	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+52899	53078	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+53075	53194	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+53191	53427	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+53420	53686	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+53683	54327	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+54437	54661	CDS
+			product	MerR-like transcriptional regulator
+			function	transcription regulation
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+54658	54822	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+54829	54987	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+55009	55176	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+55173	55574	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+55604	55813	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+55806	55967	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+55994	57430	CDS
+			product	glycosyltransferase
+			function	moron, auxiliary metabolic gene and host takeover
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+57534	58259	CDS
+			product	glucosyltransferase
+			function	moron, auxiliary metabolic gene and host takeover
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+58259	58585	CDS
+			product	HNH endonuclease
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+58651	58758	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:PHANOTATE:1.6.7
+			transl_table	11
+32106	32041	pseudogene
+			gene	tRNA-Lys(AAG)
+			product	tRNA-Lys(AAG)
+			inference	profile:tRNAscan-SE:2.0.12
+			anticodon	(pos:32079..32077,aa:Lys,seq:CTT)
+42829	43182	tmRNA
+			inference	profile:Aragorn:1.2.41
+			product	transfer-messenger RNA SsrA
+			tag_peptide	157..258
+			note	tag peptide sequence: ASARSRNGRMYGRSRGEPCRNGTTSGRPSACAC*
