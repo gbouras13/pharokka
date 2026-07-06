@@ -9,13 +9,19 @@ Usage: pytest
 import sys
 import unittest
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 from loguru import logger
 
-from pharokka.processes import (run_aragorn, run_mash_sketch, run_minced,
-                                run_phanotate, run_pyrodigal, run_pyrodigal_gv)
+from pharokka.processes import (
+    run_aragorn,
+    run_mash_sketch,
+    run_minced,
+    run_phanotate,
+    run_pyrodigal,
+    run_pyrodigal_gv,
+)
+
 # import functions
 from pharokka.util import remove_directory
 

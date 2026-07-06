@@ -142,11 +142,13 @@ def get_input():
         action="store",
         default="nothing",
     )
-    parser.add_argument(
-        "--skip_extra_annotations",
-        help="Skips tRNAscan-SE 2, MinCED and Aragorn.",
-        action="store_true",
-    ),
+    (
+        parser.add_argument(
+            "--skip_extra_annotations",
+            help="Skips tRNAscan-SE 2, MinCED and Aragorn.",
+            action="store_true",
+        ),
+    )
     parser.add_argument(
         "--skip_mash",
         help="Skips running mash to find the closest match for each contig in INPHARED.",
@@ -164,13 +166,15 @@ def get_input():
         default=0.2,
         type=float,
     )
-    parser.add_argument(
-        "--trna_scan_model",
-        help="tRNAscan-SE model",
-        choices=["general", "bacterial"],
-        default="general",
-        type=str,
-    ),
+    (
+        parser.add_argument(
+            "--trna_scan_model",
+            help="tRNAscan-SE model",
+            choices=["general", "bacterial"],
+            default="general",
+            type=str,
+        ),
+    )
     parser.add_argument(
         "--keep_raw_prodigal",
         help="Keeps raw prodigal header information.",
@@ -479,24 +483,24 @@ def check_dependencies(skip_mash):
             f"MMseqs2 version found is v{mmseqs_major_version}.{mmseqs_minor_version}"
         )
         logger.warning(
-            f"Pharokka from v1.8.0 onwards will not work with MMseqs2 versions older than v14-7e284 (October 13 2022)"
+            "Pharokka from v1.8.0 onwards will not work with MMseqs2 versions older than v14-7e284 (October 13 2022)"
         )
         logger.error(
-            f"Please install a newer version of MMseqs2, ideally v18.8cc5c or newer"
+            "Please install a newer version of MMseqs2, ideally v18.8cc5c or newer"
         )
     else:
         logger.warning(f"MMseqs2 version found is v{mmseqs_version}")
         logger.warning(
-            f"Pharokka is recommended to be run with MMseqs2 v18.8cc5c or newer"
+            "Pharokka is recommended to be run with MMseqs2 v18.8cc5c or newer"
         )
         logger.warning(
-            f"Using a different MMseqs2 version after v14-7e284 (October 13 2022) is likely to work with Pharokka without issue, but this cannot be guaranteed."
+            "Using a different MMseqs2 version after v14-7e284 (October 13 2022) is likely to work with Pharokka without issue, but this cannot be guaranteed."
         )
         logger.warning(
-            f"Using an MMseqs2 version before v14-7e284 (October 13 2022) will not work with Pharokka from v1.8.0 onwards."
+            "Using an MMseqs2 version before v14-7e284 (October 13 2022) will not work with Pharokka from v1.8.0 onwards."
         )
         logger.warning(
-            f"If that is the case, please install a newer version of MMseqs2s."
+            "If that is the case, please install a newer version of MMseqs2s."
         )
 
     logger.info(
@@ -668,7 +672,7 @@ def check_dependencies(skip_mash):
         logger.error("Pyrodigal is the wrong version. Please re-install pharokka.")
 
     logger.info(f"Pyrodigal version is v{pyrodigal_version}")
-    logger.info(f"Pyrodigal version is ok.")
+    logger.info("Pyrodigal version is ok.")
 
     #######
     # pyrodigal gv
@@ -680,7 +684,7 @@ def check_dependencies(skip_mash):
         logger.error("Pyrodigal_gv is the wrong version. Please re-install pharokka.")
 
     logger.info(f"Pyrodigal_gv version is v{pyrodigal_gv_version}")
-    logger.info(f"Pyrodigal_gv version is ok.")
+    logger.info("Pyrodigal_gv version is ok.")
 
     #######
     # pyrodigal rv
@@ -692,7 +696,7 @@ def check_dependencies(skip_mash):
         logger.error("Pyrodigal_rv is the wrong version. Please re-install pharokka.")
 
     logger.info(f"Pyrodigal_rv version is v{pyrodigal_rv_version}")
-    logger.info(f"Pyrodigal_rv version is ok.")
+    logger.info("Pyrodigal_rv version is ok.")
 
     return (
         phanotate_version,

@@ -9,7 +9,6 @@ Note: all MSAs must be in FASTA format inside the directory provided with -i and
 import argparse
 import os
 import shutil
-import sys
 from argparse import RawTextHelpFormatter
 from pathlib import Path
 
@@ -139,7 +138,7 @@ def main():
 
     pyhmmer.hmmer.hmmpress(hmms, f"{HMM_dir}/{args.prefix}")
 
-    logger.info(f"HMM creation complete.")
+    logger.info("HMM creation complete.")
     logger.info(
         f"The combined file you will need to run with pharokka run --custom_hmm is {HMM_dir}/{args.prefix}.h3m"
     )

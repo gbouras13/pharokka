@@ -11,20 +11,20 @@ Usage:
 
 Exit code 0 = identical (modulo timestamps / float formatting), non-zero = differences found.
 """
+
 import math
-import os
 import re
 import sys
 from pathlib import Path
 
 # ── patterns that are timestamp/run-specific and should be ignored ──────────
 SKIP_LINE_PATTERNS = [
-    re.compile(r"^\d{4}-\d{2}-\d{2}"),          # log lines: 2026-05-26 ...
-    re.compile(r"^#.*pharokka.*run"),             # GFF pragma with run info
-    re.compile(r"^LOCUS\s+\S+\s+\d+ bp"),        # GenBank LOCUS date field
-    re.compile(r"^##date"),                        # any ##date pragma
+    re.compile(r"^\d{4}-\d{2}-\d{2}"),  # log lines: 2026-05-26 ...
+    re.compile(r"^#.*pharokka.*run"),  # GFF pragma with run info
+    re.compile(r"^LOCUS\s+\S+\s+\d+ bp"),  # GenBank LOCUS date field
+    re.compile(r"^##date"),  # any ##date pragma
     re.compile(r"Creation Date"),
-    re.compile(r"Time to find repeats:"),         # MinCED timing in minced_spacers.txt
+    re.compile(r"Time to find repeats:"),  # MinCED timing in minced_spacers.txt
 ]
 
 # file extensions to skip entirely
@@ -40,12 +40,10 @@ SKIP_DIRS = {"logs"}
 
 # Matches a field that is entirely a number (int or float, with optional sign/exponent).
 # Anchored so "1000/1000" or "No_PHROGs_HMM" never match.
-_NUMERIC_FIELD_RE = re.compile(
-    r'^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$'
-)
+_NUMERIC_FIELD_RE = re.compile(r"^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$")
 
 # Matches a field that is a pure integer (no decimal point, no exponent).
-_INTEGER_FIELD_RE = re.compile(r'^[+-]?\d+$')
+_INTEGER_FIELD_RE = re.compile(r"^[+-]?\d+$")
 
 
 def _numeric_equal(a: str, b: str, rel_tol: float = 1e-9) -> bool:
@@ -86,15 +84,15 @@ def _tsv_lines_match(a: str, b: str, rel_tol: float = 1e-9) -> bool:
     """Compare two tab-separated lines with per-field float tolerance."""
     if a == b:
         return True
-    fields_a = a.split('\t')
-    fields_b = b.split('\t')
+    fields_a = a.split("\t")
+    fields_b = b.split("\t")
     if len(fields_a) != len(fields_b):
         return False
     return all(_numeric_equal(fa, fb, rel_tol) for fa, fb in zip(fields_a, fields_b))
 
 
 # Matches a contig name that is purely an integer (unicycler-style numeric headers).
-_INTEGER_CONTIG_RE = re.compile(r'^\d+$')
+_INTEGER_CONTIG_RE = re.compile(r"^\d+$")
 
 
 def _cds_functions_v191_intcontig_bugs(new_lines: list, ref_lines: list) -> tuple:
@@ -111,13 +109,14 @@ def _cds_functions_v191_intcontig_bugs(new_lines: list, ref_lines: list) -> tupl
 
     Returns (bug_count: int, non_bug_diff_count: int).
     """
+
     def parse_cds_functions(lines):
         """Return {(Description, contig): count_str} skipping the header."""
         d = {}
         for line in lines:
             if not line or line.startswith("Description"):
                 continue
-            parts = line.split('\t')
+            parts = line.split("\t")
             if len(parts) != 3:
                 continue
             desc, count_str, contig = parts
@@ -137,11 +136,13 @@ def _cds_functions_v191_intcontig_bugs(new_lines: list, ref_lines: list) -> tupl
         if new_val == ref_val:
             continue
         # v1.9.1 bug: CRISPRs or tmRNAs on purely-integer contig names counted as 0 in ref
-        if (desc in {"CRISPRs", "tmRNAs"}
-                and _INTEGER_CONTIG_RE.match(contig)
-                and new_val is not None
-                and new_val != "0"
-                and (ref_val is None or ref_val == "0")):
+        if (
+            desc in {"CRISPRs", "tmRNAs"}
+            and _INTEGER_CONTIG_RE.match(contig)
+            and new_val is not None
+            and new_val != "0"
+            and (ref_val is None or ref_val == "0")
+        ):
             bug_count += 1
         else:
             non_bug_diff_count += 1
@@ -166,8 +167,8 @@ def _mash_tiebreak(a: str, b: str) -> bool:
     """
     if a == b:
         return False  # identical → not a tie-break, handled elsewhere
-    fa = a.split('\t')
-    fb = b.split('\t')
+    fa = a.split("\t")
+    fb = b.split("\t")
     if len(fa) < 5 or len(fb) < 5:
         return False
     # contig (col 0) must be identical
@@ -184,6 +185,7 @@ def _mash_tiebreak(a: str, b: str) -> bool:
 
 
 # ── file helpers ─────────────────────────────────────────────────────────────
+
 
 def filter_lines(path: Path) -> list[str]:
     """Read a file and return lines with timestamp-like content removed."""
@@ -254,8 +256,7 @@ def _diff_file(fn: Path, fr: Path, rel: Path) -> tuple[list[str], list[str]]:
             is_mash_file = rel.name == "pharokka_top_hits_mash_inphared.tsv"
             if is_mash_file:
                 real_mismatches = [
-                    (i, a, b) for (i, a, b) in mismatches
-                    if not _mash_tiebreak(a, b)
+                    (i, a, b) for (i, a, b) in mismatches if not _mash_tiebreak(a, b)
                 ]
                 tiebreak_count = len(mismatches) - len(real_mismatches)
                 if tiebreak_count > 0:
@@ -309,7 +310,9 @@ def _diff_file(fn: Path, fr: Path, rel: Path) -> tuple[list[str], list[str]]:
     return diffs, notices
 
 
-def compare_against_golden(produced_dir: Path, golden_dir: Path) -> tuple[list[str], list[str]]:
+def compare_against_golden(
+    produced_dir: Path, golden_dir: Path
+) -> tuple[list[str], list[str]]:
     """Golden-file comparison.
 
     Every file committed under ``golden_dir`` must have a matching file under
@@ -340,7 +343,9 @@ def compare_against_golden(produced_dir: Path, golden_dir: Path) -> tuple[list[s
     return diffs, notices
 
 
-def compare_dirs(dir_new: Path, dir_ref: Path, prefix: str = "") -> tuple[list[str], list[str]]:
+def compare_dirs(
+    dir_new: Path, dir_ref: Path, prefix: str = ""
+) -> tuple[list[str], list[str]]:
     """Recursively compare two directories.
 
     Returns (diffs, notices) where diffs are real mismatches (cause non-zero exit)
@@ -354,7 +359,7 @@ def compare_dirs(dir_new: Path, dir_ref: Path, prefix: str = "") -> tuple[list[s
 
     only_new = new_files - ref_files
     only_ref = ref_files - new_files
-    common   = new_files & ref_files
+    common = new_files & ref_files
 
     for f in sorted(only_new):
         if should_skip(f):
@@ -406,7 +411,9 @@ def main():
         sys.exit(1)
     else:
         if notices:
-            print("ALL OUTPUTS MATCH (modulo timestamps / float formatting / known v1.9.1 quirks).")
+            print(
+                "ALL OUTPUTS MATCH (modulo timestamps / float formatting / known v1.9.1 quirks)."
+            )
         else:
             print("ALL OUTPUTS MATCH (modulo timestamps / float formatting).")
         sys.exit(0)

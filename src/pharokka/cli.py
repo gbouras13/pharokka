@@ -21,12 +21,12 @@ import sys
 # name (e.g. 'pharokka.py'), we inject the correct subcommand so that the
 # call is transparently forwarded to the right handler.
 _LEGACY_NAMES: dict = {
-    "pharokka.py":              "run",
-    "pharokka_proteins.py":     "proteins",
-    "install_databases.py":     "install",
-    "pharokka_plotter.py":      "plot",
+    "pharokka.py": "run",
+    "pharokka_proteins.py": "proteins",
+    "install_databases.py": "install",
+    "pharokka_plotter.py": "plot",
     "pharokka_multiplotter.py": "multiplot",
-    "create_custom_hmm.py":     "create-hmm",
+    "create_custom_hmm.py": "create-hmm",
 }
 
 USAGE = """\
@@ -47,6 +47,7 @@ Run `pharokka <command> --help` for help on a specific command.
 def main():
     # Make every logger.error() call exit with status 1.
     from pharokka.util import register_error_sink
+
     register_error_sink()
 
     # Backward compat: detect legacy invocation names and inject subcommand.
@@ -68,6 +69,7 @@ def main():
 
     if sys.argv[1] in ("-V", "--version", "version"):
         from pharokka.version import __version__
+
         print(f"pharokka v{__version__}")
         sys.exit(0)
 
@@ -79,26 +81,32 @@ def main():
 
     if subcommand == "run":
         from pharokka.run import main as _main
+
         _main()
 
     elif subcommand == "proteins":
         from pharokka.proteins import main as _main
+
         _main()
 
     elif subcommand == "install":
         from pharokka.install import main as _main
+
         _main()
 
     elif subcommand == "plot":
         from pharokka.plot_entry import main as _main
+
         _main()
 
     elif subcommand == "multiplot":
         from pharokka.multiplot_entry import main as _main
+
         _main()
 
     elif subcommand in ("create-hmm", "create_hmm"):
         from pharokka.create_custom_hmm import main as _main
+
         _main()
 
     else:

@@ -29,15 +29,19 @@ THREADS = 8
 def main(argv: list[str]) -> int:
     db_dir = Path(os.environ.get("PHAROKKA_DB", "tests/test_data/database"))
     if not db_dir.is_dir():
-        print(f"ERROR: pharokka database not found at {db_dir}. "
-              f"Set PHAROKKA_DB to your database directory.")
+        print(
+            f"ERROR: pharokka database not found at {db_dir}. "
+            f"Set PHAROKKA_DB to your database directory."
+        )
         return 2
 
     wanted = argv or sorted(CASES)
     unknown = [c for c in wanted if c not in CASES]
     if unknown:
-        print(f"ERROR: unknown case(s): {', '.join(unknown)}. "
-              f"Known: {', '.join(sorted(CASES))}")
+        print(
+            f"ERROR: unknown case(s): {', '.join(unknown)}. "
+            f"Known: {', '.join(sorted(CASES))}"
+        )
         return 2
 
     GOLDEN_DIR.mkdir(parents=True, exist_ok=True)
@@ -61,7 +65,9 @@ def main(argv: list[str]) -> int:
                     copied.append(name)
             print(f"   copied {len(copied)} file(s): {', '.join(copied)}")
 
-    print(f"\nDone. Golden outputs under {GOLDEN_DIR}. Review the diff before committing.")
+    print(
+        f"\nDone. Golden outputs under {GOLDEN_DIR}. Review the diff before committing."
+    )
     return 0
 
 

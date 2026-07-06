@@ -94,3 +94,105 @@ omit = [
     "src/pharokka/plot_entry.py",
     "src/pharokka/multiplot_entry.py",
 ]
+
+# ---------------------------------------------------------------------------
+# Ruff (formatter + linter)
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 88
+exclude = ["*.ipynb"]
+
+[tool.ruff.lint]
+# E/W: pycodestyle, F: pyflakes, I: isort.  E501 (line-too-long) is left to the
+# formatter rather than enforced as a lint error.
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]
+
+# ---------------------------------------------------------------------------
+# Pixi configuration
+# ---------------------------------------------------------------------------
+# Pixi provides reproducible conda-based environments (see pixi.lock) for both
+# development and end-user installs.  Every dependency pins an explicit channel
+# so the solve is unambiguous: python libraries come from conda-forge, and the
+# bioinformatics tools + bio-python bindings come from bioconda.
+[tool.pixi.workspace]
+channels = ["conda-forge", "bioconda"]
+platforms = ["linux-64", "linux-aarch64", "osx-64", "osx-arm64"]
+
+[tool.pixi.dependencies]
+# Python + pure-python libraries (conda-forge)
+python = { version = ">=3.9", channel = "conda-forge" }
+polars = { version = ">=0.19.0", channel = "conda-forge" }
+biopython = { version = ">=1.80", channel = "conda-forge" }
+loguru = { version = ">=0.5.4", channel = "conda-forge" }
+pyyaml = { version = ">=6.0", channel = "conda-forge" }
+requests = { version = ">=2.25.1", channel = "conda-forge" }
+alive-progress = { version = ">=3.0.1", channel = "conda-forge" }
+# Bio-python bindings (bioconda)
+pyhmmer = { version = ">=0.12.0", channel = "bioconda" }
+pyrodigal = { version = ">=3.1.0", channel = "bioconda" }
+pyrodigal-gv = { version = ">=0.2.0", channel = "bioconda" }
+pyrodigal-rv = { version = ">=0.1.0", channel = "bioconda" }
+phanotate = { version = ">=1.6.7,<2", channel = "bioconda" }
+bcbio-gff = { version = ">=0.7.0", channel = "bioconda" }
+pycirclize = { version = ">=0.3.1", channel = "conda-forge" }
+# External command-line tools (bioconda)
+mmseqs2 = { version = ">=14.7e284", channel = "bioconda" }
+trnascan-se = { version = ">=2.0.9", channel = "bioconda" }
+minced = { version = ">=0.4.2", channel = "bioconda" }
+aragorn = { version = ">=1.2.41", channel = "bioconda" }
+mash = { version = ">=2.2", channel = "bioconda" }
+dnaapler = { version = ">=1.0.1", channel = "bioconda" }
+
+[tool.pixi.pypi-dependencies]
+# Install pharokka itself (editable) from this source tree.  Needed because we
+# are not using a conda build backend to place the package on the path.
+pharokka = { path = ".", editable = true }
+
+[tool.pixi.feature.test.dependencies]
+pytest = ">=6.2.5"
+pytest-cov = ">=3.0.0"
+
+[tool.pixi.feature.build.dependencies]
+python-build = "*"
+
+[tool.pixi.feature.lint.dependencies]
+ruff = ">=0.4.0"
+
+[tool.pixi.feature.lint.tasks]
+# Format + autofix in place.
+fmt = "ruff format . && ruff check --fix ."
+# Verify formatting and lint without changing files (used in CI).
+check-fmt = "ruff format --check . && ruff check ."
+
+[tool.pixi.feature.py39.dependencies]
+python = "3.9.*"
+
+[tool.pixi.feature.py313.dependencies]
+python = "3.13.*"
+
+# Separate solve groups per Python version (different python => different solve).
+# 'lint' is a lean standalone environment (just ruff, no runtime deps) so the
+# formatting/lint CI job doesn't have to build the full bioinformatics stack.
+[tool.pixi.environments]
+default = { solve-group = "default" }
+py39 = { features = ["py39", "test"] }
+py313 = { features = ["py313", "test", "build"] }
+lint = { features = ["lint"], no-default-feature = true }
+
+[tool.pixi.tasks]
+# Local quick test run (skips the heavy golden-output regression tests).
+# 'python -m pytest' (not bare 'pytest') keeps sys.path[0] as the project root
+# so bin/pharokka.py cannot shadow the pharokka package.
+test = "python -m pytest -m 'not golden'"
+# CI test run with coverage, excluding golden tests.  COVERAGE_PROCESS_START is
+# set so subprocess coverage (test_overall.py / test_proteins.py run pharokka
+# via subprocess) is captured — the sitecustomize hook is written in CI.
+test-ci = { cmd = "python -m pytest -m 'not golden' --cov=src/pharokka --cov-report=xml", env = { COVERAGE_PROCESS_START = "pyproject.toml" } }
+# Full CI run INCLUDING golden regression tests — used only on the reference
+# cell (ubuntu-latest + py313) the golden files were generated against.
+test-ci-golden = { cmd = "python -m pytest --cov=src/pharokka --cov-report=xml", env = { COVERAGE_PROCESS_START = "pyproject.toml" } }
+# Local coverage report with HTML output.
+coverage = "python -m pytest -m 'not golden' --cov=src/pharokka --cov-report=term --cov-report=html"
+# Build the sdist + wheel (setuptools, dynamic version from version.py).
+build = "python -m build"

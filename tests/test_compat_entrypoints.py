@@ -12,8 +12,6 @@ correctly and forward to the right subcommand.
 import subprocess
 import sys
 
-import pytest
-
 
 def _run(cmd: list[str]) -> subprocess.CompletedProcess:
     """Run a command and return the result (stdout + stderr captured)."""
@@ -29,7 +27,10 @@ def _run(cmd: list[str]) -> subprocess.CompletedProcess:
 # Helpers
 # ---------------------------------------------------------------------------
 
-def assert_deprecation_warning(result: subprocess.CompletedProcess, old_name: str, new_cmd: str) -> None:
+
+def assert_deprecation_warning(
+    result: subprocess.CompletedProcess, old_name: str, new_cmd: str
+) -> None:
     """Check that the deprecation warning was emitted on stderr."""
     assert old_name in result.stderr, (
         f"Expected deprecation warning mentioning '{old_name}' in stderr.\n"
@@ -57,6 +58,7 @@ def assert_help_shown(result: subprocess.CompletedProcess) -> None:
 # pharokka.py  →  pharokka run
 # ---------------------------------------------------------------------------
 
+
 def test_pharokka_py_help():
     result = _run(["pharokka.py", "--help"])
     assert_deprecation_warning(result, "pharokka.py", "pharokka run")
@@ -73,6 +75,7 @@ def test_pharokka_py_importable():
 # pharokka_proteins.py  →  pharokka proteins
 # ---------------------------------------------------------------------------
 
+
 def test_pharokka_proteins_py_help():
     result = _run(["pharokka_proteins.py", "--help"])
     assert_deprecation_warning(result, "pharokka_proteins.py", "pharokka proteins")
@@ -82,6 +85,7 @@ def test_pharokka_proteins_py_help():
 # ---------------------------------------------------------------------------
 # install_databases.py  →  pharokka install
 # ---------------------------------------------------------------------------
+
 
 def test_install_databases_py_help():
     result = _run(["install_databases.py", "--help"])
@@ -93,6 +97,7 @@ def test_install_databases_py_help():
 # pharokka_plotter.py  →  pharokka plot
 # ---------------------------------------------------------------------------
 
+
 def test_pharokka_plotter_py_help():
     result = _run(["pharokka_plotter.py", "--help"])
     assert_deprecation_warning(result, "pharokka_plotter.py", "pharokka plot")
@@ -102,6 +107,7 @@ def test_pharokka_plotter_py_help():
 # ---------------------------------------------------------------------------
 # pharokka_multiplotter.py  →  pharokka multiplot
 # ---------------------------------------------------------------------------
+
 
 def test_pharokka_multiplotter_py_help():
     result = _run(["pharokka_multiplotter.py", "--help"])
@@ -113,6 +119,7 @@ def test_pharokka_multiplotter_py_help():
 # create_custom_hmm.py  →  pharokka create-hmm
 # ---------------------------------------------------------------------------
 
+
 def test_create_custom_hmm_py_help():
     result = _run(["create_custom_hmm.py", "--help"])
     assert_deprecation_warning(result, "create_custom_hmm.py", "pharokka create-hmm")
@@ -122,6 +129,7 @@ def test_create_custom_hmm_py_help():
 # ---------------------------------------------------------------------------
 # cli.py invocation-name detection (symlink / alias path)
 # ---------------------------------------------------------------------------
+
 
 def test_cli_detects_legacy_name_via_argv(tmp_path):
     """

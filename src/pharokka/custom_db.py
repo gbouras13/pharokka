@@ -2,8 +2,6 @@ import collections
 import os
 
 import pyhmmer
-from pyhmmer.easel import SequenceFile
-from pyhmmer.plan7 import HMM, HMMFile
 
 
 def run_custom_pyhmmer(custom_hmm, out_dir, threads, gene_predictor, evalue):
@@ -36,13 +34,14 @@ def run_custom_pyhmmer(custom_hmm, out_dir, threads, gene_predictor, evalue):
                 protein = hits.query.name
                 for hit in hits:
                     if hit.included:
-                        results.append(
-                            Result(protein, hit.name, hit.score, hit.evalue)
-                        )
+                        results.append(Result(protein, hit.name, hit.score, hit.evalue))
 
     best_results = {}
     for result in results:
-        if result.protein not in best_results or result.bitscore > best_results[result.protein].bitscore:
+        if (
+            result.protein not in best_results
+            or result.bitscore > best_results[result.protein].bitscore
+        ):
             best_results[result.protein] = result
 
     return best_results

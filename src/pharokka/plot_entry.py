@@ -6,7 +6,6 @@ Adapted from bin/pharokka_plotter.py with relative package imports.
 
 import argparse
 import os
-import sys
 from argparse import RawTextHelpFormatter
 from pathlib import Path
 

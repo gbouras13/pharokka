@@ -12,7 +12,6 @@ from loguru import logger
 
 from .processes import convert_gff_to_gbk
 from .util import (
-    parse_attributes,
     remove_directory,
     remove_file,
     rename_file,
@@ -134,8 +133,14 @@ class Pharok:
         self.input_fasta = input_fasta
         self.meta_mode = meta_mode
         self.locustag = locustag
-        self.pyhmmer_results_dict = pyhmmer_results_dict if pyhmmer_results_dict is not None else {}
-        self.custom_pyhmmer_results_dict = custom_pyhmmer_results_dict if custom_pyhmmer_results_dict is not None else {}
+        self.pyhmmer_results_dict = (
+            pyhmmer_results_dict if pyhmmer_results_dict is not None else {}
+        )
+        self.custom_pyhmmer_results_dict = (
+            custom_pyhmmer_results_dict
+            if custom_pyhmmer_results_dict is not None
+            else {}
+        )
         self.merged_df = merged_df if merged_df is not None else pl.DataFrame()
         self.vfdb_results = vfdb_results if vfdb_results is not None else pl.DataFrame()
         self.card_results = card_results if card_results is not None else pl.DataFrame()
@@ -269,11 +274,13 @@ class Pharok:
         if self.hmm_flag is True:
             merged_df = process_pyhmmer_results(merged_df, self.pyhmmer_results_dict)
         else:
-            merged_df = merged_df.with_columns([
-                pl.lit("No_PHROGs_HMM").alias("pyhmmer_phrog"),
-                pl.lit("No_PHROGs_HMM").alias("pyhmmer_bitscore"),
-                pl.lit("No_PHROGs_HMM").alias("pyhmmer_evalue"),
-            ])
+            merged_df = merged_df.with_columns(
+                [
+                    pl.lit("No_PHROGs_HMM").alias("pyhmmer_phrog"),
+                    pl.lit("No_PHROGs_HMM").alias("pyhmmer_bitscore"),
+                    pl.lit("No_PHROGs_HMM").alias("pyhmmer_evalue"),
+                ]
+            )
 
         # add custom db results
         if self.custom_hmm_flag is True:
@@ -281,17 +288,21 @@ class Pharok:
                 merged_df, self.custom_pyhmmer_results_dict
             )
         else:
-            merged_df = merged_df.with_columns([
-                pl.lit("No_custom_HMM").alias("custom_hmm_id"),
-                pl.lit("No_custom_HMM").alias("custom_hmm_bitscore"),
-                pl.lit("No_custom_HMM").alias("custom_hmm_evalue"),
-            ])
+            merged_df = merged_df.with_columns(
+                [
+                    pl.lit("No_custom_HMM").alias("custom_hmm_id"),
+                    pl.lit("No_custom_HMM").alias("custom_hmm_bitscore"),
+                    pl.lit("No_custom_HMM").alias("custom_hmm_evalue"),
+                ]
+            )
 
         # strip off phrog_ for both
-        merged_df = merged_df.with_columns([
-            pl.col("mmseqs_phrog").str.replace("phrog_", ""),
-            pl.col("pyhmmer_phrog").str.replace("phrog_", ""),
-        ])
+        merged_df = merged_df.with_columns(
+            [
+                pl.col("mmseqs_phrog").str.replace("phrog_", ""),
+                pl.col("pyhmmer_phrog").str.replace("phrog_", ""),
+            ]
+        )
 
         ############
         # Build the overall "phrog" column.  In mmseqs mode: take mmseqs_phrog,
@@ -300,8 +311,10 @@ class Pharok:
         if self.mmseqs_flag is True:
             merged_df = merged_df.with_columns(
                 pl.when(
-                    pl.col("mmseqs_phrog").is_null() & (pl.col("pyhmmer_phrog") != "No_PHROGs_HMM")
-                ).then(pl.col("pyhmmer_phrog"))
+                    pl.col("mmseqs_phrog").is_null()
+                    & (pl.col("pyhmmer_phrog") != "No_PHROGs_HMM")
+                )
+                .then(pl.col("pyhmmer_phrog"))
                 .otherwise(pl.col("mmseqs_phrog"))
                 .alias("phrog")
             )
@@ -310,7 +323,9 @@ class Pharok:
 
         # read in phrog annotation file
         phrog_annot_df = pl.read_csv(
-            os.path.join(self.db_dir, "phrog_annot_v4.tsv"), separator="\t", infer_schema=False
+            os.path.join(self.db_dir, "phrog_annot_v4.tsv"),
+            separator="\t",
+            infer_schema=False,
         )
         phrog_annot_df = phrog_annot_df.with_columns(pl.col("phrog").cast(pl.Utf8))
 
@@ -322,15 +337,21 @@ class Pharok:
         elif self.gene_predictor == "genbank":
             method_val = "CUSTOM"
         elif self.gene_predictor == "prodigal-gv":
-            method_val = f"ab initio prediction:Pyrodigal-gv:{self.pyrodigal_gv_version}"
+            method_val = (
+                f"ab initio prediction:Pyrodigal-gv:{self.pyrodigal_gv_version}"
+            )
         elif self.gene_predictor == "pyrodigal-rv":
-            method_val = f"ab initio prediction:Pyrodigal-rv:{self.pyrodigal_rv_version}"
+            method_val = (
+                f"ab initio prediction:Pyrodigal-rv:{self.pyrodigal_rv_version}"
+            )
         else:
             method_val = "UNKNOWN"
-        merged_df = merged_df.with_columns([
-            pl.lit(method_val).alias("Method"),
-            pl.lit("CDS").alias("Region"),
-        ])
+        merged_df = merged_df.with_columns(
+            [
+                pl.lit(method_val).alias("Method"),
+                pl.lit("CDS").alias("Region"),
+            ]
+        )
 
         # cast mmseqs columns to string
         cols_to_force_string = [
@@ -350,35 +371,46 @@ class Pharok:
         # The "phrog" column also gets cast + filled here.  "No_PHROG" exists in
         # phrog_annot_v4.tsv with annot="NA"; the explicit "NA"→"hypothetical
         # protein" replacement below handles that case.
-        merged_df = merged_df.with_columns([
-            pl.col(c).cast(pl.Utf8).fill_null("No_PHROG")
-            for c in cols_to_force_string + ["phrog"]
-        ])
+        merged_df = merged_df.with_columns(
+            [
+                pl.col(c).cast(pl.Utf8).fill_null("No_PHROG")
+                for c in cols_to_force_string + ["phrog"]
+            ]
+        )
 
         # merge phrog annotation (single join) and normalise null/"NA" values
         # in one pass.  phrog_annot_v4.tsv stores "NA" as a literal string for
         # unannotated phrogs — pandas treated "NA" as NaN so fillna() worked,
         # but polars with infer_schema=False keeps it as a string, so we
         # explicitly map both null and "NA" to the user-facing default value.
-        merged_df = merged_df.join(phrog_annot_df, on="phrog", how="left").with_columns([
-            pl.when(pl.col("annot").is_null() | (pl.col("annot") == "NA"))
-              .then(pl.lit("hypothetical protein"))
-              .otherwise(pl.col("annot"))
-              .alias("annot"),
-            pl.when(pl.col("category").is_null() | (pl.col("category") == "NA"))
-              .then(pl.lit("unknown function"))
-              .otherwise(pl.col("category"))
-              .alias("category"),
-            pl.col("color").fill_null("None"),
-        ])
+        merged_df = merged_df.join(phrog_annot_df, on="phrog", how="left").with_columns(
+            [
+                pl.when(pl.col("annot").is_null() | (pl.col("annot") == "NA"))
+                .then(pl.lit("hypothetical protein"))
+                .otherwise(pl.col("annot"))
+                .alias("annot"),
+                pl.when(pl.col("category").is_null() | (pl.col("category") == "NA"))
+                .then(pl.lit("unknown function"))
+                .otherwise(pl.col("category"))
+                .alias("category"),
+                pl.col("color").fill_null("None"),
+            ]
+        )
 
         # process vfdb results
         (merged_df, vfdb_results) = process_vfdb_results(
-            self.out_dir, merged_df, proteins_flag=False, reverse_mmseqs2=self.reverse_mmseqs2
+            self.out_dir,
+            merged_df,
+            proteins_flag=False,
+            reverse_mmseqs2=self.reverse_mmseqs2,
         )
         # process CARD results
         (merged_df, card_results) = process_card_results(
-            self.out_dir, merged_df, self.db_dir, proteins_flag=False, reverse_mmseqs2=self.reverse_mmseqs2
+            self.out_dir,
+            merged_df,
+            self.db_dir,
+            proteins_flag=False,
+            reverse_mmseqs2=self.reverse_mmseqs2,
         )
 
         self.merged_df = merged_df
@@ -393,7 +425,10 @@ class Pharok:
         :return: length_df a polars dataframe (to class)
         """
 
-        if self.gene_predictor == "prodigal-gv" or self.gene_predictor == "pyrodigal-rv":
+        if (
+            self.gene_predictor == "prodigal-gv"
+            or self.gene_predictor == "pyrodigal-rv"
+        ):
             # define col list
             col_list = [
                 "contig",
@@ -417,28 +452,53 @@ class Pharok:
                 infer_schema=False,
             )
             # Split attributes to extract transl_table
-            pyrodigal_gv_rv_gff = pyrodigal_gv_rv_gff.with_columns(
-                pl.col("attributes").str.splitn("transl_table=", 2).alias("_split1")
-            ).with_columns([
-                pl.col("_split1").struct.field("field_0").alias("attributes"),
-                pl.col("_split1").struct.field("field_1").alias("transl_table"),
-            ]).drop("_split1")
+            pyrodigal_gv_rv_gff = (
+                pyrodigal_gv_rv_gff.with_columns(
+                    pl.col("attributes").str.splitn("transl_table=", 2).alias("_split1")
+                )
+                .with_columns(
+                    [
+                        pl.col("_split1").struct.field("field_0").alias("attributes"),
+                        pl.col("_split1").struct.field("field_1").alias("transl_table"),
+                    ]
+                )
+                .drop("_split1")
+            )
 
-            pyrodigal_gv_rv_gff = pyrodigal_gv_rv_gff.with_columns(
-                pl.col("transl_table").str.splitn(";conf", 2).alias("_split2")
-            ).with_columns([
-                pl.col("_split2").struct.field("field_0").alias("transl_table"),
-                pl.col("_split2").struct.field("field_1").alias("rest"),
-            ]).drop("_split2")
+            pyrodigal_gv_rv_gff = (
+                pyrodigal_gv_rv_gff.with_columns(
+                    pl.col("transl_table").str.splitn(";conf", 2).alias("_split2")
+                )
+                .with_columns(
+                    [
+                        pl.col("_split2").struct.field("field_0").alias("transl_table"),
+                        pl.col("_split2").struct.field("field_1").alias("rest"),
+                    ]
+                )
+                .drop("_split2")
+            )
 
             # drop and then remove duplicates
-            pyrodigal_gv_rv_gff = pyrodigal_gv_rv_gff.drop([
-                "rest", "Method", "Region", "start", "stop", "score", "strand", "frame", "attributes",
-            ])
+            pyrodigal_gv_rv_gff = pyrodigal_gv_rv_gff.drop(
+                [
+                    "rest",
+                    "Method",
+                    "Region",
+                    "start",
+                    "stop",
+                    "score",
+                    "strand",
+                    "frame",
+                    "attributes",
+                ]
+            )
             pyrodigal_gv_rv_gff = pyrodigal_gv_rv_gff.unique()
             # Convert to a dictionary
             transl_table_dict = dict(
-                zip(pyrodigal_gv_rv_gff["contig"].to_list(), pyrodigal_gv_rv_gff["transl_table"].to_list())
+                zip(
+                    pyrodigal_gv_rv_gff["contig"].to_list(),
+                    pyrodigal_gv_rv_gff["transl_table"].to_list(),
+                )
             )
 
         contig_names = []
@@ -460,7 +520,10 @@ class Pharok:
                 lengths.append(len(record.seq))
                 gc.append(round(gc_fraction(record.seq), 2))
                 # pyrodigal-gv lookup from the dict
-                if self.gene_predictor == "prodigal-gv" or self.gene_predictor == "pyrodigal-rv":
+                if (
+                    self.gene_predictor == "prodigal-gv"
+                    or self.gene_predictor == "pyrodigal-rv"
+                ):
                     try:
                         transl_table = transl_table_dict[record.id]
                     except Exception:
@@ -568,9 +631,7 @@ class Pharok:
             i = 0  # line counter
             j = 0  # contig counter
             for line in lines:
-                if (
-                    line[0] == ">" and "sensitivity" not in line
-                ):
+                if line[0] == ">" and "sensitivity" not in line:
                     if "0 genes found" not in lines[i + 1]:
                         tmrna_flag = True
                         tmrna_count = int(lines[i + 1][0])
@@ -654,15 +715,23 @@ class Pharok:
             subset_dfs = []
             for contig in contigs_list:
                 subset_df = self.merged_df.filter(pl.col("contig") == contig)
-                subset_df = subset_df.with_row_index("_idx").with_columns(
-                    (pl.col("_idx") + 1).cast(pl.Utf8).str.zfill(4).alias("count")
-                ).drop("_idx")
+                subset_df = (
+                    subset_df.with_row_index("_idx")
+                    .with_columns(
+                        (pl.col("_idx") + 1).cast(pl.Utf8).str.zfill(4).alias("count")
+                    )
+                    .drop("_idx")
+                )
                 subset_dfs.append(subset_df)
             self.merged_df = pl.concat(subset_dfs)
         else:
-            self.merged_df = self.merged_df.with_row_index("_idx").with_columns(
-                (pl.col("_idx") + 1).cast(pl.Utf8).str.zfill(4).alias("count")
-            ).drop("_idx")
+            self.merged_df = (
+                self.merged_df.with_row_index("_idx")
+                .with_columns(
+                    (pl.col("_idx") + 1).cast(pl.Utf8).str.zfill(4).alias("count")
+                )
+                .drop("_idx")
+            )
 
         # get the locus tag
         if not self.meta_mode:
@@ -671,7 +740,9 @@ class Pharok:
             )
         else:
             self.merged_df = self.merged_df.with_columns(
-                (pl.col("contig") + pl.lit("_CDS_") + pl.col("count")).alias("locus_tag")
+                (pl.col("contig") + pl.lit("_CDS_") + pl.col("count")).alias(
+                    "locus_tag"
+                )
             )
 
         # Propagate the locus_tag to prot_seq_df so that convert_gff_to_gbk
@@ -683,20 +754,34 @@ class Pharok:
         # whereas merged_df.gene retains the full pre-split string, so we
         # normalise merged_df's gene with the same splitn before joining.
         self.prot_seq_df = self.prot_seq_df.with_columns(pl.col("gene").cast(pl.Utf8))
-        _locus_lookup = self.merged_df.select([
-            pl.col("gene").cast(pl.Utf8).str.splitn(" ", 2).struct.field("field_0").alias("gene"),
-            "locus_tag",
-        ])
+        _locus_lookup = self.merged_df.select(
+            [
+                pl.col("gene")
+                .cast(pl.Utf8)
+                .str.splitn(" ", 2)
+                .struct.field("field_0")
+                .alias("gene"),
+                "locus_tag",
+            ]
+        )
         self.prot_seq_df = self.prot_seq_df.join(_locus_lookup, on="gene", how="left")
 
         #########
         # Rearrange start and stop so that start is always less than stop for GFF.
         # GFF3 requires start ≤ end (purely positional); strand carries direction.
         #########
-        self.merged_df = self.merged_df.with_columns([
-            pl.when(pl.col("strand") == "-").then(pl.col("stop")).otherwise(pl.col("start")).alias("start"),
-            pl.when(pl.col("strand") == "-").then(pl.col("start")).otherwise(pl.col("stop")).alias("stop"),
-        ])
+        self.merged_df = self.merged_df.with_columns(
+            [
+                pl.when(pl.col("strand") == "-")
+                .then(pl.col("stop"))
+                .otherwise(pl.col("start"))
+                .alias("start"),
+                pl.when(pl.col("strand") == "-")
+                .then(pl.col("start"))
+                .otherwise(pl.col("stop"))
+                .alias("stop"),
+            ]
+        )
 
         # Capture locus_df AFTER the GFF coordinate swap so that start ≤ stop in
         # both single-phage and meta mode.  locus_df is used by
@@ -720,18 +805,28 @@ class Pharok:
         # create attributes
         self.merged_df = self.merged_df.with_columns(
             (
-                pl.lit("ID=") + pl.col("locus_tag").cast(pl.Utf8)
-                + pl.lit(";transl_table=") + pl.col("transl_table").cast(pl.Utf8)
-                + pl.lit(";phrog=") + pl.col("phrog").fill_null("No_PHROG").cast(pl.Utf8)
-                + pl.lit(";locus_tag=") + pl.col("locus_tag").cast(pl.Utf8)
-                + pl.lit(";function=") + pl.col("category").cast(pl.Utf8)
-                + pl.lit(";product=") + pl.col("annot").cast(pl.Utf8)
+                pl.lit("ID=")
+                + pl.col("locus_tag").cast(pl.Utf8)
+                + pl.lit(";transl_table=")
+                + pl.col("transl_table").cast(pl.Utf8)
+                + pl.lit(";phrog=")
+                + pl.col("phrog").fill_null("No_PHROG").cast(pl.Utf8)
+                + pl.lit(";locus_tag=")
+                + pl.col("locus_tag").cast(pl.Utf8)
+                + pl.lit(";function=")
+                + pl.col("category").cast(pl.Utf8)
+                + pl.lit(";product=")
+                + pl.col("annot").cast(pl.Utf8)
             ).alias("attributes")
         )
 
         if "partial" in self.merged_df.columns:
             self.merged_df = self.merged_df.with_columns(
-                (pl.col("attributes") + pl.lit(";partial=") + pl.col("partial").cast(pl.Utf8)).alias("attributes")
+                (
+                    pl.col("attributes")
+                    + pl.lit(";partial=")
+                    + pl.col("partial").cast(pl.Utf8)
+                ).alias("attributes")
             )
 
         # adds custom hmm database annotations
@@ -739,7 +834,8 @@ class Pharok:
             pl.when(pl.col("custom_hmm_id") != "No_custom_HMM")
             .then(
                 pl.col("attributes").cast(pl.Utf8)
-                + pl.lit(";custom_annotation=") + pl.col("custom_hmm_id").cast(pl.Utf8)
+                + pl.lit(";custom_annotation=")
+                + pl.col("custom_hmm_id").cast(pl.Utf8)
             )
             .otherwise(pl.col("attributes"))
             .alias("attributes")
@@ -749,9 +845,12 @@ class Pharok:
             pl.when(pl.col("vfdb_short_name") != "None")
             .then(
                 pl.col("attributes").cast(pl.Utf8)
-                + pl.lit(";vfdb_short_name=") + pl.col("vfdb_short_name").cast(pl.Utf8)
-                + pl.lit(";vfdb_description=") + pl.col("vfdb_description").cast(pl.Utf8)
-                + pl.lit(";vfdb_species=") + pl.col("vfdb_species").cast(pl.Utf8)
+                + pl.lit(";vfdb_short_name=")
+                + pl.col("vfdb_short_name").cast(pl.Utf8)
+                + pl.lit(";vfdb_description=")
+                + pl.col("vfdb_description").cast(pl.Utf8)
+                + pl.lit(";vfdb_species=")
+                + pl.col("vfdb_species").cast(pl.Utf8)
             )
             .otherwise(pl.col("attributes"))
             .alias("attributes")
@@ -761,29 +860,52 @@ class Pharok:
             pl.when(pl.col("CARD_short_name") != "None")
             .then(
                 pl.col("attributes").cast(pl.Utf8)
-                + pl.lit(";CARD_short_name=") + pl.col("CARD_short_name").cast(pl.Utf8)
-                + pl.lit(";AMR_Gene_Family=") + pl.col("AMR_Gene_Family").cast(pl.Utf8)
-                + pl.lit(";CARD_species=") + pl.col("CARD_species").cast(pl.Utf8)
+                + pl.lit(";CARD_short_name=")
+                + pl.col("CARD_short_name").cast(pl.Utf8)
+                + pl.lit(";AMR_Gene_Family=")
+                + pl.col("AMR_Gene_Family").cast(pl.Utf8)
+                + pl.lit(";CARD_species=")
+                + pl.col("CARD_species").cast(pl.Utf8)
             )
             .otherwise(pl.col("attributes"))
             .alias("attributes")
         )
 
         # get gff dataframe in correct order
-        gff_df = self.merged_df.select([
-            "contig", "Method", "Region", "start", "stop", "score", "strand", "frame", "attributes",
-        ])
+        gff_df = self.merged_df.select(
+            [
+                "contig",
+                "Method",
+                "Region",
+                "start",
+                "stop",
+                "score",
+                "strand",
+                "frame",
+                "attributes",
+            ]
+        )
 
         # change start and stop to int
-        gff_df = gff_df.with_columns([
-            pl.col("start").cast(pl.Int64),
-            pl.col("stop").cast(pl.Int64),
-        ])
+        gff_df = gff_df.with_columns(
+            [
+                pl.col("start").cast(pl.Int64),
+                pl.col("stop").cast(pl.Int64),
+            ]
+        )
 
         ### trnas
         if self.skip_extra_annotations is False:
             col_list = [
-                "contig", "Method", "Region", "start", "stop", "score", "strand", "frame", "attributes",
+                "contig",
+                "Method",
+                "Region",
+                "start",
+                "stop",
+                "score",
+                "strand",
+                "frame",
+                "attributes",
             ]
             trna_empty = is_trna_empty(self.out_dir)
             if not trna_empty:
@@ -806,8 +928,8 @@ class Pharok:
                 # below.  Raw attribute string starts with "ID=<id>;..."
                 trna_df = trna_df.with_columns(
                     pl.col("attributes")
-                      .str.extract(r"ID=([^;]+)", 1)
-                      .alias("_trnascan_id")
+                    .str.extract(r"ID=([^;]+)", 1)
+                    .alias("_trnascan_id")
                 )
 
                 # index hack if meta mode
@@ -816,53 +938,93 @@ class Pharok:
                     for contig in contigs_list:
                         subset_df = trna_df.filter(pl.col("contig") == contig)
                         subset_df = subset_df.filter(
-                            (pl.col("Region") == "tRNA") | (pl.col("Region") == "pseudogene")
+                            (pl.col("Region") == "tRNA")
+                            | (pl.col("Region") == "pseudogene")
                         )
-                        subset_df = subset_df.with_row_index("_idx").with_columns(
-                            (pl.col("_idx") + 1).cast(pl.Utf8).str.zfill(4).alias("_count")
-                        ).drop("_idx")
+                        subset_df = (
+                            subset_df.with_row_index("_idx")
+                            .with_columns(
+                                (pl.col("_idx") + 1)
+                                .cast(pl.Utf8)
+                                .str.zfill(4)
+                                .alias("_count")
+                            )
+                            .drop("_idx")
+                        )
                         subset_df = subset_df.with_columns(
-                            (pl.lit(contig + "_tRNA_") + pl.col("_count")).alias("locus_tag")
+                            (pl.lit(contig + "_tRNA_") + pl.col("_count")).alias(
+                                "locus_tag"
+                            )
                         ).drop("_count")
                         subset_dfs.append(subset_df)
                     trna_df = pl.concat(subset_dfs)
                 else:
                     trna_df = trna_df.filter(
-                        (pl.col("Region") == "tRNA") | (pl.col("Region") == "pseudogene")
+                        (pl.col("Region") == "tRNA")
+                        | (pl.col("Region") == "pseudogene")
                     )
-                    trna_df = trna_df.with_row_index("_idx").with_columns(
-                        (pl.col("_idx") + 1).cast(pl.Utf8).str.zfill(4).alias("_count")
-                    ).drop("_idx")
+                    trna_df = (
+                        trna_df.with_row_index("_idx")
+                        .with_columns(
+                            (pl.col("_idx") + 1)
+                            .cast(pl.Utf8)
+                            .str.zfill(4)
+                            .alias("_count")
+                        )
+                        .drop("_idx")
+                    )
                     trna_df = trna_df.with_columns(
-                        (pl.lit(self.locustag + "_tRNA_") + pl.col("_count")).alias("locus_tag")
+                        (pl.lit(self.locustag + "_tRNA_") + pl.col("_count")).alias(
+                            "locus_tag"
+                        )
                     ).drop("_count")
 
-                trna_df = trna_df.with_columns([
-                    pl.col("start").cast(pl.Int64),
-                    pl.col("stop").cast(pl.Int64),
-                ])
+                trna_df = trna_df.with_columns(
+                    [
+                        pl.col("start").cast(pl.Int64),
+                        pl.col("stop").cast(pl.Int64),
+                    ]
+                )
 
                 # Split attributes to extract isotype and anticodon
-                trna_df = trna_df.with_columns(
-                    pl.col("attributes").str.splitn(";isotype=", 2).alias("_s1")
-                ).with_columns([
-                    pl.col("_s1").struct.field("field_0").alias("attributes"),
-                    pl.col("_s1").struct.field("field_1").alias("isotypes"),
-                ]).drop("_s1")
+                trna_df = (
+                    trna_df.with_columns(
+                        pl.col("attributes").str.splitn(";isotype=", 2).alias("_s1")
+                    )
+                    .with_columns(
+                        [
+                            pl.col("_s1").struct.field("field_0").alias("attributes"),
+                            pl.col("_s1").struct.field("field_1").alias("isotypes"),
+                        ]
+                    )
+                    .drop("_s1")
+                )
 
-                trna_df = trna_df.with_columns(
-                    pl.col("isotypes").str.splitn(";anticodon=", 2).alias("_s2")
-                ).with_columns([
-                    pl.col("_s2").struct.field("field_0").alias("isotypes"),
-                    pl.col("_s2").struct.field("field_1").alias("anticodon"),
-                ]).drop("_s2")
+                trna_df = (
+                    trna_df.with_columns(
+                        pl.col("isotypes").str.splitn(";anticodon=", 2).alias("_s2")
+                    )
+                    .with_columns(
+                        [
+                            pl.col("_s2").struct.field("field_0").alias("isotypes"),
+                            pl.col("_s2").struct.field("field_1").alias("anticodon"),
+                        ]
+                    )
+                    .drop("_s2")
+                )
 
-                trna_df = trna_df.with_columns(
-                    pl.col("anticodon").str.splitn(";gene_biotype", 2).alias("_s3")
-                ).with_columns([
-                    pl.col("_s3").struct.field("field_0").alias("anticodon"),
-                    pl.col("_s3").struct.field("field_1").alias("rest"),
-                ]).drop("_s3")
+                trna_df = (
+                    trna_df.with_columns(
+                        pl.col("anticodon").str.splitn(";gene_biotype", 2).alias("_s3")
+                    )
+                    .with_columns(
+                        [
+                            pl.col("_s3").struct.field("field_0").alias("anticodon"),
+                            pl.col("_s3").struct.field("field_1").alias("rest"),
+                        ]
+                    )
+                    .drop("_s3")
+                )
 
                 # Extract anticodon positions once, up-front.
                 anticodon_positions = extract_anticodon_positions(self.out_dir)
@@ -893,21 +1055,27 @@ class Pharok:
                 # the GFF and .sec files were sorted differently (common — the
                 # GFF is in genomic order; the .sec is in tRNA-ID order).
                 if anticodon_positions:
-                    positions_df = pl.DataFrame({
-                        "_trnascan_id": list(anticodon_positions.keys()),
-                        "_pos_start":   [s for s, _ in anticodon_positions.values()],
-                        "_pos_end":     [e for _, e in anticodon_positions.values()],
-                    }).with_columns([
-                        pl.col("_pos_start").cast(pl.Int64),
-                        pl.col("_pos_end").cast(pl.Int64),
-                    ])
+                    positions_df = pl.DataFrame(
+                        {
+                            "_trnascan_id": list(anticodon_positions.keys()),
+                            "_pos_start": [s for s, _ in anticodon_positions.values()],
+                            "_pos_end": [e for _, e in anticodon_positions.values()],
+                        }
+                    ).with_columns(
+                        [
+                            pl.col("_pos_start").cast(pl.Int64),
+                            pl.col("_pos_end").cast(pl.Int64),
+                        ]
+                    )
                     trna_df = trna_df.join(positions_df, on="_trnascan_id", how="left")
                 else:
                     # No .sec file / no positions parsed — fall back to start/stop.
-                    trna_df = trna_df.with_columns([
-                        pl.lit(None, dtype=pl.Int64).alias("_pos_start"),
-                        pl.lit(None, dtype=pl.Int64).alias("_pos_end"),
-                    ])
+                    trna_df = trna_df.with_columns(
+                        [
+                            pl.lit(None, dtype=pl.Int64).alias("_pos_start"),
+                            pl.lit(None, dtype=pl.Int64).alias("_pos_end"),
+                        ]
+                    )
 
                 # 2) Compute the codon column using Biopython's reverse-complement
                 # + transcribe.  ``map_elements`` evaluates per-row; the safe
@@ -928,58 +1096,70 @@ class Pharok:
                 # since polars evaluates with_columns inputs in parallel against
                 # the current frame state.
                 _isotypes_remapped = (
-                    pl.when(pl.col("isotypes") == "Undet").then(pl.lit("OTHER"))
-                      .when(pl.col("isotypes") == "Sup").then(pl.lit("TERM"))
-                      .otherwise(pl.col("isotypes"))
+                    pl.when(pl.col("isotypes") == "Undet")
+                    .then(pl.lit("OTHER"))
+                    .when(pl.col("isotypes") == "Sup")
+                    .then(pl.lit("TERM"))
+                    .otherwise(pl.col("isotypes"))
                 )
 
-                trna_df = trna_df.with_columns([
-                    # note: assigned only for Undet / Sup, unchanged otherwise
-                    pl.when(pl.col("isotypes") == "Undet").then(pl.lit("Undetermined tRNA"))
-                      .when(pl.col("isotypes") == "Sup").then(pl.lit("Suppressor tRNA"))
-                      .otherwise(pl.col("note"))
-                      .alias("note"),
-                    # codon: empty for Undet, computed via Biopython otherwise
-                    pl.when(pl.col("isotypes") == "Undet")
-                      .then(pl.lit(""))
-                      .otherwise(
-                          pl.col("anticodon").map_elements(_safe_codon, return_dtype=pl.Utf8)
-                      )
-                      .alias("codon"),
-                    # anticodon_gb: None for Undet; otherwise pos:start..end,aa:ISO,seq:ANT
-                    pl.when(pl.col("isotypes") == "Undet")
-                      .then(pl.lit(None, dtype=pl.Utf8))
-                      .otherwise(
-                          pl.format(
-                              "(pos:{}..{},aa:{},seq:{})",
-                              pl.coalesce([pl.col("_pos_start"), pl.col("start")]),
-                              pl.coalesce([pl.col("_pos_end"),   pl.col("stop")]),
-                              _isotypes_remapped,
-                              pl.col("anticodon"),
-                          )
-                      )
-                      .alias("anticodon_gb"),
-                    # isotypes: remapped Undet→OTHER, Sup→TERM, else unchanged
-                    _isotypes_remapped.alias("isotypes"),
-                ])
+                trna_df = trna_df.with_columns(
+                    [
+                        # note: assigned only for Undet / Sup, unchanged otherwise
+                        pl.when(pl.col("isotypes") == "Undet")
+                        .then(pl.lit("Undetermined tRNA"))
+                        .when(pl.col("isotypes") == "Sup")
+                        .then(pl.lit("Suppressor tRNA"))
+                        .otherwise(pl.col("note"))
+                        .alias("note"),
+                        # codon: empty for Undet, computed via Biopython otherwise
+                        pl.when(pl.col("isotypes") == "Undet")
+                        .then(pl.lit(""))
+                        .otherwise(
+                            pl.col("anticodon").map_elements(
+                                _safe_codon, return_dtype=pl.Utf8
+                            )
+                        )
+                        .alias("codon"),
+                        # anticodon_gb: None for Undet; otherwise pos:start..end,aa:ISO,seq:ANT
+                        pl.when(pl.col("isotypes") == "Undet")
+                        .then(pl.lit(None, dtype=pl.Utf8))
+                        .otherwise(
+                            pl.format(
+                                "(pos:{}..{},aa:{},seq:{})",
+                                pl.coalesce([pl.col("_pos_start"), pl.col("start")]),
+                                pl.coalesce([pl.col("_pos_end"), pl.col("stop")]),
+                                _isotypes_remapped,
+                                pl.col("anticodon"),
+                            )
+                        )
+                        .alias("anticodon_gb"),
+                        # isotypes: remapped Undet→OTHER, Sup→TERM, else unchanged
+                        _isotypes_remapped.alias("isotypes"),
+                    ]
+                )
 
                 # Drop temp columns from the positions join + ID extraction.
                 trna_df = trna_df.drop(["_pos_start", "_pos_end", "_trnascan_id"])
 
-                trna_df = trna_df.with_columns([
-                    (
-                        pl.lit("tRNA-") + pl.col("isotypes")
-                        + pl.when(pl.col("codon") != "")
-                        .then(pl.lit("(") + pl.col("codon") + pl.lit(")"))
-                        .otherwise(pl.lit(""))
-                    ).alias("trna_gene"),
-                    (
-                        pl.lit("tRNA-") + pl.col("isotypes")
-                        + pl.when(pl.col("codon") != "")
-                        .then(pl.lit("(") + pl.col("codon") + pl.lit(")"))
-                        .otherwise(pl.lit(""))
-                    ).alias("trna_product"),
-                ])
+                trna_df = trna_df.with_columns(
+                    [
+                        (
+                            pl.lit("tRNA-")
+                            + pl.col("isotypes")
+                            + pl.when(pl.col("codon") != "")
+                            .then(pl.lit("(") + pl.col("codon") + pl.lit(")"))
+                            .otherwise(pl.lit(""))
+                        ).alias("trna_gene"),
+                        (
+                            pl.lit("tRNA-")
+                            + pl.col("isotypes")
+                            + pl.when(pl.col("codon") != "")
+                            .then(pl.lit("(") + pl.col("codon") + pl.lit(")"))
+                            .otherwise(pl.lit(""))
+                        ).alias("trna_product"),
+                    ]
+                )
 
                 if "anticodon_gb" not in trna_df.columns:
                     trna_df = trna_df.with_columns(pl.lit(None).alias("anticodon_gb"))
@@ -987,19 +1167,27 @@ class Pharok:
                 trna_df = trna_df.drop(["attributes"])
                 trna_df = trna_df.with_columns(
                     (
-                        pl.lit("ID=") + pl.col("locus_tag")
-                        + pl.lit(";locus_tag=") + pl.col("locus_tag")
-                        + pl.lit(";gene=") + pl.col("trna_gene").cast(pl.Utf8)
-                        + pl.lit(";product=") + pl.col("trna_product").cast(pl.Utf8)
+                        pl.lit("ID=")
+                        + pl.col("locus_tag")
+                        + pl.lit(";locus_tag=")
+                        + pl.col("locus_tag")
+                        + pl.lit(";gene=")
+                        + pl.col("trna_gene").cast(pl.Utf8)
+                        + pl.lit(";product=")
+                        + pl.col("trna_product").cast(pl.Utf8)
                         + pl.when(
                             pl.col("anticodon_gb").is_not_null()
                             & (pl.col("anticodon_gb").cast(pl.Utf8) != pl.lit(""))
-                        ).then(pl.lit(";anticodon=") + pl.col("anticodon_gb").cast(pl.Utf8))
+                        )
+                        .then(
+                            pl.lit(";anticodon=") + pl.col("anticodon_gb").cast(pl.Utf8)
+                        )
                         .otherwise(pl.lit(""))
                         + pl.when(
                             pl.col("note").is_not_null()
                             & (pl.col("note").cast(pl.Utf8) != pl.lit(""))
-                        ).then(pl.lit(";note=") + pl.col("note").cast(pl.Utf8))
+                        )
+                        .then(pl.lit(";note=") + pl.col("note").cast(pl.Utf8))
                         .otherwise(pl.lit(""))
                     ).alias("attributes")
                 )
@@ -1009,10 +1197,20 @@ class Pharok:
                 # get null which writes as an empty field (trailing tab).
                 # Explicitly select in the correct column order so "codon" comes
                 # after "attributes" when written to GFF.
-                trna_df = trna_df.select([
-                    "contig", "Method", "Region", "start", "stop",
-                    "score", "strand", "frame", "attributes", "codon",
-                ])
+                trna_df = trna_df.select(
+                    [
+                        "contig",
+                        "Method",
+                        "Region",
+                        "start",
+                        "stop",
+                        "score",
+                        "strand",
+                        "frame",
+                        "attributes",
+                        "codon",
+                    ]
+                )
 
             ### crisprs
             crispr_count = get_crispr_count(self.out_dir, self.prefix)
@@ -1028,34 +1226,58 @@ class Pharok:
                 )
                 minced_df = minced_df.with_columns(pl.col("contig").cast(pl.Utf8))
                 minced_df = minced_df.with_columns(
-                    pl.lit(f"nucleotide motif:MinCED:{self.minced_version}").alias("Method")
+                    pl.lit(f"nucleotide motif:MinCED:{self.minced_version}").alias(
+                        "Method"
+                    )
                 )
-                minced_df = minced_df.with_columns([
-                    pl.col("start").cast(pl.Int64),
-                    pl.col("stop").cast(pl.Int64),
-                ])
+                minced_df = minced_df.with_columns(
+                    [
+                        pl.col("start").cast(pl.Int64),
+                        pl.col("stop").cast(pl.Int64),
+                    ]
+                )
 
                 # split attributes
-                minced_df = minced_df.with_columns(
-                    pl.col("attributes").str.splitn(";rpt_unit_seq=", 2).alias("_s1")
-                ).with_columns([
-                    pl.col("_s1").struct.field("field_0").alias("attributes"),
-                    pl.col("_s1").struct.field("field_1").alias("rpt_unit_seq"),
-                ]).drop("_s1")
+                minced_df = (
+                    minced_df.with_columns(
+                        pl.col("attributes")
+                        .str.splitn(";rpt_unit_seq=", 2)
+                        .alias("_s1")
+                    )
+                    .with_columns(
+                        [
+                            pl.col("_s1").struct.field("field_0").alias("attributes"),
+                            pl.col("_s1").struct.field("field_1").alias("rpt_unit_seq"),
+                        ]
+                    )
+                    .drop("_s1")
+                )
 
-                minced_df = minced_df.with_columns(
-                    pl.col("attributes").str.splitn(";rpt_family=", 2).alias("_s2")
-                ).with_columns([
-                    pl.col("_s2").struct.field("field_0").alias("attributes"),
-                    pl.col("_s2").struct.field("field_1").alias("rpt_family"),
-                ]).drop("_s2")
+                minced_df = (
+                    minced_df.with_columns(
+                        pl.col("attributes").str.splitn(";rpt_family=", 2).alias("_s2")
+                    )
+                    .with_columns(
+                        [
+                            pl.col("_s2").struct.field("field_0").alias("attributes"),
+                            pl.col("_s2").struct.field("field_1").alias("rpt_family"),
+                        ]
+                    )
+                    .drop("_s2")
+                )
 
-                minced_df = minced_df.with_columns(
-                    pl.col("attributes").str.splitn(";rpt_type=", 2).alias("_s3")
-                ).with_columns([
-                    pl.col("_s3").struct.field("field_0").alias("attributes"),
-                    pl.col("_s3").struct.field("field_1").alias("rpt_type"),
-                ]).drop("_s3")
+                minced_df = (
+                    minced_df.with_columns(
+                        pl.col("attributes").str.splitn(";rpt_type=", 2).alias("_s3")
+                    )
+                    .with_columns(
+                        [
+                            pl.col("_s3").struct.field("field_0").alias("attributes"),
+                            pl.col("_s3").struct.field("field_1").alias("rpt_type"),
+                        ]
+                    )
+                    .drop("_s3")
+                )
 
                 minced_df = minced_df.drop(["attributes"])
 
@@ -1064,34 +1286,62 @@ class Pharok:
                     subset_dfs = []
                     for contig in contigs_list:
                         subset_df = minced_df.filter(pl.col("contig") == contig)
-                        subset_df = subset_df.with_row_index("_idx").with_columns(
-                            (pl.col("_idx") + 1).cast(pl.Utf8).str.zfill(4).alias("_count")
-                        ).drop("_idx")
+                        subset_df = (
+                            subset_df.with_row_index("_idx")
+                            .with_columns(
+                                (pl.col("_idx") + 1)
+                                .cast(pl.Utf8)
+                                .str.zfill(4)
+                                .alias("_count")
+                            )
+                            .drop("_idx")
+                        )
                         subset_df = subset_df.with_columns(
-                            (pl.lit(contig + "_CRISPR_") + pl.col("_count").str.zfill(4)).alias("locus_tag")
+                            (
+                                pl.lit(contig + "_CRISPR_")
+                                + pl.col("_count").str.zfill(4)
+                            ).alias("locus_tag")
                         ).drop("_count")
                         subset_dfs.append(subset_df)
                     minced_df = pl.concat(subset_dfs)
                 else:
-                    minced_df = minced_df.with_row_index("_idx").with_columns(
-                        (pl.col("_idx") + 1).cast(pl.Utf8).str.zfill(4).alias("_count")
-                    ).drop("_idx")
+                    minced_df = (
+                        minced_df.with_row_index("_idx")
+                        .with_columns(
+                            (pl.col("_idx") + 1)
+                            .cast(pl.Utf8)
+                            .str.zfill(4)
+                            .alias("_count")
+                        )
+                        .drop("_idx")
+                    )
                     minced_df = minced_df.with_columns(
-                        (pl.lit(self.locustag + "_CRISPR_") + pl.col("_count")).alias("locus_tag")
+                        (pl.lit(self.locustag + "_CRISPR_") + pl.col("_count")).alias(
+                            "locus_tag"
+                        )
                     ).drop("_count")
 
                 minced_df = minced_df.with_columns(
                     (
-                        pl.lit("ID=") + pl.col("locus_tag")
-                        + pl.lit(";rpt_type=") + pl.col("rpt_type").cast(pl.Utf8)
-                        + pl.lit(";rpt_family=") + pl.col("rpt_family").cast(pl.Utf8)
-                        + pl.lit(";rpt_unit_seq=") + pl.col("rpt_unit_seq").cast(pl.Utf8)
-                        + pl.lit(";rpt_unit_range=") + pl.col("start").cast(pl.Utf8)
-                        + pl.lit("..") + pl.col("stop").cast(pl.Utf8)
-                        + pl.lit(";locus_tag=") + pl.col("locus_tag")
+                        pl.lit("ID=")
+                        + pl.col("locus_tag")
+                        + pl.lit(";rpt_type=")
+                        + pl.col("rpt_type").cast(pl.Utf8)
+                        + pl.lit(";rpt_family=")
+                        + pl.col("rpt_family").cast(pl.Utf8)
+                        + pl.lit(";rpt_unit_seq=")
+                        + pl.col("rpt_unit_seq").cast(pl.Utf8)
+                        + pl.lit(";rpt_unit_range=")
+                        + pl.col("start").cast(pl.Utf8)
+                        + pl.lit("..")
+                        + pl.col("stop").cast(pl.Utf8)
+                        + pl.lit(";locus_tag=")
+                        + pl.col("locus_tag")
                     ).alias("attributes")
                 )
-                minced_df = minced_df.drop(["rpt_unit_seq", "rpt_family", "rpt_type", "locus_tag"])
+                minced_df = minced_df.drop(
+                    ["rpt_unit_seq", "rpt_family", "rpt_type", "locus_tag"]
+                )
 
             ### tmrna
             if self.tmrna_flag:
@@ -1105,37 +1355,60 @@ class Pharok:
                     infer_schema=False,
                 )
                 tmrna_df = tmrna_df.with_columns(pl.col("contig").cast(pl.Utf8))
-                tmrna_df = tmrna_df.with_columns([
-                    pl.col("start").cast(pl.Int64),
-                    pl.col("stop").cast(pl.Int64),
-                ])
+                tmrna_df = tmrna_df.with_columns(
+                    [
+                        pl.col("start").cast(pl.Int64),
+                        pl.col("stop").cast(pl.Int64),
+                    ]
+                )
 
                 # index hack if meta mode
                 if self.meta_mode:
                     subset_dfs = []
                     for contig in contigs_list:
                         subset_df = tmrna_df.filter(pl.col("contig") == contig)
-                        subset_df = subset_df.with_row_index("_idx").with_columns(
-                            (pl.col("_idx") + 1).cast(pl.Utf8).str.zfill(4).alias("_count")
-                        ).drop("_idx")
+                        subset_df = (
+                            subset_df.with_row_index("_idx")
+                            .with_columns(
+                                (pl.col("_idx") + 1)
+                                .cast(pl.Utf8)
+                                .str.zfill(4)
+                                .alias("_count")
+                            )
+                            .drop("_idx")
+                        )
                         subset_df = subset_df.with_columns(
-                            (pl.lit(contig + "_tmRNA_") + pl.col("_count")).alias("locus_tag")
+                            (pl.lit(contig + "_tmRNA_") + pl.col("_count")).alias(
+                                "locus_tag"
+                            )
                         ).drop("_count")
                         subset_dfs.append(subset_df)
                     tmrna_df = pl.concat(subset_dfs)
                 else:
-                    tmrna_df = tmrna_df.with_row_index("_idx").with_columns(
-                        (pl.col("_idx") + 1).cast(pl.Utf8).str.zfill(4).alias("_count")
-                    ).drop("_idx")
+                    tmrna_df = (
+                        tmrna_df.with_row_index("_idx")
+                        .with_columns(
+                            (pl.col("_idx") + 1)
+                            .cast(pl.Utf8)
+                            .str.zfill(4)
+                            .alias("_count")
+                        )
+                        .drop("_idx")
+                    )
                     tmrna_df = tmrna_df.with_columns(
-                        (pl.lit(self.locustag + "_tmRNA_") + pl.col("_count")).alias("locus_tag")
+                        (pl.lit(self.locustag + "_tmRNA_") + pl.col("_count")).alias(
+                            "locus_tag"
+                        )
                     ).drop("_count")
 
                 tmrna_df = tmrna_df.with_columns(
                     (
-                        pl.lit("ID=") + pl.col("locus_tag")
-                        + pl.lit(";") + pl.col("attributes").cast(pl.Utf8)
-                        + pl.lit(";locus_tag=") + pl.col("locus_tag")
+                        pl.lit("ID=")
+                        + pl.col("locus_tag")
+                        + pl.lit(";")
+                        + pl.col("attributes").cast(pl.Utf8)
+                        + pl.lit(";locus_tag=")
+                        + pl.col("locus_tag")
                     ).alias("attributes")
                 )
                 tmrna_df = tmrna_df.drop(["locus_tag"])
@@ -1176,10 +1449,12 @@ class Pharok:
         total_gff = pl.concat(df_list, how="diagonal")
 
         # ensure that the start and stops are integer
-        total_gff = total_gff.with_columns([
-            pl.col("start").cast(pl.Int64),
-            pl.col("stop").cast(pl.Int64),
-        ])
+        total_gff = total_gff.with_columns(
+            [
+                pl.col("start").cast(pl.Int64),
+                pl.col("stop").cast(pl.Int64),
+            ]
+        )
 
         # sorts all features by start
         total_gff = total_gff.sort(["contig", "start"])
@@ -1191,7 +1466,13 @@ class Pharok:
         # We replicate that by keeping "codon" in trna_df and using diagonal
         # concat so non-tRNA rows get null → empty string → trailing tab.
         with open(os.path.join(self.out_dir, self.prefix + ".gff"), "a") as f:
-            total_gff.write_csv(f, separator="\t", include_header=False, quote_style="never", null_value="")
+            total_gff.write_csv(
+                f,
+                separator="\t",
+                include_header=False,
+                quote_style="never",
+                null_value="",
+            )
 
         # write fasta on the end
         with open(os.path.join(self.out_dir, self.prefix + ".gff"), "a") as f:
@@ -1201,7 +1482,7 @@ class Pharok:
                 sequence = record.seq
                 chunk_size = 60
                 for i in range(0, len(sequence), chunk_size):
-                    f.write(str(sequence[i: i + chunk_size]) + "\n")
+                    f.write(str(sequence[i : i + chunk_size]) + "\n")
 
         self.gff_df = gff_df
         self.total_gff = total_gff
@@ -1218,21 +1499,19 @@ class Pharok:
         Creates the pharokka.tbl file
         """
 
-        col_list = [
-            "contig", "Method", "Region", "start", "stop", "score", "strand", "frame", "attributes",
-        ]
-
         ### trnas
         if self.trna_empty is False:
             trna_df = self.total_gff.filter(
                 pl.col("Method") == f"profile:tRNAscan-SE:{self.trna_version}"
             )
             trna_df = parse_attributes_column(trna_df)
-            trna_df = trna_df.with_columns([
-                pl.col("contig").cast(pl.Utf8),
-                pl.col("start").cast(pl.Int64),
-                pl.col("stop").cast(pl.Int64),
-            ])
+            trna_df = trna_df.with_columns(
+                [
+                    pl.col("contig").cast(pl.Utf8),
+                    pl.col("start").cast(pl.Int64),
+                    pl.col("stop").cast(pl.Int64),
+                ]
+            )
             if "anticodon" not in trna_df.columns:
                 trna_df = trna_df.with_columns(pl.lit(None).alias("anticodon"))
 
@@ -1240,21 +1519,25 @@ class Pharok:
         if self.crispr_count > 0:
             crispr_df = self.total_gff.filter(pl.col("Region") == "repeat_region")
             crispr_df = parse_attributes_column(crispr_df)
-            crispr_df = crispr_df.with_columns([
-                pl.col("contig").cast(pl.Utf8),
-                pl.col("start").cast(pl.Int64),
-                pl.col("stop").cast(pl.Int64),
-            ])
+            crispr_df = crispr_df.with_columns(
+                [
+                    pl.col("contig").cast(pl.Utf8),
+                    pl.col("start").cast(pl.Int64),
+                    pl.col("stop").cast(pl.Int64),
+                ]
+            )
 
         ### TMRNAs
         if self.tmrna_flag is True:
             tmrna_df = self.total_gff.filter(pl.col("Region") == "tmRNA")
             tmrna_df = parse_attributes_column(tmrna_df)
-            tmrna_df = tmrna_df.with_columns([
-                pl.col("contig").cast(pl.Utf8),
-                pl.col("start").cast(pl.Int64),
-                pl.col("stop").cast(pl.Int64),
-            ])
+            tmrna_df = tmrna_df.with_columns(
+                [
+                    pl.col("contig").cast(pl.Utf8),
+                    pl.col("start").cast(pl.Int64),
+                    pl.col("stop").cast(pl.Int64),
+                ]
+            )
 
         with open(os.path.join(self.out_dir, self.prefix + ".tbl"), "w") as f:
             for row in self.length_df.iter_rows(named=True):
@@ -1268,10 +1551,12 @@ class Pharok:
                 if "partial" in subset_df.columns:
                     subset_df = subset_df.drop(["partial"])
                 subset_df = parse_attributes_column(subset_df)
-                subset_df = subset_df.with_columns([
-                    pl.col("start").cast(pl.Int64),
-                    pl.col("stop").cast(pl.Int64),
-                ])
+                subset_df = subset_df.with_columns(
+                    [
+                        pl.col("start").cast(pl.Int64),
+                        pl.col("stop").cast(pl.Int64),
+                    ]
+                )
                 for srow in subset_df.iter_rows(named=True):
                     start = str(srow["start"])
                     stop = str(srow["stop"])
@@ -1292,9 +1577,7 @@ class Pharok:
                         elif srow["strand"] == "-" and srow["partial"] == "01":
                             start = "<" + str(srow["stop"])
                             if contig_length - srow["stop"] > 0:
-                                codon_start = (
-                                    contig_length - srow["stop"] + 1
-                                )
+                                codon_start = contig_length - srow["stop"] + 1
                                 start = "<" + str(contig_length)
                                 if codon_start > 3:
                                     logger.error(
@@ -1373,7 +1656,9 @@ class Pharok:
             subset_df = self.total_gff.filter(pl.col("contig") == contig)
 
             with open(os.path.join(single_gff_dir, contig + ".gff"), "a") as f:
-                subset_df.write_csv(f, separator="\t", include_header=False, quote_style="never")
+                subset_df.write_csv(
+                    f, separator="\t", include_header=False, quote_style="never"
+                )
 
             with open(os.path.join(single_gff_dir, contig + ".gff"), "a") as f:
                 f.write("##FASTA\n")
@@ -1434,9 +1719,13 @@ class Pharok:
         ######################################
         # locus_df is self.merged_df (set in create_gff)
         # The vfdb_results needs to be joined with locus tag info
-        locus_tag_info = self.locus_df.select(["gene", "locus_tag", "contig", "start", "stop", "strand"])
+        locus_tag_info = self.locus_df.select(
+            ["gene", "locus_tag", "contig", "start", "stop", "strand"]
+        )
 
-        self.vfdb_results = self.vfdb_results.join(locus_tag_info, how="left", on="gene")
+        self.vfdb_results = self.vfdb_results.join(
+            locus_tag_info, how="left", on="gene"
+        )
 
         # reorder: locus_tag first
         cols = self.vfdb_results.columns
@@ -1444,12 +1733,23 @@ class Pharok:
         self.vfdb_results = self.vfdb_results.select(cols_reordered)
 
         # keep only desired columns and save
-        self.vfdb_results = self.vfdb_results.select([
-            "contig", "locus_tag", "vfdb_hit", "vfdb_alnScore", "vfdb_seqIdentity", "start", "stop", "strand",
-        ])
-        self.vfdb_results = self.vfdb_results.rename({
-            "locus_tag": "gene",
-        })
+        self.vfdb_results = self.vfdb_results.select(
+            [
+                "contig",
+                "locus_tag",
+                "vfdb_hit",
+                "vfdb_alnScore",
+                "vfdb_seqIdentity",
+                "start",
+                "stop",
+                "strand",
+            ]
+        )
+        self.vfdb_results = self.vfdb_results.rename(
+            {
+                "locus_tag": "gene",
+            }
+        )
 
         if self.mmseqs_flag is True:
             self.vfdb_results = self.vfdb_results.sort("start")
@@ -1460,20 +1760,33 @@ class Pharok:
         ######################################
         ##### update card with locus tag #####
         ######################################
-        self.card_results = self.card_results.join(locus_tag_info, how="left", on="gene")
+        self.card_results = self.card_results.join(
+            locus_tag_info, how="left", on="gene"
+        )
         cols = self.card_results.columns
         cols_reordered = ["locus_tag"] + [c for c in cols if c != "locus_tag"]
         self.card_results = self.card_results.select(cols_reordered)
 
-        self.card_results = self.card_results.select([
-            "contig", "locus_tag", "CARD_hit", "CARD_alnScore", "CARD_seqIdentity", "start", "stop", "strand",
-        ])
-        self.card_results = self.card_results.rename({
-            "locus_tag": "gene",
-            "CARD_hit": "card_hit",
-            "CARD_alnScore": "card_alnScore",
-            "CARD_seqIdentity": "card_seqIdentity",
-        })
+        self.card_results = self.card_results.select(
+            [
+                "contig",
+                "locus_tag",
+                "CARD_hit",
+                "CARD_alnScore",
+                "CARD_seqIdentity",
+                "start",
+                "stop",
+                "strand",
+            ]
+        )
+        self.card_results = self.card_results.rename(
+            {
+                "locus_tag": "gene",
+                "CARD_hit": "card_hit",
+                "CARD_alnScore": "card_alnScore",
+                "CARD_seqIdentity": "card_seqIdentity",
+            }
+        )
         if self.mmseqs_flag is True:
             self.card_results = self.card_results.sort("start")
             self.card_results.write_csv(
@@ -1494,11 +1807,21 @@ class Pharok:
         self.merged_df = self.merged_df.with_columns(pl.col("contig").cast(pl.Utf8))
 
         col_list = [
-            "contig", "Method", "Region", "start", "stop", "score", "strand", "frame", "attributes",
+            "contig",
+            "Method",
+            "Region",
+            "start",
+            "stop",
+            "score",
+            "strand",
+            "frame",
+            "attributes",
         ]
 
         if self.skip_extra_annotations is False:
-            _empty_gff = pl.DataFrame({c: pl.Series([], dtype=pl.Utf8) for c in col_list})
+            _empty_gff = pl.DataFrame(
+                {c: pl.Series([], dtype=pl.Utf8) for c in col_list}
+            )
 
             try:
                 trna_df = pl.read_csv(
@@ -1544,31 +1867,35 @@ class Pharok:
         # ─── Per-contig CDS stats: count + PHROG category breakdown + length sum
         # The 11 PHROG-category labels in display order.
         cds_categories = [
-            ("connector",       "connector"),
-            ("metabolism",      "DNA, RNA and nucleotide metabolism"),
-            ("head",            "head and packaging"),
-            ("integration",     "integration and excision"),
-            ("lysis",           "lysis"),
-            ("moron",           "moron, auxiliary metabolic gene and host takeover"),
-            ("other",           "other"),
-            ("tail",            "tail"),
-            ("transcription",   "transcription regulation"),
-            ("unknown",         "unknown function"),
+            ("connector", "connector"),
+            ("metabolism", "DNA, RNA and nucleotide metabolism"),
+            ("head", "head and packaging"),
+            ("integration", "integration and excision"),
+            ("lysis", "lysis"),
+            ("moron", "moron, auxiliary metabolic gene and host takeover"),
+            ("other", "other"),
+            ("tail", "tail"),
+            ("transcription", "transcription regulation"),
+            ("unknown", "unknown function"),
         ]
 
         cds_only_df = self.merged_df.filter(pl.col("Region") == "CDS")
         if cds_only_df.height > 0:
-            cds_only_df = cds_only_df.with_columns([
-                # function name extracted from attributes (matches old splitn logic)
-                pl.col("attributes")
-                  .str.splitn(";function=", 2).struct.field("field_1")
-                  .str.splitn(";product=", 2).struct.field("field_0")
-                  .alias("_function"),
-                # |start − stop| feeds the coding-density calculation
-                (pl.col("start").cast(pl.Int64) - pl.col("stop").cast(pl.Int64))
+            cds_only_df = cds_only_df.with_columns(
+                [
+                    # function name extracted from attributes (matches old splitn logic)
+                    pl.col("attributes")
+                    .str.splitn(";function=", 2)
+                    .struct.field("field_1")
+                    .str.splitn(";product=", 2)
+                    .struct.field("field_0")
+                    .alias("_function"),
+                    # |start − stop| feeds the coding-density calculation
+                    (pl.col("start").cast(pl.Int64) - pl.col("stop").cast(pl.Int64))
                     .abs()
                     .alias("_cds_len"),
-            ])
+                ]
+            )
             cds_stats = cds_only_df.group_by("contig", maintain_order=True).agg(
                 [pl.len().alias("CDS"), pl.col("_cds_len").sum().alias("_cds_len_sum")]
                 + [
@@ -1577,29 +1904,27 @@ class Pharok:
                 ]
             )
         else:
-            cds_stats = pl.DataFrame(schema={
-                "contig": pl.Utf8, "CDS": pl.UInt32, "_cds_len_sum": pl.Int64,
-                **{short: pl.UInt32 for short, _ in cds_categories},
-            })
+            cds_stats = pl.DataFrame(
+                schema={
+                    "contig": pl.Utf8,
+                    "CDS": pl.UInt32,
+                    "_cds_len_sum": pl.Int64,
+                    **{short: pl.UInt32 for short, _ in cds_categories},
+                }
+            )
 
-        cds_stats_dict = {
-            row["contig"]: row for row in cds_stats.iter_rows(named=True)
-        }
+        cds_stats_dict = {row["contig"]: row for row in cds_stats.iter_rows(named=True)}
 
         # ─── Per-contig RNA / CRISPR / tmRNA counts via group_by
         def _counts_by_contig(src_df):
             if src_df.height == 0:
                 return {}
-            return dict(
-                src_df.group_by("contig")
-                      .agg(pl.len().alias("_n"))
-                      .iter_rows()
-            )
+            return dict(src_df.group_by("contig").agg(pl.len().alias("_n")).iter_rows())
 
         if self.skip_extra_annotations is False:
-            trna_counts   = _counts_by_contig(trna_df)
+            trna_counts = _counts_by_contig(trna_df)
             crispr_counts = _counts_by_contig(crispr_df)
-            tmrna_counts  = _counts_by_contig(tmrna_df)
+            tmrna_counts = _counts_by_contig(tmrna_df)
 
         # ─── VFDB / CARD counts.  v1.9.1 used str.contains(contig) on the hit
         # row's contig column — preserved here in case the test suite ever
@@ -1617,9 +1942,7 @@ class Pharok:
         card_counts = _counts_by_contig_contains(self.card_results, contigs_list)
 
         # ─── Total contig length for coding-density calculation
-        length_lookup = dict(
-            self.length_df.select(["contig", "length"]).iter_rows()
-        )
+        length_lookup = dict(self.length_df.select(["contig", "length"]).iter_rows())
 
         # ─── Assemble the long-format output table.  Build flat lists once,
         # then construct a single DataFrame (avoids 16+ tiny DataFrames/contig).
@@ -1632,41 +1955,60 @@ class Pharok:
                 cds_count, cds_len_sum = 0, 0
                 cat_counts = [0] * len(cds_categories)
             else:
-                cds_count    = stats["CDS"]
-                cds_len_sum  = stats["_cds_len_sum"]
-                cat_counts   = [stats[short] for short, _ in cds_categories]
+                cds_count = stats["CDS"]
+                cds_len_sum = stats["_cds_len_sum"]
+                cat_counts = [stats[short] for short, _ in cds_categories]
 
             # 11 PHROG-category rows
-            descriptions.append("CDS"); counts.append(cds_count); contigs_out.append(contig)
+            descriptions.append("CDS")
+            counts.append(cds_count)
+            contigs_out.append(contig)
             for (_short, label), n in zip(cds_categories, cat_counts):
-                descriptions.append(label); counts.append(n); contigs_out.append(contig)
+                descriptions.append(label)
+                counts.append(n)
+                contigs_out.append(contig)
 
             if self.skip_extra_annotations is False:
-                descriptions.append("tRNAs");   counts.append(trna_counts.get(contig, 0));   contigs_out.append(contig)
-                descriptions.append("CRISPRs"); counts.append(crispr_counts.get(contig, 0)); contigs_out.append(contig)
-                descriptions.append("tmRNAs");  counts.append(tmrna_counts.get(contig, 0));  contigs_out.append(contig)
+                descriptions.append("tRNAs")
+                counts.append(trna_counts.get(contig, 0))
+                contigs_out.append(contig)
+                descriptions.append("CRISPRs")
+                counts.append(crispr_counts.get(contig, 0))
+                contigs_out.append(contig)
+                descriptions.append("tmRNAs")
+                counts.append(tmrna_counts.get(contig, 0))
+                contigs_out.append(contig)
 
-            descriptions.append("VFDB_Virulence_Factors"); counts.append(vfdb_counts.get(contig, 0)); contigs_out.append(contig)
-            descriptions.append("CARD_AMR_Genes");         counts.append(card_counts.get(contig, 0)); contigs_out.append(contig)
+            descriptions.append("VFDB_Virulence_Factors")
+            counts.append(vfdb_counts.get(contig, 0))
+            contigs_out.append(contig)
+            descriptions.append("CARD_AMR_Genes")
+            counts.append(card_counts.get(contig, 0))
+            contigs_out.append(contig)
 
             # coding density
             contig_length_val = length_lookup.get(contig)
             density_dict[contig] = (
                 round(cds_len_sum * 100 / contig_length_val, 2)
-                if contig_length_val else 0
+                if contig_length_val
+                else 0
             )
 
         # update length_df with densities
-        density_vals = [density_dict.get(c, None) for c in self.length_df["contig"].to_list()]
+        density_vals = [
+            density_dict.get(c, None) for c in self.length_df["contig"].to_list()
+        ]
         self.length_df = self.length_df.with_columns(
             pl.Series("cds_coding_density", density_vals)
         )
 
-        description_total_df = pl.DataFrame({
-            "Description": descriptions,
-            "Count": counts,
-            "contig": contigs_out,
-        })
+        description_total_df = pl.DataFrame(
+            {
+                "Description": descriptions,
+                "Count": counts,
+                "contig": contigs_out,
+            }
+        )
         description_total_df.write_csv(
             os.path.join(self.out_dir, self.prefix + "_cds_functions.tsv"),
             separator="\t",
@@ -1690,17 +2032,17 @@ class Pharok:
         annots = self.locus_df["annot"].to_list()
 
         with open(os.path.join(self.out_dir, fasta_output_nts_gd), "w") as nt_fa:
-            for i, dna_record in enumerate(SeqIO.parse(
-                os.path.join(self.out_dir, fasta_input_nts_tmp), "fasta"
-            )):
+            for i, dna_record in enumerate(
+                SeqIO.parse(os.path.join(self.out_dir, fasta_input_nts_tmp), "fasta")
+            ):
                 dna_record.id = str(locus_tags[i])
                 dna_record.description = str(annots[i])
                 SeqIO.write(dna_record, nt_fa, "fasta")
 
         with open(os.path.join(self.out_dir, fasta_output_aas_gd), "w") as aa_fa:
-            for i, dna_record in enumerate(SeqIO.parse(
-                os.path.join(self.out_dir, fasta_input_aas_tmp), "fasta"
-            )):
+            for i, dna_record in enumerate(
+                SeqIO.parse(os.path.join(self.out_dir, fasta_input_aas_tmp), "fasta")
+            ):
                 dna_record.id = str(locus_tags[i])
                 dna_record.description = str(annots[i])
                 SeqIO.write(dna_record, aa_fa, "fasta")
@@ -1711,15 +2053,21 @@ class Pharok:
         """
         # rename gene with locus_tag
         locus_tag_list = self.locus_df["locus_tag"].to_list()
-        self.merged_df = self.merged_df.with_columns(
-            pl.Series("gene", locus_tag_list)
-        )
+        self.merged_df = self.merged_df.with_columns(pl.Series("gene", locus_tag_list))
 
         # rearrange start and stop for neg strand
-        self.merged_df = self.merged_df.with_columns([
-            pl.when(pl.col("strand") == "-").then(pl.col("stop")).otherwise(pl.col("start")).alias("start"),
-            pl.when(pl.col("strand") == "-").then(pl.col("start")).otherwise(pl.col("stop")).alias("stop"),
-        ])
+        self.merged_df = self.merged_df.with_columns(
+            [
+                pl.when(pl.col("strand") == "-")
+                .then(pl.col("stop"))
+                .otherwise(pl.col("start"))
+                .alias("start"),
+                pl.when(pl.col("strand") == "-")
+                .then(pl.col("start"))
+                .otherwise(pl.col("stop"))
+                .alias("stop"),
+            ]
+        )
 
         # move gene column to head
         cols = self.merged_df.columns
@@ -1727,7 +2075,11 @@ class Pharok:
         self.merged_df = self.merged_df.select(cols_reordered)
 
         # drop cols
-        drop_cols = [c for c in ["frame", "attributes", "count", "locus_tag"] if c in self.merged_df.columns]
+        drop_cols = [
+            c
+            for c in ["frame", "attributes", "count", "locus_tag"]
+            if c in self.merged_df.columns
+        ]
         self.merged_df = self.merged_df.drop(drop_cols)
 
         final_output_path = os.path.join(
@@ -1748,9 +2100,9 @@ class Pharok:
 
         with open(os.path.join(self.out_dir, "terL.ffn"), "w") as aa_fa:
             j = 0
-            for i, dna_record in enumerate(SeqIO.parse(
-                os.path.join(self.out_dir, fasta_input_nts_tmp), "fasta"
-            )):
+            for i, dna_record in enumerate(
+                SeqIO.parse(os.path.join(self.out_dir, fasta_input_nts_tmp), "fasta")
+            ):
                 dna_record.id = str(locus_tags[i])
                 dna_record.description = str(annots[i])
                 if annots[i] == "terminase large subunit":
@@ -1764,9 +2116,9 @@ class Pharok:
                     j += 1
 
         with open(os.path.join(self.out_dir, "terL.faa"), "w") as aa_fa:
-            for i, dna_record in enumerate(SeqIO.parse(
-                os.path.join(self.out_dir, fasta_input_aas_tmp), "fasta"
-            )):
+            for i, dna_record in enumerate(
+                SeqIO.parse(os.path.join(self.out_dir, fasta_input_aas_tmp), "fasta")
+            ):
                 dna_record.id = str(locus_tags[i])
                 dna_record.description = str(annots[i])
                 if annots[i] == "terminase large subunit":
@@ -1779,7 +2131,11 @@ class Pharok:
 
         mash_tsv = os.path.join(self.out_dir, "mash_out.tsv")
         col_list = [
-            "contig", "Accession", "mash_distance", "mash_pval", "mash_matching_hashes",
+            "contig",
+            "Accession",
+            "mash_distance",
+            "mash_pval",
+            "mash_matching_hashes",
         ]
 
         contigs = self.length_df["contig"].cast(pl.Utf8)
@@ -1789,10 +2145,12 @@ class Pharok:
             mash_df = pl.read_csv(
                 mash_tsv, separator="\t", has_header=False, new_columns=col_list
             )
-            mash_df = mash_df.with_columns([
-                pl.col("contig").cast(pl.Utf8),
-                pl.col("mash_distance").cast(pl.Float64),
-            ])
+            mash_df = mash_df.with_columns(
+                [
+                    pl.col("contig").cast(pl.Utf8),
+                    pl.col("mash_distance").cast(pl.Float64),
+                ]
+            )
         except pl.exceptions.NoDataError:
             mash_df = pl.DataFrame({c: pl.Series([], dtype=pl.Utf8) for c in col_list})
 
@@ -1807,7 +2165,9 @@ class Pharok:
             # sort which picked alphabetically-first accession for ties, e.g. "DQ222853"
             # instead of "NC_007458" (which appears earlier in INPHARED).
             # Example: DQ222853 (old, alphabetical) → NC_007458 (new, DB order for NC_007458.1 contig).
-            hit_df = mash_df.filter(pl.col("contig") == contig).sort("mash_distance", maintain_order=True)
+            hit_df = mash_df.filter(pl.col("contig") == contig).sort(
+                "mash_distance", maintain_order=True
+            )
             hits = hit_df.height
             if hits > 0:
                 top_row = hit_df[0]
@@ -1818,36 +2178,67 @@ class Pharok:
                 # pval column) or "0.0" when it inferred Float64. New behaviour always
                 # uses float() for a consistent representation.
                 # Example for pval: "0" (old, dtype-dependent) → "0.0" (new, consistent).
-                tophits.append([
-                    top_row[0, "contig"],
-                    top_row[0, "Accession"],
-                    str(float(top_row[0, "mash_distance"])),
-                    str(float(top_row[0, "mash_pval"])),
-                    top_row[0, "mash_matching_hashes"],
-                ])
+                tophits.append(
+                    [
+                        top_row[0, "contig"],
+                        top_row[0, "Accession"],
+                        str(float(top_row[0, "mash_distance"])),
+                        str(float(top_row[0, "mash_pval"])),
+                        top_row[0, "mash_matching_hashes"],
+                    ]
+                )
             else:
-                tophits.append([
-                    contig,
-                    "no_inphared_mash_hit",
-                    "no_inphared_mash_hit",
-                    "no_inphared_mash_hit",
-                    "no_inphared_mash_hit",
-                ])
+                tophits.append(
+                    [
+                        contig,
+                        "no_inphared_mash_hit",
+                        "no_inphared_mash_hit",
+                        "no_inphared_mash_hit",
+                        "no_inphared_mash_hit",
+                    ]
+                )
 
         tophits_mash_df = pl.DataFrame(
             tophits,
-            schema=["contig", "Accession", "mash_distance", "mash_pval", "mash_matching_hashes"],
+            schema=[
+                "contig",
+                "Accession",
+                "mash_distance",
+                "mash_pval",
+                "mash_matching_hashes",
+            ],
             orient="row",
         )
 
         # read in the inphared tsv
         inphared_tsv_file = os.path.join(self.db_dir, "9Aug2025_data.tsv")
         cols = [
-            "Accession", "Description", "Classification", "Genome_Length_(bp)", "Jumbophage",
-            "molGC_(%)", "Molecule", "Modification_Date", "Number_CDS", "Positive_Strand_(%)",
-            "Negative_Strand_(%)", "Coding_Capacity_(%)", "Low_Coding_Capacity_Warning",
-            "tRNAs", "Host", "Lowest_Taxa", "Genus", "Sub-family", "Family", "Order",
-            "Class", "Phylum", "Kingdom", "Realm", "Baltimore_Group", "Genbank_Division",
+            "Accession",
+            "Description",
+            "Classification",
+            "Genome_Length_(bp)",
+            "Jumbophage",
+            "molGC_(%)",
+            "Molecule",
+            "Modification_Date",
+            "Number_CDS",
+            "Positive_Strand_(%)",
+            "Negative_Strand_(%)",
+            "Coding_Capacity_(%)",
+            "Low_Coding_Capacity_Warning",
+            "tRNAs",
+            "Host",
+            "Lowest_Taxa",
+            "Genus",
+            "Sub-family",
+            "Family",
+            "Order",
+            "Class",
+            "Phylum",
+            "Kingdom",
+            "Realm",
+            "Baltimore_Group",
+            "Genbank_Division",
             "Isolation_Host_(beware_inconsistent_and_nonsense_values)",
         ]
         inphared_df = pl.read_csv(
@@ -1863,26 +2254,31 @@ class Pharok:
         #   1. "NA" strings → null (pandas treated "NA" as NaN → wrote as empty, no quotes)
         #   2. "TRUE"/"FALSE" → "True"/"False" (pandas read as Python bool)
         #   3. Float cols with trailing zeros → stripped (pandas parsed as float64)
-        inphared_df = inphared_df.with_columns([
-            pl.when(pl.col(c) == "NA").then(None).otherwise(pl.col(c)).alias(c)
-            for c in inphared_df.columns
-        ])
+        inphared_df = inphared_df.with_columns(
+            [
+                pl.when(pl.col(c) == "NA").then(None).otherwise(pl.col(c)).alias(c)
+                for c in inphared_df.columns
+            ]
+        )
         inphared_df = inphared_df.with_columns(
             pl.col("Jumbophage")
-              .str.replace_all("^TRUE$", "True")
-              .str.replace_all("^FALSE$", "False")
+            .str.replace_all("^TRUE$", "True")
+            .str.replace_all("^FALSE$", "False")
         )
         # Re-format float columns to strip trailing zeros (e.g. "44.890" → "44.89")
         float_inphared_cols = [
-            "molGC_(%)", "Positive_Strand_(%)", "Negative_Strand_(%)", "Coding_Capacity_(%)",
+            "molGC_(%)",
+            "Positive_Strand_(%)",
+            "Negative_Strand_(%)",
+            "Coding_Capacity_(%)",
         ]
         for _fc in float_inphared_cols:
             if _fc in inphared_df.columns:
                 inphared_df = inphared_df.with_columns(
                     pl.when(pl.col(_fc).is_not_null())
-                      .then(pl.col(_fc).cast(pl.Float64).cast(pl.Utf8))
-                      .otherwise(pl.col(_fc))
-                      .alias(_fc)
+                    .then(pl.col(_fc).cast(pl.Float64).cast(pl.Utf8))
+                    .otherwise(pl.col(_fc))
+                    .alias(_fc)
                 )
         # NOTE (future cleanup): Genome_Length_(bp), Number_CDS, tRNAs were previously
         # cast to Float64 here to match an assumed pandas float64 behaviour.  However,
@@ -1913,18 +2309,40 @@ def create_mmseqs_tophits(out_dir, reverse_mmseqs):
 
     if reverse_mmseqs:
         col_list = [
-            "gene", "mmseqs_phrog", "mmseqs_alnScore", "mmseqs_seqIdentity", "mmseqs_eVal",
-            "qStart", "qEnd", "qLen", "tStart", "tEnd", "tLen",
+            "gene",
+            "mmseqs_phrog",
+            "mmseqs_alnScore",
+            "mmseqs_seqIdentity",
+            "mmseqs_eVal",
+            "qStart",
+            "qEnd",
+            "qLen",
+            "tStart",
+            "tEnd",
+            "tLen",
         ]
     else:
         col_list = [
-            "mmseqs_phrog", "gene", "mmseqs_alnScore", "mmseqs_seqIdentity", "mmseqs_eVal",
-            "qStart", "qEnd", "qLen", "tStart", "tEnd", "tLen",
+            "mmseqs_phrog",
+            "gene",
+            "mmseqs_alnScore",
+            "mmseqs_seqIdentity",
+            "mmseqs_eVal",
+            "qStart",
+            "qEnd",
+            "qLen",
+            "tStart",
+            "tEnd",
+            "tLen",
         ]
 
     try:
         mmseqs_df = pl.read_csv(
-            mmseqs_file, separator="\t", has_header=False, new_columns=col_list, infer_schema=False
+            mmseqs_file,
+            separator="\t",
+            has_header=False,
+            new_columns=col_list,
+            infer_schema=False,
         )
     except pl.exceptions.NoDataError:
         mmseqs_df = pl.DataFrame({c: pl.Series([], dtype=pl.Utf8) for c in col_list})
@@ -1936,16 +2354,23 @@ def create_mmseqs_tophits(out_dir, reverse_mmseqs):
     # differences (e.g. "3.473e-22" → polars 3.4730000000000002e-22 vs Python
     # 3.4729999999999998e-22).
     tophits_df = (
-        mmseqs_df
-        .with_columns(pl.col("mmseqs_eVal").cast(pl.Float64).alias("_eVal_sort"))
+        mmseqs_df.with_columns(
+            pl.col("mmseqs_eVal").cast(pl.Float64).alias("_eVal_sort")
+        )
         .sort("_eVal_sort", maintain_order=True)
         .unique(subset=["gene"], keep="first", maintain_order=True)
         .drop("_eVal_sort")
     )
 
-    tophits_df = tophits_df.select([
-        "mmseqs_phrog", "gene", "mmseqs_alnScore", "mmseqs_seqIdentity", "mmseqs_eVal",
-    ])
+    tophits_df = tophits_df.select(
+        [
+            "mmseqs_phrog",
+            "gene",
+            "mmseqs_alnScore",
+            "mmseqs_seqIdentity",
+            "mmseqs_eVal",
+        ]
+    )
 
     # Cast seqIdentity to float so trailing zeros are stripped ("0.660" → "0.66").
     # mmseqs_eVal: normalise to canonical float64 string via polars Ryu formatter.
@@ -1955,14 +2380,14 @@ def create_mmseqs_tophits(out_dir, reverse_mmseqs):
     # Example: "3.4729999999999998e-22" (old, pandas parsed "3.473E-22") →
     #          "3.473e-22" (new, polars Ryu shortest round-trip). Also normalises
     # uppercase-E to lowercase-e.
-    tophits_df = tophits_df.with_columns([
-        pl.col("mmseqs_seqIdentity").cast(pl.Float64),
-        pl.col("mmseqs_eVal").cast(pl.Float64).cast(pl.Utf8),
-    ])
-
-    tophits_df.write_csv(
-        os.path.join(out_dir, "top_hits_mmseqs.tsv"), separator="\t"
+    tophits_df = tophits_df.with_columns(
+        [
+            pl.col("mmseqs_seqIdentity").cast(pl.Float64),
+            pl.col("mmseqs_eVal").cast(pl.Float64).cast(pl.Utf8),
+        ]
     )
+
+    tophits_df.write_csv(os.path.join(out_dir, "top_hits_mmseqs.tsv"), separator="\t")
     return tophits_df
 
 
@@ -2110,11 +2535,13 @@ def process_pyhmmer_results(merged_df, pyhmmer_results_dict):
         pyhmmer_bitscore_list[i] = str(round(hit.bitscore, 6))
         pyhmmer_evalue_list[i] = str(hit.evalue)
 
-    merged_df = merged_df.with_columns([
-        pl.Series("pyhmmer_phrog", pyhmmer_phrog_list),
-        pl.Series("pyhmmer_bitscore", pyhmmer_bitscore_list),
-        pl.Series("pyhmmer_evalue", pyhmmer_evalue_list),
-    ])
+    merged_df = merged_df.with_columns(
+        [
+            pl.Series("pyhmmer_phrog", pyhmmer_phrog_list),
+            pl.Series("pyhmmer_bitscore", pyhmmer_bitscore_list),
+            pl.Series("pyhmmer_evalue", pyhmmer_evalue_list),
+        ]
+    )
 
     return merged_df
 
@@ -2140,17 +2567,21 @@ def process_custom_pyhmmer_results(merged_df, custom_pyhmmer_results_dict):
         custom_hmm_bitscore_list[i] = str(round(hit.bitscore, 6))
         custom_hmm_evalue_list[i] = str(hit.evalue)
 
-    merged_df = merged_df.with_columns([
-        pl.Series("custom_hmm_id", custom_hmm_id_list),
-        pl.Series("custom_hmm_bitscore", custom_hmm_bitscore_list),
-        pl.Series("custom_hmm_evalue", custom_hmm_evalue_list),
-    ])
+    merged_df = merged_df.with_columns(
+        [
+            pl.Series("custom_hmm_id", custom_hmm_id_list),
+            pl.Series("custom_hmm_bitscore", custom_hmm_bitscore_list),
+            pl.Series("custom_hmm_evalue", custom_hmm_evalue_list),
+        ]
+    )
 
     return merged_df
 
 
 #### process vfdb files
-def process_vfdb_results(out_dir, merged_df, proteins_flag=False, reverse_mmseqs2=False):
+def process_vfdb_results(
+    out_dir, merged_df, proteins_flag=False, reverse_mmseqs2=False
+):
     """
     Processes VFDB results
     """
@@ -2159,13 +2590,31 @@ def process_vfdb_results(out_dir, merged_df, proteins_flag=False, reverse_mmseqs
 
     if reverse_mmseqs2:
         col_list = [
-            "gene", "vfdb_hit", "vfdb_alnScore", "vfdb_seqIdentity", "vfdb_eVal",
-            "qStart", "qEnd", "qLen", "tStart", "tEnd", "tLen",
+            "gene",
+            "vfdb_hit",
+            "vfdb_alnScore",
+            "vfdb_seqIdentity",
+            "vfdb_eVal",
+            "qStart",
+            "qEnd",
+            "qLen",
+            "tStart",
+            "tEnd",
+            "tLen",
         ]
     else:
         col_list = [
-            "vfdb_hit", "gene", "vfdb_alnScore", "vfdb_seqIdentity", "vfdb_eVal",
-            "qStart", "qEnd", "qLen", "tStart", "tEnd", "tLen",
+            "vfdb_hit",
+            "gene",
+            "vfdb_alnScore",
+            "vfdb_seqIdentity",
+            "vfdb_eVal",
+            "qStart",
+            "qEnd",
+            "qLen",
+            "tStart",
+            "tEnd",
+            "tLen",
         ]
 
     touch_file(vfdb_file)
@@ -2174,7 +2623,11 @@ def process_vfdb_results(out_dir, merged_df, proteins_flag=False, reverse_mmseqs
         vfdb_df = pl.DataFrame({col: pl.Series([], dtype=pl.Utf8) for col in col_list})
     else:
         vfdb_df = pl.read_csv(
-            vfdb_file, separator="\t", has_header=False, new_columns=col_list, infer_schema=False
+            vfdb_file,
+            separator="\t",
+            has_header=False,
+            new_columns=col_list,
+            infer_schema=False,
         )
 
     # Issue #410 — strip problematic square brackets from certain VFDB hit
@@ -2183,52 +2636,57 @@ def process_vfdb_results(out_dir, merged_df, proteins_flag=False, reverse_mmseqs
     # the column rather than materialising 8 separate DataFrames.
     vfdb_df = vfdb_df.with_columns(
         pl.col("vfdb_hit")
-          .str.replace_all(
-              r"L-allo-isoleucine:holo-\[CmaA peptidyl-carrier protein\]",
-              "L-allo-isoleucine:holo-CmaA peptidyl-carrier protein",
-          )
-          .str.replace_all(
-              r"UDP-3-O-\[3-hydroxymyristoyl\]",
-              "UDP-3-O-3-hydroxymyristoyl",
-          )
-          .str.replace_all(
-              r"N-\[\(2S\)-2-amino-2-carboxyethyl\]",
-              "N-(2S)-2-amino-2-carboxyethyl",
-          )
-          .str.replace_all(
-              r"3-\(L-alanin-3-ylcarbamoyl\)-2-\[\(2- aminoethylcarbamoyl\)methyl\]",
-              "3-(L-alanin-3-ylcarbamoyl)-2-(2- aminoethylcarbamoyl)methyl",
-          )
-          .str.replace_all(
-              r"beta-ketoacyl-\[acyl-carrier-protein\]",
-              "UDP-3-O-3-hydroxymyristoyl",
-          )
-          .str.replace_all(
-              r"biotin--\[acetyl-CoA-carboxylase\] ligase",
-              "biotin--acetyl-CoA-carboxylase ligase",
-          )
-          .str.replace_all(
-              r"DP-3-O-\[3-hydroxymyristoyl\]",
-              "DP-3-O-[3-hydroxymyristoyl]",
-          )
-          .str.replace_all(
-              r"biotin--\[acetyl-CoA-carboxylase\]",
-              "biotin--acetyl-CoA-carboxylase",
-          )
+        .str.replace_all(
+            r"L-allo-isoleucine:holo-\[CmaA peptidyl-carrier protein\]",
+            "L-allo-isoleucine:holo-CmaA peptidyl-carrier protein",
+        )
+        .str.replace_all(
+            r"UDP-3-O-\[3-hydroxymyristoyl\]",
+            "UDP-3-O-3-hydroxymyristoyl",
+        )
+        .str.replace_all(
+            r"N-\[\(2S\)-2-amino-2-carboxyethyl\]",
+            "N-(2S)-2-amino-2-carboxyethyl",
+        )
+        .str.replace_all(
+            r"3-\(L-alanin-3-ylcarbamoyl\)-2-\[\(2- aminoethylcarbamoyl\)methyl\]",
+            "3-(L-alanin-3-ylcarbamoyl)-2-(2- aminoethylcarbamoyl)methyl",
+        )
+        .str.replace_all(
+            r"beta-ketoacyl-\[acyl-carrier-protein\]",
+            "UDP-3-O-3-hydroxymyristoyl",
+        )
+        .str.replace_all(
+            r"biotin--\[acetyl-CoA-carboxylase\] ligase",
+            "biotin--acetyl-CoA-carboxylase ligase",
+        )
+        .str.replace_all(
+            r"DP-3-O-\[3-hydroxymyristoyl\]",
+            "DP-3-O-[3-hydroxymyristoyl]",
+        )
+        .str.replace_all(
+            r"biotin--\[acetyl-CoA-carboxylase\]",
+            "biotin--acetyl-CoA-carboxylase",
+        )
     )
 
     # Sort by eVal; normalise eVal and seqIdentity to canonical float64 strings.
     tophits_df = (
-        vfdb_df
-        .with_columns(pl.col("vfdb_eVal").cast(pl.Float64).alias("_eVal_sort"))
+        vfdb_df.with_columns(pl.col("vfdb_eVal").cast(pl.Float64).alias("_eVal_sort"))
         .sort("_eVal_sort", maintain_order=True)
         .unique(subset=["gene"], keep="first", maintain_order=True)
         .drop("_eVal_sort")
     )
 
-    tophits_df = tophits_df.select([
-        "vfdb_hit", "gene", "vfdb_alnScore", "vfdb_seqIdentity", "vfdb_eVal",
-    ])
+    tophits_df = tophits_df.select(
+        [
+            "vfdb_hit",
+            "gene",
+            "vfdb_alnScore",
+            "vfdb_seqIdentity",
+            "vfdb_eVal",
+        ]
+    )
 
     # vfdb_eVal: normalise to canonical float64 string via polars Ryu formatter.
     # Differs from pharokka v1.9.1 (pandas): pandas C-level parser produced a
@@ -2241,10 +2699,12 @@ def process_vfdb_results(out_dir, merged_df, proteins_flag=False, reverse_mmseqs
     # VFDB hit), pandas promoted int64 to float64 due to NaN, writing "321.0".
     # New polars behaviour keeps the raw integer string.
     # Example: "321.0" (old, when ≥1 CDS had no VFDB hit) → "321" (new).
-    tophits_df = tophits_df.with_columns([
-        pl.col("vfdb_eVal").cast(pl.Float64).cast(pl.Utf8),
-        pl.col("vfdb_seqIdentity").cast(pl.Float64).cast(pl.Utf8),
-    ])
+    tophits_df = tophits_df.with_columns(
+        [
+            pl.col("vfdb_eVal").cast(pl.Float64).cast(pl.Utf8),
+            pl.col("vfdb_seqIdentity").cast(pl.Float64).cast(pl.Utf8),
+        ]
+    )
 
     tophits_df = tophits_df.with_columns(pl.col("gene").cast(pl.Utf8))
 
@@ -2255,37 +2715,58 @@ def process_vfdb_results(out_dir, merged_df, proteins_flag=False, reverse_mmseqs
 
     # merge top hits into the merged df
     merged_df = merged_df.join(tophits_df, on="gene", how="left")
-    merged_df = merged_df.with_columns([
-        pl.col("vfdb_hit").fill_null("None"),
-        pl.col("vfdb_alnScore").fill_null("None"),
-        pl.col("vfdb_seqIdentity").fill_null("None"),
-        pl.col("vfdb_eVal").fill_null("None"),
-    ])
+    merged_df = merged_df.with_columns(
+        [
+            pl.col("vfdb_hit").fill_null("None"),
+            pl.col("vfdb_alnScore").fill_null("None"),
+            pl.col("vfdb_seqIdentity").fill_null("None"),
+            pl.col("vfdb_eVal").fill_null("None"),
+        ]
+    )
 
     if tophits_df.height > 0:
         number_vfs = tophits_df.height
         logger.info(str(number_vfs) + " VFDB virulence factors identified.")
 
-        merged_df = merged_df.with_columns(
-            pl.col("vfdb_hit").str.splitn("[", 3).alias("_split")
-        ).with_columns([
-            pl.col("_split").struct.field("field_0").alias("genbank"),
-            pl.col("_split").struct.field("field_1").alias("desc_tmp"),
-            pl.col("_split").struct.field("field_2").alias("vfdb_species"),
-        ]).drop("_split")
+        merged_df = (
+            merged_df.with_columns(
+                pl.col("vfdb_hit").str.splitn("[", 3).alias("_split")
+            )
+            .with_columns(
+                [
+                    pl.col("_split").struct.field("field_0").alias("genbank"),
+                    pl.col("_split").struct.field("field_1").alias("desc_tmp"),
+                    pl.col("_split").struct.field("field_2").alias("vfdb_species"),
+                ]
+            )
+            .drop("_split")
+        )
 
         merged_df = merged_df.with_columns(
-            pl.col("vfdb_species").str.replace_all("]", "", literal=True).str.strip_chars().alias("vfdb_species")
+            pl.col("vfdb_species")
+            .str.replace_all("]", "", literal=True)
+            .str.strip_chars()
+            .alias("vfdb_species")
         )
 
         # genbank has the info
-        merged_df = merged_df.with_columns([
-            pl.col("genbank").str.splitn(")", 2).struct.field("field_1").alias("vfdb_short_name"),
-            pl.col("genbank").str.splitn(")", 3).struct.field("field_2").alias("vfdb_description"),
-        ])
         merged_df = merged_df.with_columns(
-            pl.col("vfdb_short_name").str.replace_all("(", "", literal=True)
-            .str.splitn(")", 2).struct.field("field_0")
+            [
+                pl.col("genbank")
+                .str.splitn(")", 2)
+                .struct.field("field_1")
+                .alias("vfdb_short_name"),
+                pl.col("genbank")
+                .str.splitn(")", 3)
+                .struct.field("field_2")
+                .alias("vfdb_description"),
+            ]
+        )
+        merged_df = merged_df.with_columns(
+            pl.col("vfdb_short_name")
+            .str.replace_all("(", "", literal=True)
+            .str.splitn(")", 2)
+            .struct.field("field_0")
             .str.strip_chars()
             .alias("vfdb_short_name")
         )
@@ -2294,23 +2775,29 @@ def process_vfdb_results(out_dir, merged_df, proteins_flag=False, reverse_mmseqs
         )
 
         merged_df = merged_df.drop(["genbank", "desc_tmp"])
-        merged_df = merged_df.with_columns([
-            pl.col("vfdb_short_name").fill_null("None"),
-            pl.col("vfdb_description").fill_null("None"),
-            pl.col("vfdb_species").fill_null("None"),
-        ])
+        merged_df = merged_df.with_columns(
+            [
+                pl.col("vfdb_short_name").fill_null("None"),
+                pl.col("vfdb_description").fill_null("None"),
+                pl.col("vfdb_species").fill_null("None"),
+            ]
+        )
     else:
         logger.info("0 VFDB virulence factors identified.")
-        merged_df = merged_df.with_columns([
-            pl.lit("None").alias("vfdb_short_name"),
-            pl.lit("None").alias("vfdb_description"),
-            pl.lit("None").alias("vfdb_species"),
-        ])
+        merged_df = merged_df.with_columns(
+            [
+                pl.lit("None").alias("vfdb_short_name"),
+                pl.lit("None").alias("vfdb_description"),
+                pl.lit("None").alias("vfdb_species"),
+            ]
+        )
     return (merged_df, tophits_df)
 
 
 #### process CARD files
-def process_card_results(out_dir, merged_df, db_dir, proteins_flag=False, reverse_mmseqs2=False):
+def process_card_results(
+    out_dir, merged_df, db_dir, proteins_flag=False, reverse_mmseqs2=False
+):
     """
     Processes card results
     :param out_dir: output directory path
@@ -2322,13 +2809,31 @@ def process_card_results(out_dir, merged_df, db_dir, proteins_flag=False, revers
     logger.info("Processing CARD output.")
     if reverse_mmseqs2:
         col_list = [
-            "gene", "CARD_hit", "CARD_alnScore", "CARD_seqIdentity", "CARD_eVal",
-            "qStart", "qEnd", "qLen", "tStart", "tEnd", "tLen",
+            "gene",
+            "CARD_hit",
+            "CARD_alnScore",
+            "CARD_seqIdentity",
+            "CARD_eVal",
+            "qStart",
+            "qEnd",
+            "qLen",
+            "tStart",
+            "tEnd",
+            "tLen",
         ]
     else:
         col_list = [
-            "CARD_hit", "gene", "CARD_alnScore", "CARD_seqIdentity", "CARD_eVal",
-            "qStart", "qEnd", "qLen", "tStart", "tEnd", "tLen",
+            "CARD_hit",
+            "gene",
+            "CARD_alnScore",
+            "CARD_seqIdentity",
+            "CARD_eVal",
+            "qStart",
+            "qEnd",
+            "qLen",
+            "tStart",
+            "tEnd",
+            "tLen",
         ]
     touch_file(card_file)
 
@@ -2336,21 +2841,30 @@ def process_card_results(out_dir, merged_df, db_dir, proteins_flag=False, revers
         card_df = pl.DataFrame({col: pl.Series([], dtype=pl.Utf8) for col in col_list})
     else:
         card_df = pl.read_csv(
-            card_file, separator="\t", has_header=False, new_columns=col_list, infer_schema=False
+            card_file,
+            separator="\t",
+            has_header=False,
+            new_columns=col_list,
+            infer_schema=False,
         )
 
     # Sort by eVal; normalise eVal and seqIdentity to canonical float64 strings.
     tophits_df = (
-        card_df
-        .with_columns(pl.col("CARD_eVal").cast(pl.Float64).alias("_eVal_sort"))
+        card_df.with_columns(pl.col("CARD_eVal").cast(pl.Float64).alias("_eVal_sort"))
         .sort("_eVal_sort", maintain_order=True)
         .unique(subset=["gene"], keep="first", maintain_order=True)
         .drop("_eVal_sort")
     )
 
-    tophits_df = tophits_df.select([
-        "CARD_hit", "gene", "CARD_alnScore", "CARD_seqIdentity", "CARD_eVal",
-    ])
+    tophits_df = tophits_df.select(
+        [
+            "CARD_hit",
+            "gene",
+            "CARD_alnScore",
+            "CARD_seqIdentity",
+            "CARD_eVal",
+        ]
+    )
 
     # CARD_eVal: normalise to canonical float64 string via polars Ryu formatter.
     # Differs from pharokka v1.9.1 (pandas): pandas C-level parser produced a
@@ -2363,10 +2877,12 @@ def process_card_results(out_dir, merged_df, db_dir, proteins_flag=False, revers
     # CARD hit), pandas promoted int64 to float64, writing "243.0".
     # New polars behaviour keeps the raw integer string.
     # Example: "243.0" (old, when ≥1 CDS had no CARD hit) → "243" (new).
-    tophits_df = tophits_df.with_columns([
-        pl.col("CARD_eVal").cast(pl.Float64).cast(pl.Utf8),
-        pl.col("CARD_seqIdentity").cast(pl.Float64).cast(pl.Utf8),
-    ])
+    tophits_df = tophits_df.with_columns(
+        [
+            pl.col("CARD_eVal").cast(pl.Float64).cast(pl.Utf8),
+            pl.col("CARD_seqIdentity").cast(pl.Float64).cast(pl.Utf8),
+        ]
+    )
 
     tophits_df = tophits_df.with_columns(pl.col("gene").cast(pl.Utf8))
 
@@ -2376,36 +2892,54 @@ def process_card_results(out_dir, merged_df, db_dir, proteins_flag=False, revers
         )
 
     merged_df = merged_df.join(tophits_df, on="gene", how="left")
-    merged_df = merged_df.with_columns([
-        pl.col("CARD_hit").fill_null("None"),
-        pl.col("CARD_alnScore").fill_null("None"),
-        pl.col("CARD_seqIdentity").fill_null("None"),
-        pl.col("CARD_eVal").fill_null("None"),
-    ])
+    merged_df = merged_df.with_columns(
+        [
+            pl.col("CARD_hit").fill_null("None"),
+            pl.col("CARD_alnScore").fill_null("None"),
+            pl.col("CARD_seqIdentity").fill_null("None"),
+            pl.col("CARD_eVal").fill_null("None"),
+        ]
+    )
 
     if tophits_df.height > 0:
         number_cards = tophits_df.height
         logger.info(str(number_cards) + " CARD AMR genes identified.")
 
-        merged_df = merged_df.with_columns(
-            pl.col("CARD_hit").str.splitn("[", 2).alias("_split")
-        ).with_columns([
-            pl.col("_split").struct.field("field_0").alias("genbank"),
-            pl.col("_split").struct.field("field_1").alias("CARD_species"),
-        ]).drop("_split")
-
-        merged_df = merged_df.with_columns(
-            pl.col("CARD_species").str.replace_all("]", "", literal=True).str.strip_chars().alias("CARD_species")
+        merged_df = (
+            merged_df.with_columns(
+                pl.col("CARD_hit").str.splitn("[", 2).alias("_split")
+            )
+            .with_columns(
+                [
+                    pl.col("_split").struct.field("field_0").alias("genbank"),
+                    pl.col("_split").struct.field("field_1").alias("CARD_species"),
+                ]
+            )
+            .drop("_split")
         )
 
         merged_df = merged_df.with_columns(
-            pl.col("genbank").str.splitn("|", 4).alias("_split2")
-        ).with_columns([
-            pl.col("_split2").struct.field("field_0").alias("gb"),
-            pl.col("_split2").struct.field("field_1").alias("genbank2"),
-            pl.col("_split2").struct.field("field_2").alias("ARO_Accession"),
-            pl.col("_split2").struct.field("field_3").alias("CARD_short_name"),
-        ]).drop(["_split2", "genbank"]).rename({"genbank2": "genbank"})
+            pl.col("CARD_species")
+            .str.replace_all("]", "", literal=True)
+            .str.strip_chars()
+            .alias("CARD_species")
+        )
+
+        merged_df = (
+            merged_df.with_columns(
+                pl.col("genbank").str.splitn("|", 4).alias("_split2")
+            )
+            .with_columns(
+                [
+                    pl.col("_split2").struct.field("field_0").alias("gb"),
+                    pl.col("_split2").struct.field("field_1").alias("genbank2"),
+                    pl.col("_split2").struct.field("field_2").alias("ARO_Accession"),
+                    pl.col("_split2").struct.field("field_3").alias("CARD_short_name"),
+                ]
+            )
+            .drop(["_split2", "genbank"])
+            .rename({"genbank2": "genbank"})
+        )
 
         merged_df = merged_df.with_columns(
             pl.col("CARD_short_name").str.strip_chars().alias("CARD_short_name")
@@ -2413,9 +2947,18 @@ def process_card_results(out_dir, merged_df, db_dir, proteins_flag=False, revers
 
         CARD_index_file = os.path.join(db_dir, "aro_index.tsv")
         card_cols = [
-            "ARO_Accession", "CVTERM_ID", "Model_Sequence_ID", "Model_ID", "Model_Name",
-            "ARO_Name", "Protein_Accession", "DNA_Accession", "AMR_Gene_Family",
-            "Drug_Class", "Resistance_Mechanism", "CARD_Short_Name",
+            "ARO_Accession",
+            "CVTERM_ID",
+            "Model_Sequence_ID",
+            "Model_ID",
+            "Model_Name",
+            "ARO_Name",
+            "Protein_Accession",
+            "DNA_Accession",
+            "AMR_Gene_Family",
+            "Drug_Class",
+            "Resistance_Mechanism",
+            "CARD_Short_Name",
         ]
         card_index_df = pl.read_csv(
             CARD_index_file,
@@ -2425,35 +2968,45 @@ def process_card_results(out_dir, merged_df, db_dir, proteins_flag=False, revers
             new_columns=card_cols,
             infer_schema=False,
         )
-        card_index_df = card_index_df.drop([
-            "CVTERM_ID", "Model_Sequence_ID", "Model_ID", "Model_Name",
-            "ARO_Name", "CARD_Short_Name",
-        ])
+        card_index_df = card_index_df.drop(
+            [
+                "CVTERM_ID",
+                "Model_Sequence_ID",
+                "Model_ID",
+                "Model_Name",
+                "ARO_Name",
+                "CARD_Short_Name",
+            ]
+        )
         merged_df = merged_df.join(card_index_df, on="ARO_Accession", how="left")
         merged_df = merged_df.drop(["gb", "genbank"])
 
-        merged_df = merged_df.with_columns([
-            pl.col("CARD_species").fill_null("None"),
-            pl.col("ARO_Accession").fill_null("None"),
-            pl.col("CARD_short_name").fill_null("None"),
-            pl.col("Protein_Accession").fill_null("None"),
-            pl.col("DNA_Accession").fill_null("None"),
-            pl.col("AMR_Gene_Family").fill_null("None"),
-            pl.col("Drug_Class").fill_null("None"),
-            pl.col("Resistance_Mechanism").fill_null("None"),
-        ])
+        merged_df = merged_df.with_columns(
+            [
+                pl.col("CARD_species").fill_null("None"),
+                pl.col("ARO_Accession").fill_null("None"),
+                pl.col("CARD_short_name").fill_null("None"),
+                pl.col("Protein_Accession").fill_null("None"),
+                pl.col("DNA_Accession").fill_null("None"),
+                pl.col("AMR_Gene_Family").fill_null("None"),
+                pl.col("Drug_Class").fill_null("None"),
+                pl.col("Resistance_Mechanism").fill_null("None"),
+            ]
+        )
     else:
         logger.info("0 CARD AMR genes identified.")
-        merged_df = merged_df.with_columns([
-            pl.lit("None").alias("CARD_species"),
-            pl.lit("None").alias("ARO_Accession"),
-            pl.lit("None").alias("CARD_short_name"),
-            pl.lit("None").alias("Protein_Accession"),
-            pl.lit("None").alias("DNA_Accession"),
-            pl.lit("None").alias("AMR_Gene_Family"),
-            pl.lit("None").alias("Drug_Class"),
-            pl.lit("None").alias("Resistance_Mechanism"),
-        ])
+        merged_df = merged_df.with_columns(
+            [
+                pl.lit("None").alias("CARD_species"),
+                pl.lit("None").alias("ARO_Accession"),
+                pl.lit("None").alias("CARD_short_name"),
+                pl.lit("None").alias("Protein_Accession"),
+                pl.lit("None").alias("DNA_Accession"),
+                pl.lit("None").alias("AMR_Gene_Family"),
+                pl.lit("None").alias("Drug_Class"),
+                pl.lit("None").alias("Resistance_Mechanism"),
+            ]
+        )
 
     return (merged_df, tophits_df)
 
@@ -2498,18 +3051,20 @@ def parse_attributes_column(df):
         df.select(
             pl.int_range(0, df.height).alias("_row"),
             pl.col("attributes")
-              .str.split(";")
-              .list.eval(
-                  pl.element().str.splitn("=", 2).struct.rename_fields(["key", "value"])
-              )
-              .alias("_pairs"),
+            .str.split(";")
+            .list.eval(
+                pl.element().str.splitn("=", 2).struct.rename_fields(["key", "value"])
+            )
+            .alias("_pairs"),
         )
-        .with_columns(
-            pl.int_ranges(0, pl.col("_pairs").list.len()).alias("_pair_pos")
-        )
+        .with_columns(pl.int_ranges(0, pl.col("_pairs").list.len()).alias("_pair_pos"))
         .explode(["_pairs", "_pair_pos"])
         .unnest("_pairs")
-        .filter(pl.col("key").is_not_null() & (pl.col("key") != "") & pl.col("value").is_not_null())
+        .filter(
+            pl.col("key").is_not_null()
+            & (pl.col("key") != "")
+            & pl.col("value").is_not_null()
+        )
     )
 
     if pairs.height == 0:
@@ -2520,13 +3075,14 @@ def parse_attributes_column(df):
     # wins.  Sort by (row, pair_pos) of first appearance.
     key_order = (
         pairs.group_by("key", maintain_order=True)
-             .agg([
-                 pl.col("_row").min().alias("_first_row"),
-                 pl.col("_pair_pos").first().alias("_first_pos"),
-             ])
-             .sort(["_first_row", "_first_pos"])
-             ["key"]
-             .to_list()
+        .agg(
+            [
+                pl.col("_row").min().alias("_first_row"),
+                pl.col("_pair_pos").first().alias("_first_pos"),
+            ]
+        )
+        .sort(["_first_row", "_first_pos"])["key"]
+        .to_list()
     )
 
     # Pivot to wide form: one column per key, row-indexed by _row.

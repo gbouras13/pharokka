@@ -49,8 +49,10 @@ def test_golden(case, tmp_path, ensure_database):
     """Run a pharokka case and diff key outputs against the committed golden copy."""
     golden = GOLDEN_DIR / case
     if not golden.is_dir() or not any(golden.iterdir()):
-        pytest.skip(f"no golden outputs committed for case {case!r} "
-                    f"(generate with tests/generate_golden.py)")
+        pytest.skip(
+            f"no golden outputs committed for case {case!r} "
+            f"(generate with tests/generate_golden.py)"
+        )
 
     run_pharokka(CASES[case], tmp_path, DATABASE_DIR, THREADS)
 
@@ -59,6 +61,5 @@ def test_golden(case, tmp_path, ensure_database):
         print(n)
     assert not diffs, (
         f"Golden output mismatch for case {case!r} "
-        f"(regenerate with tests/generate_golden.py if intended):\n"
-        + "\n".join(diffs)
+        f"(regenerate with tests/generate_golden.py if intended):\n" + "\n".join(diffs)
     )

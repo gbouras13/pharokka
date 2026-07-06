@@ -8,7 +8,7 @@ The easiest way to install `pharokka` is via conda. For inexperienced command li
 conda install -c bioconda pharokka
 ```
 
-This will install all the dependencies along with `pharokka`. The dependencies are listed in environment.yml.
+This will install all the dependencies along with `pharokka`. The dependencies are listed in `pyproject.toml`.
 
 
 ## Pip
@@ -45,24 +45,24 @@ singularity exec $containerImage pharokka -h
 
 ## Source
 
-Alternatively, the development version of `pharokka` (which may include new, untested features) can be installed manually via github. 
+Alternatively, the development version of `pharokka` (which may include new, untested features) can be installed manually via github.
+
+The recommended way is with [pixi](https://pixi.sh), which installs `pharokka` together with all of its Python and non-Python dependencies from the pinned `pixi.lock`:
 
 ```bash
 git clone https://github.com/gbouras13/pharokka.git
 cd pharokka
-pip install -e .
+# creates the environment (from pixi.lock) with pharokka installed editable
+pixi shell
 pharokka --help
 ```
 
-The dependencies found in environment.yml will then need to be installed manually.
-
-For example using conda to install the required dependencies:
+Alternatively, if you would rather manage the dependencies yourself, install the
+non-Python dependencies listed in `pyproject.toml` (`[tool.pixi.dependencies]`)
+manually and then install `pharokka` from source:
 
 ```bash
-conda env create -f environment.yml
-conda activate pharokka_env
-# assuming you are in the pharokka directory 
-# installs pharokka from source
+# assuming you are in the pharokka directory
 pip install -e .
 pharokka --help
 ```

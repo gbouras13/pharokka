@@ -6,13 +6,12 @@ Usage: pytest .
 
 # import
 import os
-import shutil
+
 # import functions
 import subprocess
 import sys
 import unittest
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 from loguru import logger
@@ -42,11 +41,6 @@ VFDB_data = Path(f"{overall_data}/VFDB_example")
 genbank_data = Path(f"{overall_data}/genbank_examples")
 logger.add(lambda _: sys.exit(1), level="ERROR")
 threads = 8
-
-
-def remove_directory(dir_path):
-    if os.path.exists(dir_path):
-        shutil.rmtree(dir_path)
 
 
 @pytest.fixture(scope="session")
@@ -83,8 +77,11 @@ def test_download(tmp_dir):
 def test_overall(tmp_dir):
     """test pharokka overall"""
     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
-    cmd = f"pharokka run -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
+    cmd = (
+        f"pharokka run -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
+    )
     exec_command(cmd)
+
 
 def test_overall_reverse_mmseqs_sensitivity(tmp_dir):
     """test pharokka reverse_mmseqs - use with low sensitivity or else takes forever"""
@@ -93,11 +90,13 @@ def test_overall_reverse_mmseqs_sensitivity(tmp_dir):
     cmd = f"pharokka run -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --reverse_mmseqs2 -g pyrodigal-rv --sensitivity {sensitivity}"
     exec_command(cmd)
 
+
 def test_overall_trna_anticodon(tmp_dir):
     """test for #405 trna anticodon bug"""
     input_fasta: Path = f"{bug_data}/AJ251789_trna_anticodon.fa"
     cmd = f"pharokka run -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --fast"
     exec_command(cmd)
+
 
 def test_overall_pyhmmer_alphabet(tmp_dir):
     """test for #331 #357 pyhmmer alphabet must be explictly specifyied as amino acid"""
@@ -105,11 +104,13 @@ def test_overall_pyhmmer_alphabet(tmp_dir):
     cmd = f"pharokka run -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --fast"
     exec_command(cmd)
 
-def test_terminase(tmp_dir):
+
+def test_vfdb_issue_410(tmp_dir):
     """test pharokka vfdb issue #410 fix with extra [] in vfdb headers"""
     input_fasta: Path = f"{bug_data}/vfdb_issue_410.fasta"
     cmd = f"pharokka run -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --fast"
     exec_command(cmd)
+
 
 def test_overall_mash_distance(tmp_dir):
     """test pharokka overall with stricter mash distance"""
@@ -121,7 +122,9 @@ def test_overall_mash_distance(tmp_dir):
 def test_overall_crispr(tmp_dir):
     """test pharokka overall crispr"""
     input_fasta: Path = f"{CRISPR_data}/Biggiephage_A_fullcontig_CasΦ1.fasta"
-    cmd = f"pharokka run -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
+    cmd = (
+        f"pharokka run -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
+    )
     exec_command(cmd)
 
 
@@ -149,7 +152,9 @@ def test_overall_amr(tmp_dir):
 def test_overall_tmrna(tmp_dir):
     """test pharokka overall tmrna"""
     input_fasta: Path = f"{tmrna_data}/NC_051700.fasta"
-    cmd = f"pharokka run -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
+    cmd = (
+        f"pharokka run -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f"
+    )
     exec_command(cmd)
 
 
@@ -186,6 +191,7 @@ def test_meta_unicycler_header_prodigal(tmp_dir):
     input_fasta: Path = f"{meta_data}/combined_meta_unicycler_headers.fasta"
     cmd = f"pharokka run -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f -g prodigal-gv -m"
     exec_command(cmd)
+
 
 def test_pyrodigal_gv(tmp_dir):
     """test pharokka with prodigal-rv"""
@@ -367,9 +373,7 @@ class testFails(unittest.TestCase):
         """tests that pharokka exits if bad threads"""
         with self.assertRaises(RuntimeError):
             input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
-            cmd = (
-                f"pharokka run -i {input_fasta} -d {database_dir} -o {temp_dir} -t sf -f"
-            )
+            cmd = f"pharokka run -i {input_fasta} -d {database_dir} -o {temp_dir} -t sf -f"
             exec_command(cmd)
 
     def test_bad_fast_mmseqs2_only(self):
@@ -379,7 +383,7 @@ class testFails(unittest.TestCase):
             cmd = f"pharokka run -i {input_fasta} -d {database_dir} -o {temp_dir} -t {threads} --fast --mmseqs2_only -f"
             exec_command(cmd)
 
-    def test_bad_fast_meta_gmm(self):
+    def test_bad_fast_meta_hmm(self):
         """tests that pharokka exits if both fast and meta_hmm"""
         with self.assertRaises(RuntimeError):
             input_fasta: Path = f"{standard_data}/SAOMS1.fasta"

@@ -6,18 +6,24 @@ Usage: pytest
 """
 
 import sys
+
 # import
 import unittest
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 from loguru import logger
 
-from pharokka.input_commands import (instantiate_dirs, validate_fasta,
-                                     validate_gene_predictor, validate_meta,
-                                     validate_strand, validate_terminase,
-                                     validate_terminase_start, validate_threads)
+from pharokka.input_commands import (
+    instantiate_dirs,
+    validate_fasta,
+    validate_gene_predictor,
+    validate_meta,
+    validate_strand,
+    validate_terminase,
+    validate_terminase_start,
+    validate_threads,
+)
 from pharokka.util import remove_directory
 
 # test data
@@ -158,7 +164,7 @@ class TestValidateTerminase(unittest.TestCase):
             validate_terminase(fasta, "pos", "nothing")
 
 
-class TestValidateTerminase(unittest.TestCase):
+class TestValidateThreads(unittest.TestCase):
     """Tests of validate_threads"""
 
     def test_validate_threads(self):

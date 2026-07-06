@@ -6,7 +6,6 @@ Adapted from bin/install_databases.py with relative package imports.
 
 import argparse
 import os
-import sys
 from argparse import RawTextHelpFormatter
 
 from loguru import logger
@@ -38,8 +37,8 @@ def get_db_input():
 def _default_db_dir():
     """Return the databases/ directory at the project root (3 levels above this file)."""
     _here = os.path.dirname(os.path.realpath(__file__))  # src/pharokka/
-    _src = os.path.dirname(_here)                         # src/
-    _root = os.path.dirname(_src)                         # project root
+    _src = os.path.dirname(_here)  # src/
+    _root = os.path.dirname(_src)  # project root
     return os.path.join(_root, "databases/")
 
 

@@ -454,7 +454,7 @@ def create_plot(
         interval=int(interval),
         outer=False,
         show_bottom_line=False,
-        label_formatter=lambda v: f"{v/ 1000:.0f} Kb",  # no decimal place
+        label_formatter=lambda v: f"{v / 1000:.0f} Kb",  # no decimal place
         label_orientation="vertical",
         line_kws=dict(ec="grey"),
         label_size=8,
@@ -650,7 +650,7 @@ def create_single_plot(
     seq_len = gb_size_dict[contig_id]
     circos = Circos(sectors={contig_id: seq_len})
 
-    if contig_count == 1 and contig_count != None:
+    if contig_count == 1 and contig_count is not None:
         circos.text(plot_title, size=int(title_size), r=190)
     else:
         circos.text(contig_id, size=int(title_size), r=190)
@@ -1072,7 +1072,7 @@ def create_single_plot(
         interval=int(interval),
         outer=False,
         show_bottom_line=False,
-        label_formatter=lambda v: f"{v/ 1000:.0f} Kb",  # no decimal place
+        label_formatter=lambda v: f"{v / 1000:.0f} Kb",  # no decimal place
         label_orientation="vertical",
         line_kws=dict(ec="grey"),
         label_size=7,

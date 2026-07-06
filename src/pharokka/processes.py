@@ -10,7 +10,6 @@ import pyrodigal_gv
 import pyrodigal_rv
 from BCBio import GFF
 from Bio import SeqIO
-from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from loguru import logger
 
@@ -117,10 +116,14 @@ def _run_phanotate_meta(out_dir, threads, num_fastas, fmt):
     ext = "fasta" if fmt == "fasta" else "txt"
     phanotate_tmp_dir = os.path.join(out_dir, "input_split_tmp")
     commands = [
-        ["phanotate.py",
-         os.path.join(phanotate_tmp_dir, f"input_subprocess{i}.fasta"),
-         "-o", os.path.join(phanotate_tmp_dir, f"phanotate_out_tmp{i}.{ext}"),
-         "-f", fmt]
+        [
+            "phanotate.py",
+            os.path.join(phanotate_tmp_dir, f"input_subprocess{i}.fasta"),
+            "-o",
+            os.path.join(phanotate_tmp_dir, f"phanotate_out_tmp{i}.{ext}"),
+            "-f",
+            fmt,
+        ]
         for i in range(1, num_fastas + 1)
     ]
     with concurrent.futures.ThreadPoolExecutor(max_workers=int(threads)) as ex:
@@ -176,7 +179,19 @@ def run_trnascan_meta(filepath_in, out_dir, threads, num_fastas, trna_scan_model
         in_path = os.path.join(input_tmp_dir, "input_subprocess" + str(i) + ".fasta")
         filepath_out = os.path.join(input_tmp_dir, "trnascan_tmp" + str(i) + ".gff")
         sec_out = os.path.join(input_tmp_dir, "trnascan_tmp" + str(i) + ".sec")
-        cmd = ["tRNAscan-SE", in_path, "--thread", "1", f"-{model}", "-D", "-Q", "-j", filepath_out, "-f", sec_out]
+        cmd = [
+            "tRNAscan-SE",
+            in_path,
+            "--thread",
+            "1",
+            f"-{model}",
+            "-D",
+            "-Q",
+            "-j",
+            filepath_out,
+            "-f",
+            sec_out,
+        ]
         commands.append(cmd)
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=int(threads)) as ex:
@@ -220,7 +235,7 @@ def run_phanotate(filepath_in, out_dir, logdir):
         tool="phanotate.py",
         input=f"{filepath_in}",
         output=f"-o {out_fasta}",
-        params=f"-f fasta",
+        params="-f fasta",
         logdir=logdir,
         outfile="",
     )
@@ -229,7 +244,7 @@ def run_phanotate(filepath_in, out_dir, logdir):
         tool="phanotate.py",
         input=f"{filepath_in}",
         output=f"-o {out_tab}",
-        params=f"-f tabular",
+        params="-f tabular",
         logdir=logdir,
         outfile="",
     )
@@ -313,10 +328,12 @@ def tidy_phanotate_output(out_dir):
     )
 
     # Cast to proper types
-    phan_df = phan_df.with_columns([
-        pl.col("start").cast(pl.Int64),
-        pl.col("stop").cast(pl.Int64),
-    ])
+    phan_df = phan_df.with_columns(
+        [
+            pl.col("start").cast(pl.Int64),
+            pl.col("stop").cast(pl.Int64),
+        ]
+    )
 
     # Parse PHANOTATE score strings (E-notation, e.g. "-1.150410E+28") to
     # Float64. Polars uses a consistent IEEE 754 double representation for both
@@ -342,9 +359,7 @@ def tidy_phanotate_output(out_dir):
         ).alias("gene")
     ).drop("_idx")
 
-    phan_df.write_csv(
-        os.path.join(out_dir, "cleaned_phanotate.tsv"), separator="\t"
-    )
+    phan_df.write_csv(os.path.join(out_dir, "cleaned_phanotate.tsv"), separator="\t")
     return phan_df
 
 
@@ -353,8 +368,15 @@ def tidy_prodigal_output(out_dir, gene_predictor):
     prefix = gene_predictor
     prod_file = os.path.join(out_dir, f"{prefix}_out.gff")
     col_list = [
-        "contig", "prod", "orf", "start", "stop",
-        "score", "strand", "frame", "description",
+        "contig",
+        "prod",
+        "orf",
+        "start",
+        "stop",
+        "score",
+        "strand",
+        "frame",
+        "description",
     ]
 
     prod_df = pl.read_csv(
@@ -381,10 +403,14 @@ def tidy_prodigal_output(out_dir, gene_predictor):
     prod_df = prod_df.drop_nulls()
 
     # Keep relevant columns
-    prod_filt_df = prod_df.select(["start", "stop", "strand", "contig", "score", "description"])
+    prod_filt_df = prod_df.select(
+        ["start", "stop", "strand", "contig", "score", "description"]
+    )
 
     # Parse the description column to get attributes
-    parsed_attrs = [parse_attributes(row) for row in prod_filt_df["description"].to_list()]
+    parsed_attrs = [
+        parse_attributes(row) for row in prod_filt_df["description"].to_list()
+    ]
 
     # Build a polars DataFrame from the parsed attributes
     attr_keys = set()
@@ -403,24 +429,30 @@ def tidy_prodigal_output(out_dir, gene_predictor):
     available_cols = [c for c in keep_cols if c in prod_filt_df.columns]
     prod_filt_df = prod_filt_df.select(available_cols)
     if "partial" not in prod_filt_df.columns:
-        prod_filt_df = prod_filt_df.with_columns(pl.lit(None).cast(pl.Utf8).alias("partial"))
+        prod_filt_df = prod_filt_df.with_columns(
+            pl.lit(None).cast(pl.Utf8).alias("partial")
+        )
 
-    prod_filt_df = prod_filt_df.with_columns([
-        pl.col("start").cast(pl.Int64),
-        pl.col("stop").cast(pl.Int64),
-    ])
+    prod_filt_df = prod_filt_df.with_columns(
+        [
+            pl.col("start").cast(pl.Int64),
+            pl.col("stop").cast(pl.Int64),
+        ]
+    )
 
     # Swap start/stop for negative-strand genes (to match phanotate_out convention)
-    prod_filt_df = prod_filt_df.with_columns([
-        pl.when(pl.col("strand") == "-")
-        .then(pl.col("stop"))
-        .otherwise(pl.col("start"))
-        .alias("start"),
-        pl.when(pl.col("strand") == "-")
-        .then(pl.col("start"))
-        .otherwise(pl.col("stop"))
-        .alias("stop"),
-    ])
+    prod_filt_df = prod_filt_df.with_columns(
+        [
+            pl.when(pl.col("strand") == "-")
+            .then(pl.col("stop"))
+            .otherwise(pl.col("start"))
+            .alias("start"),
+            pl.when(pl.col("strand") == "-")
+            .then(pl.col("start"))
+            .otherwise(pl.col("stop"))
+            .alias("stop"),
+        ]
+    )
 
     prod_filt_df = prod_filt_df.with_row_index("_idx")
     prod_filt_df = prod_filt_df.with_columns(
@@ -468,12 +500,14 @@ def tidy_genbank_output(out_dir, genbank_file, coding_table):
                 strands.append(strand)
                 contigs.append(contig)
 
-    gen_df = pl.DataFrame({
-        "start": starts,
-        "stop": stops,
-        "strand": strands,
-        "contig": contigs,
-    })
+    gen_df = pl.DataFrame(
+        {
+            "start": starts,
+            "stop": stops,
+            "strand": strands,
+            "contig": contigs,
+        }
+    )
     gen_df = gen_df.with_columns(pl.lit("No_score").alias("score"))
 
     gen_df = gen_df.with_row_index("_idx")
@@ -603,7 +637,17 @@ def run_trna_scan(filepath_in, threads, out_dir, logdir, trna_scan_model):
         return 0
 
 
-def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, reverse_mmseqs2, sensitivity, db_name):
+def run_mmseqs(
+    db_dir,
+    out_dir,
+    threads,
+    logdir,
+    gene_predictor,
+    evalue,
+    reverse_mmseqs2,
+    sensitivity,
+    db_name,
+):
     """Runs mmseqs2."""
     logger.info(f"Running MMseqs2 on {db_name} Database.")
 
@@ -636,7 +680,7 @@ def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, reverse
 
     mmseqs_createdb = ExternalTool(
         tool="mmseqs createdb",
-        input=f"",
+        input="",
         output=f"{target_seqs}",
         params=f"{input_aa_fasta}",
         logdir=logdir,
@@ -654,7 +698,7 @@ def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, reverse
 
         mmseqs_search = ExternalTool(
             tool="mmseqs search",
-            input=f"",
+            input="",
             output=f"{tmp_dir} -s {sensitivity} --threads {threads}",
             params=params_list,
             logdir=logdir,
@@ -662,13 +706,17 @@ def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, reverse
         )
     else:
         if reverse_mmseqs2:
-            params_list = f"--min-seq-id 0.8 -c 0.4 {target_seqs} {profile_db} {result_mmseqs}"
+            params_list = (
+                f"--min-seq-id 0.8 -c 0.4 {target_seqs} {profile_db} {result_mmseqs}"
+            )
         else:
-            params_list = f"--min-seq-id 0.8 -c 0.4 {profile_db} {target_seqs} {result_mmseqs}"
+            params_list = (
+                f"--min-seq-id 0.8 -c 0.4 {profile_db} {target_seqs} {result_mmseqs}"
+            )
 
         mmseqs_search = ExternalTool(
             tool="mmseqs search",
-            input=f"",
+            input="",
             output=f"{tmp_dir} -s {sensitivity} --threads {threads}",
             params=params_list,
             logdir=logdir,
@@ -684,7 +732,7 @@ def run_mmseqs(db_dir, out_dir, threads, logdir, gene_predictor, evalue, reverse
 
     mmseqs_createtsv = ExternalTool(
         tool="mmseqs createtsv",
-        input=f"",
+        input="",
         output=f"{mmseqs_result_tsv} --full-header --threads {threads}",
         params=params_list,
         logdir=logdir,
@@ -712,10 +760,12 @@ def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, prot_seq_df):
 
     # Build a {locus_tag → sequence} dict for O(1) lookup.
     if "locus_tag" in prot_seq_df.columns:
-        translation_lookup = dict(zip(
-            prot_seq_df["locus_tag"].to_list(),
-            prot_seq_df["sequence"].to_list(),
-        ))
+        translation_lookup = dict(
+            zip(
+                prot_seq_df["locus_tag"].to_list(),
+                prot_seq_df["sequence"].to_list(),
+            )
+        )
     else:
         translation_lookup = {}
 
@@ -766,11 +816,13 @@ def convert_gff_to_gbk(filepath_in, input_dir, out_dir, prefix, prot_seq_df):
                     # Look up translation by locus_tag (stable key) rather
                     # than by row position.  Falls back to empty string if
                     # unmatched — better than a misaligned translation.
-                    locus_tag_vals = feature.qualifiers.get("locus_tag") or feature.qualifiers.get("ID")
+                    locus_tag_vals = feature.qualifiers.get(
+                        "locus_tag"
+                    ) or feature.qualifiers.get("ID")
                     locus_tag = locus_tag_vals[0] if locus_tag_vals else None
-                    feature.qualifiers.update({
-                        "translation": translation_lookup.get(locus_tag, "")
-                    })
+                    feature.qualifiers.update(
+                        {"translation": translation_lookup.get(locus_tag, "")}
+                    )
 
             SeqIO.write(record, gbk_handler, "genbank")
 
@@ -787,7 +839,7 @@ def run_minced(filepath_in, out_dir, prefix, minced_args, logdir):
 
     minced_fast = ExternalTool(
         tool="minced",
-        input=f"",
+        input="",
         output=f" {output_spacers} {output_gff}",
         params=f" {minced_args} {filepath_in}",
         logdir=logdir,
@@ -809,7 +861,7 @@ def run_aragorn(filepath_in, out_dir, prefix, logdir):
         tool="aragorn",
         input=f"{filepath_in}",
         output=f"-o {aragorn_out_file}",
-        params=f"-l -gcbact -w -m",
+        params="-l -gcbact -w -m",
         logdir=logdir,
         outfile="",
     )
@@ -856,7 +908,7 @@ def run_mash_sketch(filepath_in, out_dir, logdir):
 
     mash_sketch = ExternalTool(
         tool="mash sketch",
-        input=f"",
+        input="",
         output=f"-o {mash_sketch_out_file} -i",
         params=f"{filepath_in}",
         logdir=logdir,
@@ -903,7 +955,7 @@ def run_dnaapler(filepath_in, contig_count, out_dir, threads, logdir):
             tool="dnaapler phage",
             input=f"-i {filepath_in}",
             output=f"-o {dnaapler_output_dir} -t {threads}",
-            params=f"",
+            params="",
             logdir=logdir,
             outfile="",
         )
@@ -912,7 +964,7 @@ def run_dnaapler(filepath_in, contig_count, out_dir, threads, logdir):
             tool="dnaapler all",
             input=f"-i {filepath_in}",
             output=f"-o {dnaapler_output_dir} -t {threads}",
-            params=f"",
+            params="",
             logdir=logdir,
             outfile="",
         )

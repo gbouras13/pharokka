@@ -1,56 +1,55 @@
 name: CI
 
-on: [push,pull_request]
+on: [push, pull_request]
 
 jobs:
+  lint:
+    name: "Lint & format (ruff)"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Pixi
+        uses: prefix-dev/setup-pixi@v0.8.3
+        with:
+          pixi-version: v0.71.2
+          cache: true
+          environments: lint
+
+      - name: Check formatting and lint
+        run: pixi run -e lint check-fmt
+
   tests:
-    name: "Python ${{ matrix.python-version }}"
+    name: "Tests (${{ matrix.os }}, ${{ matrix.environment }})"
     runs-on: ${{ matrix.os }}
 
-    defaults:
-      run:
-        shell: bash -el {0}
-
     strategy:
+      fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-latest] #macos-latest/macos-14 is M1 - some deps
-        python-version: ["3.9", "3.13"]
+        os: [ubuntu-latest, macos-latest] # macos-latest is arm64 (M1)
+        environment: [py39, py313]
 
     steps:
-      - uses: "actions/checkout@v3"
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # Setup env
-      - uses: "conda-incubator/setup-miniconda@v3"
+      - name: Setup Pixi
+        uses: prefix-dev/setup-pixi@v0.8.3
         with:
-          activate-environment: pharokka_env
-          environment-file: environment.yml
-          python-version: ${{ matrix.python-version }}
-          auto-activate-base: false
-          channels: conda-forge,bioconda,defaults
-          channel-priority: strict
-          auto-update-conda: true
-
-      - name: Install pip
-        run: conda install -n pharokka_env pip -y
-
-      - name: Install test deps
-        run: pip install pytest pytest-cov
-
-      - name: Install pharokka
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e .
+          pixi-version: v0.71.2
+          cache: true
+          environments: ${{ matrix.environment }}
 
       - name: Enable subprocess coverage tracking
         # test_overall.py and test_proteins.py run `pharokka run` via
         # subprocess.Popen, so coverage.py can't see them without this.
-        # Writing sitecustomize.py to site-packages makes every new Python
-        # subprocess call coverage.process_startup(), which checks for the
-        # COVERAGE_PROCESS_START env var and starts measuring if set.
+        # Writing sitecustomize.py into the pixi environment's site-packages
+        # makes every new Python subprocess call coverage.process_startup(),
+        # which checks for the COVERAGE_PROCESS_START env var (set by the
+        # test-ci pixi task) and starts measuring if present.
         run: |
-          python - <<'EOF'
+          pixi run -e ${{ matrix.environment }} python - <<'EOF'
           import site, os
           for p in site.getsitepackages():
               if os.path.isdir(p):
@@ -62,30 +61,18 @@ jobs:
           EOF
 
       - name: Run tests and collect coverage
-        # Use 'python -m pytest' rather than bare 'pytest': the bare pytest
-        # script adds bin/ to sys.path[0], which causes bin/pharokka.py (the
-        # legacy backward-compat entry point) to shadow the pharokka package
-        # and produces "pharokka is not a package" on every test import.
-        # python -m sets sys.path[0] to the project root instead.
-        #
-        # COVERAGE_PROCESS_START tells coverage.process_startup() (called by
-        # sitecustomize.py in each subprocess) which config file to use.
-        #
-        # Golden-output regression tests (test_golden.py, marked `golden`) run
-        # 6 extra full pharokka pipelines and diff key outputs against committed
-        # reference files.  Output is reproducible (the database is version
-        # pinned), but they only need to run on ONE matrix cell to catch
-        # regressions — running them on all four would quadruple the heavy work
-        # for no extra signal.  So they run only on ubuntu-latest + Python 3.13
-        # (the reference platform the golden files were generated against) and
-        # are deselected elsewhere with -m "not golden".
-        env:
-          COVERAGE_PROCESS_START: pyproject.toml
+        # Golden-output regression tests (marked `golden`) run several full
+        # pharokka pipelines and diff key outputs against committed reference
+        # files.  They only need to run on ONE matrix cell to catch regressions
+        # — running them on all four would quadruple the heavy work for no extra
+        # signal.  So they run only on ubuntu-latest + py313 (the reference
+        # platform the golden files were generated against) via test-ci-golden;
+        # every other cell uses test-ci, which excludes them.
         run: |
-          if [[ "${{ matrix.os }}" == "ubuntu-latest" && "${{ matrix.python-version }}" == "3.13" ]]; then
-            python -m pytest --cov=src/pharokka --cov-report=xml
+          if [[ "${{ matrix.os }}" == "ubuntu-latest" && "${{ matrix.environment }}" == "py313" ]]; then
+            pixi run -e py313 test-ci-golden
           else
-            python -m pytest -m "not golden" --cov=src/pharokka --cov-report=xml
+            pixi run -e ${{ matrix.environment }} test-ci
           fi
 
       - name: Upload coverage reports to Codecov

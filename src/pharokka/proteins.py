@@ -17,8 +17,17 @@ from loguru import logger
 
 from .databases import check_db_installation
 from .external_tools import ExternalTool
-from .input_commands import check_dependencies, instantiate_dirs, validate_fasta, validate_threads
-from .post_processing import process_card_results, process_pyhmmer_results, process_vfdb_results
+from .input_commands import (
+    check_dependencies,
+    instantiate_dirs,
+    validate_fasta,
+    validate_threads,
+)
+from .post_processing import (
+    process_card_results,
+    process_pyhmmer_results,
+    process_vfdb_results,
+)
 from .util import get_contig_headers, get_version, remove_directory, remove_file
 
 Result = collections.namedtuple("Result", ["protein", "phrog", "bitscore", "evalue"])
@@ -109,7 +118,17 @@ def get_input_proteins():
     return args
 
 
-def run_mmseqs_proteins(input_fasta, db_dir, out_dir, threads, logdir, evalue, reverse_mmseqs2, sensitivity, db_name):
+def run_mmseqs_proteins(
+    input_fasta,
+    db_dir,
+    out_dir,
+    threads,
+    logdir,
+    evalue,
+    reverse_mmseqs2,
+    sensitivity,
+    db_name,
+):
     """
     Runs mmseqs2 for pharokka proteins
     """
@@ -142,7 +161,7 @@ def run_mmseqs_proteins(input_fasta, db_dir, out_dir, threads, logdir, evalue, r
 
     mmseqs_createdb = ExternalTool(
         tool="mmseqs createdb",
-        input=f"",
+        input="",
         output=f"{target_seqs}",
         params=f"{input_fasta}",
         logdir=logdir,
@@ -160,7 +179,7 @@ def run_mmseqs_proteins(input_fasta, db_dir, out_dir, threads, logdir, evalue, r
 
         mmseqs_search = ExternalTool(
             tool="mmseqs search",
-            input=f"",
+            input="",
             output=f"{tmp_dir} -s {sensitivity} --threads {threads}",
             params=params_list,
             logdir=logdir,
@@ -168,13 +187,17 @@ def run_mmseqs_proteins(input_fasta, db_dir, out_dir, threads, logdir, evalue, r
         )
     else:
         if reverse_mmseqs2:
-            params_list = f"--min-seq-id 0.8 -c 0.4 {target_seqs} {profile_db} {result_mmseqs}"
+            params_list = (
+                f"--min-seq-id 0.8 -c 0.4 {target_seqs} {profile_db} {result_mmseqs}"
+            )
         else:
-            params_list = f"--min-seq-id 0.8 -c 0.4 {profile_db} {target_seqs} {result_mmseqs}"
+            params_list = (
+                f"--min-seq-id 0.8 -c 0.4 {profile_db} {target_seqs} {result_mmseqs}"
+            )
 
         mmseqs_search = ExternalTool(
             tool="mmseqs search",
-            input=f"",
+            input="",
             output=f"{tmp_dir} -s {sensitivity} --threads {threads}",
             params=params_list,
             logdir=logdir,
@@ -190,7 +213,7 @@ def run_mmseqs_proteins(input_fasta, db_dir, out_dir, threads, logdir, evalue, r
 
     mmseqs_createtsv = ExternalTool(
         tool="mmseqs createtsv",
-        input=f"",
+        input="",
         output=f"{mmseqs_result_tsv} --full-header --threads {threads}",
         params=params_list,
         logdir=logdir,
@@ -212,7 +235,9 @@ def run_pyhmmer_proteins(input_fasta, db_dir, threads, evalue):
 
     results = []
     alphabet = pyhmmer.easel.Alphabet.amino()
-    with pyhmmer.plan7.HMMFile(os.path.join(db_dir, "all_phrogs.h3m"), alphabet=alphabet) as hmms:
+    with pyhmmer.plan7.HMMFile(
+        os.path.join(db_dir, "all_phrogs.h3m"), alphabet=alphabet
+    ) as hmms:
         with pyhmmer.easel.SequenceFile(
             input_fasta, digital=True, alphabet=alphabet
         ) as seqs:
@@ -222,13 +247,14 @@ def run_pyhmmer_proteins(input_fasta, db_dir, threads, evalue):
                 protein = hits.query.name
                 for hit in hits:
                     if hit.included:
-                        results.append(
-                            Result(protein, hit.name, hit.score, hit.evalue)
-                        )
+                        results.append(Result(protein, hit.name, hit.score, hit.evalue))
 
     best_results = {}
     for result in results:
-        if result.protein not in best_results or result.bitscore > best_results[result.protein].bitscore:
+        if (
+            result.protein not in best_results
+            or result.bitscore > best_results[result.protein].bitscore
+        ):
             best_results[result.protein] = result
 
     return best_results
@@ -284,7 +310,9 @@ class Pharok_Prot:
         self.db_dir = db_dir
         self.prefix = prefix
         self.input_fasta = input_fasta
-        self.pyhmmer_results_dict = pyhmmer_results_dict if pyhmmer_results_dict is not None else {}
+        self.pyhmmer_results_dict = (
+            pyhmmer_results_dict if pyhmmer_results_dict is not None else {}
+        )
         self.tophits_df = tophits_df if tophits_df is not None else pl.DataFrame()
         self.vfdb_results = vfdb_results if vfdb_results is not None else pl.DataFrame()
         self.card_results = card_results if card_results is not None else pl.DataFrame()
@@ -298,7 +326,9 @@ class Pharok_Prot:
         Processes and combines PHROGS, CARD and VFDB mmseqs output
         """
 
-        ids = get_contig_headers(self.input_fasta)  # returns polars Series (seq descriptions)
+        ids = get_contig_headers(
+            self.input_fasta
+        )  # returns polars Series (seq descriptions)
         all_genes_df = pl.DataFrame({"gene": ids.to_list()})
 
         if self.mmseqs_flag is True:
@@ -307,46 +337,77 @@ class Pharok_Prot:
 
             if self.reverse_mmseqs2:
                 col_list = [
-                    "gene", "mmseqs_phrog", "mmseqs_alnScore", "mmseqs_seqIdentity", "mmseqs_eVal",
-                    "qStart", "qEnd", "qLen", "tStart", "tEnd", "tLen",
+                    "gene",
+                    "mmseqs_phrog",
+                    "mmseqs_alnScore",
+                    "mmseqs_seqIdentity",
+                    "mmseqs_eVal",
+                    "qStart",
+                    "qEnd",
+                    "qLen",
+                    "tStart",
+                    "tEnd",
+                    "tLen",
                 ]
             else:
                 col_list = [
-                    "mmseqs_phrog", "gene", "mmseqs_alnScore", "mmseqs_seqIdentity", "mmseqs_eVal",
-                    "qStart", "qEnd", "qLen", "tStart", "tEnd", "tLen",
+                    "mmseqs_phrog",
+                    "gene",
+                    "mmseqs_alnScore",
+                    "mmseqs_seqIdentity",
+                    "mmseqs_eVal",
+                    "qStart",
+                    "qEnd",
+                    "qLen",
+                    "tStart",
+                    "tEnd",
+                    "tLen",
                 ]
 
             mmseqs_df = pl.read_csv(
-                mmseqs_file, separator="\t", has_header=False, new_columns=col_list, infer_schema=False
+                mmseqs_file,
+                separator="\t",
+                has_header=False,
+                new_columns=col_list,
+                infer_schema=False,
             )
 
             # get best hit per gene (lowest e-value)
             tophits_df = (
-                mmseqs_df
-                .with_columns(pl.col("mmseqs_eVal").cast(pl.Float64))
+                mmseqs_df.with_columns(pl.col("mmseqs_eVal").cast(pl.Float64))
                 .sort("mmseqs_eVal")
                 .unique(subset=["gene"], keep="first", maintain_order=True)
-                .select(["gene", "mmseqs_phrog", "mmseqs_alnScore", "mmseqs_seqIdentity", "mmseqs_eVal"])
+                .select(
+                    [
+                        "gene",
+                        "mmseqs_phrog",
+                        "mmseqs_alnScore",
+                        "mmseqs_seqIdentity",
+                        "mmseqs_eVal",
+                    ]
+                )
             )
 
             # get all genes by left-joining with the all gene df
-            tophits_df = (
-                all_genes_df
-                .join(tophits_df, on="gene", how="left")
-                .with_columns([
+            tophits_df = all_genes_df.join(
+                tophits_df, on="gene", how="left"
+            ).with_columns(
+                [
                     pl.col("mmseqs_phrog").fill_null("No_MMseqs"),
                     pl.col("mmseqs_alnScore").fill_null("No_MMseqs"),
                     pl.col("mmseqs_seqIdentity").fill_null("No_MMseqs"),
                     pl.col("mmseqs_eVal").fill_null("No_MMseqs").cast(pl.Utf8),
-                ])
+                ]
             )
         else:
-            tophits_df = all_genes_df.with_columns([
-                pl.lit("No_MMseqs").alias("mmseqs_phrog"),
-                pl.lit("No_MMseqs").alias("mmseqs_alnScore"),
-                pl.lit("No_MMseqs").alias("mmseqs_seqIdentity"),
-                pl.lit("No_MMseqs").alias("mmseqs_eVal"),
-            ])
+            tophits_df = all_genes_df.with_columns(
+                [
+                    pl.lit("No_MMseqs").alias("mmseqs_phrog"),
+                    pl.lit("No_MMseqs").alias("mmseqs_alnScore"),
+                    pl.lit("No_MMseqs").alias("mmseqs_seqIdentity"),
+                    pl.lit("No_MMseqs").alias("mmseqs_eVal"),
+                ]
+            )
 
         ####################
         # combine phrogs
@@ -355,17 +416,21 @@ class Pharok_Prot:
         if self.hmm_flag is True:
             tophits_df = process_pyhmmer_results(tophits_df, self.pyhmmer_results_dict)
         else:
-            tophits_df = tophits_df.with_columns([
-                pl.lit("No_HMM").alias("pyhmmer_phrog"),
-                pl.lit("No_HMM").alias("pyhmmer_bitscore"),
-                pl.lit("No_HMM").alias("pyhmmer_evalue"),
-            ])
+            tophits_df = tophits_df.with_columns(
+                [
+                    pl.lit("No_HMM").alias("pyhmmer_phrog"),
+                    pl.lit("No_HMM").alias("pyhmmer_bitscore"),
+                    pl.lit("No_HMM").alias("pyhmmer_evalue"),
+                ]
+            )
 
         # strip off phrog_
-        tophits_df = tophits_df.with_columns([
-            pl.col("mmseqs_phrog").str.replace("phrog_", ""),
-            pl.col("pyhmmer_phrog").str.replace("phrog_", ""),
-        ])
+        tophits_df = tophits_df.with_columns(
+            [
+                pl.col("mmseqs_phrog").str.replace("phrog_", ""),
+                pl.col("pyhmmer_phrog").str.replace("phrog_", ""),
+            ]
+        )
 
         ############
         # code to create 1 overall phrog column
@@ -375,7 +440,8 @@ class Pharok_Prot:
             tophits_df = tophits_df.with_columns(
                 pl.when(
                     pl.col("phrog").is_null() & (pl.col("pyhmmer_phrog") != "No_PHROG")
-                ).then(pl.col("pyhmmer_phrog"))
+                )
+                .then(pl.col("pyhmmer_phrog"))
                 .otherwise(pl.col("phrog"))
                 .alias("phrog")
             )
@@ -384,7 +450,9 @@ class Pharok_Prot:
 
         # read in phrog annotation file
         phrog_annot_df = pl.read_csv(
-            os.path.join(self.db_dir, "phrog_annot_v4.tsv"), separator="\t", infer_schema=False
+            os.path.join(self.db_dir, "phrog_annot_v4.tsv"),
+            separator="\t",
+            infer_schema=False,
         )
         phrog_annot_df = phrog_annot_df.with_columns(pl.col("phrog").cast(pl.Utf8))
 
@@ -394,13 +462,21 @@ class Pharok_Prot:
         )
 
         tophits_df = tophits_df.join(phrog_annot_df, on="phrog", how="left")
-        tophits_df = tophits_df.with_columns([
-            pl.col("annot").str.replace("No_PHROG", "hypothetical protein"),
-            pl.col("category").str.replace("No_PHROG", "unknown function"),
-        ])
+        tophits_df = tophits_df.with_columns(
+            [
+                pl.col("annot").str.replace("No_PHROG", "hypothetical protein"),
+                pl.col("category").str.replace("No_PHROG", "unknown function"),
+            ]
+        )
 
         # cast mmseqs columns to str and fill nulls
-        for col in ["mmseqs_phrog", "mmseqs_alnScore", "mmseqs_seqIdentity", "mmseqs_eVal", "color"]:
+        for col in [
+            "mmseqs_phrog",
+            "mmseqs_alnScore",
+            "mmseqs_seqIdentity",
+            "mmseqs_eVal",
+            "color",
+        ]:
             tophits_df = tophits_df.with_columns(
                 pl.col(col).cast(pl.Utf8).fill_null("No_PHROG")
             )
@@ -411,26 +487,30 @@ class Pharok_Prot:
         # drop and re-merge for final annotation
         tophits_df = tophits_df.drop(["color", "annot", "category"])
         tophits_df = tophits_df.join(phrog_annot_df, on="phrog", how="left")
-        tophits_df = tophits_df.with_columns([
-            pl.col("annot").fill_null("hypothetical protein"),
-            pl.col("category").fill_null("unknown function"),
-            pl.col("color").fill_null("None"),
-        ])
+        tophits_df = tophits_df.with_columns(
+            [
+                pl.col("annot").fill_null("hypothetical protein"),
+                pl.col("category").fill_null("unknown function"),
+                pl.col("color").fill_null("None"),
+            ]
+        )
         # phrog_annot_v4.tsv stores "NA" as a literal string for unannotated phrogs.
         # pandas treated "NA" as NaN so fillna("hypothetical protein") worked;
         # polars infer_schema=False keeps "NA" as a string, so fill_null has no effect.
         # Replace explicitly here to match the old pandas behaviour.
         # Example: "NA" (old, pandas NaN-filled) → "hypothetical protein" (new, explicit).
-        tophits_df = tophits_df.with_columns([
-            pl.when(pl.col("annot") == "NA")
-              .then(pl.lit("hypothetical protein"))
-              .otherwise(pl.col("annot"))
-              .alias("annot"),
-            pl.when(pl.col("category") == "NA")
-              .then(pl.lit("unknown function"))
-              .otherwise(pl.col("category"))
-              .alias("category"),
-        ])
+        tophits_df = tophits_df.with_columns(
+            [
+                pl.when(pl.col("annot") == "NA")
+                .then(pl.lit("hypothetical protein"))
+                .otherwise(pl.col("annot"))
+                .alias("annot"),
+                pl.when(pl.col("category") == "NA")
+                .then(pl.lit("unknown function"))
+                .otherwise(pl.col("category"))
+                .alias("category"),
+            ]
+        )
 
         ##### length df
         fasta_sequences = SeqIO.parse(open(self.input_fasta), "fasta")
@@ -448,11 +528,18 @@ class Pharok_Prot:
 
         # process vfdb results
         (tophits_df, vfdb_results) = process_vfdb_results(
-            self.out_dir, tophits_df, proteins_flag=True, reverse_mmseqs2=self.reverse_mmseqs2
+            self.out_dir,
+            tophits_df,
+            proteins_flag=True,
+            reverse_mmseqs2=self.reverse_mmseqs2,
         )
         # process CARD results
         (tophits_df, card_results) = process_card_results(
-            self.out_dir, tophits_df, self.db_dir, proteins_flag=True, reverse_mmseqs2=self.reverse_mmseqs2
+            self.out_dir,
+            tophits_df,
+            self.db_dir,
+            proteins_flag=True,
+            reverse_mmseqs2=self.reverse_mmseqs2,
         )
 
         # Rename the "gene" column to "ID"
@@ -460,7 +547,9 @@ class Pharok_Prot:
 
         # Reorder columns: ID, length, then phrog, annot, category in positions 2,3,4
         cols = tophits_df.columns
-        desired_order = [col for col in cols if col not in ["phrog", "annot", "category"]]
+        desired_order = [
+            col for col in cols if col not in ["phrog", "annot", "category"]
+        ]
         desired_order.insert(2, "phrog")
         desired_order.insert(3, "annot")
         desired_order.insert(4, "category")
@@ -493,7 +582,9 @@ class Pharok_Prot:
         self.vfdb_results = vfdb_results
         self.card_results = card_results
 
-        summary_df = self.tophits_df.select(["ID", "length", "phrog", "annot", "category"])
+        summary_df = self.tophits_df.select(
+            ["ID", "length", "phrog", "annot", "category"]
+        )
         summary_df.write_csv(
             os.path.join(self.out_dir, f"{self.prefix}_summary_output.tsv"),
             separator="\t",
@@ -509,9 +600,7 @@ class Pharok_Prot:
         with open(fasta_output_aas, "w") as aa_fa:
             for i, aa_record in enumerate(SeqIO.parse(self.input_fasta, "fasta")):
                 aa_record.description = (
-                    str(aa_record.description)
-                    + " "
-                    + str(annots[i])
+                    str(aa_record.description) + " " + str(annots[i])
                 )
                 SeqIO.write(aa_record, aa_fa, "fasta")
 

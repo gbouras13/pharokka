@@ -7,13 +7,12 @@ Usage: pytest .
 
 # import
 import os
-import shutil
+
 # import functions
 import subprocess
 import sys
 import unittest
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 from loguru import logger
@@ -32,11 +31,6 @@ proteins_data = Path(f"{test_data}/proteins")
 threads = 4
 
 logger.add(lambda _: sys.exit(1), level="ERROR")
-
-
-def remove_directory(dir_path):
-    if os.path.exists(dir_path):
-        shutil.rmtree(dir_path)
 
 
 @pytest.fixture(scope="session")
@@ -96,6 +90,7 @@ def test_proteins_mmseqs_only(tmp_dir):
     input_fasta: Path = f"{proteins_data}/phanotate.faa"
     cmd = f"pharokka proteins -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --mmseqs2_only"
     exec_command(cmd)
+
 
 def test_proteins_reverse_mmseqs_sensitivity(tmp_dir):
     """test pharokka reverse_mmseqs with sensitivity low or else takes forever"""

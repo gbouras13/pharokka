@@ -7,7 +7,6 @@ Adapted from bin/pharokka_multiplotter.py with relative package imports.
 import argparse
 import os
 import shutil
-import sys
 from argparse import RawTextHelpFormatter
 from pathlib import Path
 

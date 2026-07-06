@@ -78,9 +78,12 @@ def run_pharokka(case_args: str, out_dir: Path, db_dir: Path, threads: int = 8) 
     cmd = [
         "pharokka",
         *shlex.split(case_args),
-        "-d", str(db_dir),
-        "-o", str(out_dir),
-        "-t", str(threads),
+        "-d",
+        str(db_dir),
+        "-o",
+        str(out_dir),
+        "-t",
+        str(threads),
         "-f",
     ]
     proc = subprocess.run(cmd, capture_output=True, text=True)

@@ -27,10 +27,10 @@ Each shim then removes ``bin/`` from ``sys.path`` *before* importing from
 import os
 import sys
 
-
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
+
 
 def _fix_sys_path() -> None:
     """Remove any sys.path entry that contains a ``pharokka.py`` file.
@@ -52,13 +52,11 @@ def _fix_sys_path() -> None:
     directory.
     """
     # Fast path: nothing to do if no entry on sys.path shadows pharokka.
-    if not any(
-        p and os.path.isfile(os.path.join(p, "pharokka.py"))
-        for p in sys.path
-    ):
+    if not any(p and os.path.isfile(os.path.join(p, "pharokka.py")) for p in sys.path):
         return
     sys.path = [
-        p for p in sys.path
+        p
+        for p in sys.path
         if not (p and os.path.isfile(os.path.join(p, "pharokka.py")))
     ]
 
@@ -75,6 +73,7 @@ def _warn(old: str, new: str) -> None:
 # Shim entry points (registered in pyproject.toml [project.scripts])
 # ---------------------------------------------------------------------------
 
+
 def pharokka_main() -> None:
     """pharokka  →  pharokka.cli:main (via sys.path-safe shim).
 
@@ -84,6 +83,7 @@ def pharokka_main() -> None:
     """
     _fix_sys_path()
     from pharokka.cli import main
+
     main()
 
 
@@ -97,53 +97,72 @@ def _legacy_shim(old: str, new: str, import_main):
     _fix_sys_path()
     _warn(old, new)
     from pharokka.util import register_error_sink
+
     register_error_sink()
     import_main()()
 
 
 def pharokka_py() -> None:
     """pharokka.py  →  pharokka run"""
+
     def _imp():
         from pharokka.run import main
+
         return main
+
     _legacy_shim("pharokka.py", "pharokka run", _imp)
 
 
 def pharokka_proteins_py() -> None:
     """pharokka_proteins.py  →  pharokka proteins"""
+
     def _imp():
         from pharokka.proteins import main
+
         return main
+
     _legacy_shim("pharokka_proteins.py", "pharokka proteins", _imp)
 
 
 def install_databases_py() -> None:
     """install_databases.py  →  pharokka install"""
+
     def _imp():
         from pharokka.install import main
+
         return main
+
     _legacy_shim("install_databases.py", "pharokka install", _imp)
 
 
 def pharokka_plotter_py() -> None:
     """pharokka_plotter.py  →  pharokka plot"""
+
     def _imp():
         from pharokka.plot_entry import main
+
         return main
+
     _legacy_shim("pharokka_plotter.py", "pharokka plot", _imp)
 
 
 def pharokka_multiplotter_py() -> None:
     """pharokka_multiplotter.py  →  pharokka multiplot"""
+
     def _imp():
         from pharokka.multiplot_entry import main
+
         return main
+
     _legacy_shim("pharokka_multiplotter.py", "pharokka multiplot", _imp)
 
 
 def create_custom_hmm_py() -> None:
     """create_custom_hmm.py  →  pharokka create-hmm"""
+
     def _imp():
         from pharokka.create_custom_hmm import main
+
         return main
+
     _legacy_shim("create_custom_hmm.py", "pharokka create-hmm", _imp)

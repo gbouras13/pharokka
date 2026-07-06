@@ -2,8 +2,6 @@ import collections
 import os
 
 import pyhmmer
-from pyhmmer.easel import SequenceFile
-from pyhmmer.plan7 import HMM, HMMFile
 
 
 def run_pyhmmer(db_dir, out_dir, threads, gene_predictor, evalue):
@@ -26,7 +24,9 @@ def run_pyhmmer(db_dir, out_dir, threads, gene_predictor, evalue):
 
     results = []
     alphabet = pyhmmer.easel.Alphabet.amino()
-    with pyhmmer.plan7.HMMFile(os.path.join(db_dir, "all_phrogs.h3m"), alphabet=alphabet) as hmms:
+    with pyhmmer.plan7.HMMFile(
+        os.path.join(db_dir, "all_phrogs.h3m"), alphabet=alphabet
+    ) as hmms:
         with pyhmmer.easel.SequenceFile(
             amino_acid_fasta_file, digital=True, alphabet=alphabet
         ) as seqs:
@@ -36,13 +36,14 @@ def run_pyhmmer(db_dir, out_dir, threads, gene_predictor, evalue):
                 protein = hits.query.name
                 for hit in hits:
                     if hit.included:
-                        results.append(
-                            Result(protein, hit.name, hit.score, hit.evalue)
-                        )
+                        results.append(Result(protein, hit.name, hit.score, hit.evalue))
 
     best_results = {}
     for result in results:
-        if result.protein not in best_results or result.bitscore > best_results[result.protein].bitscore:
+        if (
+            result.protein not in best_results
+            or result.bitscore > best_results[result.protein].bitscore
+        ):
             best_results[result.protein] = result
 
     return best_results

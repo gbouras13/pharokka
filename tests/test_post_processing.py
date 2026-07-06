@@ -17,7 +17,6 @@ Coverage focus:
 """
 
 import collections
-import os
 
 import polars as pl
 import pytest
@@ -36,23 +35,25 @@ from pharokka.post_processing import (
     process_vfdb_results,
 )
 
-
 # ---------------------------------------------------------------------------
 # parse_attributes_column
 # ---------------------------------------------------------------------------
+
 
 class TestParseAttributesColumn:
     """Vectorised GFF attribute parser — fix #1."""
 
     def test_basic_homogeneous(self):
-        df = pl.DataFrame({
-            "contig": ["c1", "c1", "c2"],
-            "attributes": [
-                "ID=a;phrog=1;product=foo",
-                "ID=b;phrog=2;product=bar",
-                "ID=c;phrog=3;product=baz",
-            ],
-        })
+        df = pl.DataFrame(
+            {
+                "contig": ["c1", "c1", "c2"],
+                "attributes": [
+                    "ID=a;phrog=1;product=foo",
+                    "ID=b;phrog=2;product=bar",
+                    "ID=c;phrog=3;product=baz",
+                ],
+            }
+        )
         result = parse_attributes_column(df)
         # New columns appended in first-appearance order
         assert result.columns == ["contig", "attributes", "ID", "phrog", "product"]
@@ -61,13 +62,15 @@ class TestParseAttributesColumn:
         assert result["product"].to_list() == ["foo", "bar", "baz"]
 
     def test_heterogeneous_keys_have_nulls(self):
-        df = pl.DataFrame({
-            "attributes": [
-                "ID=a;phrog=1;partial=10",
-                "ID=b;phrog=2",
-                "ID=c;phrog=3;partial=01",
-            ],
-        })
+        df = pl.DataFrame(
+            {
+                "attributes": [
+                    "ID=a;phrog=1;partial=10",
+                    "ID=b;phrog=2",
+                    "ID=c;phrog=3;partial=01",
+                ],
+            }
+        )
         result = parse_attributes_column(df)
         assert result.columns == ["attributes", "ID", "phrog", "partial"]
         assert result["partial"].to_list() == ["10", None, "01"]
@@ -75,13 +78,15 @@ class TestParseAttributesColumn:
     def test_column_order_preserves_first_appearance(self):
         """A key that first appears in row 1 (not 0) should still sit after
         keys from row 0."""
-        df = pl.DataFrame({
-            "attributes": [
-                "ID=a;phrog=1",
-                "ID=b;phrog=2;partial=01;extra=foo",
-                "ID=c;phrog=3",
-            ],
-        })
+        df = pl.DataFrame(
+            {
+                "attributes": [
+                    "ID=a;phrog=1",
+                    "ID=b;phrog=2;partial=01;extra=foo",
+                    "ID=c;phrog=3",
+                ],
+            }
+        )
         result = parse_attributes_column(df)
         # extra appears AFTER partial because that's the order in row 1.
         assert result.columns == ["attributes", "ID", "phrog", "partial", "extra"]
@@ -101,6 +106,7 @@ class TestParseAttributesColumn:
 # ---------------------------------------------------------------------------
 # extract_anticodon_positions  (regression test for bug fix #6)
 # ---------------------------------------------------------------------------
+
 
 class TestExtractAnticodonPositions:
     """Regression tests for the v1.9.1 → v1.10.0 anticodon-position bug fix.
@@ -164,16 +170,16 @@ class TestExtractAnticodonPositions:
 # get_codon_from_anticodon
 # ---------------------------------------------------------------------------
 
-class TestGetCodonFromAnticodon:
 
+class TestGetCodonFromAnticodon:
     @pytest.mark.parametrize(
         ("anticodon", "expected_codon"),
         [
-            ("CAT", "AUG"),   # Met
-            ("CTT", "AAG"),   # Lys
-            ("GAA", "UUC"),   # Phe
-            ("GTC", "GAC"),   # Asp
-            ("cat", "AUG"),   # lowercase input is uppercased
+            ("CAT", "AUG"),  # Met
+            ("CTT", "AAG"),  # Lys
+            ("GAA", "UUC"),  # Phe
+            ("GTC", "GAC"),  # Asp
+            ("cat", "AUG"),  # lowercase input is uppercased
         ],
     )
     def test_known_codons(self, anticodon, expected_codon):
@@ -204,12 +210,13 @@ CustomResult = collections.namedtuple(
 
 
 class TestProcessPyhmmerResults:
-
     def _base_df(self):
-        return pl.DataFrame({
-            "gene": ["gene_001 100_200", "gene_002 300_400", "gene_003 500_600"],
-            "other_col": ["x", "y", "z"],
-        })
+        return pl.DataFrame(
+            {
+                "gene": ["gene_001 100_200", "gene_002 300_400", "gene_003 500_600"],
+                "other_col": ["x", "y", "z"],
+            }
+        )
 
     def test_attaches_hits_for_matching_proteins(self):
         df = self._base_df()
@@ -222,9 +229,17 @@ class TestProcessPyhmmerResults:
         assert "pyhmmer_phrog" in result.columns
         assert "pyhmmer_bitscore" in result.columns
         assert "pyhmmer_evalue" in result.columns
-        assert result["pyhmmer_phrog"].to_list() == ["phrog_42", "No_PHROGs_HMM", "phrog_7"]
+        assert result["pyhmmer_phrog"].to_list() == [
+            "phrog_42",
+            "No_PHROGs_HMM",
+            "phrog_7",
+        ]
         # bitscore rounded to 6 decimal places, str()-ified
-        assert result["pyhmmer_bitscore"].to_list() == ["100.5", "No_PHROGs_HMM", "50.25"]
+        assert result["pyhmmer_bitscore"].to_list() == [
+            "100.5",
+            "No_PHROGs_HMM",
+            "50.25",
+        ]
         assert result["pyhmmer_evalue"].to_list() == ["1e-30", "No_PHROGs_HMM", "1e-10"]
 
     def test_empty_hits_dict_yields_all_no_phrogs(self):
@@ -237,12 +252,13 @@ class TestProcessPyhmmerResults:
     def test_gene_name_split_strips_post_space_portion(self):
         """The protein name used for lookup is everything before the first space."""
         df = pl.DataFrame({"gene": ["abc def ghi"]})
-        result = process_pyhmmer_results(df, {"abc": Result("abc", "phrog_1", 1.0, 1e-5)})
+        result = process_pyhmmer_results(
+            df, {"abc": Result("abc", "phrog_1", 1.0, 1e-5)}
+        )
         assert result["pyhmmer_phrog"].to_list() == ["phrog_1"]
 
 
 class TestProcessCustomPyhmmerResults:
-
     def test_attaches_custom_hits(self):
         df = pl.DataFrame({"gene": ["g1 100_200", "g2 300_400"]})
         hits = {"g1": CustomResult("g1", "custom_xyz", 99.9, 1e-25)}
@@ -255,6 +271,7 @@ class TestProcessCustomPyhmmerResults:
 # ---------------------------------------------------------------------------
 # process_vfdb_results  (fix #10: issue #410 bracket cleanup)
 # ---------------------------------------------------------------------------
+
 
 class TestProcessVfdbResults:
     """Confirm the 8 chained bracket-cleanup substitutions produce the same
@@ -281,12 +298,45 @@ class TestProcessVfdbResults:
         # Column order (forward mode): vfdb_hit, gene, alnScore, seqIdentity, eVal,
         #                              qStart, qEnd, qLen, tStart, tEnd, tLen
         rows = [
-            ("VFG001 L-allo-isoleucine:holo-[CmaA peptidyl-carrier protein] foo",
-             "gene_001", "100", "0.9", "1e-30", "1", "100", "100", "1", "100", "100"),
-            ("VFG002 UDP-3-O-[3-hydroxymyristoyl] synthase",
-             "gene_002", "200", "0.8", "1e-25", "1", "100", "100", "1", "100", "100"),
-            ("VFG003 biotin--[acetyl-CoA-carboxylase] protein",
-             "gene_003", "300", "0.7", "1e-20", "1", "100", "100", "1", "100", "100"),
+            (
+                "VFG001 L-allo-isoleucine:holo-[CmaA peptidyl-carrier protein] foo",
+                "gene_001",
+                "100",
+                "0.9",
+                "1e-30",
+                "1",
+                "100",
+                "100",
+                "1",
+                "100",
+                "100",
+            ),
+            (
+                "VFG002 UDP-3-O-[3-hydroxymyristoyl] synthase",
+                "gene_002",
+                "200",
+                "0.8",
+                "1e-25",
+                "1",
+                "100",
+                "100",
+                "1",
+                "100",
+                "100",
+            ),
+            (
+                "VFG003 biotin--[acetyl-CoA-carboxylase] protein",
+                "gene_003",
+                "300",
+                "0.7",
+                "1e-20",
+                "1",
+                "100",
+                "100",
+                "1",
+                "100",
+                "100",
+            ),
         ]
         vfdb_file = tmp_path / "vfdb_results.tsv"
         with open(vfdb_file, "w") as f:
@@ -298,7 +348,9 @@ class TestProcessVfdbResults:
         )
         hits = tophits["vfdb_hit"].to_list()
         # bracket characters should be stripped from these specific patterns
-        assert any("L-allo-isoleucine:holo-CmaA peptidyl-carrier protein" in h for h in hits)
+        assert any(
+            "L-allo-isoleucine:holo-CmaA peptidyl-carrier protein" in h for h in hits
+        )
         assert any("UDP-3-O-3-hydroxymyristoyl synthase" in h for h in hits)
         assert any("biotin--acetyl-CoA-carboxylase protein" in h for h in hits)
         # No leftover square brackets on the cleaned-up patterns
@@ -308,10 +360,32 @@ class TestProcessVfdbResults:
     def test_lowest_evalue_wins_per_gene(self, tmp_path, merged_df):
         """Two hits for the same gene → the one with the smallest eVal wins."""
         rows = [
-            ("VFG_LOSER",  "gene_001", "100", "0.9", "1e-10",
-             "1", "100", "100", "1", "100", "100"),
-            ("VFG_WINNER", "gene_001", "200", "0.8", "1e-30",
-             "1", "100", "100", "1", "100", "100"),
+            (
+                "VFG_LOSER",
+                "gene_001",
+                "100",
+                "0.9",
+                "1e-10",
+                "1",
+                "100",
+                "100",
+                "1",
+                "100",
+                "100",
+            ),
+            (
+                "VFG_WINNER",
+                "gene_001",
+                "200",
+                "0.8",
+                "1e-30",
+                "1",
+                "100",
+                "100",
+                "1",
+                "100",
+                "100",
+            ),
         ]
         vfdb_file = tmp_path / "vfdb_results.tsv"
         with open(vfdb_file, "w") as f:
@@ -330,8 +404,8 @@ class TestProcessVfdbResults:
 # create_mmseqs_tophits
 # ---------------------------------------------------------------------------
 
-class TestCreateMmseqsTophits:
 
+class TestCreateMmseqsTophits:
     def test_empty_mmseqs_file_returns_empty_df(self, tmp_path):
         """When the mmseqs file is empty, polars raises ``NoDataError`` —
         the function catches it and returns an empty DataFrame."""
@@ -344,12 +418,45 @@ class TestCreateMmseqsTophits:
         # Forward mode columns: phrog, gene, alnScore, seqIdentity, eVal,
         #                      qStart, qEnd, qLen, tStart, tEnd, tLen
         rows = [
-            ("phrog_loser",  "gene_001", "100", "0.9", "1e-10",
-             "1", "100", "100", "1", "100", "100"),
-            ("phrog_winner", "gene_001", "200", "0.8", "1e-30",
-             "1", "100", "100", "1", "100", "100"),
-            ("phrog_other",  "gene_002", "50",  "0.7", "1e-5",
-             "1", "100", "100", "1", "100", "100"),
+            (
+                "phrog_loser",
+                "gene_001",
+                "100",
+                "0.9",
+                "1e-10",
+                "1",
+                "100",
+                "100",
+                "1",
+                "100",
+                "100",
+            ),
+            (
+                "phrog_winner",
+                "gene_001",
+                "200",
+                "0.8",
+                "1e-30",
+                "1",
+                "100",
+                "100",
+                "1",
+                "100",
+                "100",
+            ),
+            (
+                "phrog_other",
+                "gene_002",
+                "50",
+                "0.7",
+                "1e-5",
+                "1",
+                "100",
+                "100",
+                "1",
+                "100",
+                "100",
+            ),
         ]
         with open(tmp_path / "mmseqs_results.tsv", "w") as f:
             for row in rows:
@@ -365,8 +472,8 @@ class TestCreateMmseqsTophits:
 # Small filesystem helpers
 # ---------------------------------------------------------------------------
 
-class TestFilesystemHelpers:
 
+class TestFilesystemHelpers:
     def test_is_file_empty_true_for_empty_file(self, tmp_path):
         empty = tmp_path / "empty.txt"
         empty.write_text("")
