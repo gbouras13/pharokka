@@ -834,6 +834,13 @@ def run_minced(filepath_in, out_dir, prefix, minced_args, logdir):
     output_spacers = os.path.join(out_dir, prefix + "_minced_spacers.txt")
     output_gff = os.path.join(out_dir, prefix + "_minced.gff")
 
+    # MinCED opens its GFF output in append mode, so a pre-existing file from a
+    # previous run would accumulate duplicate "##gff-version 3" headers. Remove
+    # any stale outputs first so exactly one header is emitted per run.
+    for stale in (output_spacers, output_gff):
+        if os.path.exists(stale):
+            os.remove(stale)
+
     if minced_args != "":
         minced_args = f"-{minced_args}"
 
