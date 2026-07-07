@@ -1,7 +1,7 @@
 History
 =======
 
-1.10.0 (TBD)
+1.10.0 (2026-07-07)
 -------------
 
 * New subcommand-based CLI: `pharokka run`, `pharokka proteins`, `pharokka install`, `pharokka plot`, `pharokka multiplot`, `pharokka create-hmm`
