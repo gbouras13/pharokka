@@ -1,44 +1,80 @@
 name: CI
 
-on: [push,pull_request]
+on: [push, pull_request]
 
 jobs:
+  lint:
+    name: "Lint & format (ruff)"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Pixi
+        uses: prefix-dev/setup-pixi@v0.8.3
+        with:
+          pixi-version: v0.71.2
+          cache: true
+          environments: lint
+
+      - name: Check formatting and lint
+        run: pixi run -e lint check-fmt
+
   tests:
-    name: "Python ${{ matrix.python-version }}"
+    name: "Tests (${{ matrix.os }}, ${{ matrix.environment }})"
     runs-on: ${{ matrix.os }}
 
-    defaults:
-      run:
-        shell: bash -el {0}
-
     strategy:
+      fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-latest] #macos-latest/macos-14 is M1 - some deps
-        python-version: ["3.9", "3.13"]
+        os: [ubuntu-latest, macos-latest] # macos-latest is arm64 (M1)
+        environment: [py39, py313]
 
     steps:
-      - uses: "actions/checkout@v3"
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # Setup env
-      - uses: "conda-incubator/setup-miniconda@v3"
+      - name: Setup Pixi
+        uses: prefix-dev/setup-pixi@v0.8.3
         with:
-          activate-environment: pharokka_env
-          environment-file: environment.yml
-          python-version: ${{ matrix.python-version }}
-          auto-activate-base: false
-          channels: conda-forge,bioconda,defaults
-          channel-priority: strict
-          auto-update-conda: true
-      - name: Install pharokka 
-        shell: bash -l {0}
+          pixi-version: v0.71.2
+          cache: true
+          environments: ${{ matrix.environment }}
+
+      - name: Enable subprocess coverage tracking
+        # test_overall.py and test_proteins.py run `pharokka run` via
+        # subprocess.Popen, so coverage.py can't see them without this.
+        # Writing sitecustomize.py into the pixi environment's site-packages
+        # makes every new Python subprocess call coverage.process_startup(),
+        # which checks for the COVERAGE_PROCESS_START env var (set by the
+        # test-ci pixi task) and starts measuring if present.
         run: |
-          conda install python=${{ matrix.python-version }}
-          python -m pip install --upgrade pip
-          pip install -e .
+          pixi run -e ${{ matrix.environment }} python - <<'EOF'
+          import site, os
+          for p in site.getsitepackages():
+              if os.path.isdir(p):
+                  sc = os.path.join(p, "sitecustomize.py")
+                  with open(sc, "w") as f:
+                      f.write("try:\n    import coverage; coverage.process_startup()\nexcept ImportError:\n    pass\n")
+                  print(f"Wrote subprocess coverage hook to {sc}")
+                  break
+          EOF
+
       - name: Run tests and collect coverage
-        run: pytest --cov=./ --cov-report=xml
+        # Golden-output regression tests (marked `golden`) run several full
+        # pharokka pipelines and diff key outputs against committed reference
+        # files.  They only need to run on ONE matrix cell to catch regressions
+        # — running them on all four would quadruple the heavy work for no extra
+        # signal.  So they run only on ubuntu-latest + py313 (the reference
+        # platform the golden files were generated against) via test-ci-golden;
+        # every other cell uses test-ci, which excludes them.
+        run: |
+          if [[ "${{ matrix.os }}" == "ubuntu-latest" && "${{ matrix.environment }}" == "py313" ]]; then
+            pixi run -e py313 test-ci-golden
+          else
+            pixi run -e ${{ matrix.environment }} test-ci
+          fi
+
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
         with:

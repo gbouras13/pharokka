@@ -1,0 +1,2838 @@
+>Feature NC_051700.1
+109	564	CDS
+			product	minor tail protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+572	2209	CDS
+			product	terminase large subunit
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+2240	3610	CDS
+			product	portal protein
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+3597	4352	CDS
+			product	head maturation protease
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+4379	5029	CDS
+			product	head scaffolding protein
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+5048	5869	CDS
+			product	major head protein
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+5878	6447	CDS
+			product	head-tail adaptor Ad1
+			function	connector
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+6444	6773	CDS
+			product	head-tail adaptor
+			function	connector
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+6780	7106	CDS
+			product	head-tail connector protein
+			function	connector
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+7096	7500	CDS
+			product	head-tail adaptor
+			function	connector
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+7610	8419	CDS
+			product	major tail protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+8533	9084	CDS
+			product	tail assembly chaperone
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+9035	9469	CDS
+			product	tail assembly chaperone
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+9487	10026	CDS
+			product	HNH endonuclease
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+10026	13553	CDS
+			product	tail length tape measure protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+13554	15263	CDS
+			product	minor tail protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+15348	17057	CDS
+			product	minor tail protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+17113	17943	CDS
+			product	minor tail protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+17940	20477	CDS
+			product	minor tail protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+20474	22363	CDS
+			product	minor tail protein with lysin activity
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+22360	23523	CDS
+			product	minor tail protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+23537	23878	CDS
+			product	head protein
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+23901	24155	CDS
+			product	minor tail protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+24169	24807	CDS
+			product	minor tail protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+24804	25628	CDS
+			product	minor tail protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+25830	25633	CDS
+			product	HTH DNA binding protein
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+25979	26263	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+26413	26565	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+26639	26872	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+26869	28140	CDS
+			product	endolysin
+			function	lysis
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+28140	29141	CDS
+			product	endolysin
+			function	lysis
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+29157	29390	CDS
+			product	holin
+			function	lysis
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+29387	29761	CDS
+			product	minor tail protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+29786	30019	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+30006	30827	CDS
+			product	DNA polymerase exonuclease subunit
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+30882	31133	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+31265	31426	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+31785	31591	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+31877	32035	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+32217	33518	CDS
+			product	integrase
+			function	integration and excision
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+34012	33596	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+35054	34314	CDS
+			product	transcriptional repressor
+			function	transcription regulation
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+35346	35636	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+35723	35920	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+35964	36347	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+36344	36532	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+36529	36789	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+36782	37027	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+37024	37638	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+37713	37991	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+37988	38335	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+38335	38829	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+38826	39311	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+39308	39586	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+39583	39948	CDS
+			product	DNA binding protein
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+39948	40103	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+40100	40522	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+40519	40761	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+40758	41735	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+41732	42340	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+42337	42693	CDS
+			product	HNH endonuclease
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+42690	44204	CDS
+			product	DNA methyltransferase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+44280	44369	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+44344	44595	CDS
+			product	methyltransferase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+44710	44955	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+44955	45101	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+45098	45268	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+45246	45401	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+45394	46047	CDS
+			product	Rnase H
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+46044	46439	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+46436	46738	CDS
+			product	DNA methyltransferase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+46758	47525	CDS
+			product	DNA methyltransferase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+47551	47673	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+47670	47897	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+47894	48562	CDS
+			product	DNA methyltransferase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+48559	48693	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+48697	49548	CDS
+			product	replication initiation protein
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+49545	49805	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+49805	50008	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+49954	50199	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+50196	50327	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+50327	50572	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+50569	51069	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+51066	51236	CDS
+			product	site-specific recombination directionality factor RDF
+			function	integration and excision
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+51295	51498	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+51500	51877	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+51874	52086	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+52044	52274	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+52271	52450	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+52585	52902	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+52899	53078	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+53191	53427	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+53420	53686	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+53683	54327	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+54437	54661	CDS
+			product	MerR-like transcriptional regulator
+			function	transcription regulation
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+54658	54822	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+54829	54987	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+55173	55574	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+55571	55813	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+55994	57430	CDS
+			product	glycosyltransferase
+			function	moron, auxiliary metabolic gene and host takeover
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+57433	57639	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+57636	58259	CDS
+			product	glucosyltransferase
+			function	moron, auxiliary metabolic gene and host takeover
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+<58758	58159	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+32106	32041	tRNA
+			gene	tRNA-Lys(AAG)
+			product	tRNA-Lys(AAG)
+			inference	profile:tRNAscan-SE:2.0.12
+			anticodon	(pos:32079..32077,aa:Lys,seq:CTT)
+42829	43182	tmRNA
+			inference	profile:Aragorn:1.2.41
+			product	transfer-messenger RNA SsrA
+			tag_peptide	157..258
+			note	tag peptide sequence: ASARSRNGRMYGRSRGEPCRNGTTSGRPSACAC*
+>Feature NC_004617.1
+1096	59	CDS
+			product	integrase
+			function	integration and excision
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+1204	1818	CDS
+			product	Na/K ATPase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+1940	1815	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+3148	2378	CDS
+			product	transcriptional repressor
+			function	transcription regulation
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+3307	3531	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+3549	3809	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+4372	3833	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+4429	5178	CDS
+			product	anti-repressor
+			function	transcription regulation
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+5194	5391	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+5422	5562	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+6209	5577	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+6268	6588	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+6839	7099	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+7109	7330	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+7323	8102	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+8133	8684	CDS
+			product	single strand DNA binding protein
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+8697	9368	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+9365	9514	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+9788	9507	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+9854	10624	CDS
+			product	replication initiation protein
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+10634	11413	CDS
+			product	DnaC-like helicase loader
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+11452	11565	CDS
+			product	transcriptional regulator
+			function	transcription regulation
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+11578	11799	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+11810	12214	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+12219	12404	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+12405	12776	CDS
+			product	Panton-Valentine leukocicin
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+12777	13025	CDS
+			product	virulence associated
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+13089	13436	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+13433	13822	CDS
+			product	acetyltransferase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+13815	14069	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+14056	14226	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+14219	14755	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+14792	14965	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+14982	15188	CDS
+			product	transcriptional regulator
+			function	transcription regulation
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+15185	15334	CDS
+			product	RinB-like transcriptional activator
+			function	transcription regulation
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+15334	15534	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+15557	16027	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+16142	16594	CDS
+			product	MazG-like pyrophosphatase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+16601	16954	CDS
+			product	HNH endonuclease
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+17084	17551	CDS
+			product	terminase small subunit
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+17554	19248	CDS
+			product	terminase large subunit
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+19393	20718	CDS
+			product	portal protein
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+20711	21295	CDS
+			product	head maturation protease
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+21383	22630	CDS
+			product	major head protein
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+22666	22824	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+22833	23165	CDS
+			product	head-tail adaptor Ad1
+			function	connector
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+23152	23487	CDS
+			product	head closure Hc1
+			function	connector
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+23487	23864	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+23861	24241	CDS
+			product	tail terminator
+			function	connector
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+24242	25195	CDS
+			product	major tail protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+25260	25706	CDS
+			product	head-tail adaptor
+			function	connector
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+25944	30596	CDS
+			product	tail length tape measure protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+30596	32086	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+32102	35887	CDS
+			product	minor head protein
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+35877	36029	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+36076	36363	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+36487	36717	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+37255	37509	CDS
+			product	holin
+			function	lysis
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+37521	38276	CDS
+			product	endolysin
+			function	lysis
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+38467	38958	CDS
+			product	kinase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+39647	39943	CDS
+			product	endolysin
+			function	lysis
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+40487	40038	CDS
+			product	chemotaxis inhibition protein
+			function	moron, auxiliary metabolic gene and host takeover
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+41170	41520	CDS
+			product	complement inhibitor
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+>Feature MW460250_1
+392	183	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+737	405	CDS
+			product	hemolysin
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+1076	750	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+1636	1902	CDS
+			product	membrane protein
+			function	moron, auxiliary metabolic gene and host takeover
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+1880	2158	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+2155	2565	CDS
+			product	terminase small subunit
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+2580	2777	CDS
+			product	terminase large subunit
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+3071	4042	CDS
+			product	HNH endonuclease
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+4183	5730	CDS
+			product	terminase large subunit
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+5723	6544	CDS
+			product	virion structural protein
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+6531	6704	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+6701	7180	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+7222	8415	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+8492	8842	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+8851	9231	CDS
+			product	portal protein
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+9235	10926	CDS
+			product	portal protein
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+11120	11893	CDS
+			product	head maturation protease
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+11912	12868	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+12984	14375	CDS
+			product	major head protein
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+14467	14763	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+14776	15684	CDS
+			product	tail fiber protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+15698	16576	CDS
+			product	virion structural protein
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+16576	17196	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+17215	18051	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+18053	18268	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+18295	20058	CDS
+			product	tail sheath
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+20131	20559	CDS
+			product	virion structural protein
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+20656	20796	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+20839	21297	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+21310	21504	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+21586	21897	CDS
+			product	virion structural protein
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+22029	22487	CDS
+			product	tail assembly chaperone
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+22531	23067	CDS
+			product	RNA polymerase beta subunit
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+23120	27178	CDS
+			product	tail associated lysin
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+27257	29683	CDS
+			product	tail protein with lysin activity
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+29697	30584	CDS
+			product	tail protein with lysin activity
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+30584	33130	CDS
+			product	glycerophosphoryl diester phosphodiesterase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+33237	34028	CDS
+			product	virion structural protein
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+34028	34552	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+34552	35256	CDS
+			product	baseplate protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+35271	36317	CDS
+			product	baseplate wedge subunit
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+36338	39397	CDS
+			product	virion structural protein
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+39508	40029	CDS
+			product	virion structural protein
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+40050	43508	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+43557	43715	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+43716	45638	CDS
+			product	virion structural protein
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+45661	46035	CDS
+			product	tail fiber protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+46042	47418	CDS
+			product	tail fiber protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+47510	49258	CDS
+			product	DNA helicase
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+49270	50883	CDS
+			product	HTH DNA binding protein
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+50876	52318	CDS
+			product	DnaB-like replicative helicase
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+52397	53434	CDS
+			product	SbcD-like subunit of palindrome specific endonuclease
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+53434	53811	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+53811	55730	CDS
+			product	exonuclease
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+55730	56326	CDS
+			product	anti-sigma factor
+			function	moron, auxiliary metabolic gene and host takeover
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+56341	57408	CDS
+			product	DNA primase/helicase
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+57475	57813	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+57813	58265	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+58252	58860	CDS
+			product	RusA-like Holliday junction resolvase
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+58877	59269	CDS
+			product	flavodoxin
+			function	moron, auxiliary metabolic gene and host takeover
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+59284	61398	CDS
+			product	NrdA-like aerobic NDP reductase large subunit
+			function	moron, auxiliary metabolic gene and host takeover
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+61412	62461	CDS
+			product	ribonucleoside diphosphate reductase small subunit
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+62479	62808	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+62792	63112	CDS
+			product	thioredoxin domain
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+63319	63915	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+63925	64230	CDS
+			product	DNA binding protein
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+64306	65178	CDS
+			product	DNA polymerase
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+65344	65856	CDS
+			product	endonuclease
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+65992	67335	CDS
+			product	DNA polymerase
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+67603	68310	CDS
+			product	HNH endonuclease
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+68544	69404	CDS
+			product	DNA polymerase
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+69473	69715	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+69732	70214	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+70301	71572	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+71632	71856	CDS
+			product	RecA or Sak4, length ?
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+72201	73169	CDS
+			product	endonuclease
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+73317	74264	CDS
+			product	UvsX-like recombinase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+74268	74621	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+74608	75270	CDS
+			product	RNA polymerase sigma factor
+			function	transcription regulation
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+75398	76021	CDS
+			product	Ig domain containing protein
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+76044	76556	CDS
+			product	major tail protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+76571	76798	CDS
+			product	major tail protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+76894	77154	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+77158	77913	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+77906	79156	CDS
+			product	exonuclease
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+79170	79538	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+79525	79836	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+79900	80436	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+80429	81196	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+81174	81620	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+81620	82483	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+82855	83586	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+83604	84062	CDS
+			product	virion structural protein
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+84127	84570	CDS
+			product	DNA binding protein
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+84587	85291	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+85353	85751	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+85898	86140	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+86145	86309	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+86511	86687	CDS
+			product	DNA sliding clamp inhibitor arrest of S.aureus DNA synthesis
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+86677	87210	CDS
+			product	ribulose-1,5-bisphosphate carboxylase/oxygenase small subunit
+			function	moron, auxiliary metabolic gene and host takeover
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+87225	87473	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+87485	87661	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+87654	87950	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+87998	88180	CDS
+			product	membrane protein
+			function	moron, auxiliary metabolic gene and host takeover
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+88193	88561	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+88574	88921	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+88921	89199	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+89269	89574	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+89589	89939	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+89939	90541	CDS
+			product	HNH endonuclease
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+90555	90734	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+90961	91362	CDS
+			product	membrane protein
+			function	moron, auxiliary metabolic gene and host takeover
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+91364	91624	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+91676	91963	CDS
+			product	membrane protein
+			function	moron, auxiliary metabolic gene and host takeover
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+91974	92090	CDS
+			product	transcription factor
+			function	transcription regulation
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+92080	92343	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+92420	92599	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+92614	92877	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+92880	93197	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+93198	93878	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+93967	94125	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+94160	94360	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+94361	94651	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+94743	95051	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+95048	95956	CDS
+			product	ribose-phosphate pyrophosphokinase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+95974	97443	CDS
+			product	nicotinamide phosphoribosyl transferase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+97522	97767	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+97787	98179	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+98181	98402	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+98468	98779	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+98782	99291	CDS
+			product	endolysin
+			function	lysis
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+99293	99622	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+99628	99822	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+99846	100160	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+100175	100342	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+100379	100480	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+101353	101652	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+101668	101853	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+101960	102250	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+102250	102537	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+102537	102830	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+102834	103091	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+103169	103408	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+103419	103766	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+104313	103975	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+104624	104932	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+105138	105422	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+105497	105688	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+106493	106005	CDS
+			product	HNH endonuclease
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+106661	106819	CDS
+			product	TreN-like membrane protein
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+106889	107020	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+107188	107424	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+107504	107974	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+108004	108129	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+108214	108393	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+108963	108727	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+109450	108965	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+109870	109463	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+110301	109870	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+110495	110304	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+110977	110492	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+111401	110970	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+111957	111415	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+112457	111969	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+112868	112470	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+113572	112865	CDS
+			product	NinI-like serine-threonine phosphatase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+114226	113672	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+114559	114242	CDS
+			product	major tail protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+116093	115545	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+116315	116097	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+116510	116316	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+117237	116500	CDS
+			product	nucleotidyltransferase
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+117404	117300	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+117655	117416	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+118046	117657	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+118318	118145	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+118841	118359	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+119433	118891	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+119966	119433	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+120133	119969	CDS
+			product	RinB-like transcriptional activator
+			function	transcription regulation
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+120411	120136	CDS
+			product	membrane protein
+			function	moron, auxiliary metabolic gene and host takeover
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+121256	120411	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+122386	121268	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+122866	122540	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+123275	122859	CDS
+			product	nucleotide kinase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+123711	123409	CDS
+			product	MazG-like pyrophosphatase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+123899	123711	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+124104	123943	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+126152	124104	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+126493	126230	CDS
+			product	virion structural protein
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+126683	126510	CDS
+			product	lysM motif protein
+			function	lysis
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+127268	126690	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+127887	127261	CDS
+			product	nucleoside 2-deoxyribosyltransferase
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+128776	127880	CDS
+			product	RNA ligase
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+129000	128776	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+129809	129069	CDS
+			product	PhoH-like phosphate starvation-inducible
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+130475	129861	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+130916	130491	CDS
+			product	Rnase H
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+131097	130906	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+131761	131120	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+131981	131751	CDS
+			product	transcriptional repressor
+			function	transcription regulation
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+132211	131984	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+133013	132321	CDS
+			product	transglycosylase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+133835	133200	CDS
+			product	HNH endonuclease
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+134693	133902	CDS
+			product	lipoprotein
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+135001	134693	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+135743	135114	CDS
+			product	endolysin
+			function	lysis
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+136514	136014	CDS
+			product	HNH endonuclease
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+137477	136674	CDS
+			product	endolysin
+			function	lysis
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+137980	137477	CDS
+			product	holin
+			function	lysis
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+138250	138065	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+140015	139797	CDS
+			product	ribosome associated inhibitor A zinc finger domain
+			function	moron, auxiliary metabolic gene and host takeover
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+115265	115194	tRNA
+			gene	tRNA-Met(AUG)
+			product	tRNA-Met(AUG)
+			inference	profile:tRNAscan-SE:2.0.12
+			anticodon	(pos:115233..115231,aa:Met,seq:CAT)
+138562	138490	tRNA
+			gene	tRNA-Phe(UUC)
+			product	tRNA-Phe(UUC)
+			inference	profile:tRNAscan-SE:2.0.12
+			anticodon	(pos:138529..138527,aa:Phe,seq:GAA)
+138642	138569	tRNA
+			gene	tRNA-Asp(GAC)
+			product	tRNA-Asp(GAC)
+			inference	profile:tRNAscan-SE:2.0.12
+			anticodon	(pos:138608..138606,aa:Asp,seq:GTC)
+>Feature SR-VP_4-6_scaffold_141_1259094
+278	>3	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+579	292	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+2681	582	CDS
+			product	DNA helicase
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+2778	3848	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+3850	4653	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+4745	5527	CDS
+			product	Holliday junction resolvase
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+5990	5505	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+6475	5987	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+6721	7209	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+7581	7312	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+8604	7816	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+9648	8893	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+12453	10330	CDS
+			product	transposase
+			function	integration and excision
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+12836	12459	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+14071	13082	CDS
+			product	metallo-phosphoesterase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+14903	14064	CDS
+			product	HNH endonuclease
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+15359	14949	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+16537	16202	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+16642	17421	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+17602	17396	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+17645	18865	CDS
+			product	tRNA nucleotidyltransferase
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+18868	19173	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+19550	19170	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+19592	19861	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+20404	19871	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+20748	20410	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+20810	21640	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+22860	21643	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+24208	23018	CDS
+			product	kinase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+25524	24193	CDS
+			product	2-aminooxy adenylosuccinate synthetase
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+26017	25517	CDS
+			product	cytidyltransferase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+27008	26025	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+27188	27045	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+28661	27201	CDS
+			product	nicotinamide phosphoribosyl transferase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+29417	28671	CDS
+			product	MutT/NUDIX hydrolase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+29564	30367	CDS
+			product	endolysin
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+30364	31257	CDS
+			product	homing endonuclease
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+31599	31234	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+31791	31606	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+31854	32135	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+32143	32628	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+32612	32950	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+33192	32953	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+33551	33189	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+33957	33697	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+34454	34023	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+34660	34505	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+34910	35221	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+35487	36146	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+36704	36111	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+36778	37680	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+37694	37954	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+37965	38462	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+38893	38426	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+39217	40293	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+40271	40606	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+41709	40603	CDS
+			product	endolysin
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+41966	41754	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+42766	41963	CDS
+			product	deoxynucleoside monophosphate kinase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+43548	42760	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+44723	43575	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+45352	44735	CDS
+			product	endonuclease
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+45427	46416	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+46456	46716	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+46713	47255	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+47240	47578	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+47586	47975	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+47972	48634	CDS
+			product	phosphohydrolase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+48923	48627	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+49672	49103	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+49733	50071	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+50505	50065	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+50876	50502	CDS
+			product	HNH endonuclease
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+50924	51580	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+51577	51816	CDS
+			product	RNA-binding protein
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+51813	52772	CDS
+			product	DNA methyltransferase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+52780	53019	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+54005	52983	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+54784	54002	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+55383	54787	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+55639	55376	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+56820	55849	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+57617	56817	CDS
+			product	endonuclease VII
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+58077	57622	CDS
+			product	phosphatase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+58353	58147	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+58727	58350	CDS
+			product	GTP-binding domain
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+59413	58724	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+59715	59419	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+60329	59715	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+60844	60326	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+61742	60930	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+62214	61975	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+62590	62156	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+62991	62587	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+63274	63020	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+64104	63271	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+64521	64180	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+65012	64518	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+65487	65050	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+65708	65517	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+65921	65712	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+67177	65918	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+67991	67227	CDS
+			product	NAD synthetase
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+68732	68034	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+70110	68830	CDS
+			product	thymidylate synthase
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+70661	70107	CDS
+			product	unknown function
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+70957	70658	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+71254	71024	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+71552	71256	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+72017	71808	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+73165	72014	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+73475	73158	CDS
+			product	sulfatase-modifying factor enzyme
+			function	other
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+73690	73475	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+75237	73687	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+75648	75313	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+75849	75676	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+76491	75877	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+79275	76492	CDS
+			product	DNA polymerase
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+79645	79253	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+80341	79703	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+81810	80341	CDS
+			product	DnaB-like replicative helicase
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+82664	81810	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+83402	82737	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+84116	83436	CDS
+			product	HNH endonuclease
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+85809	84118	CDS
+			product	DNA helicase
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+<86088	85932	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+			codon_start	2
+9670	10000	repeat_region
+			inference	nucleotide motif:MinCED:0.4.2
+			rpt_family	CRISPR
+			rpt_type	direct
+			rpt_unit_range	9670..10000
+			rpt_unit_seq	CGTCTCGACTAATCGAGCAATCGTTTGAGATCTCTCC
+10008	10193	repeat_region
+			inference	nucleotide motif:MinCED:0.4.2
+			rpt_family	CRISPR
+			rpt_type	direct
+			rpt_unit_range	10008..10193
+			rpt_unit_seq	GTCTCGACTAATCGAGCAATCGTTTGAGATCTCTCC
+>Feature NC_007458.1
+63	548	CDS
+			product	terminase small subunit
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+545	2242	CDS
+			product	terminase large subunit
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+2258	3556	CDS
+			product	portal protein
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+3519	4139	CDS
+			product	head maturation protease
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+4178	5356	CDS
+			product	major head protein
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+5374	5664	CDS
+			product	head-tail adaptor Ad1
+			function	connector
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+5661	5984	CDS
+			product	head closure Hc1
+			function	connector
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+5977	6417	CDS
+			product	tail completion or Neck1 protein
+			function	connector
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+6414	6773	CDS
+			product	tail terminator
+			function	connector
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+6774	7382	CDS
+			product	major tail protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+7432	7749	CDS
+			product	head-tail adaptor
+			function	connector
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+7972	11823	CDS
+			product	tail length tape measure protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+11826	13328	CDS
+			product	tail protein
+			function	tail
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+13325	17191	CDS
+			product	minor head protein
+			function	head and packaging
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+17230	17655	CDS
+			product	holin
+			function	lysis
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+17655	18356	CDS
+			product	amidase
+			function	lysis
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+18905	18414	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+19110	18898	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+19294	19602	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+19599	19781	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+19836	21080	CDS
+			product	FtsK/SpoIIIE-like protein
+			function	moron, auxiliary metabolic gene and host takeover
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+21022	21639	CDS
+			product	replication initiation protein
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+21909	21673	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+22045	22164	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+22177	23040	CDS
+			product	HTH DNA binding protein
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+23107	24561	CDS
+			product	integrase
+			function	integration and excision
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+24852	25079	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+25119	25277	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+25349	25504	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+25522	26337	CDS
+			product	anti-repressor
+			function	transcription regulation
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+26404	27057	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+27165	28133	CDS
+			product	DnaD-like helicase loader
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+28149	29060	CDS
+			product	DnaC-like helicase loader
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+29079	29312	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+29305	30051	CDS
+			product	RNA polymerase sigma factor
+			function	transcription regulation
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+30048	30524	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+30584	31126	CDS
+			product	nucleoside triphosphate pyrophosphohydrolase
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+31150	31380	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+31408	31524	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+31547	31957	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+32369	32004	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+32874	33044	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+33239	33538	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+33531	33770	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+33923	34045	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+34207	34614	CDS
+			product	transcriptional regulator
+			function	transcription regulation
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+34734	34958	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+34965	35186	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+35191	35595	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+35700	35891	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+35911	36165	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+36162	36332	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+36364	36555	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+36557	36823	CDS
+			product	hypothetical protein
+			function	unknown function
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11
+36823	37206	CDS
+			product	HNH endonuclease
+			function	DNA, RNA and nucleotide metabolism
+			inference	ab initio prediction:Pyrodigal-gv:0.3.2
+			transl_table	11

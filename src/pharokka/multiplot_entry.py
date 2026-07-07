@@ -1,0 +1,226 @@
+"""
+Entry point for `pharokka multiplot` – plot multiple phages from a genbank file.
+
+Adapted from bin/pharokka_multiplotter.py with relative package imports.
+"""
+
+import argparse
+import os
+import shutil
+from argparse import RawTextHelpFormatter
+from pathlib import Path
+
+from loguru import logger
+from pycirclize.parser import Genbank
+
+from .plot import create_single_plot
+from .util import get_version
+
+
+def get_input():
+    """Gets input for pharokka multiplot.
+    :return: args
+    """
+    parser = argparse.ArgumentParser(
+        description="pharokka multiplot: pharokka plotting function for multiple phages",
+        formatter_class=RawTextHelpFormatter,
+    )
+    parser.add_argument(
+        "-g",
+        "--genbank",
+        action="store",
+        required=True,
+        help="Input genbank file from Pharokka.",
+    )
+    parser.add_argument(
+        "-o",
+        "--outdir",
+        action="store",
+        help="Pharokka output directory.",
+        required=True,
+    )
+    parser.add_argument(
+        "-f", "--force", help="Overwrites the output plot file.", action="store_true"
+    )
+    parser.add_argument(
+        "--label_hypotheticals",
+        help="Flag to label  hypothetical or unknown proteins. By default these are not labelled.",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--remove_other_features_labels",
+        help="Flag to remove labels for tRNA/tmRNA/CRISPRs. By default these are labelled. \nThey will still be plotted in black.",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--title_size",
+        action="store",
+        default="20",
+        help="Controls title size. Must be an integer. Defaults to 20.",
+    )
+    parser.add_argument(
+        "--label_size",
+        action="store",
+        default="8",
+        help="Controls annotation label size. Must be an integer. Defaults to 8.",
+    )
+    parser.add_argument(
+        "--interval",
+        action="store",
+        default="5000",
+        help="Axis tick interval. Must be an integer. Must be an integer. Defaults to 5000.",
+    )
+    parser.add_argument(
+        "--truncate",
+        action="store",
+        default="20",
+        help="Number of characters to include in annoation labels before truncation with ellipsis. \nMust be an integer. Defaults to 20.",
+    )
+    parser.add_argument(
+        "--dpi",
+        action="store",
+        default="600",
+        help="Resultion (dots per inch). Must be an integer. Defaults to 600.",
+    )
+    parser.add_argument(
+        "--annotations",
+        action="store",
+        default="1",
+        help="Controls the proporition of annotations labelled. Must be a number between 0 and 1 inclusive. \n0 = no annotations, 0.5 = half of the annotations, 1 = all annotations. \nDefaults to 1. Chosen in order of CDS size.",
+    )
+    parser.add_argument(
+        "-t", "--plot_title", action="store", default="Phage", help="Plot name."
+    )
+    parser.add_argument(
+        "--label_ids",
+        action="store",
+        default="",
+        help="Text file with list of CDS IDs (from gff file) that are guaranteed to be labelled.",
+    )
+    args = parser.parse_args()
+    return args
+
+
+def main():
+    args = get_input()
+    # The logger.error → sys.exit(1) sink is registered once per process
+    # by the entry-point dispatcher (cli.main or pharokka_scripts._legacy_shim).
+    # preamble
+    logger.info(f"Starting Pharokka v{get_version()}")
+    logger.info("Running pharokka multiplot to plot your phages.")
+    logger.info("Command executed: {}", args)
+    logger.info("Repository homepage is https://github.com/gbouras13/pharokka")
+    logger.info("Written by George Bouras: george.bouras@adelaide.edu.au")
+    logger.info("Checking your inputs.")
+
+    try:
+        int(args.interval)
+    except Exception:
+        logger.error(
+            f"--interval {args.interval} specified is not an integer. Please check your input and try again."
+        )
+
+    try:
+        int(args.label_size)
+    except Exception:
+        logger.error(
+            f"--label_size {args.label_size} specified is not an integer. Please check your input and try again."
+        )
+
+    try:
+        int(args.title_size)
+    except Exception:
+        logger.error(
+            f"--title_size {args.title_size} specified is not an integer. Please check your input and try again."
+        )
+
+    try:
+        int(args.dpi)
+    except Exception:
+        logger.error(
+            f"--dpi {args.dpi} specified is not an integer. Please check your input and try again."
+        )
+
+    try:
+        float(args.annotations)
+    except Exception:
+        logger.error(
+            f"--annotations {args.annotations} specified is not a float. Please check your input and try again."
+        )
+
+    if args.force is True:
+        if os.path.exists(args.outdir) is True:
+            logger.info(f"Removing {args.outdir} as --force was specified.")
+            shutil.rmtree(args.outdir)
+        else:
+            logger.warning(
+                f"--force was specified even though the output plot directory {args.outdir} does not already exist."
+            )
+            logger.warning("Continuing")
+    else:
+        if os.path.exists(args.outdir) is True:
+            logger.error(
+                f"Output directory {args.outdir} already exists and force was not specified. Please specify -f or --force to overwrite the output directory."
+            )
+
+    # instantiate outdir
+    if Path(args.outdir).exists() is False:
+        Path(args.outdir).mkdir(parents=True, exist_ok=True)
+
+    # list of all IDs that need to be labelled from file
+    label_force_list = []
+    label_ids = args.label_ids
+
+    if label_ids != "":
+        logger.info(
+            f"You have specified a file {label_ids} containing a list of CDS IDs to force label."
+        )
+        if Path(label_ids).exists() is False:
+            logger.error(f"{label_ids} was not found.")
+        try:
+            with open(Path(label_ids), "r") as file:
+                first_char = file.read(1)  # noqa: F841 – intentional read check
+                with open(Path(label_ids)) as f:
+                    ignore_dict = {x.rstrip().split()[0] for x in f}
+                label_force_list = list(ignore_dict)
+        except FileNotFoundError:
+            logger.warning(f"{label_ids} contains no text. No contigs will be ignored")
+
+    logger.info("All files checked.")
+
+    gbk = Genbank(args.genbank)
+
+    # gets all contigs and seqs
+    gb_seq_dict = gbk.get_seqid2seq()
+    gb_size_dict = gbk.get_seqid2size()
+    contig_count = len(gb_seq_dict)
+
+    # gets all features - will get all regardless of type (tRNA etc from pharokka)
+    gb_feature_dict = gbk.get_seqid2features()
+
+    for contig_id, contig_sequence in gb_seq_dict.items():
+        logger.info(f"Plotting {contig_id}")
+
+        create_single_plot(
+            contig_id,
+            contig_sequence,
+            contig_count,
+            gb_size_dict,
+            gb_feature_dict,
+            gbk,
+            int(args.interval),
+            float(args.annotations),
+            int(args.title_size),
+            args.plot_title,
+            int(args.truncate),
+            args.outdir,
+            int(args.dpi),
+            float(args.label_size),
+            args.label_hypotheticals,
+            args.remove_other_features_labels,
+            label_force_list,
+        )
+
+
+if __name__ == "__main__":
+    main()

@@ -6,6 +6,12 @@ __pycache__/
 # C extensions
 *.so
 
+# claude
+.claude
+
+# local tracking docs (not for commit)
+docs/refactor_improvements.md
+
 # test data
 tests/test_data/database/*
 tests/test_data/logs/*
@@ -112,3 +118,7 @@ ENV/
 .DS_Store
 */.DS_Store
 */*/.DS_Store
+
+# pixi environments
+.pixi/*
+!.pixi/config.toml

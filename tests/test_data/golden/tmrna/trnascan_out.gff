@@ -1,0 +1,3 @@
+##gff-version 3
+NC_051700.1	tRNAscan-SE	pseudogene	32041	32106	17.1	-	.	ID=NC_051700.1.trna1;Name=NC_051700.1.tRNA1-LysCTT;isotype=Lys;anticodon=CTT;gene_biotype=pseudogene;
+NC_051700.1	tRNAscan-SE	exon	32041	32106	.	-	.	ID=NC_051700.1.trna1.exon1;Parent=NC_051700.1.trna1;

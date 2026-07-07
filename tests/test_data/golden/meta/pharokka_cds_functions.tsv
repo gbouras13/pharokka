@@ -1,0 +1,81 @@
+Description	Count	contig
+CDS	103	NC_051700.1
+connector	4	NC_051700.1
+DNA, RNA and nucleotide metabolism	7	NC_051700.1
+head and packaging	6	NC_051700.1
+integration and excision	2	NC_051700.1
+lysis	3	NC_051700.1
+moron, auxiliary metabolic gene and host takeover	2	NC_051700.1
+other	5	NC_051700.1
+tail	15	NC_051700.1
+transcription regulation	2	NC_051700.1
+unknown function	57	NC_051700.1
+tRNAs	1	NC_051700.1
+CRISPRs	0	NC_051700.1
+tmRNAs	1	NC_051700.1
+VFDB_Virulence_Factors	0	NC_051700.1
+CARD_AMR_Genes	0	NC_051700.1
+CDS	63	NC_004617.1
+connector	4	NC_004617.1
+DNA, RNA and nucleotide metabolism	5	NC_004617.1
+head and packaging	6	NC_004617.1
+integration and excision	1	NC_004617.1
+lysis	3	NC_004617.1
+moron, auxiliary metabolic gene and host takeover	1	NC_004617.1
+other	6	NC_004617.1
+tail	2	NC_004617.1
+transcription regulation	5	NC_004617.1
+unknown function	30	NC_004617.1
+tRNAs	0	NC_004617.1
+CRISPRs	0	NC_004617.1
+tmRNAs	0	NC_004617.1
+VFDB_Virulence_Factors	3	NC_004617.1
+CARD_AMR_Genes	0	NC_004617.1
+CDS	212	MW460250_1
+connector	0	MW460250_1
+DNA, RNA and nucleotide metabolism	29	MW460250_1
+head and packaging	17	MW460250_1
+integration and excision	0	MW460250_1
+lysis	5	MW460250_1
+moron, auxiliary metabolic gene and host takeover	10	MW460250_1
+other	14	MW460250_1
+tail	13	MW460250_1
+transcription regulation	4	MW460250_1
+unknown function	120	MW460250_1
+tRNAs	3	MW460250_1
+CRISPRs	0	MW460250_1
+tmRNAs	0	MW460250_1
+VFDB_Virulence_Factors	0	MW460250_1
+CARD_AMR_Genes	0	MW460250_1
+CDS	126	SR-VP_4-6_scaffold_141_1259094
+connector	0	SR-VP_4-6_scaffold_141_1259094
+DNA, RNA and nucleotide metabolism	15	SR-VP_4-6_scaffold_141_1259094
+head and packaging	2	SR-VP_4-6_scaffold_141_1259094
+integration and excision	1	SR-VP_4-6_scaffold_141_1259094
+lysis	0	SR-VP_4-6_scaffold_141_1259094
+moron, auxiliary metabolic gene and host takeover	0	SR-VP_4-6_scaffold_141_1259094
+other	12	SR-VP_4-6_scaffold_141_1259094
+tail	0	SR-VP_4-6_scaffold_141_1259094
+transcription regulation	0	SR-VP_4-6_scaffold_141_1259094
+unknown function	96	SR-VP_4-6_scaffold_141_1259094
+tRNAs	0	SR-VP_4-6_scaffold_141_1259094
+CRISPRs	2	SR-VP_4-6_scaffold_141_1259094
+tmRNAs	0	SR-VP_4-6_scaffold_141_1259094
+VFDB_Virulence_Factors	0	SR-VP_4-6_scaffold_141_1259094
+CARD_AMR_Genes	0	SR-VP_4-6_scaffold_141_1259094
+CDS	55	NC_007458.1
+connector	5	NC_007458.1
+DNA, RNA and nucleotide metabolism	6	NC_007458.1
+head and packaging	6	NC_007458.1
+integration and excision	1	NC_007458.1
+lysis	2	NC_007458.1
+moron, auxiliary metabolic gene and host takeover	1	NC_007458.1
+other	0	NC_007458.1
+tail	3	NC_007458.1
+transcription regulation	3	NC_007458.1
+unknown function	28	NC_007458.1
+tRNAs	0	NC_007458.1
+CRISPRs	0	NC_007458.1
+tmRNAs	0	NC_007458.1
+VFDB_Virulence_Factors	0	NC_007458.1
+CARD_AMR_Genes	1	NC_007458.1

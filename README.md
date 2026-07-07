@@ -69,6 +69,10 @@ If you don't want to install `pharokka` or `phold` locally, you can run `pharokk
 - [Paper](#paper)
 - [Pharokka with Galaxy Europe Webserver](#pharokka-with-galaxy-europe-webserver)
 - [Brief Overview](#brief-overview)
+  - [Pharokka v 1.10.0 Update](#pharokka-v-1100-update)
+    - [New subcommand-based CLI](#new-subcommand-based-cli)
+    - [Backward compatibility](#backward-compatibility)
+    - [Other changes in v1.10.0](#other-changes-in-v1100)
   - [Pharokka v 1.9.0 Update (12 January 2026)](#pharokka-v-190-update-12-january-2026)
   - [Pharokka v 1.8.0 Update (14 September 2025)](#pharokka-v-180-update-14-september-2025)
   - [Pharokka v 1.7.0 Update (4 March 2024)](#pharokka-v-170-update-4-march-2024)
@@ -102,15 +106,17 @@ The easiest way to install `pharokka` is via conda:
 
 Followed by database download and installation:
 
-`install_databases.py -o <path/to/databse_dir>`
+`pharokka install -o <path/to/database_dir>`
 
 And finally annotation:
 
-`pharokka.py -i <phage fasta file> -o <output directory> -d <path/to/database_dir> -t <threads>`
+`pharokka run -i <phage fasta file> -o <output directory> -d <path/to/database_dir> -t <threads>`
 
-As of `pharokka` v1.4.0, if you want extremely rapid PHROG annotations, use `--fast`:
+If you want extremely rapid PHROG annotations, use `--fast`:
 
-`pharokka.py -i <phage fasta file> -o <output directory> -d <path/to/database_dir> -t <threads> --fast`
+`pharokka run -i <phage fasta file> -o <output directory> -d <path/to/database_dir> -t <threads> --fast`
+
+> **Upgrading from v1.9.x or earlier?** As of v1.10.0, `pharokka` uses a subcommand-based CLI (`pharokka run`, `pharokka install`, etc.). The old script names (`pharokka.py`, `install_databases.py`, etc.) are still installed and will continue to work — they just print a one-line deprecation notice and forward to the new commands. See [v1.10.0 CLI changes](#pharokka-v-1100-update) for details.
 
 # Documentation
 
@@ -137,6 +143,43 @@ So if you can't get `pharokka` to install on your machine for whatever reason or
 </p>
 
 `pharokka` uses [PHANOTATE](https://github.com/deprekate/PHANOTATE), the only gene prediction program tailored to bacteriophages, as the default program for gene prediction. [Prodigal](https://github.com/hyattpd/Prodigal) implemented with [pyrodigal](https://github.com/althonos/pyrodigal) and [Prodigal-gv](https://github.com/apcamargo/prodigal-gv) implemented with [pyrodigal-gv](https://github.com/althonos/pyrodigal-gv) are also available as alternatives. Following this, functional annotations are assigned by matching each predicted coding sequence (CDS) to the [PHROGs](https://phrogs.lmge.uca.fr), [CARD](https://card.mcmaster.ca) and [VFDB](http://www.mgc.ac.cn/VFs/main.htm) databases using [MMseqs2](https://github.com/soedinglab/MMseqs2). As of v1.4.0, `pharokka` will also match each CDS to the PHROGs database using more sensitive Hidden Markov Models using [PyHMMER](https://github.com/althonos/pyhmmer). Pharokka's main output is a GFF file suitable for using in downstream pangenomic pipelines like [Roary](https://sanger-pathogens.github.io/Roary/). `pharokka` also generates a `cds_functions.tsv` file, which includes counts of CDSs, tRNAs, tmRNAs, CRISPRs and functions assigned to CDSs according to the PHROGs database. See the full [usage](#usage) and check out the full [documentation](https://pharokka.readthedocs.io) for more details.  
+
+## Pharokka v 1.10.0 Update
+
+`pharokka` v1.10.0 is a major refactor that modernises the codebase and CLI. It also introduces a breaking dependency change, replacing `pandas` with `polars`.
+
+### New subcommand-based CLI
+
+The main change is that `pharokka` now uses a subcommand-based CLI instead of separate script files:
+
+| New command | Old command (deprecated) |
+|---|---|
+| `pharokka run` | `pharokka.py` |
+| `pharokka proteins` | `pharokka_proteins.py` |
+| `pharokka install` | `install_databases.py` |
+| `pharokka plot` | `pharokka_plotter.py` |
+| `pharokka multiplot` | `pharokka_multiplotter.py` |
+| `pharokka create-hmm` | `create_custom_hmm.py` |
+
+All arguments are identical — only the invocation syntax changes.
+
+### Backward compatibility
+
+**The old script names continue to work.** They are still installed alongside the new `pharokka` command and will forward every call transparently to the correct subcommand. The only difference is a one-line deprecation notice printed to stderr:
+
+```bash
+[pharokka] DeprecationWarning: 'pharokka.py' is deprecated and will be
+removed in a future release. Use 'pharokka run' instead.
+```
+
+You do not need to update your existing pipelines — but we recommend migrating to the new subcommand syntax.
+
+### Other changes in v1.10.0
+
+* Internal rewrite from pandas to polars for improved performance and memory efficiency
+* `src/` package layout for cleaner installation
+* All test entry points now resolve via `$PHAROKKA_DB` environment variable (default: `tests/test_data/database`)
+* Cleaned up numerical precision and float handling throughout the pharokka codebase
 
 ## Pharokka v 1.9.0 Update (12 January 2026)
 
@@ -246,7 +289,7 @@ The easiest way to install `pharokka` is via conda. For inexperienced command li
 
 `conda install -c bioconda pharokka`
 
-This will install all the dependencies along with `pharokka`. The dependencies are listed in environment.yml.
+This will install all the dependencies along with `pharokka`. The dependencies are listed in `pyproject.toml`.
 
 If conda is taking a long time to solve the environment, try using mamba:
 
@@ -290,24 +333,22 @@ singularity exec $containerImage pharokka.py -h
 
 ## Source
 
-Alternatively, the development version of `pharokka` (which may include new, untested features) can be installed manually via github. 
+Alternatively, the development version of `pharokka` (which may include new, untested features) can be installed manually via github.
+
+The recommended way is with [pixi](https://pixi.sh), which installs `pharokka` together with all of its Python and non-Python dependencies from the pinned `pixi.lock`:
 
 ```
 git clone https://github.com/gbouras13/pharokka.git
 cd pharokka
-pip install -e .
-pharokka.py --help
+# creates the environment (from pixi.lock) with pharokka installed editable
+pixi shell
+pharokka --help
 ```
 
-The dependencies found in environment.yml will then need to be installed manually.
-
-For example using conda to install the required dependencies:
+Alternatively, if you would rather manage the dependencies yourself, install the non-Python dependencies listed in `pyproject.toml` (`[tool.pixi.dependencies]`) manually and then install `pharokka` from source:
 
 ```
-conda env create -f environment.yml
-conda activate pharokka_env
-# assuming you are in the pharokka directory 
-# installs pharokka from source
+# assuming you are in the pharokka directory
 pip install -e .
 pharokka.py --help
 ```
@@ -384,21 +425,21 @@ pharokka.py -h
 
 Once the databases have finished downloading, to run `pharokka`:
 
-`pharokka.py -i <fasta file> -o <output directory> -t <threads>`
+`pharokka run -i <fasta file> -o <output directory> -d <path/to/database_dir> -t <threads>`
 
-To specify a different database directory (recommended):
+To specify a prefix for output files:
 
-`pharokka.py -i <fasta file> -o <output directory> -d <path/to/database_dir> -t <threads> -p <prefix>`
+`pharokka run -i <fasta file> -o <output directory> -d <path/to/database_dir> -t <threads> -p <prefix>`
 
 For a full explanation of all arguments, please see [usage](docs/run.md).
 
-pharokka defaults to 1 thread.
+`pharokka` defaults to 1 thread.
 
 ```
-usage: pharokka.py [-h] [-i INFILE] [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG] [-g GENE_PREDICTOR] [-m] [-s] [-c CODING_TABLE] [-e EVALUE]
-                   [--fast] [--mmseqs2_only] [--meta_hmm] [--dnaapler] [--custom_hmm CUSTOM_HMM] [--genbank] [--terminase] [--terminase_strand TERMINASE_STRAND]
-                   [--terminase_start TERMINASE_START] [--skip_extra_annotations] [--skip_mash] [--minced_args MINCED_ARGS] [--mash_distance MASH_DISTANCE]
-                   [--trna_scan_model {general,bacterial}] [--keep_raw_prodigal] [--reverse_mmseqs2] [-V] [--citation]
+usage: pharokka run [-h] [-i INFILE] [-o OUTDIR] [-d DATABASE] [-t THREADS] [-f] [-p PREFIX] [-l LOCUSTAG] [-g GENE_PREDICTOR] [-m] [-s] [-c CODING_TABLE] [-e EVALUE]
+                    [--fast] [--mmseqs2_only] [--meta_hmm] [--dnaapler] [--custom_hmm CUSTOM_HMM] [--genbank] [--terminase] [--terminase_strand TERMINASE_STRAND]
+                    [--terminase_start TERMINASE_START] [--skip_extra_annotations] [--skip_mash] [--minced_args MINCED_ARGS] [--mash_distance MASH_DISTANCE]
+                    [--trna_scan_model {general,bacterial}] [--keep_raw_prodigal] [--reverse_mmseqs2] [--sensitivity SENSITIVITY] [-V] [--citation]
 
 pharokka: fast phage annotation program
 
@@ -415,26 +456,26 @@ options:
   -l, --locustag LOCUSTAG
                         User specified locus tag for the gff/gbk files. This is not required. A random locus tag will be generated instead.
   -g, --gene_predictor GENE_PREDICTOR
-                        User specified gene predictor. Use "-g phanotate" or "-g prodigal" or "-g prodigal-gv" or "-g pyrodigal-rv" or "-g genbank". 
+                        User specified gene predictor. Use "-g phanotate" or "-g prodigal" or "-g prodigal-gv" or "-g pyrodigal-rv" or "-g genbank".
                         Defaults to phanotate usually and prodigal-gv in meta mode.
   -m, --meta            meta mode for metavirome input samples
-  -s, --split           split mode for metavirome samples. -m must also be specified. 
+  -s, --split           split mode for metavirome samples. -m must also be specified.
                         Will output separate split FASTA, gff and genbank files for each input contig.
   -c, --coding_table CODING_TABLE
                         translation table for prodigal. Defaults to 11.
   -e, --evalue EVALUE   E-value threshold for MMseqs2 database PHROGs, VFDB and CARD and PyHMMER PHROGs database search. Defaults to 1E-05.
-  --fast, --hmm_only    Runs PyHMMER (HMMs) with PHROGs only, not MMseqs2 with PHROGs, CARD or VFDB. 
+  --fast, --hmm_only    Runs PyHMMER (HMMs) with PHROGs only, not MMseqs2 with PHROGs, CARD or VFDB.
                         Designed for phage isolates, will not likely be faster for large metagenomes.
   --mmseqs2_only        Runs MMseqs2 with PHROGs, CARD and VFDB only (same as Pharokka v1.3.2 and prior). Default in meta mode.
   --meta_hmm            Overrides --mmseqs2_only in meta mode. Will run both MMseqs2 and PyHMMER.
-  --dnaapler            Runs dnaapler to automatically re-orient all contigs to begin with terminase large subunit if found. 
+  --dnaapler            Runs dnaapler to automatically re-orient all contigs to begin with terminase large subunit if found.
                         Recommended over using '--terminase'.
   --custom_hmm CUSTOM_HMM
-                        Run pharokka with a custom HMM profile database suffixed .h3m. 
-                        Please use create this with the create_custom_hmm.py script.
-  --genbank             Flag denoting that -i/--input is a genbank file instead of the usual FASTA file. 
-                         The CDS calls in this file will be preserved and re-annotated.
-  --terminase           Runs terminase large subunit re-orientation mode. 
+                        Run pharokka with a custom HMM profile database suffixed .h3m.
+                        Please create this with `pharokka create-hmm`.
+  --genbank             Flag denoting that -i/--input is a genbank file instead of the usual FASTA file.
+                        The CDS calls in this file will be preserved and re-annotated.
+  --terminase           Runs terminase large subunit re-orientation mode.
                         Single genome input only and requires --terminase_strand and --terminase_start to be specified.
   --terminase_strand TERMINASE_STRAND
                         Strand of terminase large subunit. Must be "pos" or "neg".
@@ -444,16 +485,18 @@ options:
                         Skips tRNAscan-SE 2, MinCED and Aragorn.
   --skip_mash           Skips running mash to find the closest match for each contig in INPHARED.
   --minced_args MINCED_ARGS
-                        extra commands to pass to MINced (please omit the leading hyphen for the first argument). You will need to use quotation marks e.g. --minced_args "minNR 2 -minRL 21"
+                        Extra commands to pass to MINced (please omit the leading hyphen for the first argument). You will need to use quotation marks e.g. --minced_args "minNR 2 -minRL 21"
   --mash_distance MASH_DISTANCE
                         mash distance for the search against INPHARED. Defaults to 0.2.
   --trna_scan_model {general,bacterial}
-                        tRNAscan-SE model
+                        tRNAscan-SE model. Defaults to general.
   --keep_raw_prodigal   Keeps raw prodigal header information.
-  --reverse_mmseqs2     MMseqs2 database as target not query.
+  --reverse_mmseqs2     MMseqs2 database as target not query. Only recommended for enormous datasets.
+  --sensitivity SENSITIVITY
+                        MMseqs2 profile search sensitivity. Defaults to 8.5.
   -V, --version         Print pharokka Version
   --citation            Print pharokka Citation
-  ```
+```
 
 # Version Log
 

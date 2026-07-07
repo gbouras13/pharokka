@@ -28,10 +28,16 @@ George Bouras, Roshan Nepal, Ghais Houtak, Alkis James Psaltis, Peter-John Worma
 
 If you don't want to install `pharokka` locally, you can run it without any code using one [this Google Colab notebook](https://colab.research.google.com/github/gbouras13/phold/blob/main/run_pharokka_and_phold_and_phynteny.ipynb). 
 
-Pharokka, Phold and Phynteny are complimentary tools and when used together, they substantially increase the annotation rate of your phage genome. The below plot shows the annotation rate of different tools across 4 benchmarked datasets ((a) INPHARED 1419, (b) Cook, (c) Crass and (d) Tara - see the [Phold preprint]((https://www.biorxiv.org/content/10.1101/2025.08.05.668817v1)) for more information)
+Pharokka, Phold and Phynteny are complimentary tools and when used together, they substantially increase the annotation rate of your phage genome. The below plot shows the annotation rate of different tools across 4 benchmarked datasets ((a) INPHARED 1419, (b) Cook, (c) Crass and (d) Tara - see the [Phold paper](https://doi.org/10.1093/nar/gkaf1448) for more information)
 
 Specifically, the final Phynteny plots combine the benefits of annotation with Pharokka (with HMM, the second violin) followed by Phold (with structures, the fourth violin) followed by Phynteny
 
 <p align="center">
   <img src="Pharokka_Phold_Phynteny.png" alt="pharokka plus phold plus phynteny" height=1200>
 </p>
+
+## phold Citation
+
+If you use `phold`, please cite:
+
+Bouras G., Grigson S.R., Mirdita M., Heinzinger M., Papudeshi B., Mallawaarachchi V., Green R., Kim S.R., Mihalia V., Psaltis A.J., Wormald P-J., Vreugde S., Steinegger M., Edwards R.A. Protein Structure Informed Bacteriophage Genome Annotation with Phold. *Nucleic Acids Research*, Volume 54, Issue 1, 13 January 2026, gkaf1448, [https://doi.org/10.1093/nar/gkaf1448](https://doi.org/10.1093/nar/gkaf1448)

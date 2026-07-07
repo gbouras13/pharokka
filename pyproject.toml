@@ -1,22 +1,17 @@
 [project]
 name = "pharokka"
-version = "1.9.1" # change version.py also
+dynamic = ["version"]
 description = "Fast phage annotation tool"
 authors = [{ name = "George Bouras", email = "george.bouras@adelaide.edu.au" }]
 readme = "README.md"
 license = { text = "MIT" }
-requires-python = ">=3.5"
+requires-python = ">=3.8"
 dependencies = [
-    "setuptools>=67.7.2,<81",
     "loguru>=0.5.4",
     "pyyaml>=6.0",
-    "pandas>=1.4.2",
+    "polars>=0.19.0",
     "biopython>=1.80",
     "pyhmmer>=0.12.0",
-    "black>=22.3.0",
-    "isort>=5.10.1",
-    "pytest>=6.2.5",
-    "pytest-cov>=3.0.0",
     "alive-progress>=3.0.1",
     "requests>=2.25.1",
     "bcbio-gff>=0.7.0",
@@ -26,32 +21,178 @@ dependencies = [
     "phanotate>=1.6.7,<2"
 ]
 
+[project.scripts]
+# The main entry point is also routed through pharokka_scripts (not directly
+# to pharokka.cli:main) to avoid a sys.path shadowing bug: bin/pharokka.py
+# (the legacy compat script) would shadow the pharokka package when bin/ is
+# on sys.path[0], causing "pharokka is not a package" for any script run from
+# that directory.  pharokka_scripts:pharokka_main calls _fix_sys_path() first.
+pharokka = "pharokka_scripts:pharokka_main"
+# Backward-compatible script names (deprecated — use 'pharokka <subcommand>').
+# These are wired through pharokka_scripts (a separate top-level module) to
+# avoid a sys.path collision: if the entry point were named pharokka.py and
+# imported from pharokka.*, Python would find the script file in bin/ before
+# the installed package.  pharokka_scripts has no such naming conflict.
+"pharokka.py"              = "pharokka_scripts:pharokka_py"
+"pharokka_proteins.py"     = "pharokka_scripts:pharokka_proteins_py"
+"install_databases.py"     = "pharokka_scripts:install_databases_py"
+"pharokka_plotter.py"      = "pharokka_scripts:pharokka_plotter_py"
+"pharokka_multiplotter.py" = "pharokka_scripts:pharokka_multiplotter_py"
+"create_custom_hmm.py"     = "pharokka_scripts:create_custom_hmm_py"
+
+# ---------------------------------------------------------------------------
+# Package discovery
+# ---------------------------------------------------------------------------
+# package-dir tells setuptools that src/ is the root for both packages
+# (pharokka/) and top-level modules (pharokka_scripts.py).
+[tool.setuptools.dynamic]
+version = {attr = "pharokka.version.__version__"}
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["pharokka", "pharokka.*"]
+
 [tool.setuptools]
-packages = ["pharokka_runner"]
-package-dir = { pharokka_runner = "bin" }
 include-package-data = true
-script-files = [
-    "bin/pharokka.py",
-    "bin/pharokka_plotter.py",
-    "bin/pharokka_multiplotter.py",
-    "bin/install_databases.py",
-    "bin/pharokka_proteins.py",
-    "bin/citation.py",
-    "bin/databases.py",
-    "bin/external_tools.py",
-    "bin/input_commands.py",
-    "bin/hmm.py",
-    "bin/plot.py",
-    "bin/post_processing.py",
-    "bin/processes.py",
-    "bin/proteins.py",
-    "bin/util.py",
-    "bin/version.py",
-    "bin/create_custom_hmm.py",
-    "bin/custom_db.py"
-]
+# pharokka_scripts.py lives in src/ alongside the pharokka package.
+# Listing it here ensures it is installed as a top-level module.
+py-modules = ["pharokka_scripts"]
 
 [build-system]
-requires = ["setuptools>=67.7.2,<81", "wheel"]
+requires = ["setuptools>=67.7.2", "wheel"]
 build-backend = "setuptools.build_meta"
 
+# ---------------------------------------------------------------------------
+# Pytest configuration
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+markers = [
+    "golden: golden-output regression tests — run pharokka end-to-end and diff key output files against committed reference outputs (deselect with -m 'not golden').",
+]
+
+# ---------------------------------------------------------------------------
+# Coverage configuration
+# ---------------------------------------------------------------------------
+# parallel = true: each subprocess writes its own .coverage.* file; pytest-cov
+# combines them at the end.  This is required for subprocess coverage tracking
+# (test_overall.py and test_proteins.py run pharokka as subprocesses via
+# subprocess.Popen, so the main pytest process has no visibility into them
+# without this).  Enable subprocess tracking in CI by:
+#   1. Writing sitecustomize.py to site-packages (see ci.yaml)
+#   2. Setting COVERAGE_PROCESS_START=pyproject.toml in the test step env.
+[tool.coverage.run]
+source = ["pharokka"]
+parallel = true
+
+[tool.coverage.report]
+# Plotting modules require an interactive display — not testable in headless CI.
+omit = [
+    "src/pharokka/plot.py",
+    "src/pharokka/plot_entry.py",
+    "src/pharokka/multiplot_entry.py",
+]
+
+# ---------------------------------------------------------------------------
+# Ruff (formatter + linter)
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 88
+exclude = ["*.ipynb"]
+
+[tool.ruff.lint]
+# E/W: pycodestyle, F: pyflakes, I: isort.  E501 (line-too-long) is left to the
+# formatter rather than enforced as a lint error.
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]
+
+# ---------------------------------------------------------------------------
+# Pixi configuration
+# ---------------------------------------------------------------------------
+# Pixi provides reproducible conda-based environments (see pixi.lock) for both
+# development and end-user installs.  Every dependency pins an explicit channel
+# so the solve is unambiguous: python libraries come from conda-forge, and the
+# bioinformatics tools + bio-python bindings come from bioconda.
+[tool.pixi.workspace]
+channels = ["conda-forge", "bioconda"]
+platforms = ["linux-64", "linux-aarch64", "osx-64", "osx-arm64"]
+
+[tool.pixi.dependencies]
+# Python + pure-python libraries (conda-forge)
+python = { version = ">=3.9", channel = "conda-forge" }
+polars = { version = ">=0.19.0", channel = "conda-forge" }
+biopython = { version = ">=1.80", channel = "conda-forge" }
+loguru = { version = ">=0.5.4", channel = "conda-forge" }
+pyyaml = { version = ">=6.0", channel = "conda-forge" }
+requests = { version = ">=2.25.1", channel = "conda-forge" }
+alive-progress = { version = ">=3.0.1", channel = "conda-forge" }
+# Bio-python bindings (bioconda)
+pyhmmer = { version = ">=0.12.0", channel = "bioconda" }
+pyrodigal = { version = ">=3.1.0", channel = "bioconda" }
+pyrodigal-gv = { version = ">=0.2.0", channel = "bioconda" }
+pyrodigal-rv = { version = ">=0.1.0", channel = "bioconda" }
+phanotate = { version = ">=1.6.7,<2", channel = "bioconda" }
+bcbio-gff = { version = ">=0.7.0", channel = "bioconda" }
+pycirclize = { version = ">=0.3.1", channel = "conda-forge" }
+# External command-line tools (bioconda)
+mmseqs2 = { version = ">=14.7e284", channel = "bioconda" }
+trnascan-se = { version = ">=2.0.9", channel = "bioconda" }
+minced = { version = ">=0.4.2", channel = "bioconda" }
+aragorn = { version = ">=1.2.41", channel = "bioconda" }
+mash = { version = ">=2.2", channel = "bioconda" }
+dnaapler = { version = ">=1.0.1", channel = "bioconda" }
+
+[tool.pixi.pypi-dependencies]
+# Install pharokka itself (editable) from this source tree.  Needed because we
+# are not using a conda build backend to place the package on the path.
+pharokka = { path = ".", editable = true }
+
+[tool.pixi.feature.test.dependencies]
+pytest = ">=6.2.5"
+pytest-cov = ">=3.0.0"
+
+[tool.pixi.feature.build.dependencies]
+python-build = "*"
+
+[tool.pixi.feature.lint.dependencies]
+ruff = ">=0.4.0"
+
+[tool.pixi.feature.lint.tasks]
+# Format + autofix in place.
+fmt = "ruff format . && ruff check --fix ."
+# Verify formatting and lint without changing files (used in CI).
+check-fmt = "ruff format --check . && ruff check ."
+
+[tool.pixi.feature.py39.dependencies]
+python = "3.9.*"
+
+[tool.pixi.feature.py313.dependencies]
+python = "3.13.*"
+
+# Separate solve groups per Python version (different python => different solve).
+# 'lint' is a lean standalone environment (just ruff, no runtime deps) so the
+# formatting/lint CI job doesn't have to build the full bioinformatics stack.
+[tool.pixi.environments]
+default = { solve-group = "default" }
+py39 = { features = ["py39", "test"] }
+py313 = { features = ["py313", "test", "build"] }
+lint = { features = ["lint"], no-default-feature = true }
+
+[tool.pixi.tasks]
+# Local quick test run (skips the heavy golden-output regression tests).
+# 'python -m pytest' (not bare 'pytest') keeps sys.path[0] as the project root
+# so bin/pharokka.py cannot shadow the pharokka package.
+test = "python -m pytest -m 'not golden'"
+# CI test run with coverage, excluding golden tests.  COVERAGE_PROCESS_START is
+# set so subprocess coverage (test_overall.py / test_proteins.py run pharokka
+# via subprocess) is captured — the sitecustomize hook is written in CI.
+test-ci = { cmd = "python -m pytest -m 'not golden' --cov=src/pharokka --cov-report=xml", env = { COVERAGE_PROCESS_START = "pyproject.toml" } }
+# Full CI run INCLUDING golden regression tests — used only on the reference
+# cell (ubuntu-latest + py313) the golden files were generated against.
+test-ci-golden = { cmd = "python -m pytest --cov=src/pharokka --cov-report=xml", env = { COVERAGE_PROCESS_START = "pyproject.toml" } }
+# Local coverage report with HTML output.
+coverage = "python -m pytest -m 'not golden' --cov=src/pharokka --cov-report=term --cov-report=html"
+# Build the sdist + wheel (setuptools, dynamic version from version.py).
+build = "python -m build"
