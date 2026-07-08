@@ -38,7 +38,7 @@ If you use this protocol, please cite
 >  
 > *Decoding Viral Dark Matter: Metagenomic Prokaryotic Virus Characterization With Pharokka, Phold, and Phynteny*  
 > **Current Protocols**, Volume 6, Number 7, 6 July 2026  
-> [https://doi.org/10.1093/nar/gkaf1448](https://doi.org/10.1002/cpz1.70405)
+> [https://doi.org/10.1002/cpz1.70405](https://doi.org/10.1002/cpz1.70405)
 
 # phold
 
