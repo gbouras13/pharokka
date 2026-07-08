@@ -25,6 +25,21 @@ Extra special thanks to Ghais Houtak for making Pharokka's logo.
 
 If you are looking for rapid standardised annotation of bacterial genomes, please use [Bakta](https://github.com/oschwengers/bakta). [Prokka](https://github.com/tseemann/prokka), which inspired the creation & naming of `pharokka`, is another good option, but Bakta is [Prokka's worthy successor](https://twitter.com/torstenseemann/status/1565471892840259585).
 
+# Protocols
+
+We have recently published a [protocols paper](https://doi.org/10.1002/cpz1.70405) in _Current Protocols_ outlining how to run Pharokka, [Phold](https://github.com/gbouras13/phold), [Phynteny](https://github.com/susiegriggo/Phynteny_transformer) for annotation and visualisation via our [Phold Plot Wasm application](https://gbouras13.github.io/phold-plot-wasm-app/).
+
+We highly recommend reading and following this protocol for users new to phage annotation.
+
+If you use this protocol, please cite
+
+> Bouras G., Grigson S.R., Durr L., Papudeshi B., Vreugde S.,
+> Mallawaarachchi V., Vreugde S., Edwards R.A. 
+>  
+> *Decoding Viral Dark Matter: Metagenomic Prokaryotic Virus Characterization With Pharokka, Phold, and Phynteny*  
+> **Current Protocols**, Volume 6, Number 7, 6 July 2026  
+> [https://doi.org/10.1093/nar/gkaf1448](https://doi.org/10.1002/cpz1.70405)
+
 # phold
 
 If you like `pharokka`, you will probably love [phold](https://github.com/gbouras13/phold). `phold` uses structural homology to improve phage annotation. Benchmarking is ongoing but `phold` strongly outperforms `pharokka` in terms of annotation, particularly for less characterised phages such as those from metagenomic datasets.
