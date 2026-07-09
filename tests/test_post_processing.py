@@ -33,7 +33,20 @@ from pharokka.post_processing import (
     process_custom_pyhmmer_results,
     process_pyhmmer_results,
     process_vfdb_results,
+    read_feature_gff,
 )
+
+GFF_COLS = [
+    "contig",
+    "Method",
+    "Region",
+    "start",
+    "stop",
+    "score",
+    "strand",
+    "frame",
+    "attributes",
+]
 
 # ---------------------------------------------------------------------------
 # parse_attributes_column
@@ -518,3 +531,44 @@ class TestFilesystemHelpers:
         # Should not raise
         check_and_create_directory(str(existing))
         assert existing.is_dir()
+
+
+class TestReadFeatureGff:
+    """Regression tests for read_feature_gff.
+
+    A phage with no tRNAs (or CRISPRs / tmRNAs) leaves a 0-byte feature GFF.
+    Passing that to polars raised NoDataError on some platforms and
+    OSError ("Exec format error") on others, crashing post-processing.
+    read_feature_gff must return an empty frame instead of raising.
+    """
+
+    def test_zero_byte_file_returns_empty_frame(self, tmp_path):
+        gff = tmp_path / "trnascan_out.gff"
+        gff.write_text("")
+        df = read_feature_gff(str(gff), GFF_COLS)
+        assert df.height == 0
+        assert df.columns == GFF_COLS
+
+    def test_header_only_file_returns_empty_frame(self, tmp_path):
+        gff = tmp_path / "trnascan_out.gff"
+        gff.write_text("##gff-version 3\n")
+        df = read_feature_gff(str(gff), GFF_COLS)
+        assert df.height == 0
+        assert df.columns == GFF_COLS
+
+    def test_missing_file_returns_empty_frame(self, tmp_path):
+        df = read_feature_gff(str(tmp_path / "does_not_exist.gff"), GFF_COLS)
+        assert df.height == 0
+        assert df.columns == GFF_COLS
+
+    def test_reads_feature_rows_and_skips_comments(self, tmp_path):
+        gff = tmp_path / "trnascan_out.gff"
+        gff.write_text(
+            "##gff-version 3\n"
+            "ctg1\ttRNAscan-SE\ttRNA\t10\t80\t.\t+\t.\tID=ctg1.trna1\n"
+            "ctg1\ttRNAscan-SE\ttRNA\t120\t190\t.\t-\t.\tID=ctg1.trna2\n"
+        )
+        df = read_feature_gff(str(gff), GFF_COLS)
+        assert df.height == 2
+        assert df["Region"].to_list() == ["tRNA", "tRNA"]
+        assert df["contig"][0] == "ctg1"

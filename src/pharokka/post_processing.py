@@ -1819,50 +1819,25 @@ class Pharok:
         ]
 
         if self.skip_extra_annotations is False:
-            _empty_gff = pl.DataFrame(
-                {c: pl.Series([], dtype=pl.Utf8) for c in col_list}
+            # tRNAscan-SE, MinCED and Aragorn each emit a 0-byte or header-only
+            # GFF when they find nothing. read_feature_gff returns an empty
+            # frame in those cases (a 0-byte file makes polars raise NoDataError
+            # on some platforms and OSError on others, so we cannot rely on
+            # catching a single exception type here).
+            trna_df = read_feature_gff(
+                os.path.join(self.out_dir, "trnascan_out.gff"), col_list
             )
-
-            try:
-                trna_df = pl.read_csv(
-                    os.path.join(self.out_dir, "trnascan_out.gff"),
-                    separator="\t",
-                    has_header=False,
-                    new_columns=col_list,
-                    comment_prefix="#",
-                    truncate_ragged_lines=True,
-                    infer_schema=False,
-                )
-            except pl.exceptions.NoDataError:
-                trna_df = _empty_gff
             trna_df = trna_df.filter(
                 (pl.col("Region") == "tRNA") | (pl.col("Region") == "pseudogene")
             )
 
-            try:
-                crispr_df = pl.read_csv(
-                    os.path.join(self.out_dir, self.prefix + "_minced.gff"),
-                    separator="\t",
-                    has_header=False,
-                    new_columns=col_list,
-                    comment_prefix="#",
-                    infer_schema=False,
-                )
-            except pl.exceptions.NoDataError:
-                crispr_df = _empty_gff
+            crispr_df = read_feature_gff(
+                os.path.join(self.out_dir, self.prefix + "_minced.gff"), col_list
+            )
 
-            try:
-                tmrna_df = pl.read_csv(
-                    os.path.join(self.out_dir, self.prefix + "_aragorn.gff"),
-                    separator="\t",
-                    has_header=False,
-                    new_columns=col_list,
-                    comment_prefix="#",
-                    truncate_ragged_lines=True,
-                    infer_schema=False,
-                )
-            except pl.exceptions.NoDataError:
-                tmrna_df = _empty_gff
+            tmrna_df = read_feature_gff(
+                os.path.join(self.out_dir, self.prefix + "_aragorn.gff"), col_list
+            )
 
         # ─── Per-contig CDS stats: count + PHROG category breakdown + length sum
         # The 11 PHROG-category labels in display order.
@@ -2464,6 +2439,37 @@ def is_trna_empty(out_dir):
     if os.stat(os.path.join(out_dir, "trnascan_out.gff")).st_size == 0:
         trna_empty = True
     return trna_empty
+
+
+def read_feature_gff(path, col_list):
+    """
+    Read an optional feature GFF (tRNAscan-SE / MinCED / Aragorn) into a polars
+    DataFrame, returning an empty DataFrame when the tool found nothing.
+
+    These tools emit either a 0-byte file or a header/comment-only file when no
+    features are found. Passing such a file to ``pl.read_csv`` is unreliable
+    across platforms: polars raises ``NoDataError`` on some (e.g. a header-only
+    file, or a 0-byte file on macOS) and ``OSError`` ("Exec format error") on
+    others when it memory-maps a 0-byte file (reported on Linux).
+    We therefore short-circuit on a missing or 0-byte file, and also catch
+    ``NoDataError`` for the header-only case, so a phage with no tRNAs/CRISPRs/
+    tmRNAs does not crash post-processing.
+    """
+    empty_df = pl.DataFrame({c: pl.Series([], dtype=pl.Utf8) for c in col_list})
+    if not os.path.exists(path) or os.stat(path).st_size == 0:
+        return empty_df
+    try:
+        return pl.read_csv(
+            path,
+            separator="\t",
+            has_header=False,
+            new_columns=col_list,
+            comment_prefix="#",
+            truncate_ragged_lines=True,
+            infer_schema=False,
+        )
+    except pl.exceptions.NoDataError:
+        return empty_df
 
 
 def extract_anticodon_positions(out_dir):

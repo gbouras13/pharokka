@@ -12,6 +12,11 @@ History
 * Fixes a bug in meta mode where `top_hits_vfdb.tsv` and `top_hits_card.tsv` reported inverted coordinates (start > stop) for negative-strand CDS hits — a pandas reference side-effect that caused `locus_df` to capture biological-order coordinates before the GFF positional swap
 * Fixes a bug where the `/anticodon=(pos:X..Y,…)` qualifier in `pharokka.gff` / `pharokka.gbk` / `pharokka.tbl` could be attached to the wrong tRNA on any contig with more than one tRNA. The previous implementation matched `.sec`-file positions to GFF tRNA rows by row index; the GFF is in genomic-position order while tRNAscan-SE's `.sec` output is in tRNA-ID order, so positions were silently misaligned. Now keyed by tRNAscan ID (e.g. `MW460250_1.trna3`)
 * Cleaned up numerical precision and float handling throughout
+* Fixes a crash in post-processing for phages with no tRNAs (also CRISPRs/tmRNAs): an empty (0-byte) `trnascan_out.gff` raised `OSError: Exec format error (os error 8)` on Linux (and `NoDataError` elsewhere) when read by polars. Empty or missing feature GFFs are now read via a single `read_feature_gff` helper that returns an empty table instead of crashing
+* Adds [pixi](https://pixi.sh) support for reproducible installation and development — `pixi.lock` pins the full dependency stack across `linux-64`, `linux-aarch64`, `osx-64` and `osx-arm64`, and `pixi shell` installs `pharokka` with all of its dependencies from source (see the [installation docs](docs/install.md))
+* Parallelised execution of the external tools (tRNAscan-SE, MinCED, Aragorn, mash) using a thread pool for faster runs
+* Test database path now resolves via the `$PHAROKKA_DB` environment variable (defaults to `tests/test_data/database`), removing hardcoded developer paths
+* Developer tooling: continuous integration migrated to pixi, with `ruff` formatting/linting and golden-output regression tests added to CI
 
 1.9.0 (2026-01-12)
 ------------------

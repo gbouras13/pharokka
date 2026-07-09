@@ -51,8 +51,12 @@ The deprecated script names will be removed in a future major release.
 * **Numeric contig header bug fix**: tmRNA and CRISPR features were silently not counted for contigs with purely numeric headers (e.g. those produced by Unicycler). This is now fixed.
 * **Meta mode coordinate bug fix**: `top_hits_vfdb.tsv` and `top_hits_card.tsv` reported inverted coordinates (start > stop) for negative-strand CDS hits in meta mode. This was a pandas reference side-effect — `locus_df` captured coordinates before the GFF positional swap, so negative-strand starts and stops were reversed. Both modes now correctly report GFF-order coordinates (start ≤ stop, strand indicates direction).
 * **tRNA anticodon position bug fix**: the `/anticodon=(pos:X..Y,…)` qualifier in `pharokka.gff`, `pharokka.gbk` and `pharokka.tbl` was attached to the wrong tRNA on any contig with more than one tRNA. tRNAscan-SE's `.sec` output is sorted by tRNA ID; the GFF is sorted by genomic position; the v1.9.1 implementation matched the two by row index, so positions ended up scrambled. Now keyed by the tRNAscan ID (e.g. `MW460250_1.trna3`) for unambiguous matching.
+* **No-tRNA crash fix**: phages with no tRNAs (or CRISPRs/tmRNAs) produce an empty `trnascan_out.gff`. Reading a 0-byte file with polars raised `OSError: Exec format error (os error 8)` on Linux (and `NoDataError` on other platforms), crashing post-processing. Empty or missing feature GFFs are now handled by a single `read_feature_gff` helper that returns an empty table.
 * **Numerical precision**: float handling has been cleaned up throughout for more consistent output.
+* **Parallel external tools**: tRNAscan-SE, MinCED, Aragorn and mash now run via a thread pool rather than sequential batch-and-wait loops, speeding up runs.
 * **Test portability**: test database path now resolves via `$PHAROKKA_DB` environment variable (defaults to `tests/test_data/database`), removing hardcoded developer paths.
+* **[pixi](https://pixi.sh) support**: `pharokka` can now be installed and developed reproducibly with [pixi](https://pixi.sh). `pixi.lock` pins the full dependency stack (Python libraries + external tools) across `linux-64`, `linux-aarch64`, `osx-64` and `osx-arm64`, and `pixi shell` sets up `pharokka` with all of its dependencies from source. See the [installation guide](install.md#source).
+* **Developer tooling**: continuous integration migrated to pixi, with `ruff` formatting/linting and golden-output regression tests added.
 
 ---
 
