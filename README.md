@@ -223,14 +223,14 @@ You do not need to update your existing pipelines — but we recommend migrating
 
 ## Pharokka v 1.7.0 Update (4 March 2024)
 
-You can run `pharokka_multiplotter.py` to plot as many phage(s) as you want.
+You can run `pharokka multiplot` to plot as many phage(s) as you want.
 
 It requires the `pharokka` output Genbank file (here, `pharokka.gbk`). It will save plots for each contig in the output directory (here `pharokka_plots_output_directory`). 
 
 e.g.
 
 ```
-pharokka_multiplotter.py -g pharokka.gbk  -o pharokka_plots_output_directory 
+pharokka multiplot -g pharokka.gbk  -o pharokka_plots_output_directory 
 ```
 
 ## Pharokka v 1.6.0 Update (11 January 2024)
@@ -274,10 +274,10 @@ It is reasonably customisable and is designed for single input phage contigs. If
 
 It requires the input FASTA, `pharokka` output directory, and the `-p` or `--prefix` value used with `pharokka` if specified. 
 
-You can run `pharokka_plotter.py` in the following form
+You can run `pharokka plot` in the following form
 
 ```
-pharokka_plotter.py -i input.fasta -n pharokka_plot -o pharokka_output_directory 
+pharokka plot -i input.fasta -n pharokka_plot -o pharokka_output_directory 
 ```
 
 This will create `pharokka_plot.png` as an output file plot of your phage.
@@ -285,7 +285,7 @@ This will create `pharokka_plot.png` as an output file plot of your phage.
 An example plot is included below made with the following command (assuming Pharokka has been run with `SAOMS1_pharokka_output_directory` as the output directory).
 
 ``` 
-pharokka_plotter.py -i test_data/SAOMS1.fasta -n SAOMS1_plot -o SAOMS1_pharokka_output_directory --interval 8000 --annotations 0.5 --plot_title '${Staphylococcus}$ Phage SAOMS1'
+pharokka plot -i test_data/SAOMS1.fasta -n SAOMS1_plot -o SAOMS1_pharokka_output_directory --interval 8000 --annotations 0.5 --plot_title '${Staphylococcus}$ Phage SAOMS1'
 ```
 
 <p align="center">
@@ -342,7 +342,7 @@ singularity pull --dir $IMAGE_DIR docker://quay.io/biocontainers/pharokka:1.7.3-
 
 ```
 containerImage="$IMAGE_DIR/pharokka_1.7.3--pyhdfd78af_0.sif"
-singularity exec $containerImage pharokka.py -h
+singularity exec $containerImage pharokka -h
 ```
 
 
@@ -365,18 +365,18 @@ Alternatively, if you would rather manage the dependencies yourself, install the
 ```
 # assuming you are in the pharokka directory
 pip install -e .
-pharokka.py --help
+pharokka --help
 ```
 
 # Database Installation
 
 To install the `pharokka` database to the default directory:
 
-`install_databases.py -d`
+`pharokka install -d`
 
 If you would like to specify a different database directory (recommended), that can be achieved as follows:
 
-`install_databases.py -o <path/to/databse_dir>`
+`pharokka install -o <path/to/database_dir>`
 
 If this does not work, you an alternatively download the databases from Zenodo at https://zenodo.org/record/8276347/files/pharokka_v1.4.0_databases.tar.gz and untar the directory in a location of your choice.
 
@@ -423,8 +423,8 @@ conda config --add channels conda-forge
 ```bash
 conda create -n pharokkaENV pharokka
 conda activate pharokkaENV
-install_databases.py -h
-pharokka.py -h
+pharokka install -h
+pharokka -h
 ```
 
 If you have a Mac with Apple Silicon (M1-M4), try
@@ -432,8 +432,8 @@ If you have a Mac with Apple Silicon (M1-M4), try
 ```bash
 conda create --platform osx-64 -n pharokkaENV pharokka
 conda activate pharokkaENV
-install_databases.py -h
-pharokka.py -h
+pharokka install -h
+pharokka -h
 ```
 
 # Usage
