@@ -112,6 +112,14 @@ def test_vfdb_issue_410(tmp_dir):
     exec_command(cmd)
 
 
+def test_overall_no_trna(tmp_dir):
+    """test pharokka issue #433: phage with no tRNAs crashed post-processing
+    on a 0-byte trnascan_out.gff (NC_043029, no tRNAs identified)"""
+    input_fasta: Path = f"{bug_data}/NC_043029_no_trna.fasta"
+    cmd = f"pharokka run -i {input_fasta} -d {database_dir} -o {tmp_dir} -t {threads} -f --fast"
+    exec_command(cmd)
+
+
 def test_overall_mash_distance(tmp_dir):
     """test pharokka overall with stricter mash distance"""
     input_fasta: Path = f"{standard_data}/SAOMS1.fasta"
