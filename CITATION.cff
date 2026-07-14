@@ -1,0 +1,57 @@
+cff-version: 1.2.0
+title: Pharokka
+type: software
+repository: https://github.com/gbouras13/pharokka
+identifiers:
+- type: other
+  value: pharokka
+  description: bio.tools
+license: MIT
+keywords:
+- term: Metagenomics
+  uri: http://edamontology.org/topic_3174
+- term: Sequence sites, features and motifs
+  uri: http://edamontology.org/topic_0160
+- term: Workflows
+  uri: http://edamontology.org/topic_0769
+- term: Functional, regulatory and non-coding RNA
+  uri: http://edamontology.org/topic_0659
+abstract: Pharokka is a rapid standardised annotation tool for bacteriophage genomes
+  and metagenomes.
+message: If you use this software, please cite it and the Primary publications below.
+references:
+- doi: 10.1093/bioinformatics/btac776
+  title: 'Pharokka: a fast scalable bacteriophage annotation tool.'
+  authors:
+  - first_name: George
+    last_name: Bouras
+  - first_name: Roshan
+    last_name: Nepal
+  - first_name: Ghais
+    last_name: Houtak
+  - first_name: Alkis James
+    last_name: Psaltis
+  - first_name: Peter-John
+    last_name: Wormald
+  - first_name: Sarah
+    last_name: Vreugde
+  year: 2023
+  pub_type: article
+preferred-citation:
+  doi: 10.1093/bioinformatics/btac776
+  title: 'Pharokka: a fast scalable bacteriophage annotation tool.'
+  authors:
+  - first_name: George
+    last_name: Bouras
+  - first_name: Roshan
+    last_name: Nepal
+  - first_name: Ghais
+    last_name: Houtak
+  - first_name: Alkis James
+    last_name: Psaltis
+  - first_name: Peter-John
+    last_name: Wormald
+  - first_name: Sarah
+    last_name: Vreugde
+  year: 2023
+  pub_type: article
