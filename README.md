@@ -49,6 +49,16 @@ If you use this protocol, please cite
 > **Current Protocols**, Volume 6, Number 7, 6 July 2026  
 > [https://doi.org/10.1002/cpz1.70405](https://doi.org/10.1002/cpz1.70405)
 
+# Functions
+
+`pharokka`'s functions, as annotated on [bio.tools](https://bio.tools/pharokka) ([EDAM](http://edamontology.org/) operations):
+
+* [Genome annotation](http://edamontology.org/operation_0362)
+* [Antimicrobial resistance prediction](http://edamontology.org/operation_3482)
+* [tRNA gene prediction](http://edamontology.org/operation_0464)
+* [Formatting](http://edamontology.org/operation_0335)
+* [Sequence assembly](http://edamontology.org/operation_0310)
+
 # phold
 
 If you like `pharokka`, you will probably love [phold](https://github.com/gbouras13/phold). `phold` uses structural homology to improve phage annotation. Benchmarking is ongoing but `phold` strongly outperforms `pharokka` in terms of annotation, particularly for less characterised phages such as those from metagenomic datasets.
@@ -84,6 +94,7 @@ If you don't want to install `pharokka` or `phold` locally, you can run `pharokk
 
 - [pharokka](#pharokka)
   - [Fast Phage Annotation Tool](#fast-phage-annotation-tool)
+- [Functions](#functions)
 - [phold](#phold)
 - [Google Colab Notebook](#google-colab-notebook)
 - [Phold plot Wasm App](#phold-plot-wasm-app)
