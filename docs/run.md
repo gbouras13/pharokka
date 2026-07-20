@@ -6,7 +6,7 @@ We highly recommend reading and following this protocol for users new to phage a
 
 If you use this protocol, please cite
 
-> Bouras G., Grigson S.R., Durr L., Papudeshi B., Vreugde S.,
+> Bouras G., Grigson S.R., Durr L., Papudeshi B.,
 > Mallawaarachchi V., Vreugde S., Edwards R.A. 
 >  
 > *Decoding Viral Dark Matter: Metagenomic Prokaryotic Virus Characterization With Pharokka, Phold, and Phynteny*  

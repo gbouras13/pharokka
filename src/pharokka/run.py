@@ -75,6 +75,15 @@ def main():
         logger.info(
             "You should also cite the full list of tools Pharokka uses, which can be found at https://github.com/gbouras13/pharokka#citation."
         )
+        logger.info("Please also consider citing our protocols paper:")
+        logger.info(
+            "Bouras G, Grigson SR, Durr L, Papudeshi B, Mallawaarachchi V, Vreugde S, Edwards RA."
+        )
+        logger.info(
+            "Decoding Viral Dark Matter: Metagenomic Prokaryotic Virus Characterization With Pharokka, Phold, and Phynteny."
+        )
+        logger.info("Current Protocols, Volume 6, Number 7, 6 July 2026.")
+        logger.info("https://doi.org/10.1002/cpz1.70405.")
         sys.exit()
 
     # set the prefix
@@ -530,6 +539,15 @@ def main():
     logger.info(
         "You should also cite the full list of tools Pharokka uses, which can be found at https://github.com/gbouras13/pharokka#citation."
     )
+    logger.info("Please also consider citing our protocols paper:")
+    logger.info(
+        "Bouras G, Grigson SR, Durr L, Papudeshi B, Mallawaarachchi V, Vreugde S, Edwards RA."
+    )
+    logger.info(
+        "Decoding Viral Dark Matter: Metagenomic Prokaryotic Virus Characterization With Pharokka, Phold, and Phynteny."
+    )
+    logger.info("Current Protocols, Volume 6, Number 7, 6 July 2026.")
+    logger.info("https://doi.org/10.1002/cpz1.70405.")
 
 
 if __name__ == "__main__":
