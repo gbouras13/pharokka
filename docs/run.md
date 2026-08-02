@@ -145,6 +145,30 @@ As of v1.5.0, you can skip running tRNAscan-SE 2, MinCED and Aragorn using `--sk
 pharokka run -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads> --skip_extra_annotations
 ```
 
+## ncRNA annotation with Rfam
+
+As of v1.11.0, you can annotate non-coding RNAs (riboswitches, ribozymes, regulatory sRNAs, introns, leader elements) by scanning against [Rfam](https://rfam.org) with [Infernal](http://eddylab.org/infernal/) using `--rfam`:
+
+```bash
+pharokka run -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads> --rfam
+```
+
+This requires Infernal >= 1.1.4 to be installed, and the v1.11.0 database or newer.
+
+`--rfam` is **opt-in** because it is not free: expect roughly 30–60 seconds per phage genome on top of pharokka's normal runtime.
+
+Two things worth knowing:
+
+* **`--threads` will not speed this up for a single contig.** Infernal parallelises over the sequence database rather than over covariance models, so with one contig there is nothing to divide up. Threads do help in `--meta` mode, where there are many contigs.
+
+* **Rfam does not replace tRNAscan-SE, ARAGORN or MinCED.** It is purely additive. Rfam's tRNA (RF00005) and tmRNA (RF00023) models are less sensitive on phage sequence than the specialised tools, so hits to them are discarded by default to avoid duplicate and conflicting annotations. If you want them anyway:
+
+```bash
+pharokka run -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads> --rfam --rfam_keep_trna
+```
+
+Results are written to `{prefix}_ncrna.tsv`, and as `ncRNA` features in the `.gff` and `.gbk`. See [Output](output.md) for the column descriptions.
+
 There is also support for alternative genetic codes if `pharokka` is run with prodigal as a gene predictor using the `-c` flag. See Prodigal's [documentation](https://github.com/hyattpd/prodigal/wiki/Advice-by-Input-Type#alternate-genetic-codes), along with [Yutin et al. 2021](https://doi.org/10.1038/s41467-022-32979-6) and [Peters et al. 2022](https://doi.org/10.1038/s41467-022-32979-6) for more information:
 
 ```bash

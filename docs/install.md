@@ -71,6 +71,8 @@ pharokka --help
 
 * **Note: v1.8.0 uses a new MMseqs2 PHROG profile database format that is incompatible with the v1.4.0 database. If upgrading from v1.7.x or earlier, you must re-run `pharokka install` to fetch the updated database.**
 
+* **Note: v1.11.0 adds the Rfam 15.1 covariance models used by `--rfam`. These make the database download considerably larger. If you are upgrading from v1.10.x or earlier and want to use `--rfam`, re-run `pharokka install`. Everything else in pharokka works fine with an older database.**
+
 To install the pharokka database to the default directory:
 
 ```bash

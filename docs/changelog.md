@@ -1,5 +1,51 @@
 # Changelog
 
+## v1.11.0 — ncRNA annotation with Infernal and Rfam
+
+### `--rfam`
+
+`pharokka run --rfam` annotates non-coding RNAs by scanning the genome against
+[Rfam](https://rfam.org) 15.1 (4,227 covariance models) with
+[Infernal](http://eddylab.org/infernal/) `cmscan`.  This picks up structured
+RNAs that pharokka previously could not see at all — riboswitches, ribozymes,
+regulatory sRNAs, group I/II introns and leader elements.
+
+It is **opt-in**, because it roughly doubles the runtime for a small phage
+genome (approximately 30–60 seconds, depending on genome size).
+
+```bash
+pharokka run -i phage.fasta -o output -d database --rfam
+```
+
+New outputs:
+
+* `{prefix}_ncrna.tsv` — one row per ncRNA, with Rfam accession, family, type,
+  coordinates, bit score and E-value.
+* `{prefix}_cmscan.tblout` — the raw Infernal output.
+* `ncRNA` features in the `.gff` and `.gbk`, and an `ncRNAs` row per contig in
+  `{prefix}_cds_functions.tsv`.
+
+By default, Rfam tRNA (RF00005) and tmRNA (RF00023) hits are discarded, since
+tRNAscan-SE and ARAGORN already annotate these and are more sensitive on phage
+sequence.  Pass `--rfam_keep_trna` to keep them.
+
+**Rfam does not replace tRNAscan-SE, ARAGORN or MinCED** — it is purely
+additive.
+
+### Requirements
+
+* Infernal >= 1.1.4 must be installed (`conda install -c bioconda infernal`).
+  It is only checked when `--rfam` is used.
+* Requires the v1.11.0 database, which adds the pressed Rfam covariance models.
+  Re-run `pharokka install` to update.
+
+### Other changes
+
+* Fixed the database tarball filename being hardcoded to `v1.8.0` rather than
+  derived from the database version.
+* The PHROGs database version marker file is now derived from the database
+  version instead of being hardcoded.
+
 ## v1.10.0 — CLI Redesign & Polars Refactor
 
 ### New subcommand-based CLI
