@@ -145,10 +145,39 @@ def main():
             "The database directory was unsuccessfully checked. Please run pharokka install."
         )
 
-    # Rfam is only required for --rfam, so it is checked separately.  Doing it
-    # here means a missing Rfam database fails immediately rather than after
-    # the gene prediction and MMseqs2 steps have already run.
-    if args.rfam is True:
+    # Rfam ncRNA annotation is on by default, but off in meta mode: it scales
+    # with assembly size (roughly 2 min/Mbp on 8 threads), which is fine for a
+    # phage genome and painful for a large metagenome.  Mirrors how --meta
+    # disables PyHMMER unless --meta_hmm is given.
+    if args.skip_rfam is True and args.meta_rfam is True:
+        logger.error(
+            "You have specified --skip_rfam and --meta_rfam. This is impossible. Please choose one or the other."
+        )
+
+    rfam_flag = not args.skip_rfam
+
+    if args.meta is True:  # meta mode defaults to no Rfam
+        if args.meta_rfam is True:
+            logger.info(
+                "You have specified --meta_rfam and -m/--meta to run Rfam ncRNA annotation in meta mode. This may take a while, please be patient."
+            )
+        elif rfam_flag is True:
+            logger.info(
+                "Skipping Rfam ncRNA annotation in meta mode. Specify --meta_rfam to run it."
+            )
+            rfam_flag = False
+    else:  # not in meta mode
+        if args.meta_rfam is True:
+            logger.warning(
+                "You have specified --meta_rfam to run Rfam in meta mode, but you have not specified -m to activate meta mode."
+            )
+            logger.warning("Ignoring --meta_rfam.")
+
+    # checked separately from the main database, since Rfam was only added to
+    # the pharokka database in v1.11.0.  Doing it here means a missing Rfam
+    # database fails immediately rather than after gene prediction and MMseqs2
+    # have already run.
+    if rfam_flag is True:
         if check_rfam_installation(db_dir) is True:
             logger.info("Rfam database found.")
 
@@ -173,7 +202,7 @@ def main():
         aragorn_version,
         minced_version,
         infernal_version,
-    ) = check_dependencies(args.skip_mash, args.rfam)
+    ) = check_dependencies(args.skip_mash, rfam_flag)
 
     # instantiation/checking fasta and gene_predictor
     if args.genbank is True:
@@ -371,7 +400,7 @@ def main():
     # ncRNA annotation with Infernal against Rfam - opt in, as it roughly
     # doubles the runtime for a small phage genome
     ncrna_df = None
-    if args.rfam is True:
+    if rfam_flag is True:
         run_cmscan(input_fasta, out_dir, prefix, db_dir, args.threads, logdir)
         # locus tags are assigned later, in Pharok.create_gff(), because the
         # random locustag prefix is only resolved there
@@ -461,7 +490,7 @@ def main():
     pharok.infernal_version = infernal_version
     pharok.skip_extra_annotations = args.skip_extra_annotations
     pharok.reverse_mmseqs2 = args.reverse_mmseqs2
-    pharok.rfam_flag = args.rfam
+    pharok.rfam_flag = rfam_flag
     if ncrna_df is not None:
         pharok.ncrna_df = ncrna_df
 
@@ -492,7 +521,7 @@ def main():
     pharok.create_gff()
 
     # written after create_gff(), which is where ncRNA locus tags are assigned
-    if args.rfam is True:
+    if rfam_flag is True:
         write_ncrna_tsv(pharok.ncrna_df, out_dir, prefix)
 
     # create table

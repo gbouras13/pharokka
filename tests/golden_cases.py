@@ -34,20 +34,25 @@ TEST_DATA = Path(__file__).resolve().parent / "test_data"
 OVERALL = TEST_DATA / "overall"
 GOLDEN_DIR = TEST_DATA / "golden"
 
+# Every case passes --skip_rfam.  Rfam ncRNA annotation is on by default from
+# v1.11.0, but it needs the ~800 MB pressed covariance model database, which is
+# far too large to require for the golden suite.  The Rfam path has its own
+# end-to-end coverage in tests/test_rfam.py, which presses a five-model subset
+# committed under test_data/rfam/ and runs real cmscan against it.
 CASES = {
     # Standard single-contig phage, full pipeline (phanotate + mmseqs + mash +
     # tRNA/CRISPR/tmRNA scans).
-    "standard": f"run -i {OVERALL}/Standard_examples/SAOMS1.fasta -l PHARTEST",
+    "standard": f"run -i {OVERALL}/Standard_examples/SAOMS1.fasta -l PHARTEST --skip_rfam",
     # --fast path: pyhmmer instead of mmseqs2 (mash still runs).
-    "fast": f"run -i {OVERALL}/Standard_examples/SAOMS1.fasta --fast -l PHARTEST",
+    "fast": f"run -i {OVERALL}/Standard_examples/SAOMS1.fasta --fast -l PHARTEST --skip_rfam",
     # Meta mode over multiple contigs (per-contig locus tags).
-    "meta": f"run -i {OVERALL}/Meta_example/combined_meta.fasta -m -l PHARTEST",
+    "meta": f"run -i {OVERALL}/Meta_example/combined_meta.fasta -m -l PHARTEST --skip_rfam",
     # CRISPR detection (MinCED).
-    "crispr": f"run -i {OVERALL}/CRISPR_example/Biggiephage_A_fullcontig_CasΦ1.fasta -l PHARTEST",
+    "crispr": f"run -i {OVERALL}/CRISPR_example/Biggiephage_A_fullcontig_CasΦ1.fasta -l PHARTEST --skip_rfam",
     # tmRNA detection (Aragorn).
-    "tmrna": f"run -i {OVERALL}/tmRNA_example/NC_051700.fasta -l PHARTEST",
+    "tmrna": f"run -i {OVERALL}/tmRNA_example/NC_051700.fasta -l PHARTEST --skip_rfam",
     # GenBank input path (--genbank).
-    "genbank": f"run -i {OVERALL}/genbank_examples/SAOMS1.gbk --genbank -l PHARTEST",
+    "genbank": f"run -i {OVERALL}/genbank_examples/SAOMS1.gbk --genbank -l PHARTEST --skip_rfam",
 }
 
 # Curated, user-facing, deterministic output files.  Logs, binaries (.msh),

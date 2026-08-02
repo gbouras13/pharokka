@@ -2,21 +2,27 @@
 
 ## v1.11.0 — ncRNA annotation with Infernal and Rfam
 
-### `--rfam`
+### ncRNA annotation, on by default
 
-`pharokka run --rfam` annotates non-coding RNAs by scanning the genome against
+`pharokka run` now annotates non-coding RNAs by scanning the genome against
 [Rfam](https://rfam.org) 15.1 (4,227 covariance models) with
 [Infernal](http://eddylab.org/infernal/) `cmscan`.  This picks up structured
 RNAs that pharokka previously could not see at all — riboswitches, ribozymes,
 regulatory sRNAs, group I/II introns and leader elements.
 
-It is **opt-in**, but inexpensive: roughly 5 seconds for a typical 40 kb phage
-and 14 seconds for a 140 kb phage on 8 threads. `--threads` scales it well
-(4–5x on 8 cores) even for a single genome.
+It runs **by default**, because it is inexpensive for a phage genome: roughly
+5 seconds for a typical 40 kb phage and 14 seconds for a 140 kb phage on 8
+threads. `--threads` scales it well (4–5x on 8 cores) even for a single genome.
+
+To turn it off:
 
 ```bash
-pharokka run -i phage.fasta -o output -d database --rfam
+pharokka run -i phage.fasta -o output -d database --skip_rfam
 ```
+
+**In meta mode (`-m`) it is skipped by default**, since runtime scales with
+assembly size at roughly 2 min/Mbp on 8 threads. Use `--meta_rfam` to run it
+in meta mode anyway.
 
 New outputs:
 
@@ -33,12 +39,16 @@ sequence.  Pass `--rfam_keep_trna` to keep them.
 **Rfam does not replace tRNAscan-SE, ARAGORN or MinCED** — it is purely
 additive.
 
-### Requirements
+### Requirements — action needed when upgrading
 
-* Infernal >= 1.1.4 must be installed (`conda install -c bioconda infernal`).
-  It is only checked when `--rfam` is used.
-* Requires the v1.11.0 database, which adds the pressed Rfam covariance models.
-  Re-run `pharokka install` to update.
+* **Infernal >= 1.1.4 must be installed** (`conda install -c bioconda infernal`).
+  It is only checked when Rfam annotation will actually run.
+* **The v1.11.0 database is required**, which adds the pressed Rfam covariance
+  models. Re-run `pharokka install` to update.
+
+Because ncRNA annotation is on by default, running v1.11.0 against a v1.10.x or
+older database will fail with an explanatory error. Either update the database
+or pass `--skip_rfam`, which restores the previous behaviour exactly.
 
 ### Other changes
 

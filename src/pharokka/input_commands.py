@@ -155,8 +155,13 @@ def get_input():
         action="store_true",
     )
     parser.add_argument(
-        "--rfam",
-        help="Runs Infernal cmscan against Rfam to annotate ncRNAs (riboswitches, ribozymes, sRNAs etc). Adds approximately 30-60 seconds per phage genome.",
+        "--skip_rfam",
+        help="Skips running Infernal cmscan against Rfam to annotate ncRNAs (riboswitches, ribozymes, sRNAs etc).",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--meta_rfam",
+        help="Runs Rfam ncRNA annotation in meta mode. Off by default in meta mode as it scales with assembly size (roughly 2 minutes per Mbp on 8 threads).",
         action="store_true",
     )
     parser.add_argument(
@@ -679,11 +684,17 @@ def check_dependencies(skip_mash, rfam=False):
         )
 
         if infernal_major_version != 1:
-            logger.error("Infernal is the wrong version. Please install Infernal v1.1.4 or higher.")
+            logger.error(
+                "Infernal is the wrong version. Please install Infernal v1.1.4 or higher."
+            )
         if infernal_minor_version != 1:
-            logger.error("Infernal is the wrong version. Please install Infernal v1.1.4 or higher.")
+            logger.error(
+                "Infernal is the wrong version. Please install Infernal v1.1.4 or higher."
+            )
         if infernal_minorest_version < 4:
-            logger.error("Infernal is the wrong version. Please install Infernal v1.1.4 or higher.")
+            logger.error(
+                "Infernal is the wrong version. Please install Infernal v1.1.4 or higher."
+            )
 
         logger.info("Infernal version is ok.")
 
