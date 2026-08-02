@@ -7,6 +7,7 @@ import subprocess
 import polars as pl
 import pytest
 
+from pharokka.databases import RFAM_DB_NAMES, check_rfam_installation
 from pharokka.post_processing import Pharok
 from pharokka.rfam import (
     TRNA_TMRNA_ACCESSIONS,
@@ -233,6 +234,31 @@ class TestMetadataAndOutput:
             .split("\n")[0]
             .startswith("contig")
         )
+
+
+class TestRfamDatabaseCheck:
+    """check_rfam_installation gates the default-on ncRNA path."""
+
+    def test_passes_on_a_complete_database(self, tmp_path):
+        for name in RFAM_DB_NAMES:
+            (tmp_path / name).touch()
+        assert check_rfam_installation(str(tmp_path)) is True
+
+    def test_exits_when_a_file_is_missing(self, tmp_path):
+        """pharokka's logger.error sink exits, so this never returns False."""
+        for name in RFAM_DB_NAMES[:-1]:
+            (tmp_path / name).touch()
+        with pytest.raises(SystemExit):
+            check_rfam_installation(str(tmp_path))
+
+    def test_exits_on_an_empty_directory(self, tmp_path):
+        with pytest.raises(SystemExit):
+            check_rfam_installation(str(tmp_path))
+
+    def test_flatfile_is_not_required(self):
+        """cmscan reads the pressed .i1* files; shipping Rfam.cm would waste 329 MB."""
+        assert "Rfam.cm" not in RFAM_DB_NAMES
+        assert "Rfam.cm.i1m" in RFAM_DB_NAMES
 
 
 class TestGffConstruction:

@@ -80,11 +80,12 @@ VERSION_DICTIONARY = {
         "inphared_mash": "9Aug2025_genomes.fa.msh",
         "inphared_annot": "9Aug2025_data.tsv",
     },
-    # v1.11.0 adds the Rfam 15.1 covariance models (cmpress'd) for --rfam
-    # ncRNA annotation.  See scripts/build_rfam_db.sh for how they are built.
-    # TODO(gbouras13): fill in db_url + md5 once the tarball is uploaded to Zenodo.
+    # v1.11.0 adds the Rfam 15.1 covariance models (cmpress'd) for ncRNA
+    # annotation.  See scripts/build_rfam_db.sh for how they are built.
+    # md5 is of the built tarball (735 MB); TODO(gbouras13): update db_url with
+    # the real Zenodo record once uploaded.
     "1.11.0": {
-        "md5": "TODO_MD5_AFTER_UPLOAD",
+        "md5": "143bb375ddb0b0653e5cb5671f4a7629",
         "major": 1,
         "minor": 11,
         "minorest": 0,
@@ -136,11 +137,14 @@ CARD_DB_NAMES = [
     "CARD_h.index",
 ]
 
-# Rfam covariance models, cmpress'd.  Only required when --rfam is used, so
-# these are checked separately (check_rfam_installation) rather than in
-# check_db_installation, which gates the whole-database download.
+# Rfam covariance models, cmpress'd.  Checked separately from
+# check_db_installation (which gates the whole-database download) so that
+# --skip_rfam still works against an older database directory.
+#
+# Note the Rfam.cm flatfile itself is deliberately NOT shipped: cmscan reads
+# the pressed .i1* files and only uses the flatfile path as a base name, so
+# shipping it would add 329 MB to every user's database for nothing.
 RFAM_DB_NAMES = [
-    "Rfam.cm",
     "Rfam.cm.i1f",
     "Rfam.cm.i1i",
     "Rfam.cm.i1m",

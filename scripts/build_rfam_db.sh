@@ -9,9 +9,13 @@
 # Requires: Infernal (cmpress) on $PATH.
 #
 # Output files, which belong at the top level of the pharokka database dir:
-#   Rfam.cm  Rfam.cm.i1f  Rfam.cm.i1i  Rfam.cm.i1m  Rfam.cm.i1p
+#   Rfam.cm.i1f  Rfam.cm.i1i  Rfam.cm.i1m  Rfam.cm.i1p
 #   Rfam.clanin
 #   Rfam_metadata.tsv
+#
+# The Rfam.cm flatfile is deleted after pressing: cmscan reads the .i1* files
+# and only uses the flatfile path as a base name, so shipping it would add
+# 329 MB to every user's database for nothing.
 
 set -euo pipefail
 
@@ -44,10 +48,12 @@ python "${SCRIPT_DIR}/build_rfam_metadata.py" \
     --out Rfam_metadata.tsv
 
 echo "==> Cleaning up intermediates"
-rm -f family.txt.gz clan_membership.txt.gz
+# Rfam.cm is only needed to build the pressed files and the metadata table.
+# cmscan reads the .i1* files, so the 329 MB flatfile is not shipped.
+rm -f family.txt.gz clan_membership.txt.gz Rfam.cm
 
 echo "==> Done. Files in ${OUTDIR}:"
-ls -la Rfam.cm Rfam.cm.i1? Rfam.clanin Rfam_metadata.tsv
+ls -la Rfam.cm.i1? Rfam.clanin Rfam_metadata.tsv
 echo
 echo "Copy these into the pharokka database directory before creating the"
 echo "database tarball, then update db_url and md5 in src/pharokka/databases.py."

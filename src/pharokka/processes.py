@@ -910,6 +910,8 @@ def run_cmscan(filepath_in, out_dir, prefix, db_dir, threads, logdir):
     """
     logger.info("Running Infernal cmscan against Rfam.")
 
+    # base name only - the flatfile is not shipped, cmscan resolves the
+    # cmpress'd Rfam.cm.i1{f,i,m,p} files from this path
     rfam_cm = os.path.join(db_dir, "Rfam.cm")
     clanin = os.path.join(db_dir, "Rfam.clanin")
     tblout = os.path.join(out_dir, prefix + "_cmscan.tblout")
