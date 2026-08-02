@@ -89,7 +89,7 @@ VERSION_DICTIONARY = {
         "major": 1,
         "minor": 11,
         "minorest": 0,
-        "db_url": "https://zenodo.org/record/TODO/files/pharokka_v1.11.0_databases.tar.gz",
+        "db_url": "https://zenodo.org/records/21755221/files/pharokka_v1.11.0_databases.tar.gz",
         "dir_name": "pharokka_v1.11.0_databases",
         "inphared_mash": "9Aug2025_genomes.fa.msh",
         "inphared_annot": "9Aug2025_data.tsv",

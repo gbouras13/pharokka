@@ -222,6 +222,18 @@ class TestMetadataAndOutput:
         assert lines[0].split("\t")[:3] == ["contig", "locus_tag", "start"]
         assert len(lines) == 2
 
+    def test_write_ncrna_tsv_leaves_empty_fields_unquoted(self, tmp_path):
+        """Families with no clan should give an empty field, not a literal ''."""
+        df = add_locus_tags(
+            parse_cmscan_tblout(_write_tblout(tmp_path, [_row(clan="-")])), "ABCDE", 1
+        )
+        write_ncrna_tsv(df, str(tmp_path), "test")
+
+        lines = (tmp_path / "test_ncrna.tsv").read_text().strip().split("\n")
+        header, row = lines[0].split("\t"), lines[1].split("\t")
+        assert len(row) == len(header)
+        assert row[header.index("clan")] == ""
+
     def test_write_ncrna_tsv_when_empty(self, tmp_path):
         """A header-only file is still written, so the output set is stable."""
         write_ncrna_tsv(

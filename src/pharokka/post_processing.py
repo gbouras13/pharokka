@@ -1597,6 +1597,19 @@ class Pharok:
                 ]
             )
 
+        ### ncRNAs
+        ncrna_tbl_flag = self.rfam_flag is True and self.ncrna_df.height > 0
+        if ncrna_tbl_flag:
+            ncrna_df = self.total_gff.filter(pl.col("Region") == "ncRNA")
+            ncrna_df = parse_attributes_column(ncrna_df)
+            ncrna_df = ncrna_df.with_columns(
+                [
+                    pl.col("contig").cast(pl.Utf8),
+                    pl.col("start").cast(pl.Int64),
+                    pl.col("stop").cast(pl.Int64),
+                ]
+            )
+
         with open(os.path.join(self.out_dir, self.prefix + ".tbl"), "w") as f:
             for row in self.length_df.iter_rows(named=True):
                 contig = str(row["contig"])
@@ -1694,6 +1707,22 @@ class Pharok:
                         f.write(f"\t\t\tproduct\t{tmrow['product']}\n")
                         f.write(f"\t\t\ttag_peptide\t{tmrow['tag_peptide']}\n")
                         f.write(f"\t\t\tnote\t{tmrow['note']}\n")
+                if ncrna_tbl_flag:
+                    subset_ncrna_df = ncrna_df.filter(pl.col("contig") == contig)
+                    for nrow in subset_ncrna_df.iter_rows(named=True):
+                        start = str(nrow["start"])
+                        stop = str(nrow["stop"])
+                        if nrow["strand"] == "-":
+                            start = str(nrow["stop"])
+                            stop = str(nrow["start"])
+                        f.write(f"{start}\t{stop}\tncRNA\n")
+                        f.write(f"\t\t\tinference\t{nrow['Method']}\n")
+                        # ncRNA_class is mandatory for the ncRNA feature key
+                        f.write(f"\t\t\tncRNA_class\t{nrow['ncRNA_class']}\n")
+                        f.write(f"\t\t\tproduct\t{nrow['product']}\n")
+                        # NCBI's .tbl qualifier is db_xref, not the GFF3 Dbxref
+                        f.write(f"\t\t\tdb_xref\t{nrow['Dbxref']}\n")
+                        f.write(f"\t\t\tnote\t{nrow['note']}\n")
 
     def create_gff_singles(self):
         """

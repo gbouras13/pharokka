@@ -279,5 +279,9 @@ def add_locus_tags(df, locustag, contig_count):
 def write_ncrna_tsv(df, out_dir, prefix):
     """Writes the {prefix}_ncrna.tsv output."""
     out_path = os.path.join(out_dir, f"{prefix}_ncrna.tsv")
-    df.select(NCRNA_TSV_COLUMNS).write_csv(out_path, separator="\t")
+    # quote_style="never" so that empty fields (e.g. clan, for families that
+    # belong to no clan) render as nothing rather than a literal ""
+    df.select(NCRNA_TSV_COLUMNS).write_csv(
+        out_path, separator="\t", quote_style="never"
+    )
     logger.info(f"{df.height} ncRNA(s) written to {out_path}")

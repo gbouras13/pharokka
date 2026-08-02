@@ -53,6 +53,11 @@ CASES = {
     "tmrna": f"run -i {OVERALL}/tmRNA_example/NC_051700.fasta -l PHARTEST --skip_rfam",
     # GenBank input path (--genbank).
     "genbank": f"run -i {OVERALL}/genbank_examples/SAOMS1.gbk --genbank -l PHARTEST --skip_rfam",
+    # Rfam ncRNA annotation (the one case that does NOT skip it).  NC_004617
+    # carries three Rfam sRNA families (SprD, SprX, rli28), so this locks the
+    # ncRNA rows in the gff/gbk/tbl and the _ncrna.tsv itself.  --fast keeps it
+    # quick; the ncRNA path is independent of the CDS annotation method.
+    "rfam": f"run -i {OVERALL}/VFDB_example/NC_004617.fasta --fast -l PHARTEST",
 }
 
 # Curated, user-facing, deterministic output files.  Logs, binaries (.msh),
@@ -70,6 +75,9 @@ KEY_FILES = [
     "pharokka_minced.gff",
     "pharokka_aragorn.gff",
     "trnascan_out.gff",
+    # only produced by the "rfam" case; the raw _cmscan.tblout is deliberately
+    # excluded as it embeds the command line and run date
+    "pharokka_ncrna.tsv",
 ]
 
 

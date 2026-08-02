@@ -1,0 +1,4 @@
+contig	locus_tag	start	stop	strand	rfam_acc	rfam_id	type	description	clan	bitscore	evalue	gc	trunc	mdl_from	mdl_to
+NC_004617.1	PHARTEST_ncRNA_1	36836	37015	+	RF01492	rli28	Gene; sRNA;	Listeria sRNA rli28		94.6	7.4e-11	0.38	no	1	186
+NC_004617.1	PHARTEST_ncRNA_2	39255	39405	+	RF02672	SprX	Gene; sRNA;	Small pathogenicity island RNA X		195.7	1.2e-44	0.37	no	1	151
+NC_004617.1	PHARTEST_ncRNA_3	40870	41011	+	RF01828	SprD	Gene; sRNA;	Small pathogenicity island RNA D		170.4	2.6e-37	0.37	no	1	142
