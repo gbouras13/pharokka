@@ -879,7 +879,31 @@ def run_aragorn(filepath_in, out_dir, prefix, logdir):
         logger.error("Error with Aragorn\n")
 
 
-def run_cmscan(filepath_in, out_dir, prefix, db_dir, threads, logdir):
+# Infernal parallelises over the sequence database rather than over covariance
+# models, so extra threads only help when there are enough contigs to divide
+# up.  Below this many, threading measurably *hurts* (see cmscan_threads).
+CMSCAN_MIN_CONTIGS_FOR_THREADING = 10
+
+
+def cmscan_threads(threads, contig_count):
+    """How many CPUs to actually give cmscan.
+
+    Infernal splits the *sequence database* across threads, not the model
+    database.  With a handful of contigs there is nothing to split, so the
+    extra threads buy nothing and the coordination overhead makes things
+    slower: measured on a single 42 kb phage contig, 8 cpus took 59.4 s versus
+    36.8 s at 1 cpu.  With 100 contigs the same scan went 238.1 s -> 132.7 s,
+    so threading is worth it once there are enough sequences.
+
+    This is clamped silently rather than warned about - the user asked for N
+    threads for pharokka as a whole, and every other step still uses them.
+    """
+    if contig_count < CMSCAN_MIN_CONTIGS_FOR_THREADING:
+        return 1
+    return threads
+
+
+def run_cmscan(filepath_in, out_dir, prefix, db_dir, threads, logdir, contig_count=1):
     """Runs Infernal cmscan against Rfam to detect ncRNAs.
 
     Flag rationale, all measured against Rfam 15.1 with Infernal 1.1.5:
@@ -895,11 +919,7 @@ def run_cmscan(filepath_in, out_dir, prefix, db_dir, threads, logdir):
     --fmt 2     adds the 'olp' column, which (together with --clanin) is what
                 makes clan competition usable when parsing.
     --noali     we only ever parse the tabular output.
-
-    Note on --cpu: Infernal parallelises over the *sequence database*, not over
-    models, so this gives no speedup on a single contig (measured: 8 cpus was
-    slower than 1 on a 42 kb genome).  It does help in --meta mode where there
-    are many contigs, which is why it is still passed through.
+    --cpu       clamped by cmscan_threads(); see there for why.
     """
     logger.info("Running Infernal cmscan against Rfam.")
 
@@ -907,13 +927,15 @@ def run_cmscan(filepath_in, out_dir, prefix, db_dir, threads, logdir):
     clanin = os.path.join(db_dir, "Rfam.clanin")
     tblout = os.path.join(out_dir, prefix + "_cmscan.tblout")
 
+    cpus = cmscan_threads(threads, contig_count)
+
     cmscan = ExternalTool(
         tool="cmscan",
         input=f"{rfam_cm} {filepath_in}",
         output=f"--tblout {tblout}",
         params=(
             f"--rfam --cut_ga --nohmmonly --noali --fmt 2 "
-            f"--clanin {clanin} --cpu {threads}"
+            f"--clanin {clanin} --cpu {cpus}"
         ),
         logdir=logdir,
         outfile="",

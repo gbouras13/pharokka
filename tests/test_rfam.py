@@ -8,6 +8,7 @@ import polars as pl
 import pytest
 
 from pharokka.post_processing import Pharok
+from pharokka.processes import CMSCAN_MIN_CONTIGS_FOR_THREADING, cmscan_threads
 from pharokka.rfam import (
     TRNA_TMRNA_ACCESSIONS,
     add_locus_tags,
@@ -233,6 +234,23 @@ class TestMetadataAndOutput:
             .split("\n")[0]
             .startswith("contig")
         )
+
+
+class TestCmscanThreads:
+    """cmscan only benefits from threads when there are enough contigs."""
+
+    def test_single_contig_is_clamped_to_one_cpu(self):
+        assert cmscan_threads(16, 1) == 1
+
+    def test_few_contigs_are_clamped(self):
+        assert cmscan_threads(16, CMSCAN_MIN_CONTIGS_FOR_THREADING - 1) == 1
+
+    def test_many_contigs_use_all_threads(self):
+        assert cmscan_threads(16, CMSCAN_MIN_CONTIGS_FOR_THREADING) == 16
+        assert cmscan_threads(16, 500) == 16
+
+    def test_never_increases_the_thread_count(self):
+        assert cmscan_threads(1, 1000) == 1
 
 
 class TestGffConstruction:
