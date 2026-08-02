@@ -896,10 +896,17 @@ def run_cmscan(filepath_in, out_dir, prefix, db_dir, threads, logdir):
                 makes clan competition usable when parsing.
     --noali     we only ever parse the tabular output.
 
-    Note on --cpu: Infernal parallelises over the *sequence database*, not over
-    models, so this gives no speedup on a single contig (measured: 8 cpus was
-    slower than 1 on a 42 kb genome).  It does help in --meta mode where there
-    are many contigs, which is why it is still passed through.
+    Note on --cpu: cmscan divides the *pressed model database* across threads,
+    so threading works regardless of how many contigs are in the input.  It
+    scales well even on a single genome - measured on 8 cores (M1 Pro, 6P+2E):
+
+        NC_043029    7.6 kb    3.0 s -> 0.7 s   (4.3x)
+        NC_004617   42.7 kb   26.4 s -> 4.9 s   (5.3x)
+        SAOMS1     140.0 kb   75.3 s -> 13.5 s  (5.6x)
+
+    Do not be tempted to clamp this for small inputs.  (cmsearch against an
+    *unpressed* flatfile behaves the opposite way, parallelising over the
+    sequence database instead - that is a different tool and not what we run.)
     """
     logger.info("Running Infernal cmscan against Rfam.")
 

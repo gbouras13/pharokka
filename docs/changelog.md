@@ -10,8 +10,9 @@
 RNAs that pharokka previously could not see at all — riboswitches, ribozymes,
 regulatory sRNAs, group I/II introns and leader elements.
 
-It is **opt-in**, because it roughly doubles the runtime for a small phage
-genome (approximately 30–60 seconds, depending on genome size).
+It is **opt-in**, but inexpensive: roughly 5 seconds for a typical 40 kb phage
+and 14 seconds for a 140 kb phage on 8 threads. `--threads` scales it well
+(4–5x on 8 cores) even for a single genome.
 
 ```bash
 pharokka run -i phage.fasta -o output -d database --rfam

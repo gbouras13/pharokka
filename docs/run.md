@@ -155,11 +155,18 @@ pharokka run -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <th
 
 This requires Infernal >= 1.1.4 to be installed, and the v1.11.0 database or newer.
 
-`--rfam` is **opt-in** because it is not free: expect roughly 30–60 seconds per phage genome on top of pharokka's normal runtime.
+`--rfam` is **opt-in**, but it is not expensive. Measured on 8 cores against the full Rfam 15.1 database:
 
-Two things worth knowing:
+| genome | size | 1 thread | 8 threads |
+|---|---|---|---|
+| NC_043029 | 7.6 kb | 3.0 s | 0.7 s |
+| NC_004617 | 42.7 kb | 26.4 s | 4.9 s |
+| SAOMS1 | 140 kb | 75.3 s | 13.5 s |
+| 100 microviruses | 587 kb | 253 s | 63 s |
 
-* **`--threads` will not speed this up for a single contig.** Infernal parallelises over the sequence database rather than over covariance models, so with one contig there is nothing to divide up. Threads do help in `--meta` mode, where there are many contigs.
+`--threads` helps here, including on a single genome — `cmscan` divides the covariance model database across threads, so there is always work to parallelise regardless of how many contigs you have.
+
+One thing worth knowing:
 
 * **Rfam does not replace tRNAscan-SE, ARAGORN or MinCED.** It is purely additive. Rfam's tRNA (RF00005) and tmRNA (RF00023) models are less sensitive on phage sequence than the specialised tools, so hits to them are discarded by default to avoid duplicate and conflicting annotations. If you want them anyway:
 
