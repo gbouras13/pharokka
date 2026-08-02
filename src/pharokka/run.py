@@ -372,16 +372,7 @@ def main():
     # doubles the runtime for a small phage genome
     ncrna_df = None
     if args.rfam is True:
-        # contig_count is only set above when --dnaapler is used, so count here
-        run_cmscan(
-            input_fasta,
-            out_dir,
-            prefix,
-            db_dir,
-            args.threads,
-            logdir,
-            contig_count=count_contigs(input_fasta),
-        )
+        run_cmscan(input_fasta, out_dir, prefix, db_dir, args.threads, logdir)
         # locus tags are assigned later, in Pharok.create_gff(), because the
         # random locustag prefix is only resolved there
         ncrna_df = parse_cmscan_tblout(

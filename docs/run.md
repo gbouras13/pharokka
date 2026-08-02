@@ -153,11 +153,13 @@ As of v1.11.0, you can annotate non-coding RNAs (riboswitches, ribozymes, regula
 pharokka run -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads> --rfam
 ```
 
-This requires Infernal >= 1.1.4 to be installed, and the Pharokka v1.11.0 database or newer.
+This requires Infernal >= 1.1.4 to be installed, and the v1.11.0 database or newer.
 
-`--rfam` is **opt-in** because it adds to runtime considerably: expect roughly 30–60 seconds per phage genome on top of pharokka's normal runtime for a given phage.
+`--rfam` is **opt-in** because it is not free: expect roughly 30–60 seconds per phage genome on top of pharokka's normal runtime.
 
-One thing worth knowing:
+Two things worth knowing:
+
+* **`--threads` will not speed this up for a single contig.** Infernal parallelises over the sequence database rather than over covariance models, so with one contig there is nothing to divide up. Threads do help in `--meta` mode, where there are many contigs.
 
 * **Rfam does not replace tRNAscan-SE, ARAGORN or MinCED.** It is purely additive. Rfam's tRNA (RF00005) and tmRNA (RF00023) models are less sensitive on phage sequence than the specialised tools, so hits to them are discarded by default to avoid duplicate and conflicting annotations. If you want them anyway:
 
