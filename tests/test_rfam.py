@@ -248,6 +248,36 @@ class TestMetadataAndOutput:
         )
 
 
+class TestCdsFunctionsNcrnaRow:
+    """The ncRNAs row is always written, even when Rfam did not run."""
+
+    def test_golden_cases_without_rfam_still_have_an_ncrna_row(self):
+        golden = os.path.join(TEST_DATA, "golden")
+        checked = 0
+        for case in os.listdir(golden):
+            path = os.path.join(golden, case, "pharokka_cds_functions.tsv")
+            if not os.path.isfile(path):
+                continue
+            rows = [
+                line.split("\t")
+                for line in open(path).read().strip().split("\n")[1:]
+                if line
+            ]
+            ncrna_rows = [r for r in rows if r[0] == "ncRNAs"]
+            contigs = {r[-1] for r in rows}
+            assert ncrna_rows, f"{case}: no ncRNAs row in _cds_functions.tsv"
+            # one row per contig
+            assert {r[-1] for r in ncrna_rows} == contigs, (
+                f"{case}: ncRNAs row missing for some contigs"
+            )
+            if case != "rfam":
+                assert all(r[1] == "0" for r in ncrna_rows), (
+                    f"{case}: expected 0 ncRNAs when Rfam is skipped"
+                )
+            checked += 1
+        assert checked > 0, "no golden _cds_functions.tsv files found"
+
+
 class TestRfamDatabaseCheck:
     """check_rfam_installation gates the default-on ncRNA path."""
 

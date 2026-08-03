@@ -1988,7 +1988,9 @@ class Pharok:
             crispr_counts = _counts_by_contig(crispr_df)
             tmrna_counts = _counts_by_contig(tmrna_df)
 
-        ncrna_counts = _counts_by_contig(self.ncrna_df) if self.rfam_flag else {}
+        # counted unconditionally: the ncRNAs row is always written, so that
+        # _cds_functions.tsv has a stable schema whether or not Rfam ran
+        ncrna_counts = _counts_by_contig(self.ncrna_df)
 
         # ─── VFDB / CARD counts.  v1.9.1 used str.contains(contig) on the hit
         # row's contig column — preserved here in case the test suite ever
@@ -2043,10 +2045,11 @@ class Pharok:
                 counts.append(tmrna_counts.get(contig, 0))
                 contigs_out.append(contig)
 
-            if self.rfam_flag is True:
-                descriptions.append("ncRNAs")
-                counts.append(ncrna_counts.get(contig, 0))
-                contigs_out.append(contig)
+            # always emitted, 0 when Rfam did not run, so downstream parsers
+            # can rely on the row being present
+            descriptions.append("ncRNAs")
+            counts.append(ncrna_counts.get(contig, 0))
+            contigs_out.append(contig)
 
             descriptions.append("VFDB_Virulence_Factors")
             counts.append(vfdb_counts.get(contig, 0))

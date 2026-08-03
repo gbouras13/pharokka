@@ -1,4 +1,4 @@
-LOCUS       MW460250_1            140135 bp    DNA     linear   PHG 17-JUN-2026
+LOCUS       MW460250_1            140135 bp    DNA     linear   PHG 02-AUG-2026
 DEFINITION  MW460250_1.
 ACCESSION   MW460250_1
 VERSION     MW460250_1
@@ -5405,7 +5405,7 @@ ORIGIN
    140041 atttgataat ttaactatat actatattga taaataagtc aacagttttc taaaaataat
    140101 ttaaattatt ttgaagaata ctttaatatc aaggg
 //
-LOCUS       NC_004617.1            42722 bp    DNA     linear   PHG 17-JUN-2026
+LOCUS       NC_004617.1            42722 bp    DNA     linear   PHG 02-AUG-2026
 DEFINITION  NC_004617.1 Staphylococcus prophage phi 13, complete genome.
 ACCESSION   NC_004617
 VERSION     NC_004617.1
@@ -7031,7 +7031,7 @@ ORIGIN
     42661 ttatgctgtt ttactttttg aatgataagt aattttatgt taaaagtctc cagtttggat
     42721 ac
 //
-LOCUS       NC_007458.1            37253 bp    DNA     linear   PHG 17-JUN-2026
+LOCUS       NC_007458.1            37253 bp    DNA     linear   PHG 02-AUG-2026
 DEFINITION  NC_007458.1 Bacillus phage Gamma, complete genome.
 ACCESSION   NC_007458
 VERSION     NC_007458.1
@@ -8456,7 +8456,7 @@ ORIGIN
     37141 ttacaatcac tttgtaatcc atgtcacaac agaaaaacag cagaagacaa aaagaaatac
     37201 gggtaggggc gggtcgaaaa acattcaggg cggtctgtcc gtaccgccgc ccc
 //
-LOCUS       NC_051700.1            58758 bp    DNA     linear   PHG 17-JUN-2026
+LOCUS       NC_051700.1            58758 bp    DNA     linear   PHG 02-AUG-2026
 DEFINITION  NC_051700.1 Mycobacterium phage Polka14, complete genome.
 ACCESSION   NC_051700
 VERSION     NC_051700.1
@@ -10892,7 +10892,7 @@ ORIGIN
     58681 gcccgcaagc ctctgacctg cggaaacacc cccccagcaa cccccccggg ggggggtctg
     58741 cgcggccccg gaaggcgc
 //
-LOCUS       SR-VP_4-6_scaffold_141_1259094 86088 bp    DNA     linear   PHG 17-JUN-2026
+LOCUS       SR-VP_4-6_scaffold_141_1259094 86088 bp    DNA     linear   PHG 02-AUG-2026
 DEFINITION  SR-VP_4-6_scaffold_141_1259094 (id=222357670).
 ACCESSION   SR-VP_4-6_scaffold_141_1259094
 VERSION     SR-VP_4-6_scaffold_141_1259094
