@@ -1,6 +1,15 @@
 History
 =======
 
+1.10.2 (2026-07-20)
+-------------
+
+* `pharokka run --citation` (and the end-of-run summary) now also print our 
+  [protocols paper](https://doi.org/10.1002/cpz1.70405) citation alongside the 
+  existing Pharokka citation
+* Fixes a duplicated author name (`Vreugde S.`) in the protocols paper citation 
+  in the README and docs
+
 1.10.1 (2026-07-09)
 -------------
 
