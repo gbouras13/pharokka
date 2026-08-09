@@ -22,6 +22,8 @@
 pharokka
 =================
 
+### 🌐 Try `pharokka`, `phold` and `phynteny` in your browser - no installation required: **[https://phage-annotation.org](https://phage-annotation.org)**
+
 <p align="center">
   <img src="img/pharokka_logo.png" alt="pharokka Logo" height=400>
 </p>
