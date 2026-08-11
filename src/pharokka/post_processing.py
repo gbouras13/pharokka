@@ -1,6 +1,7 @@
 import collections
 import os
 import random
+import re
 import string
 from pathlib import Path
 
@@ -20,6 +21,48 @@ from .util import (
 )
 
 Result = collections.namedtuple("Result", ["protein", "phrog", "bitscore", "evalue"])
+
+
+def _safe_filename_component(name: str) -> str:
+    """Sanitise a string derived from user-controlled input (e.g. a FASTA
+    contig or protein identifier) for safe use as a filename component.
+
+    Contig and protein identifiers ultimately originate from the user's
+    input FASTA headers (``SeqRecord.id`` is just the first whitespace-
+    delimited token of the header line). Using one directly in
+    ``os.path.join(...)`` lets a crafted header such as
+    ``>../../../../tmp/pwned`` escape the intended output directory --
+    found while building a public web server around pharokka.
+
+    Keeps only characters that are unambiguously safe as a filename
+    component across filesystems; everything else (path separators,
+    leading dots, null bytes, ...) is replaced rather than rejected
+    outright, so a job doesn't hard-fail over one stray character in an
+    otherwise fine header.
+    """
+    sanitised = re.sub(r"[^A-Za-z0-9._-]", "_", name)
+    # Strip leading dots so the result can't become "..", ".", or smuggle a
+    # traversal back in as e.g. "..foo" after the character filter above.
+    sanitised = sanitised.lstrip(".")
+    return sanitised or "unnamed"
+
+
+def _safe_join(directory, filename_component: str) -> str:
+    """``os.path.join(directory, filename_component)``, refusing to return a
+    path outside ``directory``.
+
+    Defense in depth alongside :func:`_safe_filename_component` above, not a
+    replacement for it -- this is what catches anything the character
+    filter didn't anticipate.
+    """
+    directory = os.path.abspath(directory)
+    candidate = os.path.abspath(os.path.join(directory, filename_component))
+    if os.path.commonpath([directory, candidate]) != directory:
+        raise ValueError(
+            f"Refusing to write outside of {directory!r} "
+            f"(derived from {filename_component!r})"
+        )
+    return candidate
 
 
 class Pharok:
@@ -1782,7 +1825,8 @@ class Pharok:
         check_and_create_directory(single_fastas)
         for dna_record in self._get_input_records().values():
             contig = dna_record.id
-            with open(os.path.join(single_fastas, contig + ".fasta"), "w") as f:
+            safe_name = _safe_filename_component(contig) + ".fasta"
+            with open(_safe_join(single_fastas, safe_name), "w") as f:
                 SeqIO.write(dna_record, f, "fasta")
 
     def split_faas_singles(self):
@@ -1794,7 +1838,8 @@ class Pharok:
         with open(faa_file) as handle:
             for record in SeqIO.parse(handle, "fasta"):
                 protein_id = record.id[:-9]
-                with open(os.path.join(single_faas, f"{protein_id}.faa"), "a") as f:
+                safe_name = _safe_filename_component(protein_id) + ".faa"
+                with open(_safe_join(single_faas, safe_name), "a") as f:
                     SeqIO.write(record, f, "fasta")
 
     def write_tophits_vfdb_card(self):
