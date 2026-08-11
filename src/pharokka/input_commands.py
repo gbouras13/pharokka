@@ -155,6 +155,21 @@ def get_input():
         action="store_true",
     )
     parser.add_argument(
+        "--skip_rfam",
+        help="Skips running Infernal cmscan against Rfam to annotate ncRNAs (riboswitches, ribozymes, sRNAs etc).",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--meta_rfam",
+        help="Runs Rfam ncRNA annotation in meta mode. Off by default in meta mode as it scales with assembly size (roughly 2 minutes per Mbp on 8 threads).",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--rfam_keep_trna",
+        help="Keeps Rfam tRNA (RF00005) and tmRNA (RF00023) hits. By default these are discarded, as tRNAscan-SE and ARAGORN already annotate these features.",
+        action="store_true",
+    )
+    parser.add_argument(
         "--minced_args",
         help='extra commands to pass to MINced (please omit the leading hyphen for the first argument). You will need to use quotation marks e.g. --minced_args "minNR 2 -minRL 21"',
         default="",
@@ -408,9 +423,10 @@ def validate_threads(threads):
         logger.error(message)
 
 
-def check_dependencies(skip_mash):
+def check_dependencies(skip_mash, rfam=False):
     """Checks the dependencies and versions
     skip_mash flag from args, won't check mash is skip mash specified
+    rfam flag from args, only checks Infernal if --rfam is specified
     :return:
     """
     #############
@@ -636,6 +652,53 @@ def check_dependencies(skip_mash):
         logger.info("mash version is ok.")
 
     #############
+    # infernal (cmscan) - only needed for --rfam
+    #############
+    infernal_version = None
+    if rfam is True:
+        try:
+            process = sp.Popen(["cmscan", "-h"], stdout=sp.PIPE, stderr=sp.STDOUT)
+        except Exception:
+            logger.error(
+                "Infernal (cmscan) not found. It is required for --rfam. "
+                "Please install Infernal >=1.1.4 (e.g. conda install -c bioconda infernal)."
+            )
+
+        cmscan_out, _ = process.communicate()
+        cmscan_out = cmscan_out.decode()
+
+        # e.g. '# INFERNAL 1.1.5 (Sep 2023)'
+        version_line = [
+            line for line in cmscan_out.split("\n") if line.startswith("# INFERNAL")
+        ]
+        if not version_line:
+            logger.error("Could not determine the Infernal version from 'cmscan -h'.")
+
+        infernal_version = version_line[0].split()[2]
+        infernal_major_version = int(infernal_version.split(".")[0])
+        infernal_minor_version = int(infernal_version.split(".")[1])
+        infernal_minorest_version = int(infernal_version.split(".")[2])
+
+        logger.info(
+            f"Infernal version found is v{infernal_major_version}.{infernal_minor_version}.{infernal_minorest_version}"
+        )
+
+        if infernal_major_version != 1:
+            logger.error(
+                "Infernal is the wrong version. Please install Infernal v1.1.4 or higher."
+            )
+        if infernal_minor_version != 1:
+            logger.error(
+                "Infernal is the wrong version. Please install Infernal v1.1.4 or higher."
+            )
+        if infernal_minorest_version < 4:
+            logger.error(
+                "Infernal is the wrong version. Please install Infernal v1.1.4 or higher."
+            )
+
+        logger.info("Infernal version is ok.")
+
+    #############
     # dnaapler
     #############
     try:
@@ -706,6 +769,7 @@ def check_dependencies(skip_mash):
         trna_version,
         aragorn_version,
         minced_version,
+        infernal_version,
     )
 
 

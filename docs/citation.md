@@ -24,6 +24,11 @@ With the following full citations for the constituent tools below where relevant
 * Larralde M. and Camargo A., (2023) Pyrodigal-gv: A Pyrodigal extension to predict genes in giant viruses and viruses with alternative genetic code. https://github.com/althonos/pyrodigal-gv.
 * Shimoyama, Y. (2022). pyCirclize: Circular visualization in Python [Computer software]. https://github.com/moshi4/pyCirclize
 
+If you use `--rfam` to annotate non-coding RNAs, please additionally cite:
+
+* Nawrocki E.P., Eddy S.R., "Infernal 1.1: 100-fold faster RNA homology searches", Bioinformatics (2013) https://doi.org/10.1093/bioinformatics/btt509.
+* Ontiveros-Palacios N., Cooke E., Nawrocki E.P., Triebel S., Marz M., Rivas E., Griffiths-Jones S., Petrov A.I., Bateman A., Sweeney B., "Rfam 15: RNA families database in 2025", Nucleic Acids Research (2025) https://doi.org/10.1093/nar/gkae1023.
+
 If you also use `phold` (recommended) to improve annotations after `pharokka`, please additionally cite:
 
 * Bouras G., Grigson S.R., Mirdita M., Heinzinger M., Papudeshi B., Mallawaarachchi V., Green R., Kim S.R., Mihalia V., Psaltis A.J., Wormald P-J., Vreugde S., Steinegger M., Edwards R.A. Protein Structure Informed Bacteriophage Genome Annotation with Phold. *Nucleic Acids Research*, Volume 54, Issue 1, 13 January 2026, gkaf1448, https://doi.org/10.1093/nar/gkaf1448

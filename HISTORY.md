@@ -1,14 +1,42 @@
 History
 =======
 
-1.10.2 (2026-07-20)
+1.11.0 (2026-08-10)
 -------------
 
+**Requires a database update - re-run `pharokka install` before using this version**
+
+* Adds ncRNA annotation with [Infernal](http://eddylab.org/infernal/) `cmscan` against 
+  [Rfam](https://rfam.org) 15.1 (4,227 covariance models). This picks up structured RNAs 
+  that `pharokka` previously missed entirely - riboswitches, ribozymes, regulatory sRNAs, 
+  group I/II introns and leader elements
+    * Runs by default in single-genome mode, since it is cheap for a phage genome 
+      (~5 seconds for a 40 kb phage, ~14 seconds for a 140 kb phage on 8 threads, and 
+      scales well with `--threads`). Pass `--skip_rfam` to disable it
+    * Skipped by default in meta mode (`-m`) since runtime scales with assembly size 
+      (~2 min/Mbp on 8 threads). Pass `--meta_rfam` to run it anyway in meta mode
+    * By default, Rfam tRNA (RF00005) and tmRNA (RF00023) hits are discarded, since 
+      tRNAscan-SE and ARAGORN already annotate these and are more sensitive for phage 
+      sequence. Pass `--rfam_keep_trna` to keep them
+    * Rfam is purely additive - it does **not** replace tRNAscan-SE, ARAGORN or MinCED
+    * Adds new outputs: `{prefix}_ncrna.tsv` (one row per ncRNA hit, with Rfam accession, 
+      family, type, coordinates, bit score and E-value), `{prefix}_cmscan.tblout` (raw 
+      Infernal output), and `ncRNA` features in the `.gff`/`.gbk` (plus an `ncRNAs` row 
+      per contig in `{prefix}_cds_functions.tsv`)
+    * Requires [Infernal](http://eddylab.org/infernal/) `>= 1.1.4` (`conda install -c 
+      bioconda infernal`), only checked when Rfam annotation will actually run
+    * Requires the v1.11.0 database (adds the pressed Rfam covariance models) - running 
+      against an older database will fail with an explanatory error unless `--skip_rfam` 
+      is passed
 * `pharokka run --citation` (and the end-of-run summary) now also print our 
   [protocols paper](https://doi.org/10.1002/cpz1.70405) citation alongside the 
   existing Pharokka citation
 * Fixes a duplicated author name (`Vreugde S.`) in the protocols paper citation 
   in the README and docs
+* Fixes the database tarball filename being hardcoded to `v1.8.0` rather than derived 
+  from the database version
+* The PHROGs database version marker file is now derived from the database version 
+  instead of being hardcoded
 
 1.10.1 (2026-07-09)
 -------------

@@ -11,6 +11,7 @@ from Bio.SeqUtils import gc_fraction
 from loguru import logger
 
 from .processes import convert_gff_to_gbk
+from .rfam import add_locus_tags, rfam_type_to_ncrna_class
 from .util import (
     remove_directory,
     remove_file,
@@ -56,8 +57,11 @@ class Pharok:
         trna_version: str = None,
         aragorn_version: str = None,
         minced_version: str = None,
+        infernal_version: str = None,
         skip_extra_annotations: bool = False,
         reverse_mmseqs2: bool = False,
+        rfam_flag: bool = False,
+        ncrna_df=None,
     ) -> None:
         """
         Parameters
@@ -162,8 +166,11 @@ class Pharok:
         self.trna_version = trna_version
         self.aragorn_version = aragorn_version
         self.minced_version = minced_version
+        self.infernal_version = infernal_version
         self.skip_extra_annotations = skip_extra_annotations
         self.reverse_mmseqs2 = reverse_mmseqs2
+        self.rfam_flag = rfam_flag
+        self.ncrna_df = ncrna_df if ncrna_df is not None else pl.DataFrame()
         # Lazy cache of input FASTA records keyed by contig id.  Built on first
         # access via _get_input_records(); avoids repeatedly re-parsing the
         # FASTA from disk in the downstream writers.
@@ -688,6 +695,60 @@ class Pharok:
             quote_style="never",
         )
         self.tmrna_flag = tmrna_flag
+
+    def _build_ncrna_gff_df(self):
+        """Converts the parsed Rfam ncRNA dataframe into GFF rows.
+
+        Locus tags are assigned here rather than at parse time because the
+        random locustag prefix is only resolved in create_gff().  The tagged
+        frame is written back to self.ncrna_df so that {prefix}_ncrna.tsv and
+        the GFF agree.
+        """
+        self.ncrna_df = add_locus_tags(
+            self.ncrna_df, self.locustag, self.length_df.height
+        )
+        ncrna_df = self.ncrna_df
+
+        attributes = pl.format(
+            "ID={};locus_tag={};product={};Dbxref=RFAM:{};ncRNA_class={};note={}",
+            pl.col("locus_tag"),
+            pl.col("locus_tag"),
+            pl.col("description"),
+            pl.col("rfam_acc"),
+            pl.col("type").map_elements(rfam_type_to_ncrna_class, return_dtype=pl.Utf8),
+            pl.col("rfam_id"),
+        )
+
+        return (
+            ncrna_df.with_columns(
+                [
+                    pl.lit(f"profile:Infernal:{self.infernal_version}").alias("Method"),
+                    pl.lit("ncRNA").alias("Region"),
+                    pl.col("bitscore").cast(pl.Utf8).alias("score"),
+                    pl.lit(".").alias("frame"),
+                    attributes.alias("attributes"),
+                ]
+            )
+            .select(
+                [
+                    "contig",
+                    "Method",
+                    "Region",
+                    "start",
+                    "stop",
+                    "score",
+                    "strand",
+                    "frame",
+                    "attributes",
+                ]
+            )
+            .with_columns(
+                [
+                    pl.col("start").cast(pl.Int64),
+                    pl.col("stop").cast(pl.Int64),
+                ]
+            )
+        )
 
     def create_gff(self):
         """
@@ -1425,26 +1486,23 @@ class Pharok:
                     + "\n"
                 )
 
-        # combine dfs depending on whether the elements were detected
-        if self.skip_extra_annotations is True:
-            df_list = [gff_df]
-        else:
-            if trna_empty is True and self.tmrna_flag is False and crispr_count == 0:
-                df_list = [gff_df]
-            elif trna_empty is False and self.tmrna_flag is False and crispr_count == 0:
-                df_list = [gff_df, trna_df]
-            elif trna_empty is True and self.tmrna_flag is True and crispr_count == 0:
-                df_list = [gff_df, tmrna_df]
-            elif trna_empty is True and self.tmrna_flag is False and crispr_count > 0:
-                df_list = [gff_df, minced_df]
-            elif trna_empty is False and self.tmrna_flag is True and crispr_count == 0:
-                df_list = [gff_df, trna_df, tmrna_df]
-            elif trna_empty is False and self.tmrna_flag is False and crispr_count > 0:
-                df_list = [gff_df, trna_df, minced_df]
-            elif trna_empty is True and self.tmrna_flag is True and crispr_count > 0:
-                df_list = [gff_df, tmrna_df, minced_df]
-            else:  # all detected
-                df_list = [gff_df, trna_df, tmrna_df, minced_df]
+        # combine dfs depending on whether the elements were detected.
+        # Built additively rather than by enumerating every combination - the
+        # feature order (CDS, tRNA, tmRNA, CRISPR, ncRNA) is preserved, and
+        # adding a feature type no longer doubles the number of branches.
+        df_list = [gff_df]
+        if self.skip_extra_annotations is False:
+            if trna_empty is False:
+                df_list.append(trna_df)
+            if self.tmrna_flag is True:
+                df_list.append(tmrna_df)
+            if crispr_count > 0:
+                df_list.append(minced_df)
+
+        # ncRNAs from Infernal/Rfam. Independent of --skip_extra_annotations,
+        # which only governs tRNAscan-SE, MinCED and ARAGORN.
+        if self.rfam_flag is True and self.ncrna_df.height > 0:
+            df_list.append(self._build_ncrna_gff_df())
 
         total_gff = pl.concat(df_list, how="diagonal")
 
@@ -1532,6 +1590,19 @@ class Pharok:
             tmrna_df = self.total_gff.filter(pl.col("Region") == "tmRNA")
             tmrna_df = parse_attributes_column(tmrna_df)
             tmrna_df = tmrna_df.with_columns(
+                [
+                    pl.col("contig").cast(pl.Utf8),
+                    pl.col("start").cast(pl.Int64),
+                    pl.col("stop").cast(pl.Int64),
+                ]
+            )
+
+        ### ncRNAs
+        ncrna_tbl_flag = self.rfam_flag is True and self.ncrna_df.height > 0
+        if ncrna_tbl_flag:
+            ncrna_df = self.total_gff.filter(pl.col("Region") == "ncRNA")
+            ncrna_df = parse_attributes_column(ncrna_df)
+            ncrna_df = ncrna_df.with_columns(
                 [
                     pl.col("contig").cast(pl.Utf8),
                     pl.col("start").cast(pl.Int64),
@@ -1636,6 +1707,22 @@ class Pharok:
                         f.write(f"\t\t\tproduct\t{tmrow['product']}\n")
                         f.write(f"\t\t\ttag_peptide\t{tmrow['tag_peptide']}\n")
                         f.write(f"\t\t\tnote\t{tmrow['note']}\n")
+                if ncrna_tbl_flag:
+                    subset_ncrna_df = ncrna_df.filter(pl.col("contig") == contig)
+                    for nrow in subset_ncrna_df.iter_rows(named=True):
+                        start = str(nrow["start"])
+                        stop = str(nrow["stop"])
+                        if nrow["strand"] == "-":
+                            start = str(nrow["stop"])
+                            stop = str(nrow["start"])
+                        f.write(f"{start}\t{stop}\tncRNA\n")
+                        f.write(f"\t\t\tinference\t{nrow['Method']}\n")
+                        # ncRNA_class is mandatory for the ncRNA feature key
+                        f.write(f"\t\t\tncRNA_class\t{nrow['ncRNA_class']}\n")
+                        f.write(f"\t\t\tproduct\t{nrow['product']}\n")
+                        # NCBI's .tbl qualifier is db_xref, not the GFF3 Dbxref
+                        f.write(f"\t\t\tdb_xref\t{nrow['Dbxref']}\n")
+                        f.write(f"\t\t\tnote\t{nrow['note']}\n")
 
     def create_gff_singles(self):
         """
@@ -1901,6 +1988,10 @@ class Pharok:
             crispr_counts = _counts_by_contig(crispr_df)
             tmrna_counts = _counts_by_contig(tmrna_df)
 
+        # counted unconditionally: the ncRNAs row is always written, so that
+        # _cds_functions.tsv has a stable schema whether or not Rfam ran
+        ncrna_counts = _counts_by_contig(self.ncrna_df)
+
         # ─── VFDB / CARD counts.  v1.9.1 used str.contains(contig) on the hit
         # row's contig column — preserved here in case the test suite ever
         # depends on substring matching (would need explicit handling if two
@@ -1953,6 +2044,12 @@ class Pharok:
                 descriptions.append("tmRNAs")
                 counts.append(tmrna_counts.get(contig, 0))
                 contigs_out.append(contig)
+
+            # always emitted, 0 when Rfam did not run, so downstream parsers
+            # can rely on the row being present
+            descriptions.append("ncRNAs")
+            counts.append(ncrna_counts.get(contig, 0))
+            contigs_out.append(contig)
 
             descriptions.append("VFDB_Virulence_Factors")
             counts.append(vfdb_counts.get(contig, 0))

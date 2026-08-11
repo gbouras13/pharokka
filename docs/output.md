@@ -18,7 +18,30 @@ The main output is a `.gff` GFF3 file suitable for use in downstream pangenomic 
 
 * A `.tbl` file, which is a flat-file table suitable for upload to NCBI's BankIt.
 
-* A `_cds_functions.tsv` file, which includes counts of CDSs, tRNAs, CRISPRs and tmRNAs, and functions assigned to CDSs according to the PHROGs database.
+* A `_cds_functions.tsv` file, which includes counts of CDSs, tRNAs, CRISPRs and tmRNAs, and functions assigned to CDSs according to the PHROGs database. If `--rfam` is used, an `ncRNAs` count is also included.
+
+* If `--rfam` is used, a `_ncrna.tsv` file with one row per non-coding RNA detected by Infernal against Rfam. The columns are:
+
+  | Column | Description |
+  |--------|-------------|
+  | `contig` | Contig name |
+  | `locus_tag` | pharokka locus tag, e.g. `PHAGE_ncRNA_1` |
+  | `start`, `stop` | 1-based inclusive coordinates (always `start` < `stop`) |
+  | `strand` | `+` or `-` |
+  | `rfam_acc` | Rfam accession, e.g. `RF00050` |
+  | `rfam_id` | Rfam family name, e.g. `FMN` |
+  | `type` | Rfam family type, e.g. `Cis-reg; riboswitch;` |
+  | `description` | Rfam family description |
+  | `clan` | Rfam clan accession, if the family belongs to one |
+  | `bitscore` | Infernal bit score |
+  | `evalue` | Infernal E-value |
+  | `gc` | GC fraction of the hit |
+  | `trunc` | Whether the hit is truncated at a sequence end |
+  | `mdl_from`, `mdl_to` | Coordinates within the covariance model, which show whether the match is partial |
+
+  ncRNAs also appear as `ncRNA` features in the `.gff` and `.gbk` files.
+
+* If `--rfam` is used, a `_cmscan.tblout` file holding the raw Infernal `cmscan` output.
 
 * A `_length_gc_cds_density.tsv` file, which outputs the phage's length, GC percentage, translation table and CDS coding density.
 

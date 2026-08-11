@@ -1,5 +1,62 @@
 # Changelog
 
+## v1.11.0 — ncRNA annotation with Infernal and Rfam
+
+### ncRNA annotation, on by default
+
+`pharokka run` now annotates non-coding RNAs by scanning the genome against
+[Rfam](https://rfam.org) 15.1 (4,227 covariance models) with
+[Infernal](http://eddylab.org/infernal/) `cmscan`.  This picks up structured
+RNAs that pharokka previously could not see at all — riboswitches, ribozymes,
+regulatory sRNAs, group I/II introns and leader elements.
+
+It runs **by default**, because it is inexpensive for a phage genome: roughly
+5 seconds for a typical 40 kb phage and 14 seconds for a 140 kb phage on 8
+threads. `--threads` scales it well (4–5x on 8 cores) even for a single genome.
+
+To turn it off:
+
+```bash
+pharokka run -i phage.fasta -o output -d database --skip_rfam
+```
+
+**In meta mode (`-m`) it is skipped by default**, since runtime scales with
+assembly size at roughly 2 min/Mbp on 8 threads. Use `--meta_rfam` to run it
+in meta mode anyway.
+
+New outputs:
+
+* `{prefix}_ncrna.tsv` — one row per ncRNA, with Rfam accession, family, type,
+  coordinates, bit score and E-value.
+* `{prefix}_cmscan.tblout` — the raw Infernal output.
+* `ncRNA` features in the `.gff` and `.gbk`, and an `ncRNAs` row per contig in
+  `{prefix}_cds_functions.tsv`.
+
+By default, Rfam tRNA (RF00005) and tmRNA (RF00023) hits are discarded, since
+tRNAscan-SE and ARAGORN already annotate these and are more sensitive on phage
+sequence.  Pass `--rfam_keep_trna` to keep them.
+
+**Rfam does not replace tRNAscan-SE, ARAGORN or MinCED** — it is purely
+additive.
+
+### Requirements — action needed when upgrading
+
+* **Infernal >= 1.1.4 must be installed** (`conda install -c bioconda infernal`).
+  It is only checked when Rfam annotation will actually run.
+* **The v1.11.0 database is required**, which adds the pressed Rfam covariance
+  models. Re-run `pharokka install` to update.
+
+Because ncRNA annotation is on by default, running v1.11.0 against a v1.10.x or
+older database will fail with an explanatory error. Either update the database
+or pass `--skip_rfam`, which restores the previous behaviour exactly.
+
+### Other changes
+
+* Fixed the database tarball filename being hardcoded to `v1.8.0` rather than
+  derived from the database version.
+* The PHROGs database version marker file is now derived from the database
+  version instead of being hardcoded.
+
 ## v1.10.0 — CLI Redesign & Polars Refactor
 
 ### New subcommand-based CLI

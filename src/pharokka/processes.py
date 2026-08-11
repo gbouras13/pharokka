@@ -879,6 +879,61 @@ def run_aragorn(filepath_in, out_dir, prefix, logdir):
         logger.error("Error with Aragorn\n")
 
 
+def run_cmscan(filepath_in, out_dir, prefix, db_dir, threads, logdir):
+    """Runs Infernal cmscan against Rfam to detect ncRNAs.
+
+    Flag rationale, all measured against Rfam 15.1 with Infernal 1.1.5:
+
+    --rfam      mandatory.  Infernal derives its filter strictness from the
+                database size, so on a phage-sized target the default filters
+                go permissive and the search takes >25 minutes instead of ~30
+                seconds.
+    --cut_ga    use Rfam's curated per-family gathering thresholds, which is
+                the only sane way to threshold 4000+ heterogeneous models.
+    --nohmmonly force full CM scoring rather than falling back to the HMM
+                filter - the secondary structure model is the entire point.
+    --fmt 2     adds the 'olp' column, which (together with --clanin) is what
+                makes clan competition usable when parsing.
+    --noali     we only ever parse the tabular output.
+
+    Note on --cpu: cmscan divides the *pressed model database* across threads,
+    so threading works regardless of how many contigs are in the input.  It
+    scales well even on a single genome - measured on 8 cores (M1 Pro, 6P+2E):
+
+        NC_043029    7.6 kb    3.0 s -> 0.7 s   (4.3x)
+        NC_004617   42.7 kb   26.4 s -> 4.9 s   (5.3x)
+        SAOMS1     140.0 kb   75.3 s -> 13.5 s  (5.6x)
+
+    Do not be tempted to clamp this for small inputs.  (cmsearch against an
+    *unpressed* flatfile behaves the opposite way, parallelising over the
+    sequence database instead - that is a different tool and not what we run.)
+    """
+    logger.info("Running Infernal cmscan against Rfam.")
+
+    # base name only - the flatfile is not shipped, cmscan resolves the
+    # cmpress'd Rfam.cm.i1{f,i,m,p} files from this path
+    rfam_cm = os.path.join(db_dir, "Rfam.cm")
+    clanin = os.path.join(db_dir, "Rfam.clanin")
+    tblout = os.path.join(out_dir, prefix + "_cmscan.tblout")
+
+    cmscan = ExternalTool(
+        tool="cmscan",
+        input=f"{rfam_cm} {filepath_in}",
+        output=f"--tblout {tblout}",
+        params=(
+            f"--rfam --cut_ga --nohmmonly --noali --fmt 2 "
+            f"--clanin {clanin} --cpu {threads}"
+        ),
+        logdir=logdir,
+        outfile="",
+    )
+
+    try:
+        ExternalTool.run_tool(cmscan)
+    except Exception:
+        logger.error("Error with Infernal cmscan\n")
+
+
 def reorient_terminase(filepath_in, out_dir, prefix, terminase_strand, terminase_start):
     """Re-orients phage to begin with large terminase subunit."""
     logger.info(

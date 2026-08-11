@@ -42,7 +42,11 @@ from loguru import logger
 
 from .util import remove_directory
 
-VERSION = "1.8.0"
+VERSION = "1.11.0"
+
+# Rfam release pinned into the pharokka database tarball.  Bump this (and the
+# database VERSION above) only when a new Rfam is packaged and uploaded.
+RFAM_VERSION = "15.1"
 
 # to hold information about the different DBs
 VERSION_DICTIONARY = {
@@ -76,11 +80,27 @@ VERSION_DICTIONARY = {
         "inphared_mash": "9Aug2025_genomes.fa.msh",
         "inphared_annot": "9Aug2025_data.tsv",
     },
+    # v1.11.0 adds the Rfam 15.1 covariance models (cmpress'd) for ncRNA
+    # annotation.  See scripts/build_rfam_db.sh for how they are built.
+    # md5 is of the built tarball (735 MB); TODO(gbouras13): update db_url with
+    # the real Zenodo record once uploaded.
+    "1.11.0": {
+        "md5": "143bb375ddb0b0653e5cb5671f4a7629",
+        "major": 1,
+        "minor": 11,
+        "minorest": 0,
+        "db_url": "https://zenodo.org/records/21755221/files/pharokka_v1.11.0_databases.tar.gz",
+        "dir_name": "pharokka_v1.11.0_databases",
+        "inphared_mash": "9Aug2025_genomes.fa.msh",
+        "inphared_annot": "9Aug2025_data.tsv",
+    },
 }
 
 
 PHROG_DB_NAMES = [
-    "VERSION_1_8_0",
+    # version marker file shipped inside the database tarball; derived so it
+    # tracks VERSION rather than silently checking for a stale marker
+    f"VERSION_{VERSION.replace('.', '_')}",
     "phrogs_profile_db",
     "phrogs_profile_db.dbtype",
     "phrogs_profile_db.index",
@@ -117,6 +137,22 @@ CARD_DB_NAMES = [
     "CARD_h.index",
 ]
 
+# Rfam covariance models, cmpress'd.  Checked separately from
+# check_db_installation (which gates the whole-database download) so that
+# --skip_rfam still works against an older database directory.
+#
+# Note the Rfam.cm flatfile itself is deliberately NOT shipped: cmscan reads
+# the pressed .i1* files and only uses the flatfile path as a base name, so
+# shipping it would add 329 MB to every user's database for nothing.
+RFAM_DB_NAMES = [
+    "Rfam.cm.i1f",
+    "Rfam.cm.i1i",
+    "Rfam.cm.i1m",
+    "Rfam.cm.i1p",
+    "Rfam.clanin",
+    "Rfam_metadata.tsv",
+]
+
 
 def instantiate_install(db_dir):
     instantiate_dir(db_dir)
@@ -133,7 +169,10 @@ def instantiate_install(db_dir):
 
         logger.info(f"Downloading Pharokka Databases from {db_url}.")
 
-        tarball_path = Path(f"{db_dir}/pharokka_v1.8.0_databases.tar.gz")
+        # derived from VERSION, not hardcoded - otherwise every database
+        # version bump silently keeps writing the old tarball name
+        tarball = f"{VERSION_DICTIONARY[VERSION]['dir_name']}.tar.gz"
+        tarball_path = Path(f"{db_dir}/{tarball}")
 
         download(db_url, tarball_path)
 
@@ -260,3 +299,34 @@ def check_db_installation(db_dir):
         downloaded_flag = False
 
     return downloaded_flag
+
+
+def check_rfam_installation(db_dir):
+    """Checks that the cmpress'd Rfam database is present.
+
+    Only called when --rfam is specified.  Rfam ships inside the pharokka
+    database tarball from v1.11.0 onwards, so a user with an older database
+    directory will have everything else but not these files - hence the
+    explicit, actionable error rather than a bare missing-file traceback.
+
+    :param db_dir: pharokka database directory
+    :return: True if every Rfam file is present
+    """
+    missing = [
+        file_name
+        for file_name in RFAM_DB_NAMES
+        if not os.path.isfile(os.path.join(db_dir, file_name))
+    ]
+
+    if missing:
+        logger.error(
+            f"--rfam was specified but the Rfam database is missing from {db_dir}."
+        )
+        logger.error(f"Missing file(s): {', '.join(missing)}")
+        logger.error(
+            "Rfam was added to the pharokka database in v1.11.0. Please re-run "
+            "'pharokka install' to download the updated database."
+        )
+        return False
+
+    return True

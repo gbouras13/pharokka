@@ -1,0 +1,6 @@
+rfam_acc	rfam_id	type	description	ga_threshold	clan_acc
+RF00005	tRNA	Gene; tRNA;	tRNA	29.00	CL00001
+RF00023	tmRNA	Gene;	transfer-messenger RNA	47.00	CL00001
+RF01492	rli28	Gene; sRNA;	Listeria sRNA rli28	45.00	
+RF01828	SprD	Gene; sRNA;	Small pathogenicity island RNA D	100.00	
+RF02672	SprX	Gene; sRNA;	Small pathogenicity island RNA X	80.00	

@@ -145,6 +145,43 @@ As of v1.5.0, you can skip running tRNAscan-SE 2, MinCED and Aragorn using `--sk
 pharokka run -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads> --skip_extra_annotations
 ```
 
+## ncRNA annotation with Rfam
+
+As of v1.11.0, `pharokka` annotates non-coding RNAs (riboswitches, ribozymes, regulatory sRNAs, introns, leader elements) by scanning against [Rfam](https://rfam.org) with [Infernal](http://eddylab.org/infernal/). **This runs by default** and requires Infernal >= 1.1.4 and the v1.11.0 database or newer.
+
+To turn it off, use `--skip_rfam`:
+
+```bash
+pharokka run -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads> --skip_rfam
+```
+
+It is on by default because it is cheap for a phage genome. Measured on 8 cores against the full Rfam 15.1 database:
+
+| genome | size | 1 thread | 8 threads |
+|---|---|---|---|
+| NC_043029 | 7.6 kb | 3.0 s | 0.7 s |
+| NC_004617 | 42.7 kb | 26.4 s | 4.9 s |
+| SAOMS1 | 140 kb | 75.3 s | 13.5 s |
+| 100 microviruses | 587 kb | 253 s | 63 s |
+
+`--threads` helps here, including on a single genome — `cmscan` divides the covariance model database across threads, so there is always work to parallelise regardless of how many contigs you have.
+
+**In meta mode (`-m`), Rfam is skipped by default.** Runtime scales with assembly size at roughly 2 minutes per Mbp on 8 threads, so a 100 Mbp metagenome would take around 3 hours — fine for a phage isolate, painful for a metagenome. To run it anyway, use `--meta_rfam`:
+
+```bash
+pharokka run -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads> -m --meta_rfam
+```
+
+One thing worth knowing:
+
+* **Rfam does not replace tRNAscan-SE, ARAGORN or MinCED.** It is purely additive. Rfam's tRNA (RF00005) and tmRNA (RF00023) models are less sensitive on phage sequence than the specialised tools, so hits to them are discarded by default to avoid duplicate and conflicting annotations. If you want them anyway:
+
+```bash
+pharokka run -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <threads> --rfam_keep_trna
+```
+
+Results are written to `{prefix}_ncrna.tsv`, and as `ncRNA` features in the `.gff` and `.gbk`. See [Output](output.md) for the column descriptions.
+
 There is also support for alternative genetic codes if `pharokka` is run with prodigal as a gene predictor using the `-c` flag. See Prodigal's [documentation](https://github.com/hyattpd/prodigal/wiki/Advice-by-Input-Type#alternate-genetic-codes), along with [Yutin et al. 2021](https://doi.org/10.1038/s41467-022-32979-6) and [Peters et al. 2022](https://doi.org/10.1038/s41467-022-32979-6) for more information:
 
 ```bash
