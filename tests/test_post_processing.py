@@ -12,16 +12,23 @@ Coverage focus:
 - ``process_custom_pyhmmer_results`` — same shape, custom HMM db
 - ``process_vfdb_results``         — issue #410 bracket cleanup (fix #10)
 - ``create_mmseqs_tophits``        — lowest-eVal-wins, empty input
+- ``Pharok.parse_aragorn``        — out-of-contig ARAGORN spans (issue #444)
 - ``is_trna_empty`` / ``is_file_empty`` / ``get_crispr_count`` / ``check_and_create_directory``
                                    — small filesystem helpers
 """
 
 import collections
+import warnings
 
 import polars as pl
 import pytest
+from BCBio import GFF
+from Bio import BiopythonParserWarning, SeqIO
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
 
 from pharokka.post_processing import (
+    Pharok,
     check_and_create_directory,
     create_mmseqs_tophits,
     extract_anticodon_positions,
@@ -572,3 +579,165 @@ class TestReadFeatureGff:
         assert df.height == 2
         assert df["Region"].to_list() == ["tRNA", "tRNA"]
         assert df["contig"][0] == "ctg1"
+
+
+# ---------------------------------------------------------------------------
+# parse_aragorn — out-of-contig coordinates (issue #444, phold #141)
+# ---------------------------------------------------------------------------
+
+
+def _write_aragorn(tmp_path, prefix, body):
+    (tmp_path / f"{prefix}_aragorn.txt").write_text(body)
+
+
+def _aragorn_gff_rows(tmp_path, prefix):
+    text = (tmp_path / f"{prefix}_aragorn.gff").read_text().strip()
+    return [line.split("\t") for line in text.splitlines() if line.strip()]
+
+
+def _run_parse_aragorn(tmp_path, prefix, body, contigs, lengths, meta_mode=False):
+    _write_aragorn(tmp_path, prefix, body)
+    pharok = Pharok(
+        out_dir=str(tmp_path),
+        prefix=prefix,
+        aragorn_version="1.2.41",
+        meta_mode=meta_mode,
+        length_df=pl.DataFrame({"contig": contigs, "length": lengths}),
+    )
+    pharok.parse_aragorn()
+    return pharok
+
+
+class TestParseAragornCoordinates:
+    """ARAGORN spans that run off the end of a contig — issue #444.
+
+    Run linearly (``-l``), ARAGORN reports a gene whose model overhangs the 5'
+    end of a sequence with a non-positive start, stepping over zero so the base
+    before position 1 is ``-1`` (``position()`` in aragorn.c).  Written through
+    to the GenBank unchanged, a location like ``-63..456`` makes BioPython
+    *warn* and set ``SeqFeature.location`` to ``None``, and every downstream
+    tool that sorts on ``feature.location.start`` then dies on the ``None``
+    (phold #141).  parse_aragorn must clamp such spans onto the contig.
+    """
+
+    def test_negative_start_is_clamped_to_one(self, tmp_path):
+        _run_parse_aragorn(
+            tmp_path,
+            "neg",
+            ">c1\n1 gene found\n1   tmRNA  [-63,456]\t157,258\tASARS*\n",
+            ["c1"],
+            [5000],
+        )
+        (row,) = _aragorn_gff_rows(tmp_path, "neg")
+        assert row[3:5] == ["1", "456"]
+
+    def test_stop_past_contig_end_is_clamped(self, tmp_path):
+        _run_parse_aragorn(
+            tmp_path,
+            "over",
+            ">c1\n1 gene found\n1   tmRNA  [4800,5200]\t157,258\tASARS*\n",
+            ["c1"],
+            [5000],
+        )
+        (row,) = _aragorn_gff_rows(tmp_path, "over")
+        assert row[3:5] == ["4800", "5000"]
+
+    def test_in_range_span_is_untouched(self, tmp_path):
+        pharok = _run_parse_aragorn(
+            tmp_path,
+            "ok",
+            ">c1\n1 gene found\n1   tmRNA  [100,454]\t157,258\tASARS*\n",
+            ["c1"],
+            [5000],
+        )
+        (row,) = _aragorn_gff_rows(tmp_path, "ok")
+        assert row[3:5] == ["100", "454"]
+        assert pharok.tmrna_flag is True
+
+    def test_complementary_strand_negative_start_is_clamped(self, tmp_path):
+        """The 'c' strand marker is stripped before the coordinate is read."""
+        _run_parse_aragorn(
+            tmp_path,
+            "comp",
+            ">c1\n1 gene found\n1   tmRNA  c[-10,300]\t157,258\tASARS*\n",
+            ["c1"],
+            [5000],
+        )
+        (row,) = _aragorn_gff_rows(tmp_path, "comp")
+        assert row[3:5] == ["1", "300"]
+
+    def test_span_entirely_off_contig_is_dropped(self, tmp_path):
+        """Nothing survives, so tmrna_flag must go back to False.
+
+        Left True, create_gff() would go on to read the now-empty
+        {prefix}_aragorn.gff and raise.
+        """
+        pharok = _run_parse_aragorn(
+            tmp_path,
+            "off",
+            ">c1\n1 gene found\n1   tmRNA  [-500,-100]\t157,258\tASARS*\n",
+            ["c1"],
+            [5000],
+        )
+        assert _aragorn_gff_rows(tmp_path, "off") == []
+        assert pharok.tmrna_flag is False
+
+    def test_multi_contig_clamps_against_the_right_contig(self, tmp_path):
+        """Each span is clamped against its own contig's length, not the first."""
+        pharok = _run_parse_aragorn(
+            tmp_path,
+            "multi",
+            ">c1\n1 gene found\n1   tmRNA  [-63,456]\t157,258\tASARS*\n"
+            ">c2\n1 gene found\n1   tmRNA  [100,454]\t157,258\tASARS*\n"
+            ">c3\n1 gene found\n1   tmRNA  [400,900]\t157,258\tASARS*\n"
+            ">c4\n0 genes found\n"
+            ">end \t4 sequences 3 tmRNA genes, nothing found in 1 sequences,"
+            " (75.00% sensitivity)\n",
+            ["c1", "c2", "c3", "c4"],
+            [5000, 5000, 600, 5000],
+            meta_mode=True,
+        )
+        rows = _aragorn_gff_rows(tmp_path, "multi")
+        assert [(r[0], r[3], r[4]) for r in rows] == [
+            ("c1", "1", "456"),
+            ("c2", "100", "454"),
+            ("c3", "400", "600"),
+        ]
+        assert pharok.tmrna_flag is True
+
+    def test_clamped_span_survives_the_round_trip_to_genbank(self, tmp_path):
+        """The end-to-end chain from phold #141, pinned at the pharokka end.
+
+        Before the fix the GFF carried ``-63  456``, BioPython wrote the
+        location ``-63..456`` and re-read it as ``None``.
+        """
+        _run_parse_aragorn(
+            tmp_path,
+            "gbk",
+            ">c1\n1 gene found\n1   tmRNA  [-63,456]\t157,258\tASARS*\n",
+            ["c1"],
+            [5000],
+        )
+        (row,) = _aragorn_gff_rows(tmp_path, "gbk")
+
+        gff = tmp_path / "mini.gff"
+        gff.write_text(
+            "##gff-version 3\n"
+            f"c1\t{row[1]}\ttmRNA\t{row[3]}\t{row[4]}\t.\t+\t.\tID=c1_tmRNA_0001\n"
+        )
+        contig = SeqRecord(Seq("A" * 5000), id="c1")
+        (record,) = list(GFF.parse(str(gff), {"c1": contig}))
+        record.annotations.update(
+            molecule_type="DNA", topology="linear", data_file_division="PHG"
+        )
+        gbk = tmp_path / "mini.gbk"
+        SeqIO.write(record, str(gbk), "genbank")
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", BiopythonParserWarning)
+            (reparsed,) = list(SeqIO.parse(str(gbk), "genbank"))
+
+        (feature,) = reparsed.features
+        assert feature.location is not None
+        # 0-based half-open, so GFF 1..456 -> [0:456]
+        assert (int(feature.location.start), int(feature.location.end)) == (0, 456)

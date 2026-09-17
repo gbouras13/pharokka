@@ -31,6 +31,14 @@ History
 * `pharokka run --citation` (and the end-of-run summary) now also print our 
   [protocols paper](https://doi.org/10.1002/cpz1.70405) citation alongside the 
   existing Pharokka citation
+* Fixes #444: ARAGORN tmRNA coordinates that run off the end of a contig are now 
+  clamped to the contig rather than written through verbatim. Run linearly (`-l`), 
+  ARAGORN reports a gene overhanging the 5' end of a sequence with a negative start 
+  (e.g. `-63..456`), which BioPython refuses to parse — it *warns* and sets the 
+  feature location to `None`, so any downstream tool that touches 
+  `feature.location.start` dies on the `None` and the run is lost (see 
+  [phold #141](https://github.com/gbouras13/phold/issues/141)). Truncated spans are 
+  now logged and clipped to the contig bounds
 * Fixes a duplicated author name (`Vreugde S.`) in the protocols paper citation 
   in the README and docs
 * Fixes the database tarball filename being hardcoded to `v1.8.0` rather than derived 

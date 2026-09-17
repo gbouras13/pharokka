@@ -571,6 +571,10 @@ class Pharok:
         frames = []
         attributes = []
         contig_list = self.length_df["contig"].to_list()
+        # ARAGORN can report coordinates that fall outside the contig; see
+        # clamp_aragorn_span() for why, and for what breaks downstream if they
+        # are written through unchanged.
+        contig_lengths = dict(self.length_df.select(["contig", "length"]).iter_rows())
         # if there is only one contig
         if contig_count == 1:
             # if no trnas
@@ -596,10 +600,17 @@ class Pharok:
                     split = line.split()
                     start_stops = split[2].replace("[", "").replace("]", "").split(",")
                     contig = contig_list[0]
+                    span = clamp_aragorn_span(
+                        start_stops[0].replace("c", ""),
+                        start_stops[1],
+                        contig,
+                        contig_lengths[contig],
+                    )
+                    if span is None:
+                        continue
+                    start, stop = span
                     method = f"profile:Aragorn:{self.aragorn_version}"
                     region = "tmRNA"
-                    start = start_stops[0].replace("c", "")
-                    stop = start_stops[1]
                     score = "."
                     strand = "."
                     frame = "."
@@ -620,6 +631,9 @@ class Pharok:
                     strands.append(strand)
                     frames.append(frame)
                     attributes.append(attribute)
+                # every reported tmRNA may have been dropped as off-contig, in
+                # which case there is nothing for the downstream writers to read
+                tmrna_flag = len(contig_names) > 0
                 tmrna_df = pl.DataFrame(
                     {
                         "contig": contig_names,
@@ -649,10 +663,17 @@ class Pharok:
                                 split[2].replace("[", "").replace("]", "").split(",")
                             )
                             contig = contig_list[j]
+                            span = clamp_aragorn_span(
+                                start_stops[0].replace("c", ""),
+                                start_stops[1],
+                                contig,
+                                contig_lengths[contig],
+                            )
+                            if span is None:
+                                continue
+                            start, stop = span
                             method = f"profile:Aragorn:{self.aragorn_version}"
                             region = "tmRNA"
-                            start = start_stops[0].replace("c", "")
-                            stop = start_stops[1]
                             score = "."
                             strand = "."
                             frame = "."
@@ -675,6 +696,7 @@ class Pharok:
                             attributes.append(attribute)
                     j += 1
                 i += 1
+            tmrna_flag = len(contig_names) > 0
             tmrna_df = pl.DataFrame(
                 {
                     "contig": contig_names,
@@ -2567,6 +2589,55 @@ def read_feature_gff(path, col_list):
         )
     except pl.exceptions.NoDataError:
         return empty_df
+
+
+def clamp_aragorn_span(start, stop, contig, contig_length):
+    """Clamp a 1-based inclusive ARAGORN span onto the contig it sits on.
+
+    In linear mode (``-l``, which is what pharokka runs) ARAGORN reports a
+    gene whose model runs off the 5' end of the sequence with a non-positive
+    start, and explicitly steps over zero so that the base before position 1
+    is reported as ``-1`` — from ``position()`` in ``aragorn.c``::
+
+        if (sw->linear) if (start <= 0) start--;
+
+    A tmRNA truncated by the 3' end of the contig likewise gets a stop past
+    ``contig_length``, since ``find_slot()`` skips the wrap-around fixup when
+    ``sw->linear`` is set.
+
+    Written through unchanged, those coordinates reach the GenBank as a
+    location like ``-63..456``.  BioPython *warns* rather than raises on that,
+    sets ``SeqFeature.location`` to ``None``, and every downstream tool that
+    touches ``feature.location.start`` then dies on the ``None`` — which is
+    how phold lost whole runs (phold #141, pharokka #444).
+
+    Returns the clamped ``(start, stop)`` as strings, or ``None`` if the span
+    lies entirely off the contig and nothing meaningful can be written.
+    """
+    start = int(start)
+    stop = int(stop)
+    clamped_start = max(start, 1)
+    clamped_stop = min(stop, contig_length)
+
+    if clamped_start > clamped_stop:
+        # Either the span sits wholly off the contig, or it is inverted — the
+        # latter only reachable if pharokka ever stops passing -l, since a
+        # circular ARAGORN run reports an origin-spanning gene as start > stop.
+        logger.warning(
+            f"ARAGORN reported a tmRNA at {start}..{stop} on contig {contig} "
+            f"(length {contig_length}) that cannot be placed on the contig. "
+            f"Dropping it."
+        )
+        return None
+
+    if (clamped_start, clamped_stop) != (start, stop):
+        logger.warning(
+            f"ARAGORN reported a tmRNA at {start}..{stop} on contig {contig}, "
+            f"which runs off the end of the contig (length {contig_length}). "
+            f"Truncating it to {clamped_start}..{clamped_stop}."
+        )
+
+    return str(clamped_start), str(clamped_stop)
 
 
 def extract_anticodon_positions(out_dir):
