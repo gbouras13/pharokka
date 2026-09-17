@@ -803,3 +803,51 @@ class TestParseAragornEndSummary:
         )
         rows = _aragorn_gff_rows(tmp_path, "endname")
         assert [(r[0], r[3], r[4]) for r in rows] == [("end_of_assembly", "10", "364")]
+
+
+class TestParseAragornGeneCount:
+    """The per-contig "<N> genes found" header must be read in full.
+
+    Taking only its first character (``int(lines[i + 1][0])``) parsed
+    "12 genes found" as 1, so a contig with ten or more tmRNAs silently kept
+    only the first.  Ten is a lot for a phage, but reachable on a long
+    metagenome contig.
+    """
+
+    def test_double_digit_count_keeps_every_tmrna(self, tmp_path):
+        genes = "".join(
+            f"{n}   tmRNA  [{n * 2000 + 829},{n * 2000 + 1182}]\t157,258\tASARS*\n"
+            for n in range(1, 13)
+        )
+        pharok = _run_parse_aragorn(
+            tmp_path,
+            "many",
+            f">c1\n12 genes found\n{genes}"
+            ">c2\n3 genes found\n"
+            "1   tmRNA  [829,1182]\t157,258\tASARS*\n"
+            "2   tmRNA  [2829,3182]\t157,258\tASARS*\n"
+            "3   tmRNA  [4829,5182]\t157,258\tASARS*\n"
+            ">end \t2 sequences 15 tmRNA genes\n",
+            ["c1", "c2"],
+            [30000, 30000],
+            meta_mode=True,
+        )
+        rows = _aragorn_gff_rows(tmp_path, "many")
+        assert collections.Counter(r[0] for r in rows) == {"c1": 12, "c2": 3}
+        assert pharok.tmrna_flag is True
+
+    def test_single_contig_double_digit_count_is_not_read_as_empty(self, tmp_path):
+        """The one-contig branch tests the count for zero; 10 must not read as 1."""
+        genes = "".join(
+            f"{n}   tmRNA  [{n * 2000 + 829},{n * 2000 + 1182}]\t157,258\tASARS*\n"
+            for n in range(1, 11)
+        )
+        pharok = _run_parse_aragorn(
+            tmp_path,
+            "ten",
+            f">c1\n10 genes found\n{genes}",
+            ["c1"],
+            [30000],
+        )
+        assert len(_aragorn_gff_rows(tmp_path, "ten")) == 10
+        assert pharok.tmrna_flag is True

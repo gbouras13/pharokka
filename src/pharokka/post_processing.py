@@ -578,7 +578,7 @@ class Pharok:
         # if there is only one contig
         if contig_count == 1:
             # if no trnas
-            if int(lines[1][0]) == 0:
+            if int(lines[1].split()[0]) == 0:
                 tmrna_df = pl.DataFrame(
                     {
                         "contig": [""],
@@ -663,7 +663,10 @@ class Pharok:
                 if line[0] == ">" and j < contig_count:
                     if "0 genes found" not in lines[i + 1]:
                         tmrna_flag = True
-                        tmrna_count = int(lines[i + 1][0])
+                        # "<N> genes found" — read the whole count, not just its
+                        # first character, or a contig with 10 or more tmRNAs
+                        # silently keeps only the first (int("12"[0]) == 1)
+                        tmrna_count = int(lines[i + 1].split()[0])
                         for k in range(tmrna_count):
                             tmrna_line = lines[i + 2 + k]
                             split = tmrna_line.split()

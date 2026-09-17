@@ -44,6 +44,9 @@ History
   "sensitivity" when at least one sequence came up empty - so in the all-hit case the 
   summary was read as one more contig header and post-processing died with an 
   `IndexError`
+* Fixes tmRNAs being silently dropped from any contig carrying ten or more of them. 
+  ARAGORN's per-contig `<N> genes found` header was read one character at a time, so 
+  `12 genes found` parsed as 1 and only the first tmRNA was kept
 * Fixes a duplicated author name (`Vreugde S.`) in the protocols paper citation 
   in the README and docs
 * Fixes the database tarball filename being hardcoded to `v1.8.0` rather than derived 
