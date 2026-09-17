@@ -39,6 +39,11 @@ History
   `feature.location.start` dies on the `None` and the run is lost (see 
   [phold #141](https://github.com/gbouras13/phold/issues/141)). Truncated spans are 
   now logged and clipped to the contig bounds
+* Fixes a crash in meta mode when *every* contig carried a tmRNA. ARAGORN closes a 
+  multi-sequence run with a trailing `>end` summary line, which only mentions 
+  "sensitivity" when at least one sequence came up empty - so in the all-hit case the 
+  summary was read as one more contig header and post-processing died with an 
+  `IndexError`
 * Fixes a duplicated author name (`Vreugde S.`) in the protocols paper citation 
   in the README and docs
 * Fixes the database tarball filename being hardcoded to `v1.8.0` rather than derived 

@@ -741,3 +741,65 @@ class TestParseAragornCoordinates:
         assert feature.location is not None
         # 0-based half-open, so GFF 1..456 -> [0:456]
         assert (int(feature.location.start), int(feature.location.end)) == (0, 456)
+
+
+class TestParseAragornEndSummary:
+    """ARAGORN's trailing ``>end`` summary line must not be read as a contig.
+
+    On a multi-sequence run ARAGORN closes its batch output with
+    ``>end \\t<N> sequences ...``.  That line only mentions "sensitivity" when
+    at least one sequence came up empty, so a run where *every* contig carried
+    a tmRNA used to fall through the header check, be treated as one more
+    contig, and index ``lines[i + 1]`` off the end of the file.
+    """
+
+    def test_every_contig_with_a_tmrna_does_not_crash(self, tmp_path):
+        pharok = _run_parse_aragorn(
+            tmp_path,
+            "allhit",
+            ">c1\n1 gene found\n1   tmRNA  [100,454]\t157,258\tASARS*\n"
+            ">c2\n1 gene found\n1   tmRNA  [200,554]\t157,258\tASARS*\n"
+            ">end \t2 sequences 2 tmRNA genes\n",
+            ["c1", "c2"],
+            [5000, 5000],
+            meta_mode=True,
+        )
+        rows = _aragorn_gff_rows(tmp_path, "allhit")
+        assert [(r[0], r[3], r[4]) for r in rows] == [
+            ("c1", "100", "454"),
+            ("c2", "200", "554"),
+        ]
+        assert pharok.tmrna_flag is True
+
+    def test_summary_with_sensitivity_still_skipped(self, tmp_path):
+        """The wording ARAGORN uses when some contig came up empty."""
+        pharok = _run_parse_aragorn(
+            tmp_path,
+            "somehit",
+            ">c1\n1 gene found\n1   tmRNA  [100,454]\t157,258\tASARS*\n"
+            ">c2\n0 genes found\n"
+            ">end \t2 sequences 1 tmRNA genes, nothing found in 1 sequences,"
+            " (50.00% sensitivity)\n",
+            ["c1", "c2"],
+            [5000, 5000],
+            meta_mode=True,
+        )
+        rows = _aragorn_gff_rows(tmp_path, "somehit")
+        assert [(r[0], r[3], r[4]) for r in rows] == [("c1", "100", "454")]
+        assert pharok.tmrna_flag is True
+
+    def test_contig_named_end_is_still_parsed(self, tmp_path):
+        """Bounding by contig count, not by the ">end" text, so this is safe."""
+        _run_parse_aragorn(
+            tmp_path,
+            "endname",
+            ">c1\n0 genes found\n"
+            ">end_of_assembly\n1 gene found\n1   tmRNA  [10,364]\t157,258\tASARS*\n"
+            ">end \t2 sequences 1 tmRNA genes, nothing found in 1 sequences,"
+            " (50.00% sensitivity)\n",
+            ["c1", "end_of_assembly"],
+            [5000, 5000],
+            meta_mode=True,
+        )
+        rows = _aragorn_gff_rows(tmp_path, "endname")
+        assert [(r[0], r[3], r[4]) for r in rows] == [("end_of_assembly", "10", "364")]

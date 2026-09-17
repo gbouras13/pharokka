@@ -652,7 +652,15 @@ class Pharok:
             i = 0  # line counter
             j = 0  # contig counter
             for line in lines:
-                if line[0] == ">" and "sensitivity" not in line:
+                # ARAGORN closes a multi-sequence run with a trailing
+                # ">end \t<N> sequences ..." summary.  That line only carries
+                # the word "sensitivity" when at least one sequence came up
+                # empty, so a run where *every* contig has a tmRNA used to fall
+                # through here, be treated as another contig header, and read
+                # lines[i + 1] off the end of the file.  Bounding the walk by
+                # the contig count skips the summary however it is worded, and
+                # keeps the contig_list[j] lookup below in range.
+                if line[0] == ">" and j < contig_count:
                     if "0 genes found" not in lines[i + 1]:
                         tmrna_flag = True
                         tmrna_count = int(lines[i + 1][0])
