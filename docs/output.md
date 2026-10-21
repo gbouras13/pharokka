@@ -18,7 +18,7 @@ The main output is a `.gff` GFF3 file suitable for use in downstream pangenomic 
 
 * A `.tbl` file, which is a flat-file table suitable for upload to NCBI's BankIt.
 
-* A `_cds_functions.tsv` file, which includes counts of CDSs, tRNAs, CRISPRs and tmRNAs, and functions assigned to CDSs according to the PHROGs database. If `--rfam` is used, an `ncRNAs` count is also included.
+* A `_cds_functions.tsv` file, which includes counts of CDSs, tRNAs, CRISPRs and tmRNAs, and functions assigned to CDSs according to the PHROGs database. If `--rfam` is used, an `ncRNAs` count is also included. A `vrRNA_arrays` count is always included (0 when `--skip_vrrna` is used).
 
 * If `--rfam` is used, a `_ncrna.tsv` file with one row per non-coding RNA detected by Infernal against Rfam. The columns are:
 
@@ -42,6 +42,36 @@ The main output is a `.gff` GFF3 file suitable for use in downstream pangenomic 
   ncRNAs also appear as `ncRNA` features in the `.gff` and `.gbk` files.
 
 * If `--rfam` is used, a `_cmscan.tblout` file holding the raw Infernal `cmscan` output.
+
+* Unless `--skip_vrrna` is used, a `_vrrna.tsv` file with one row per vrRNA guide array detected
+  de novo (see [VIPR systems](run.md#vrrna-guide-arrays-vipr-systems)). The columns are:
+
+  | Column | Description |
+  |--------|-------------|
+  | `contig` | Contig name |
+  | `locus_tag` | pharokka locus tag, e.g. `PHAGE_vrRNA_1` |
+  | `start`, `stop` | 1-based inclusive coordinates (always `start` < `stop`) |
+  | `strand` | `+` or `-` |
+  | `units` | Number of `GGYNN` units in the array |
+  | `conformity` | Fraction of the array's fixed `GGY` positions that match (floor 0.80) |
+  | `score` | `units` x longest run of perfect units x `conformity` |
+  | `pvalue` | Empirical p against a shuffled null. For a `strict` call the null shuffles the whole contig; for a `relaxed` one, just its 2 kb neighbourhood |
+  | `tier` | `strict` (genome-wide pass, >= 6 units) or `relaxed` (>= 4 units next to a strict call) |
+  | `cluster_id`, `cluster_size` | Arrays within 5 kb of one another on a contig are one cluster. A big cluster is a better VIPR locus than a lone call - but see the caveat below |
+  | `tail_identity` | Identity of the 3' tail to the type II consensus tail |
+  | `tail_agreement` | Best identity of this array's tail to another array's tail on the same contig; empty when the contig has only one array |
+  | `gc` | GC fraction of the contig, which is what the null is controlling for |
+  | `guides` | The guide-defining `NN` dinucleotides, concatenated 5' to 3' |
+  | `tail` | The 60 nt immediately 3' of the array |
+
+  **`cluster_size` is architecture, not arithmetic.** Every array on a contig is scored against
+  the same null draw, so their p-values are correlated: three arrays at p = 0.01 are three
+  correlated observations of one locus, not p = 1e-6. Likewise **a low `tail_identity` is not
+  evidence against a call** - the tail is type-specific, so it is informative when it matches and
+  silent when it does not.
+
+  vrRNA arrays also appear as `ncRNA` features with `product=vrRNA guide array` in the `.gff`,
+  `.tbl` and `.gbk` files, with everything above repeated in the `note`.
 
 * A `_length_gc_cds_density.tsv` file, which outputs the phage's length, GC percentage, translation table and CDS coding density.
 

@@ -13,11 +13,14 @@ from loguru import logger
 from .processes import convert_gff_to_gbk
 from .rfam import add_locus_tags, rfam_type_to_ncrna_class
 from .util import (
+    get_version,
     remove_directory,
     remove_file,
     rename_file,
     touch_file,
 )
+from .vrrna import add_locus_tags as add_vrrna_locus_tags
+from .vrrna import vrrna_note
 
 Result = collections.namedtuple("Result", ["protein", "phrog", "bitscore", "evalue"])
 
@@ -62,6 +65,8 @@ class Pharok:
         reverse_mmseqs2: bool = False,
         rfam_flag: bool = False,
         ncrna_df=None,
+        vrrna_flag: bool = False,
+        vrrna_df=None,
     ) -> None:
         """
         Parameters
@@ -129,6 +134,14 @@ class Pharok:
             boolean whether extra annotations are skipped
         reverse_mmseqs2: bool
             use mmseqs2 dbs as target not query
+        rfam_flag: bool
+            whether Infernal/Rfam ncRNA annotation was run
+        ncrna_df: pl.DataFrame,
+            parsed Rfam ncRNA hits from rfam.parse_cmscan_tblout()
+        vrrna_flag: bool
+            whether de novo vrRNA array detection was run
+        vrrna_df: pl.DataFrame,
+            called vrRNA arrays from vrrna.scan_fasta()
         """
         self.out_dir = out_dir
         self.db_dir = db_dir
@@ -171,6 +184,8 @@ class Pharok:
         self.reverse_mmseqs2 = reverse_mmseqs2
         self.rfam_flag = rfam_flag
         self.ncrna_df = ncrna_df if ncrna_df is not None else pl.DataFrame()
+        self.vrrna_flag = vrrna_flag
+        self.vrrna_df = vrrna_df if vrrna_df is not None else pl.DataFrame()
         # Lazy cache of input FASTA records keyed by contig id.  Built on first
         # access via _get_input_records(); avoids repeatedly re-parsing the
         # FASTA from disk in the downstream writers.
@@ -758,6 +773,71 @@ class Pharok:
                     pl.lit(f"profile:Infernal:{self.infernal_version}").alias("Method"),
                     pl.lit("ncRNA").alias("Region"),
                     pl.col("bitscore").cast(pl.Utf8).alias("score"),
+                    pl.lit(".").alias("frame"),
+                    attributes.alias("attributes"),
+                ]
+            )
+            .select(
+                [
+                    "contig",
+                    "Method",
+                    "Region",
+                    "start",
+                    "stop",
+                    "score",
+                    "strand",
+                    "frame",
+                    "attributes",
+                ]
+            )
+            .with_columns(
+                [
+                    pl.col("start").cast(pl.Int64),
+                    pl.col("stop").cast(pl.Int64),
+                ]
+            )
+        )
+
+    def _build_vrrna_gff_df(self):
+        """Converts the called vrRNA arrays into GFF rows.
+
+        As with the ncRNAs, locus tags are assigned here rather than at call
+        time because the random locustag prefix is only resolved in
+        create_gff(); the tagged frame is written back to self.vrrna_df so
+        that {prefix}_vrrna.tsv, the GFF and the .tbl all agree.
+
+        The feature type is ncRNA with ncRNA_class "other".  An array is one
+        transcript - a run of GGYNN guide units plus a structured 3' tail -
+        and "other" is the INSDC vocabulary's answer for an RNA class it does
+        not yet know about, which vrRNA is.  Everything specific to the call
+        lives in the note, built by vrrna.vrrna_note().
+        """
+        self.vrrna_df = add_vrrna_locus_tags(
+            self.vrrna_df, self.locustag, self.length_df.height
+        )
+        vrrna_df = self.vrrna_df
+
+        notes = [vrrna_note(row) for row in vrrna_df.iter_rows(named=True)]
+
+        attributes = pl.format(
+            "ID={};locus_tag={};product=vrRNA guide array;ncRNA_class=other;note={}",
+            pl.col("locus_tag"),
+            pl.col("locus_tag"),
+            pl.Series("note", notes, dtype=pl.Utf8),
+        )
+
+        return (
+            vrrna_df.with_columns(
+                [
+                    pl.lit(f"ab initio prediction:pharokka:{get_version()}").alias(
+                        "Method"
+                    ),
+                    pl.lit("ncRNA").alias("Region"),
+                    # GFF column 6 is the score.  The array score (units x
+                    # longest perfect run x conformity) is the only number
+                    # here that is bigger-is-better, so it is the one that
+                    # belongs in that column; the p-value is in the note.
+                    pl.col("score").cast(pl.Utf8).alias("score"),
                     pl.lit(".").alias("frame"),
                     attributes.alias("attributes"),
                 ]
@@ -1537,6 +1617,11 @@ class Pharok:
         if self.rfam_flag is True and self.ncrna_df.height > 0:
             df_list.append(self._build_ncrna_gff_df())
 
+        # de novo vrRNA arrays. Also emitted as ncRNA features, so create_tbl()
+        # separates the two by locus tag rather than by Region.
+        if self.vrrna_flag is True and self.vrrna_df.height > 0:
+            df_list.append(self._build_vrrna_gff_df())
+
         total_gff = pl.concat(df_list, how="diagonal")
 
         # ensure that the start and stops are integer
@@ -1631,10 +1716,20 @@ class Pharok:
             )
 
         ### ncRNAs
+        # vrRNA arrays are ncRNA features too, so they have to be taken out of
+        # the Rfam selection by locus tag - otherwise every array is written
+        # to the .tbl twice, once here and once in the vrRNA block below.
+        vrrna_tbl_flag = self.vrrna_flag is True and self.vrrna_df.height > 0
+        vrrna_locus_tags = (
+            self.vrrna_df["locus_tag"].to_list() if vrrna_tbl_flag else []
+        )
+
         ncrna_tbl_flag = self.rfam_flag is True and self.ncrna_df.height > 0
         if ncrna_tbl_flag:
             ncrna_df = self.total_gff.filter(pl.col("Region") == "ncRNA")
             ncrna_df = parse_attributes_column(ncrna_df)
+            if vrrna_locus_tags:
+                ncrna_df = ncrna_df.filter(~pl.col("locus_tag").is_in(vrrna_locus_tags))
             ncrna_df = ncrna_df.with_columns(
                 [
                     pl.col("contig").cast(pl.Utf8),
@@ -1642,6 +1737,7 @@ class Pharok:
                     pl.col("stop").cast(pl.Int64),
                 ]
             )
+            ncrna_tbl_flag = ncrna_df.height > 0
 
         with open(os.path.join(self.out_dir, self.prefix + ".tbl"), "w") as f:
             for row in self.length_df.iter_rows(named=True):
@@ -1756,6 +1852,26 @@ class Pharok:
                         # NCBI's .tbl qualifier is db_xref, not the GFF3 Dbxref
                         f.write(f"\t\t\tdb_xref\t{nrow['Dbxref']}\n")
                         f.write(f"\t\t\tnote\t{nrow['note']}\n")
+                if vrrna_tbl_flag:
+                    # straight off self.vrrna_df rather than back out of the
+                    # GFF: the frame is already typed and already carries its
+                    # locus tags, so there is nothing to re-parse
+                    subset_vrrna_df = self.vrrna_df.filter(pl.col("contig") == contig)
+                    for vrow in subset_vrrna_df.iter_rows(named=True):
+                        start = str(vrow["start"])
+                        stop = str(vrow["stop"])
+                        if vrow["strand"] == "-":
+                            start = str(vrow["stop"])
+                            stop = str(vrow["start"])
+                        f.write(f"{start}\t{stop}\tncRNA\n")
+                        f.write(
+                            "\t\t\tinference\tab initio prediction:pharokka:"
+                            f"{get_version()}\n"
+                        )
+                        # ncRNA_class is mandatory for the ncRNA feature key
+                        f.write("\t\t\tncRNA_class\tother\n")
+                        f.write("\t\t\tproduct\tvrRNA guide array\n")
+                        f.write(f"\t\t\tnote\t{vrrna_note(vrow)}\n")
 
     def create_gff_singles(self):
         """
@@ -2021,9 +2137,11 @@ class Pharok:
             crispr_counts = _counts_by_contig(crispr_df)
             tmrna_counts = _counts_by_contig(tmrna_df)
 
-        # counted unconditionally: the ncRNAs row is always written, so that
-        # _cds_functions.tsv has a stable schema whether or not Rfam ran
+        # counted unconditionally: the ncRNAs and vrRNAs rows are always
+        # written, so that _cds_functions.tsv has a stable schema whether or
+        # not Rfam and the vrRNA scan ran
         ncrna_counts = _counts_by_contig(self.ncrna_df)
+        vrrna_counts = _counts_by_contig(self.vrrna_df)
 
         # ─── VFDB / CARD counts.  v1.9.1 used str.contains(contig) on the hit
         # row's contig column — preserved here in case the test suite ever
@@ -2082,6 +2200,9 @@ class Pharok:
             # can rely on the row being present
             descriptions.append("ncRNAs")
             counts.append(ncrna_counts.get(contig, 0))
+            contigs_out.append(contig)
+            descriptions.append("vrRNA_arrays")
+            counts.append(vrrna_counts.get(contig, 0))
             contigs_out.append(contig)
 
             descriptions.append("VFDB_Virulence_Factors")

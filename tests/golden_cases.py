@@ -78,6 +78,11 @@ KEY_FILES = [
     # only produced by the "rfam" case; the raw _cmscan.tblout is deliberately
     # excluded as it embeds the command line and run date
     "pharokka_ncrna.tsv",
+    # de novo vrRNA arrays, on by default (no database).  None of the case
+    # genomes carries one, so the committed copies are header-only - which is
+    # exactly the regression worth locking: the scan runs on every case and
+    # must keep finding nothing in them.
+    "pharokka_vrrna.tsv",
 ]
 
 
