@@ -220,10 +220,16 @@ holding dinucleotides fixed produces ~15% fewer GGY trinucleotides than a mononu
 
 ### Cost
 
-The scan is ~11 ms for a median phage genome (measured over 2,364 genomes, 173 Mb). The null is
-the expensive part - it re-scans the whole contig 100 times - but it only runs on a contig that
-produced at least one raw call, which on a panel of 500 ordinary phages is a small minority of
-them. See [benchmarking](benchmarking.md) for the measured per-genome distribution.
+The scan itself is **~11 ms** for a median phage genome, measured over 2,364 genomes and 173 Mb.
+The null is the expensive part, because it re-scans the whole contig 100 times - but it only runs
+on a contig that produced at least one raw call, so most genomes never pay for it.
+
+On *Escherichia* phage SUSP1 (90 kb, four arrays, so a worst case that pays the null in full) the
+whole vrRNA step took **4.1 s**, against PHANOTATE's **47 s** in the same run.
+
+If that matters to you, `--skip_vrrna` turns it off, and `--vrrna_shuffles 20` is roughly five
+times cheaper while still resolving the default `--vrrna_max_p 0.05` (the smallest attainable
+p-value would then be 1/21 = 0.048).
 
 ### Reading the output
 
