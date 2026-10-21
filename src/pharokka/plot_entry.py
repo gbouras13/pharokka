@@ -65,7 +65,7 @@ def get_input():
     )
     parser.add_argument(
         "--remove_other_features_labels",
-        help="Flag to remove labels for tRNA/tmRNA/CRISPRs. By default these are labelled. \nThey will still be plotted in black.",
+        help="Flag to remove labels for tRNA/tmRNA/CRISPRs and ncRNAs. By default these are labelled. \nThey will still be plotted.",
         action="store_true",
     )
     parser.add_argument(

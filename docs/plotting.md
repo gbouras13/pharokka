@@ -62,9 +62,24 @@ If you want to specify `pharokka` gff and genbank files instead of a directory, 
 
 `pharokka plot -i input.fasta -n pharokka_plot --gff pharokka.gff --genbank pharokka.gbk`
 
-By default, all tRNAs, tmRNAs and CRISPRs will labelled. If you want to turn this off, please use `--remove_other_features_labels` 
+By default, all tRNAs, tmRNAs, CRISPRs and ncRNAs will be labelled. If you want to turn this off, please use `--remove_other_features_labels` 
 
 `pharokka plot -i input.fasta -n pharokka_plot -o pharokka_output_directory --remove_other_features_labels`
+
+The features themselves are still plotted - only their labels are removed.
+
+### ncRNAs
+
+From v1.11.0, the ncRNAs pharokka annotates are plotted on a ring of their own, just inside the CDS ring:
+
+* **ncRNA** (orange) - Rfam families found with Infernal `cmscan` (riboswitches, ribozymes, sRNAs and so on). See [Rfam ncRNA annotation](run.md).
+* **vrRNA guide array** (teal) - VIPR vrRNA guide arrays called *de novo* by pharokka.
+
+They get their own ring rather than sharing the CDS ring with tRNAs, tmRNAs and CRISPRs because, unlike those, ncRNAs routinely sit *inside* a CDS. Drawn at the CDS radius, a 150 bp sRNA is a sliver painted over the gene it overlaps and reads as part of that gene. Rfam hits and vrRNA arrays are coloured apart because one is a homology hit against a curated covariance model and the other is an *ab initio* prediction with an empirical p-value.
+
+The ring is only drawn when the contig actually has ncRNAs, so plots of genomes without any look exactly as they did before. If you ran pharokka with `--skip_rfam` and `--skip_vrrna`, or with a pharokka version before v1.11.0, there will be no ncRNA features in the GFF and no ring.
+
+ncRNA labels are the feature's product, truncated with `--truncate` like the CDS labels, and thinned so that two ncRNAs within 500 bp of each other contribute one label rather than two overlapping ones. This matters for vrRNA arrays in particular, which come in tight clusters - *Escherichia* phage SUSP1 has four within 1.6 kb, all of them labelled "vrRNA guide array".
 
 If you want to specify specific labels, you can do this by including a list of locus_tags (from the .gff, .gbk or the summary output files) as a text file with one ID per line and specify this file with `--label_ids`:
 
@@ -106,8 +121,8 @@ options:
   --label_hypotheticals
                         Flag to label  hypothetical or unknown proteins. By default these are not labelled.
   --remove_other_features_labels
-                        Flag to remove labels for tRNA/tmRNA/CRISPRs. By default these are labelled. 
-                        They will still be plotted in black.
+                        Flag to remove labels for tRNA/tmRNA/CRISPRs and ncRNAs. By default these are labelled. 
+                        They will still be plotted.
   --title_size TITLE_SIZE
                         Controls title size. Must be an integer. Defaults to 20.
   --label_size LABEL_SIZE
@@ -140,7 +155,7 @@ e.g.
 pharokka multiplot -g pharokka.gbk  -o pharokka_plots_output_directory 
 ```
 
-The rest of the parameters are the same as `pharokka plot`
+The rest of the parameters are the same as `pharokka plot`, and tRNAs, tmRNAs, CRISPRs and ncRNAs are plotted the same way.
 
 ```bash
 usage: pharokka multiplot [-h] -g GENBANK -o OUTDIR [-f] [--label_hypotheticals] [--remove_other_features_labels]
@@ -159,8 +174,8 @@ options:
   --label_hypotheticals
                         Flag to label  hypothetical or unknown proteins. By default these are not labelled.
   --remove_other_features_labels
-                        Flag to remove labels for tRNA/tmRNA/CRISPRs. By default these are labelled. 
-                        They will still be plotted in black.
+                        Flag to remove labels for tRNA/tmRNA/CRISPRs and ncRNAs. By default these are labelled. 
+                        They will still be plotted.
   --title_size TITLE_SIZE
                         Controls title size. Must be an integer. Defaults to 20.
   --label_size LABEL_SIZE

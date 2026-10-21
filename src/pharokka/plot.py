@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 from Bio import SeqUtils
@@ -10,12 +10,159 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 from pycirclize import Circos
 from pycirclize.parser import Genbank, Gff
+from pycirclize.track import Track
+
+# ncRNA feature colours.  Rfam hits and de novo vrRNA guide arrays are both
+# GFF/GenBank `ncRNA` features and are told apart by their attributes - an
+# Rfam hit carries `Dbxref=RFAM:...`, a vrRNA array carries
+# `product=vrRNA guide array`.  They get separate colours because one is a
+# homology hit against a curated covariance model and the other an ab initio
+# prediction with an empirical p-value; a reader needs to know which.
+NCRNA_COL = "#FF8C00"
+VRRNA_COL = "#008080"
+VRRNA_PRODUCT = "vrRNA guide array"
+
+# Radial band for the ncRNA track, in the gap between the CDS track (70-80)
+# and the GC content track (42.5-60).  Forward features go in the outer half
+# and reverse in the inner half, mirroring the CDS track.
+NCRNA_TRACK_RANGE = (60, 68)
+NCRNA_FWD_R_LIM = (64, 68)
+NCRNA_REV_R_LIM = (60, 64)
+
+# Minimum spacing between two labels of the same class, in bp.  Matches the
+# value the tRNA/tmRNA/CRISPR labels have always used.
+MIN_LABEL_GAP = 500
 
 # Every feature type the plots draw.  pycirclize's GenBank parser defaults to
 # CDS alone, so `pharokka multiplot` has to ask for the rest by name - without
-# this list the tRNA/tmRNA/CRISPR filters in create_single_plot are handed a
-# CDS-only dict and always come back empty.
-PLOT_FEATURE_TYPES = ["CDS", "tRNA", "tmRNA", "repeat_region"]
+# this list the tRNA/tmRNA/CRISPR and ncRNA filters in create_single_plot are
+# handed a CDS-only dict and always come back empty.
+PLOT_FEATURE_TYPES = ["CDS", "tRNA", "tmRNA", "repeat_region", "ncRNA"]
+
+
+def is_vrrna_feature(feature: SeqFeature) -> bool:
+    """Whether an ncRNA feature is a pharokka vrRNA guide array.
+
+    The Rfam Dbxref is checked first so that an Rfam family that happened to
+    be described as a vrRNA guide array would still be treated as an Rfam
+    hit.  Anything with neither marker - an ncRNA from a hand-edited or
+    third-party GFF, say - falls through to the Rfam bucket, which is
+    labelled simply "ncRNA".
+    """
+    dbxrefs = feature.qualifiers.get("Dbxref", [])
+    if any(str(dbxref).startswith("RFAM:") for dbxref in dbxrefs):
+        return False
+    return feature.qualifiers.get("product", [""])[0] == VRRNA_PRODUCT
+
+
+def split_ncrna_features(
+    features: List[SeqFeature],
+) -> Tuple[List[SeqFeature], List[SeqFeature]]:
+    """Split ncRNA features into (Rfam and other, vrRNA arrays)."""
+    rfam_features, vrrna_features = [], []
+    for f in features:
+        if is_vrrna_feature(f):
+            vrrna_features.append(f)
+        else:
+            rfam_features.append(f)
+    return rfam_features, vrrna_features
+
+
+def add_ncrna_track(
+    sector,
+    rfam_features: List[SeqFeature],
+    vrrna_features: List[SeqFeature],
+) -> Optional[Track]:
+    """Draw ncRNAs on a track of their own, inside the CDS track.
+
+    ncRNAs are not given the black "extras" treatment that tRNA/tmRNA/CRISPR
+    get, because unlike those they routinely sit *inside* a CDS - all three
+    Rfam sRNAs of NC_004617.1 and three of the four vrRNA arrays of
+    NC_028808.2 are wholly contained in one.  Drawn at the CDS radius a
+    150 bp sRNA is a sliver painted over the gene it overlaps and reads as
+    part of that gene; on its own ring it reads as its own feature.
+
+    Boxes rather than arrows: ncRNAs are short - 50 to 200 bp is typical, so
+    under a quarter of a degree on a 90 kb circle - and pycirclize's arrow head
+    is 2 degrees, so an arrow that short is nothing but head and tapers to an
+    unreadable needle.  A box of the same height stays a legible bar.  Strand
+    is carried by which half of the ring the feature sits in, the same way the
+    CDS track above it splits forward from reverse.
+
+    The track is only added when there is something to put on it, so plots of
+    genomes without ncRNAs are unchanged.
+    """
+    if not rfam_features and not vrrna_features:
+        return None
+
+    ncrna_track = sector.add_track(NCRNA_TRACK_RANGE)
+    ncrna_track.axis(fc="#EEEEEE", ec="none")
+
+    for features, col in ((rfam_features, NCRNA_COL), (vrrna_features, VRRNA_COL)):
+        ncrna_track.genomic_features(
+            [f for f in features if f.location.strand != -1],
+            plotstyle="box",
+            r_lim=NCRNA_FWD_R_LIM,
+            fc=col,
+        )
+        ncrna_track.genomic_features(
+            [f for f in features if f.location.strand == -1],
+            plotstyle="box",
+            r_lim=NCRNA_REV_R_LIM,
+            fc=col,
+        )
+
+    return ncrna_track
+
+
+def ncrna_labels(features: List[SeqFeature], truncate) -> Tuple[List[float], List[str]]:
+    """Label positions and texts for ncRNA features, thinned and truncated.
+
+    Rfam ncRNAs and vrRNA arrays are thinned together rather than per class,
+    so that an array sitting next to a riboswitch does not produce two labels
+    on top of each other.  Thinning matters more here than for the other
+    features: vrRNA arrays come in tight clusters - four within 1.6 kb on
+    NC_028808.2, all of them carrying the identical product "vrRNA guide
+    array" - and unthinned a cluster is a stack of overlapping duplicates.
+    """
+    truncate = int(truncate)
+
+    pos_list, labels = [], []
+    for f in sorted(features, key=lambda f: int(f.location.start)):
+        label = f.qualifiers.get("product", [""])[0]
+        if label == "":
+            continue
+        if len(label) > truncate:
+            label = label[:truncate] + "..."
+        pos_list.append((int(f.location.start) + int(f.location.end)) / 2.0)
+        labels.append(label)
+
+    if not pos_list:
+        return [], []
+
+    # keep the first, then any label far enough from the one before it
+    filtered_indices = [0]
+    for i in range(1, len(pos_list)):
+        if pos_list[i] > (pos_list[i - 1] + MIN_LABEL_GAP):
+            filtered_indices.append(i)
+
+    return (
+        [pos_list[i] for i in filtered_indices],
+        [labels[i] for i in filtered_indices],
+    )
+
+
+def ncrna_legend_handles(
+    rfam_features: List[SeqFeature], vrrna_features: List[SeqFeature]
+) -> List[Patch]:
+    """Legend patches for whichever kinds of ncRNA the contig actually has."""
+    handles = []
+    if rfam_features:
+        handles.append(Patch(color=NCRNA_COL, label="ncRNA"))
+    if vrrna_features:
+        handles.append(Patch(color=VRRNA_COL, label=VRRNA_PRODUCT))
+    return handles
+
 
 # Load GFF file
 
@@ -195,6 +342,14 @@ def create_plot(
         fc=extras_col,
     )
 
+    ###################################################
+    #### ncRNAs - Rfam hits and vrRNA guide arrays
+    ###################################################
+
+    ncrna_features = gff.extract_features("ncRNA")
+    rfam_features, vrrna_features = split_ncrna_features(ncrna_features)
+    add_ncrna_track(sector, rfam_features, vrrna_features)
+
     ##################################
     ####### thin out extra features #########
     ##################################
@@ -286,6 +441,9 @@ def create_plot(
             length_list_crispr = [
                 length_list_crispr[i] for i in filtered_indices_crispr
             ]
+
+        # ncrna (Rfam ncRNAs and vrRNA arrays, thinned together)
+        pos_list_ncrna, labels_ncrna = ncrna_labels(ncrna_features, truncate)
 
     ##################################
     ####### truncate CDS labels
@@ -413,6 +571,16 @@ def create_plot(
             label_size=label_size,
             line_kws=dict(ec="grey"),
         )
+        # add ncrnas
+        if pos_list_ncrna:
+            cds_track.xticks(
+                pos_list_ncrna,
+                labels_ncrna,
+                label_orientation="vertical",
+                show_bottom_line=True,
+                label_size=label_size,
+                line_kws=dict(ec="grey"),
+            )
 
     ###################################################
     # set gc content and skew coordinates
@@ -546,7 +714,9 @@ def create_plot(
         ),
     ]
 
-    handle_other_features = [Patch(color=extras_col, label="tRNA/tmRNA/CRISPR")]
+    handle_other_features = [
+        Patch(color=extras_col, label="tRNA/tmRNA/CRISPR")
+    ] + ncrna_legend_handles(rfam_features, vrrna_features)
 
     # shrink plot a bit (0.8)
     box = circos.ax.get_position()
@@ -703,6 +873,9 @@ def create_single_plot(
         for feature in gb_feature_dict[contig_id]
         if feature.type == "repeat_region"
     ]
+    ncrna_features = [
+        feature for feature in gb_feature_dict[contig_id] if feature.type == "ncRNA"
+    ]
 
     # fwd features first
 
@@ -822,6 +995,13 @@ def create_single_plot(
         fc=extras_col,
     )
 
+    ###################################################
+    #### ncRNAs - Rfam hits and vrRNA guide arrays
+    ###################################################
+
+    rfam_features, vrrna_features = split_ncrna_features(ncrna_features)
+    add_ncrna_track(sector, rfam_features, vrrna_features)
+
     ##################################
     ####### thin out extra features #########
     ##################################
@@ -913,6 +1093,9 @@ def create_single_plot(
             length_list_crispr = [
                 length_list_crispr[i] for i in filtered_indices_crispr
             ]
+
+        # ncrna (Rfam ncRNAs and vrRNA arrays, thinned together)
+        pos_list_ncrna, labels_ncrna = ncrna_labels(ncrna_features, truncate)
 
     ##################################
     ####### truncate CDS labels
@@ -1030,6 +1213,16 @@ def create_single_plot(
             label_size=label_size,
             line_kws=dict(ec="grey"),
         )
+        # add ncrnas
+        if pos_list_ncrna:
+            cds_track.xticks(
+                pos_list_ncrna,
+                labels_ncrna,
+                label_orientation="vertical",
+                show_bottom_line=True,
+                label_size=label_size,
+                line_kws=dict(ec="grey"),
+            )
 
     ###################################################
     # set gc content and skew coordinates
@@ -1167,7 +1360,9 @@ def create_single_plot(
         ),
     ]
 
-    handle_other_features = [Patch(color=extras_col, label="tRNA/tmRNA/CRISPR")]
+    handle_other_features = [
+        Patch(color=extras_col, label="tRNA/tmRNA/CRISPR")
+    ] + ncrna_legend_handles(rfam_features, vrrna_features)
 
     # shrink plot a bit (0.8)
     box = circos.ax.get_position()

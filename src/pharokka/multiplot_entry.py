@@ -49,7 +49,7 @@ def get_input():
     )
     parser.add_argument(
         "--remove_other_features_labels",
-        help="Flag to remove labels for tRNA/tmRNA/CRISPRs. By default these are labelled. \nThey will still be plotted in black.",
+        help="Flag to remove labels for tRNA/tmRNA/CRISPRs and ncRNAs. By default these are labelled. \nThey will still be plotted.",
         action="store_true",
     )
     parser.add_argument(
@@ -196,8 +196,8 @@ def main():
     contig_count = len(gb_seq_dict)
 
     # The pycirclize default is CDS only, so without PLOT_FEATURE_TYPES the
-    # tRNA/tmRNA/CRISPR filters in create_single_plot are handed a CDS-only
-    # dict and none of those features are ever plotted.
+    # tRNA/tmRNA/CRISPR and ncRNA filters in create_single_plot are handed a
+    # CDS-only dict and none of those features are ever plotted.
     gb_feature_dict = gbk.get_seqid2features(feature_type=PLOT_FEATURE_TYPES)
 
     for contig_id, contig_sequence in gb_seq_dict.items():
