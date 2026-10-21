@@ -11,6 +11,12 @@ from matplotlib.patches import Patch
 from pycirclize import Circos
 from pycirclize.parser import Genbank, Gff
 
+# Every feature type the plots draw.  pycirclize's GenBank parser defaults to
+# CDS alone, so `pharokka multiplot` has to ask for the rest by name - without
+# this list the tRNA/tmRNA/CRISPR filters in create_single_plot are handed a
+# CDS-only dict and always come back empty.
+PLOT_FEATURE_TYPES = ["CDS", "tRNA", "tmRNA", "repeat_region"]
+
 # Load GFF file
 
 
@@ -269,7 +275,7 @@ def create_plot(
             # add the first crispr
             filtered_indices_crispr.append(0)
 
-            for i in range(1, len(length_list_tmrna)):
+            for i in range(1, len(length_list_crispr)):
                 # If the position of the crispr is at least 500bp away from the previous, add it
                 if pos_list_crispr[i] > (pos_list_crispr[i - 1] + 500):
                     filtered_indices_crispr.append(i)
@@ -794,7 +800,7 @@ def create_single_plot(
 
     fwd_list = []
     for f in fwd_features:
-        if f.type in ["tRNA", "tmRNA", "tmRNA"]:
+        if f.type in ["tRNA", "tmRNA", "repeat_region"]:
             fwd_list.append(f)
 
     cds_track.genomic_features(
@@ -806,7 +812,7 @@ def create_single_plot(
 
     rev_list = []
     for f in rev_features:
-        if f.type in ["tRNA", "tmRNA", "tmRNA"]:
+        if f.type in ["tRNA", "tmRNA", "repeat_region"]:
             rev_list.append(f)
 
     cds_track.genomic_features(
@@ -896,7 +902,7 @@ def create_single_plot(
             # add the first crispr
             filtered_indices_crispr.append(0)
 
-            for i in range(1, len(length_list_tmrna)):
+            for i in range(1, len(length_list_crispr)):
                 # If the position of the crispr is at least 500bp away from the previous, add it
                 if pos_list_crispr[i] > (pos_list_crispr[i - 1] + 500):
                     filtered_indices_crispr.append(i)
