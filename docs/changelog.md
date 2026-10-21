@@ -101,6 +101,25 @@ re-scans the contig 100 times and costs seconds, but only runs on a contig that 
 one raw call. On SUSP1 (90 kb) the whole feature took 4.1 s against PHANOTATE's 47 s in the same
 run.
 
+### Plotting
+
+`pharokka plot` and `pharokka multiplot` now draw ncRNAs. Rfam hits (orange) and vrRNA guide
+arrays (teal) get a ring of their own just inside the CDS ring, with one legend entry each and
+labels thinned the way the tRNA/tmRNA/CRISPR labels are. They are not given the black "extras"
+treatment because, unlike tRNAs, ncRNAs routinely sit *inside* a CDS — all three Rfam sRNAs of
+NC_004617.1 and three of the four vrRNA arrays of NC_028808.2 are wholly contained in one — so at
+the CDS radius they read as part of the gene they overlap. The ring is only drawn when the contig
+has ncRNAs, so plots of genomes without any are unchanged.
+
+Two plotting bugs fixed along the way:
+
+* `pharokka multiplot` asked pyCirclize for CDS features only (its default), so **no** tRNA,
+  tmRNA or CRISPR was ever plotted by the multiplotter, despite the code that filters for them.
+* CRISPR label thinning looped over the tmRNA count while indexing into the CRISPR lists, which
+  dropped CRISPR labels on a genome with fewer tmRNAs than CRISPRs and raised `IndexError` on one
+  with more. The multiplotter also never drew CRISPR features themselves, listing `tmRNA` twice
+  where `repeat_region` was meant.
+
 ### Requirements — action needed when upgrading
 
 * **Infernal >= 1.1.4 must be installed** (`conda install -c bioconda infernal`).
