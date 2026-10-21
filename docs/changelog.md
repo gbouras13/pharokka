@@ -39,6 +39,68 @@ sequence.  Pass `--rfam_keep_trna` to keep them.
 **Rfam does not replace tRNAscan-SE, ARAGORN or MinCED** — it is purely
 additive.
 
+### vrRNA guide array detection (VIPR systems), on by default
+
+`pharokka run` now calls **vrRNA guide arrays** de novo, with no database and no new dependency.
+
+vrRNAs are the guides of [VIPR](https://www.biorxiv.org/content/10.64898/2026.10.15.759431v1), an
+RNA-guided DNA silencing system encoded by phages (Lopez *et al.* 2026): a *vipr* effector and a
+*vap* accessory gene next to a tandem array of 6-16 `GGYNN` units, `GGY` invariant and the `NN`
+pairs guide-defining, closed by a structured 3' tail. No annotation tool saw this feature class
+before. Because the motif is the model, detection needs nothing downloaded — the implementation is
+pure Python and numpy in `src/pharokka/vrrna.py`.
+
+New outputs:
+
+* `{prefix}_vrrna.tsv` — one row per array, with coordinates, unit count, conformity, empirical
+  p-value, tier, cluster membership, both tail measures, the guide dinucleotides and the tail
+  sequence.
+* `ncRNA` features with `product=vrRNA guide array` in the `.gff`, `.tbl` and `.gbk`, carrying all
+  of the above in the `note`.
+* a `vrRNA_arrays` row per contig in `{prefix}_cds_functions.tsv`, always written.
+
+To turn it off: `--skip_vrrna`.
+
+#### The null is the filter
+
+`GGYNN` carries two obligate Gs, so raw calls accumulate with GC content rather than with
+biology — on a 70% GC actinobacteriophage a naive caller fires constantly and every one of those
+calls is noise. Each array is therefore scored against a null built by shuffling its own contig,
+and the user-facing knob is the resulting p-value, **not** a minimum number of units:
+
+```bash
+pharokka run -i phage.fasta -o output -d database --vrrna_max_p 0.01
+```
+
+The default is `0.05`. `0.01` is the right setting for bulk or high-GC work — it is where the
+remaining GC artefacts drop out, for roughly 1.9 points of recall. `--vrrna_shuffles` (default
+100) sets how many shuffles, and the smallest attainable p-value is `1 / (shuffles + 1)`.
+`--vrrna_null_model dinuc` offers an Altschul-Erikson dinucleotide-preserving shuffle as a
+control; it is not the default because, measured, it is the *weaker* null.
+
+#### Three things are reported, not gated on
+
+* **the 3' tail**, because it is type-specific: informative when it matches and silent when it
+  does not. `tail_identity` scores against the type II consensus, `tail_agreement` against the
+  other arrays on the same contig.
+* **clustering** (`cluster_id`, `cluster_size`), because three arrays within 5 kb is a much better
+  VIPR locus than one. It is reported as architecture and never multiplied into a joint p-value —
+  all of a contig's arrays are scored against the same null draw, so three arrays at p = 0.01 are
+  three correlated observations, not p = 1e-6.
+* **the tier**: `strict` calls come from the genome-wide pass at >= 6 units; `relaxed` calls are
+  >= 4 units within 2 kb of a strict call, scored against a null drawn from that neighbourhood.
+
+#### Accuracy and cost
+
+Measured against the 585 published arrays of the Lopez *et al.* supplement: recall 584/585 =
+99.8%, exact boundaries 84.1%, 0.282 discordant calls per 100 kb — against a published 342/348 =
+98.3% at a higher false-call rate.
+
+The scan is ~11 ms for a median phage genome (measured over 2,364 genomes, 173 Mb). The null
+re-scans the contig 100 times and costs seconds, but only runs on a contig that produced at least
+one raw call. On SUSP1 (90 kb) the whole feature took 4.1 s against PHANOTATE's 47 s in the same
+run.
+
 ### Requirements — action needed when upgrading
 
 * **Infernal >= 1.1.4 must be installed** (`conda install -c bioconda infernal`).

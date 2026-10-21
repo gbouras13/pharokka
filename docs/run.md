@@ -182,6 +182,78 @@ pharokka run -i <fasta file> -o <output folder> -d <path/to/database_dir> -t <th
 
 Results are written to `{prefix}_ncrna.tsv`, and as `ncRNA` features in the `.gff` and `.gbk`. See [Output](output.md) for the column descriptions.
 
+## vrRNA guide arrays (VIPR systems)
+
+`pharokka` also calls **vrRNA guide arrays** de novo. These are the RNA guides of
+[VIPR](https://www.biorxiv.org/content/10.64898/2026.10.15.759431v1), an RNA-guided DNA
+silencing system found in phages: a *vipr* effector and a *vap* accessory gene sitting next to a
+tandem array of 6-16 `GGYNN` units, where `GGY` is an invariant scaffold and the `NN` pairs are
+guide-defining. No annotation tool saw these before, and nothing needs downloading - the motif is
+the model, so this adds no database and no dependency.
+
+**This runs by default.** To turn it off:
+
+```bash
+pharokka run -i <fasta file> -o <output folder> -d <path/to/database_dir> --skip_vrrna
+```
+
+### The p-value is the knob, not the unit count
+
+`GGYNN` carries two obligate Gs, so the number of arrays you find by eye climbs steeply with GC
+content: a 70% GC actinobacteriophage will hand you "arrays" all day and none of them is real.
+Every call is therefore scored against a null built by shuffling that contig, and the threshold
+you set is on the resulting empirical p-value:
+
+```bash
+pharokka run -i <fasta file> -o <output folder> -d <path/to/database_dir> --vrrna_max_p 0.01
+```
+
+The default is `0.05`. **Use `0.01` if you are scanning many genomes, or any genome above ~55%
+GC** - it is where the remaining GC artefacts drop out, at a cost of roughly 1.9 points of recall.
+The smallest p-value attainable is `1 / (shuffles + 1)`, so going below 0.01 also needs
+`--vrrna_shuffles` raised above the default 100.
+
+`--vrrna_null_model dinuc` swaps the mononucleotide shuffle for an Altschul-Erikson
+dinucleotide-preserving one. It is offered as a control, not as an improvement: measured, it is the
+*weaker* null, because high-GC phage DNA is GG-depleted relative to its own base composition, so
+holding dinucleotides fixed produces ~15% fewer GGY trinucleotides than a mononucleotide shuffle.
+
+### Cost
+
+The scan itself is **~11 ms** for a median phage genome, measured over 2,364 genomes and 173 Mb.
+The null is the expensive part, because it re-scans the whole contig 100 times - but it only runs
+on a contig that produced at least one raw call, so most genomes never pay for it.
+
+On *Escherichia* phage SUSP1 (90 kb, four arrays, so a worst case that pays the null in full) the
+whole vrRNA step took **4.1 s**, against PHANOTATE's **47 s** in the same run.
+
+If that matters to you, `--skip_vrrna` turns it off, and `--vrrna_shuffles 20` is roughly five
+times cheaper while still resolving the default `--vrrna_max_p 0.05` (the smallest attainable
+p-value would then be 1/21 = 0.048).
+
+### Reading the output
+
+Three things are reported rather than filtered on, and all three are in the `note` of each
+feature as well as in `{prefix}_vrrna.tsv`:
+
+* **the 3' tail.** The structured tail is *type-specific*: a match to the type II consensus is
+  strong evidence, a non-match means nothing at all. Gating on it would throw away the one locus
+  in the published benchmark that is independently confirmed. `tail_identity` scores against the
+  type II consensus and `tail_agreement` against the other arrays on the same contig, which is
+  often the more useful of the two - two arrays sharing a tail is good evidence they belong to one
+  system even when neither matches the consensus.
+* **clustering.** Three significant arrays within 5 kb is a far better VIPR locus than one lone
+  marginal call. `cluster_id` and `cluster_size` report that architecture. They are *not* a
+  compounded probability: every array on a contig is scored against the same null draw, so three
+  arrays at p = 0.01 are three correlated observations of one locus, not p = 1e-6.
+* **the tier.** `strict` calls come from a genome-wide pass at >= 6 units. `relaxed` calls are
+  >= 4 units found within 2 kb of a strict call that already cleared the null, and are scored
+  against a null drawn from that neighbourhood rather than the whole contig.
+
+Results are written to `{prefix}_vrrna.tsv`, and as `ncRNA` features with
+`product=vrRNA guide array` in the `.gff`, `.tbl` and `.gbk`. See [Output](output.md) for the
+column descriptions.
+
 There is also support for alternative genetic codes if `pharokka` is run with prodigal as a gene predictor using the `-c` flag. See Prodigal's [documentation](https://github.com/hyattpd/prodigal/wiki/Advice-by-Input-Type#alternate-genetic-codes), along with [Yutin et al. 2021](https://doi.org/10.1038/s41467-022-32979-6) and [Peters et al. 2022](https://doi.org/10.1038/s41467-022-32979-6) for more information:
 
 ```bash

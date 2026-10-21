@@ -170,6 +170,30 @@ def get_input():
         action="store_true",
     )
     parser.add_argument(
+        "--skip_vrrna",
+        help="Skips de novo detection of VIPR vrRNA guide arrays. This needs no database and costs around 0.2 seconds per phage genome.",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--vrrna_max_p",
+        help="Maximum empirical p-value for a vrRNA array, against a null drawn by shuffling the contig itself. This is the knob, not a minimum number of units: GGYNN carries two obligate Gs, so raw calls pile up with GC content and the null is what removes them. Use --vrrna_max_p 0.01 for a stricter run - that is where the remaining high-GC artefacts drop out, for roughly 1.9 points of recall.",
+        default=0.05,
+        type=float,
+    )
+    parser.add_argument(
+        "--vrrna_shuffles",
+        help="Number of shuffles in the vrRNA null. The smallest attainable p-value is 1/(shuffles + 1), so more are needed before --vrrna_max_p can go below 0.01 at all.",
+        default=100,
+        type=int,
+    )
+    parser.add_argument(
+        "--vrrna_null_model",
+        help="What the vrRNA null holds fixed: mono = base composition, dinuc = base and dinucleotide composition (Altschul-Erikson). Measured, dinuc is the weaker null - high-GC phage DNA is GG-depleted relative to its own base composition - so mono is the default.",
+        choices=["mono", "dinuc"],
+        default="mono",
+        type=str,
+    )
+    parser.add_argument(
         "--minced_args",
         help='extra commands to pass to MINced (please omit the leading hyphen for the first argument). You will need to use quotation marks e.g. --minced_args "minNR 2 -minRL 21"',
         default="",

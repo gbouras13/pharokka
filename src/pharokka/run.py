@@ -56,6 +56,8 @@ from .processes import (
 )
 from .rfam import load_rfam_metadata, parse_cmscan_tblout, write_ncrna_tsv
 from .util import count_contigs, get_version
+from .vrrna import scan_fasta as scan_vrrna_arrays
+from .vrrna import write_vrrna_tsv
 
 # suppress biopython deprecation warning
 warnings.simplefilter("default", BiopythonDeprecationWarning)
@@ -180,6 +182,16 @@ def main():
     if rfam_flag is True:
         if check_rfam_installation(db_dir) is True:
             logger.info("Rfam database found.")
+
+    # vrRNA arrays.  No database and no external tool - the GGYNN motif is the
+    # model - so unlike Rfam this stays on in meta mode as well.
+    vrrna_flag = not args.skip_vrrna
+    if vrrna_flag is True and args.vrrna_shuffles < 1:
+        logger.error(
+            "--vrrna_shuffles must be at least 1. The shuffled null is what "
+            "separates a vrRNA array from the GC content of its own genome; "
+            "use --skip_vrrna if you do not want vrRNA annotation at all."
+        )
 
     ### custom hmm
 
@@ -410,6 +422,20 @@ def main():
             keep_trna=args.rfam_keep_trna,
         )
 
+    # de novo vrRNA guide arrays (VIPR systems).  Pure Python + numpy, no
+    # database, no external tool.  As with the ncRNAs, locus tags are assigned
+    # later in Pharok.create_gff().
+    vrrna_df = None
+    if vrrna_flag is True:
+        logger.info("Scanning for VIPR vrRNA guide arrays.")
+        vrrna_df = scan_vrrna_arrays(
+            input_fasta,
+            max_p=args.vrrna_max_p,
+            n_shuffles=args.vrrna_shuffles,
+            null_model=args.vrrna_null_model,
+        )
+        logger.info(f"Found {vrrna_df.height} vrRNA array(s).")
+
     # running mmseqs2 on the 3 databases
     if mmseqs_flag is True:
         logger.info("Starting MMseqs2.")
@@ -493,6 +519,9 @@ def main():
     pharok.rfam_flag = rfam_flag
     if ncrna_df is not None:
         pharok.ncrna_df = ncrna_df
+    pharok.vrrna_flag = vrrna_flag
+    if vrrna_df is not None:
+        pharok.vrrna_df = vrrna_df
 
     if pharok.hmm_flag is True:
         pharok.pyhmmer_results_dict = best_results_pyhmmer
@@ -523,6 +552,10 @@ def main():
     # written after create_gff(), which is where ncRNA locus tags are assigned
     if rfam_flag is True:
         write_ncrna_tsv(pharok.ncrna_df, out_dir, prefix)
+
+    # likewise for the vrRNA arrays
+    if vrrna_flag is True:
+        write_vrrna_tsv(pharok.vrrna_df, out_dir, prefix)
 
     # create table
     pharok.create_tbl()
