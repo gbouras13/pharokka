@@ -1,6 +1,14 @@
 History
 =======
 
+Unreleased
+-------------
+
+* Fix #451: fixes a crash (`UnboundLocalError`) in the dependency check when the 
+  MMseqs2 version is not one of the hardcoded release hashes (e.g. the new 
+  `19.ab57c`). The major version is now parsed from the `mmseqs version` output, 
+  so newer releases are accepted, and an unrecognised version now only warns
+
 1.11.0 (2026-08-10)
 -------------
 
