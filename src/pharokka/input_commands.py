@@ -1,5 +1,6 @@
 import argparse
 import os
+import re
 import shutil
 import subprocess as sp
 from argparse import RawTextHelpFormatter
@@ -423,6 +424,37 @@ def validate_threads(threads):
         logger.error(message)
 
 
+# commit hashes of MMseqs2 releases, for builds that report only a hash
+MMSEQS_RELEASE_HASHES = {
+    "8cc5c": 18,
+    "b804f": 17,
+    "747c6": 16,
+    "6f452": 15,
+    "7e284": 14,
+    "45111": 13,
+}
+
+
+def parse_mmseqs_version(mmseqs_version):
+    """
+    Parses the output of `mmseqs version` into (major, minor)
+
+    Release builds (e.g. bioconda) report "<major>.<hash>" (e.g. "18.8cc5c"),
+    so any future release is parsed from its major number. Builds that report
+    only a commit hash are matched against the known release hashes.
+
+    :param mmseqs_version: stripped output of `mmseqs version`
+    :return: (major as int, minor as str), or None if not recognised
+    """
+    match = re.match(r"^(\d+)\.([0-9a-zA-Z]+)", mmseqs_version)
+    if match:
+        return int(match.group(1)), match.group(2)
+    for release_hash, major in MMSEQS_RELEASE_HASHES.items():
+        if release_hash in mmseqs_version:
+            return major, release_hash
+    return None
+
+
 def check_dependencies(skip_mash, rfam=False):
     """Checks the dependencies and versions
     skip_mash flag from args, won't check mash is skip mash specified
@@ -477,34 +509,9 @@ def check_dependencies(skip_mash, rfam=False):
     mmseqs_out = mmseqs_out.decode()
     mmseqs_version = mmseqs_out.strip()
 
-    if "8cc5c" in mmseqs_version:
-        mmseqs_major_version = "18"
-        mmseqs_minor_version = "8cc5c"
-    elif "b804f" in mmseqs_version:
-        mmseqs_major_version = "17"
-        mmseqs_minor_version = "b804f"
-    elif "747c6" in mmseqs_version:
-        mmseqs_major_version = "16"
-        mmseqs_minor_version = "747c6"
-    elif "6f452" in mmseqs_version:
-        mmseqs_major_version = "15"
-        mmseqs_minor_version = "6f452"
-    elif "7e284" in mmseqs_version:
-        mmseqs_major_version = "14"
-        mmseqs_minor_version = "7e284"
-    elif "45111" in mmseqs_version:
-        mmseqs_major_version = "13"
-        mmseqs_minor_version = "45111"
-        logger.warning(
-            f"MMseqs2 version found is v{mmseqs_major_version}.{mmseqs_minor_version}"
-        )
-        logger.warning(
-            "Pharokka from v1.8.0 onwards will not work with MMseqs2 versions older than v14-7e284 (October 13 2022)"
-        )
-        logger.error(
-            "Please install a newer version of MMseqs2, ideally v18.8cc5c or newer"
-        )
-    else:
+    parsed_mmseqs_version = parse_mmseqs_version(mmseqs_version)
+
+    if parsed_mmseqs_version is None:
         logger.warning(f"MMseqs2 version found is v{mmseqs_version}")
         logger.warning(
             "Pharokka is recommended to be run with MMseqs2 v18.8cc5c or newer"
@@ -518,11 +525,23 @@ def check_dependencies(skip_mash, rfam=False):
         logger.warning(
             "If that is the case, please install a newer version of MMseqs2s."
         )
+    else:
+        mmseqs_major_version, mmseqs_minor_version = parsed_mmseqs_version
+        if mmseqs_major_version < 14:
+            logger.warning(
+                f"MMseqs2 version found is v{mmseqs_major_version}.{mmseqs_minor_version}"
+            )
+            logger.warning(
+                "Pharokka from v1.8.0 onwards will not work with MMseqs2 versions older than v14-7e284 (October 13 2022)"
+            )
+            logger.error(
+                "Please install a newer version of MMseqs2, ideally v18.8cc5c or newer"
+            )
 
-    logger.info(
-        f"MMseqs2 version found is v{mmseqs_major_version}.{mmseqs_minor_version}"
-    )
-    logger.info("MMseqs2 version is ok.")
+        logger.info(
+            f"MMseqs2 version found is v{mmseqs_major_version}.{mmseqs_minor_version}"
+        )
+        logger.info("MMseqs2 version is ok.")
 
     #############
     # trnascan

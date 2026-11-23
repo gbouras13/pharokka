@@ -5,17 +5,20 @@ Usage: pytest
 
 """
 
-import sys
-
 # import
+import subprocess as sp
+import sys
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import pytest
 from loguru import logger
 
 from pharokka.input_commands import (
+    check_dependencies,
     instantiate_dirs,
+    parse_mmseqs_version,
     validate_fasta,
     validate_gene_predictor,
     validate_meta,
@@ -173,3 +176,54 @@ class TestValidateThreads(unittest.TestCase):
     def test_validate_threads_bad(self):
         with self.assertRaises(SystemExit):
             validate_threads("o")
+
+
+class TestParseMmseqsVersion(unittest.TestCase):
+    """Tests of parse_mmseqs_version (issue #451)"""
+
+    def test_parse_known_release(self):
+        self.assertEqual(parse_mmseqs_version("18.8cc5c"), (18, "8cc5c"))
+
+    def test_parse_newer_release(self):
+        self.assertEqual(parse_mmseqs_version("19.ab57c"), (19, "ab57c"))
+
+    def test_parse_old_release(self):
+        self.assertEqual(parse_mmseqs_version("13.45111"), (13, "45111"))
+
+    def test_parse_hash_only_build(self):
+        self.assertEqual(
+            parse_mmseqs_version("7e2840992948ee89dcc336522dc98a74fe0adf00"),
+            (14, "7e284"),
+        )
+
+    def test_parse_unknown(self):
+        self.assertIsNone(parse_mmseqs_version("abcdef0123456789"))
+
+
+def _fake_mmseqs_popen(version):
+    """sp.Popen that reports the given MMseqs2 version, otherwise unchanged"""
+    real_popen = sp.Popen
+
+    def fake_popen(cmd, *args, **kwargs):
+        if cmd[:2] == ["mmseqs", "version"]:
+            cmd = ["echo", version]
+        return real_popen(cmd, *args, **kwargs)
+
+    return fake_popen
+
+
+class TestCheckDependenciesMmseqs(unittest.TestCase):
+    """check_dependencies must not crash on new or unrecognised MMseqs2 versions (issue #451)"""
+
+    def test_mmseqs_newer_release(self):
+        with mock.patch(
+            "pharokka.input_commands.sp.Popen", _fake_mmseqs_popen("19.ab57c")
+        ):
+            check_dependencies(skip_mash=True)
+
+    def test_mmseqs_unrecognised_version(self):
+        with mock.patch(
+            "pharokka.input_commands.sp.Popen",
+            _fake_mmseqs_popen("abcdef0123456789"),
+        ):
+            check_dependencies(skip_mash=True)
